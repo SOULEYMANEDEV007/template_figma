@@ -1,0 +1,293 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ═══════════════════════════════════════════════════════════════
+   DESIGN SYSTEM — LDF GROUPE
+   Couleurs : Jaune dégradé · Vert dégradé · Gris clair
+   ═══════════════════════════════════════════════════════════════ */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-nunito);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+}
+
+:root {
+  /* ── Radius ── */
+  --radius: 0.75rem;
+
+  /* ── Base ── */
+  --background: oklch(0.98 0.002 80);
+  --foreground: oklch(0.15 0.01 250);
+
+  /* ── Card ── */
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.15 0.01 250);
+
+  /* ── Popover ── */
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0.01 250);
+
+  /* ── Primary — Jaune LDF ── */
+  --primary: oklch(0.78 0.18 85);
+  --primary-foreground: oklch(0.15 0.01 85);
+
+  /* ── Secondary — Vert LDF ── */
+  --secondary: oklch(0.55 0.18 145);
+  --secondary-foreground: oklch(1 0 0);
+
+  /* ── Muted ── */
+  --muted: oklch(0.96 0.004 80);
+  --muted-foreground: oklch(0.52 0.01 250);
+
+  /* ── Accent ── */
+  --accent: oklch(0.96 0.01 85);
+  --accent-foreground: oklch(0.15 0.01 250);
+
+  /* ── Destructive ── */
+  --destructive: oklch(0.58 0.23 27);
+
+  /* ── Border / Input / Ring ── */
+  --border: oklch(0.91 0.006 80);
+  --input: oklch(0.91 0.006 80);
+  --ring: oklch(0.78 0.18 85);
+
+  /* ── Charts ── */
+  --chart-1: oklch(0.78 0.18 85);   /* jaune */
+  --chart-2: oklch(0.55 0.18 145);  /* vert */
+  --chart-3: oklch(0.55 0.2 250);   /* bleu */
+  --chart-4: oklch(0.65 0.22 35);   /* orange */
+  --chart-5: oklch(0.58 0.23 27);   /* rouge */
+
+  /* ── Font ── */
+  --font-nunito: "Nunito", sans-serif;
+
+  /* ── LDF Custom ── */
+  --ldf-yellow-start: #f6c90e;
+  --ldf-yellow-end:   #f0a500;
+  --ldf-green-start:  #22c55e;
+  --ldf-green-end:    #16a34a;
+  --ldf-sidebar-bg:   #0f172a;
+  --ldf-sidebar-text: #94a3b8;
+  --ldf-sidebar-active: rgba(246,201,14,0.15);
+  --ldf-sidebar-active-text: #f6c90e;
+}
+
+/* ─── Layout général ─────────────────────────────────────── */
+@layer base {
+  * { @apply border-border outline-ring/50; }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-nunito), sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* ─── Gradients LDF ──────────────────────────────────────── */
+.gradient-yellow {
+  background: linear-gradient(135deg, var(--ldf-yellow-start) 0%, var(--ldf-yellow-end) 100%);
+}
+.gradient-green {
+  background: linear-gradient(135deg, var(--ldf-green-start) 0%, var(--ldf-green-end) 100%);
+}
+.gradient-hero {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f172a 100%);
+}
+.gradient-card-yellow {
+  background: linear-gradient(135deg, rgba(246,201,14,0.08) 0%, rgba(240,165,0,0.04) 100%);
+}
+.gradient-card-green {
+  background: linear-gradient(135deg, rgba(34,197,94,0.08) 0%, rgba(22,163,74,0.04) 100%);
+}
+
+/* ─── Sidebar ────────────────────────────────────────────── */
+.ldf-sidebar {
+  background: var(--ldf-sidebar-bg);
+  color: var(--ldf-sidebar-text);
+}
+.ldf-sidebar-item {
+  @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200;
+  color: var(--ldf-sidebar-text);
+}
+.ldf-sidebar-item:hover {
+  background: rgba(255,255,255,0.06);
+  color: #e2e8f0;
+}
+.ldf-sidebar-item.active {
+  background: var(--ldf-sidebar-active);
+  color: var(--ldf-sidebar-active-text);
+  border-left: 3px solid var(--ldf-yellow-start);
+  padding-left: calc(0.75rem - 3px);
+}
+
+/* ─── Cards KPI ──────────────────────────────────────────── */
+.kpi-card {
+  @apply bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow duration-200;
+}
+.kpi-card-yellow {
+  @apply kpi-card;
+  border-left: 4px solid var(--ldf-yellow-start);
+}
+.kpi-card-green {
+  @apply kpi-card;
+  border-left: 4px solid var(--ldf-green-start);
+}
+
+/* ─── Tables ─────────────────────────────────────────────── */
+.ldf-table {
+  @apply w-full text-sm;
+}
+.ldf-table thead th {
+  @apply px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-100;
+}
+.ldf-table tbody tr {
+  @apply border-b border-gray-50 hover:bg-amber-50/30 transition-colors duration-150;
+}
+.ldf-table tbody td {
+  @apply px-4 py-3.5 text-gray-700;
+}
+
+/* ─── Badges statut ──────────────────────────────────────── */
+.badge-brouillon    { @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600; }
+.badge-soumise      { @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700; }
+.badge-en_attente   { @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700; }
+.badge-validee      { @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700; }
+.badge-rejetee      { @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-50 text-red-700; }
+.badge-payee        { @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700; }
+.badge-servie       { @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-teal-50 text-teal-800; }
+.badge-en_cours     { @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700; }
+.badge-encaisse     { @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700; }
+
+/* ─── Buttons LDF ────────────────────────────────────────── */
+.btn-ldf-primary {
+  @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 shadow-sm;
+  background: linear-gradient(135deg, var(--ldf-yellow-start) 0%, var(--ldf-yellow-end) 100%);
+  color: #1a1005;
+}
+.btn-ldf-primary:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 4px 12px rgba(246,201,14,0.4);
+}
+.btn-ldf-secondary {
+  @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 shadow-sm;
+  background: linear-gradient(135deg, var(--ldf-green-start) 0%, var(--ldf-green-end) 100%);
+  color: white;
+}
+.btn-ldf-secondary:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 4px 12px rgba(34,197,94,0.4);
+}
+.btn-ldf-outline {
+  @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-all duration-200;
+}
+.btn-ldf-danger {
+  @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg bg-red-600 text-white hover:bg-red-700 transition-all duration-200;
+}
+
+/* ─── Timeline ───────────────────────────────────────────── */
+.timeline-item {
+  @apply relative flex gap-4 pb-8;
+}
+.timeline-item:last-child { @apply pb-0; }
+.timeline-line {
+  @apply absolute left-4 top-8 bottom-0 w-0.5 bg-gray-100;
+}
+.timeline-dot-complete {
+  @apply w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0 z-10;
+}
+.timeline-dot-current {
+  @apply w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 z-10;
+  background: linear-gradient(135deg, var(--ldf-yellow-start), var(--ldf-yellow-end));
+}
+.timeline-dot-pending {
+  @apply w-8 h-8 rounded-full bg-gray-100 border-2 border-gray-200 flex items-center justify-center flex-shrink-0 z-10;
+}
+.timeline-dot-rejected {
+  @apply w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 z-10;
+}
+
+/* ─── Forms ──────────────────────────────────────────────── */
+.ldf-input {
+  @apply w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-lg bg-white text-gray-800 placeholder-gray-400
+         focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-400 transition-all duration-200;
+}
+.ldf-label {
+  @apply block text-sm font-medium text-gray-700 mb-1.5;
+}
+.ldf-select {
+  @apply w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-lg bg-white text-gray-800
+         focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-400 transition-all duration-200 appearance-none cursor-pointer;
+}
+
+/* ─── Page header ────────────────────────────────────────── */
+.page-header {
+  @apply flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6;
+}
+.page-title {
+  @apply text-xl font-bold text-gray-900;
+}
+.page-subtitle {
+  @apply text-sm text-gray-500 mt-0.5;
+}
+
+/* ─── Section card ───────────────────────────────────────── */
+.section-card {
+  @apply bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden;
+}
+.section-card-header {
+  @apply px-5 py-4 border-b border-gray-100 flex items-center justify-between;
+}
+.section-card-body {
+  @apply p-5;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #f8f8f8; }
+::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #bbb; }
+
+/* ─── Animations ─────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeIn 0.25s ease-out both; }
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.slide-in { animation: slideInRight 0.3s ease-out both; }
+
+/* ─── Print ──────────────────────────────────────────────── */
+@media print {
+  .no-print { display: none !important; }
+}

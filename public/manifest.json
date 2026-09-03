@@ -1,0 +1,27 @@
+{
+    "name": "Classroom Management - CiPlus",
+    "short_name": "CiPlus",
+    "description": "Système de gestion de classe avec fonctionnalités hors ligne",
+    "theme_color": "#10b981",
+    "background_color": "#ffffff",
+    "start_url": "/",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "scope": "/",
+    "icons": [
+        {
+            "src": "/images/logo_transparent_bg.png",
+            "sizes": "any",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/logo_white_bg.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        }
+    ],
+    "categories": ["education", "productivity"],
+    "lang": "fr",
+    "dir": "ltr"
+}
