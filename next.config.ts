@@ -95,7 +95,7 @@ const nextConfig: NextConfig = {
 // Configure PWA
 const withPWA = withPWAInit({
     dest: "public",
-    disable: false, // Enable PWA in all environments
+    disable: process.env.NODE_ENV === "development", // Désactivé en dev pour éviter les conflits avec le hot reload
     register: true,
     skipWaiting: true,
     scope: "/",
@@ -109,8 +109,8 @@ const withPWA = withPWAInit({
     },
     runtimeCaching: [
         {
-            // Cache HTML pages (app shell) - matches both dev and production
-            urlPattern: /^https?:\/\/(localhost:3004|ecole\.ebene\.ci)\/.*$/,
+            // Cache HTML pages (app shell)
+            urlPattern: /^https?:\/\/(localhost:3004|ldf\.ci)\/.*$/,
             handler: "NetworkFirst",
             options: {
                 cacheName: "pages-cache",
@@ -122,9 +122,9 @@ const withPWA = withPWAInit({
             },
         },
         {
-            // Cache API calls - matches your API domain
+            // Cache API calls — LDF backend
             urlPattern:
-                /^https?:\/\/(ecole\.yeminiservices\.com|localhost:8000)\/api\/.*$/,
+                /^https?:\/\/localhost:8001\/api\/.*$/,
             handler: "NetworkFirst",
             options: {
                 cacheName: "api-cache",

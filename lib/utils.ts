@@ -22,14 +22,7 @@ export function getInitials(firstName: string, lastName: string): string {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
 }
 
-export function getRoleLabel(role: string): string {
-    const roleLabels = {
-        teacher: "Professeur",
-        principal: "Chef d'établissement",
-        inspector: "Inspecteur",
-    };
-    return roleLabels[role as keyof typeof roleLabels] || role;
-}
+
 
 export function getGreeting(): string {
     const hour = new Date().getHours();

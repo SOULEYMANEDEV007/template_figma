@@ -1,6 +1,6 @@
 "use client";
 import { useLDFAuthStore } from "@/stores/ldfAuth";
-import { mockNotifications, mockSouscriptions, mockDevis, mockDossiers, mockPaiements, mockSouscripteurs } from "@/lib/ldfData";
+import { mockNotifications, mockSouscriptions, mockDevis, mockDossiers, mockPaiements } from "@/lib/ldfData";
 import { cn } from "@/lib/utils";
 import { Bell, ChevronDown, LogOut, Menu, Search, Settings, User, X } from "lucide-react";
 import Link from "next/link";
@@ -319,7 +319,7 @@ function ProfileDropdown() {
             className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
             <Settings className="w-4 h-4 text-gray-400" /> Paramètres
           </Link>
-          <Link href="/dashboard/parametres" onClick={() => setOpen(false)}
+          <Link href="/dashboard/profil" onClick={() => setOpen(false)}
             className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
             <User className="w-4 h-4 text-gray-400" /> Mon profil
           </Link>

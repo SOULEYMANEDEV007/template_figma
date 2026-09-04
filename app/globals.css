@@ -11,7 +11,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-nunito);
+  --font-sans: var(--font-sans);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -44,28 +44,28 @@
   --radius: 0.75rem;
 
   /* ── Base ── */
-  --background: oklch(0.98 0.002 80);
-  --foreground: oklch(0.15 0.01 250);
+  --background: #edf5f0;  /* vert très doux — bien visible sans agresser */
+  --foreground: #0f172a;  /* textPrimary fort pour textes nets */
 
   /* ── Card ── */
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.01 250);
+  --card: #ffffff;
+  --card-foreground: #0f172a;
 
   /* ── Popover ── */
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0.01 250);
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
 
-  /* ── Primary — Jaune LDF ── */
-  --primary: oklch(0.78 0.18 85);
-  --primary-foreground: oklch(0.15 0.01 85);
+  /* ── Primary — Vert LDF (Mobile) ── */
+  --primary: #007a33;
+  --primary-foreground: #ffffff;
 
-  /* ── Secondary — Vert LDF ── */
-  --secondary: oklch(0.55 0.18 145);
-  --secondary-foreground: oklch(1 0 0);
+  /* ── Secondary — Jaune LDF (Mobile) ── */
+  --secondary: #ffc107;
+  --secondary-foreground: #1e293b;
 
   /* ── Muted ── */
-  --muted: oklch(0.96 0.004 80);
-  --muted-foreground: oklch(0.52 0.01 250);
+  --muted: #e8f5ee;  /* primarySoft — pour les zones de fond atténuées */
+  --muted-foreground: #64748b;
 
   /* ── Accent ── */
   --accent: oklch(0.96 0.01 85);
@@ -86,18 +86,16 @@
   --chart-4: oklch(0.65 0.22 35);   /* orange */
   --chart-5: oklch(0.58 0.23 27);   /* rouge */
 
-  /* ── Font ── */
-  --font-nunito: "Nunito", sans-serif;
 
-  /* ── LDF Custom ── */
-  --ldf-yellow-start: #f6c90e;
-  --ldf-yellow-end:   #f0a500;
-  --ldf-green-start:  #22c55e;
-  --ldf-green-end:    #16a34a;
-  --ldf-sidebar-bg:   #0f172a;
-  --ldf-sidebar-text: #94a3b8;
-  --ldf-sidebar-active: rgba(246,201,14,0.15);
-  --ldf-sidebar-active-text: #f6c90e;
+  /* ── LDF Custom (Aligned with Flutter Mobile) ── */
+  --ldf-yellow-start: #ffe033;
+  --ldf-yellow-end:   #ffd600; /* navBarYellow */
+  --ldf-green-start:  #33955c; /* primaryLight */
+  --ldf-green-end:    #007a33; /* primary */
+  --ldf-sidebar-bg:   #005c26; /* primaryDark */
+  --ldf-sidebar-text: #e8f5ee; /* primarySoft */
+  --ldf-sidebar-active: rgba(255, 214, 0, 0.15); /* navBarYellow 15% */
+  --ldf-sidebar-active-text: #ffd600; /* navBarYellow */
 }
 
 /* ─── Layout général ─────────────────────────────────────── */
@@ -105,8 +103,11 @@
   * { @apply border-border outline-ring/50; }
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-nunito), sans-serif;
-    -webkit-font-smoothing: antialiased;
+    /* Sur Windows, antialiased nuit à la netteté — on utilise auto + optimizeLegibility */
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern" 1, "liga" 1;
   }
 }
 
@@ -118,7 +119,7 @@
   background: linear-gradient(135deg, var(--ldf-green-start) 0%, var(--ldf-green-end) 100%);
 }
 .gradient-hero {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f172a 100%);
+  background: linear-gradient(135deg, #005c26 0%, #007a33 100%); /* primaryHeader gradient */
 }
 .gradient-card-yellow {
   background: linear-gradient(135deg, rgba(246,201,14,0.08) 0%, rgba(240,165,0,0.04) 100%);
@@ -137,8 +138,8 @@
   color: var(--ldf-sidebar-text);
 }
 .ldf-sidebar-item:hover {
-  background: rgba(255,255,255,0.06);
-  color: #e2e8f0;
+  background: rgba(255,255,255,0.1);
+  color: #ffffff;
 }
 .ldf-sidebar-item.active {
   background: var(--ldf-sidebar-active);
@@ -152,11 +153,11 @@
   @apply bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow duration-200;
 }
 .kpi-card-yellow {
-  @apply kpi-card;
+  @apply bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow duration-200;
   border-left: 4px solid var(--ldf-yellow-start);
 }
 .kpi-card-green {
-  @apply kpi-card;
+  @apply bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow duration-200;
   border-left: 4px solid var(--ldf-green-start);
 }
 
