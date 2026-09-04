@@ -1,14 +1,14 @@
 import LDFAuthInitializer from "@/components/providers/LDFAuthInitializer";
 import { ReactQueryProvider } from "@/components/providers/ReactQueryProvider";
 import type { Metadata } from "next";
-import { Nunito } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 
-const nunito = Nunito({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-  variable: "--font-nunito",
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-sans",
   display: "swap",
 });
 
@@ -19,8 +19,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={nunito.variable}>
-      <body className="antialiased" style={{ fontFamily: "var(--font-nunito), sans-serif" }}>
+    <html lang="fr" className={plusJakartaSans.variable}>
+      <body className="antialiased font-sans">
         <ReactQueryProvider>
           <LDFAuthInitializer>
             {children}

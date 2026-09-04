@@ -1,4 +1,6 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { demoAccounts } from "@/lib/ldfData";
 import { useLDFAuthStore } from "@/stores/ldfAuth";
 import { Building2, Eye, EyeOff, Lock, Mail, ShieldCheck, Sparkles, TrendingUp } from "lucide-react";
@@ -61,8 +63,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex">
       {/* ── Colonne gauche — branding ── */}
-      <div className="hidden lg:flex lg:w-[45%] relative overflow-hidden flex-col justify-between p-12"
-        style={{ background: "linear-gradient(145deg,#0f172a 0%,#1e293b 50%,#0f172a 100%)" }}>
+      <div className="hidden lg:flex lg:w-[45%] relative overflow-hidden flex-col justify-between p-12 gradient-hero">
 
         {/* Pattern décoratif */}
         <div className="absolute inset-0 opacity-5">
@@ -95,7 +96,7 @@ export default function LoginPage() {
             </div>
             <h2 className="text-3xl font-bold text-white leading-tight">
               Gérez tout le cycle<br />de vos souscriptions<br />
-              <span style={{ background: "linear-gradient(90deg,#f6c90e,#22c55e)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              <span className="text-transparent bg-clip-text gradient-yellow">
                 en un seul endroit.
               </span>
             </h2>
@@ -159,66 +160,62 @@ export default function LoginPage() {
           {/* Formulaire */}
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email */}
-            <div>
-              <label className="ldf-label">Adresse e-mail</label>
-              <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="votre@email.ci"
-                  className="ldf-input pl-10"
-                  autoComplete="email"
-                />
-              </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-gray-700">Adresse e-mail</label>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="votre@email.ci"
+                autoComplete="email"
+                startIcon={<Mail className="w-5 h-5" />}
+              />
             </div>
 
             {/* Mot de passe */}
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="ldf-label mb-0">Mot de passe</label>
-                <button type="button" className="text-xs text-amber-600 hover:text-amber-700 font-medium">
-                  Mot de passe oublié ?
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-semibold text-gray-700">Mot de passe</label>
+                <button type="button" className="text-sm text-primary hover:text-primary-foreground font-medium transition-colors">
+                  Oublié ?
                 </button>
               </div>
-              <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="ldf-input pl-10 pr-10"
-                  autoComplete="current-password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
+              <Input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                autoComplete="current-password"
+                startIcon={<Lock className="w-5 h-5" />}
+                endIcon={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="hover:text-gray-900 transition-colors focus:outline-none"
+                    aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                }
+              />
             </div>
 
             {/* Bouton */}
-            <button
+            <Button
               type="submit"
               disabled={submitting || isLoading}
-              className="w-full py-3 text-sm font-semibold rounded-lg transition-all duration-200 mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
-              style={{ background: "linear-gradient(135deg,#f6c90e,#f0a500)", color: "#1a1005" }}
+              className="w-full mt-4"
             >
               {submitting || isLoading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+                <>
+                  <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                   </svg>
                   Connexion en cours...
-                </span>
+                </>
               ) : "Se connecter"}
-            </button>
+            </Button>
           </form>
 
           {/* Comptes de démo */}

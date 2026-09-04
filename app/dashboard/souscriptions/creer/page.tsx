@@ -14,8 +14,7 @@ function StepIndicator({ current }: { current: number }) {
       {STEPS.map((s, i) => (
         <div key={s} className="flex items-center">
           <div className="flex flex-col items-center gap-1.5">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-              i < current ? "bg-emerald-500 text-white" : i === current ? "text-amber-900 shadow-md" : "bg-gray-100 text-gray-400"}`}
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${i < current ? "bg-emerald-500 text-white" : i === current ? "text-amber-900 shadow-md" : "bg-gray-100 text-gray-400"}`}
               style={i === current ? { background: "linear-gradient(135deg,#f6c90e,#f0a500)" } : {}}>
               {i < current ? <Check className="w-4 h-4" /> : i + 1}
             </div>
@@ -101,8 +100,8 @@ export default function CreerSouscriptionPage() {
           <div className="flex items-center gap-2">
             {step === 0 && <User className="w-4 h-4 text-amber-500" />}
             {step === 1 && <Package className="w-4 h-4 text-amber-500" />}
-            {step === 2 && <Package className="w-4 h-4 text-amber-500" />}
-            {step === 3 && <Check className="w-4 h-4 text-emerald-500" />}
+            {/*step === 2 && <Package className="w-4 h-4 text-amber-500" />*/}
+            {step === 2 && <Check className="w-4 h-4 text-emerald-500" />}
             <h2 className="text-sm font-semibold text-gray-800">{STEPS[step]}</h2>
           </div>
           <span className="text-xs text-gray-400">Étape {step + 1}/{STEPS.length}</span>
@@ -113,11 +112,11 @@ export default function CreerSouscriptionPage() {
           {step === 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
-                { key: "nom",       label: "Nom *",       placeholder: "Coulibaly" },
-                { key: "prenom",    label: "Prénom *",    placeholder: "Mamadou" },
+                { key: "nom", label: "Nom *", placeholder: "Coulibaly" },
+                { key: "prenom", label: "Prénom *", placeholder: "Mamadou" },
                 { key: "telephone", label: "Téléphone *", placeholder: "+225 07 00 00 00 00" },
-                { key: "email",     label: "Email",       placeholder: "nom@email.ci", type: "email" },
-                { key: "adresse",   label: "Adresse",     placeholder: "Quartier, rue..." },
+                { key: "email", label: "Email", placeholder: "nom@email.ci", type: "email" },
+                { key: "adresse", label: "Adresse", placeholder: "Quartier, rue..." },
                 { key: "numeroCompte", label: "N° de compte bancaire", placeholder: "CI93CI..." },
               ].map(f => (
                 <div key={f.key} className={f.key === "adresse" ? "sm:col-span-2" : ""}>
@@ -166,7 +165,7 @@ export default function CreerSouscriptionPage() {
           )}
 
           {/* ÉTAPE 2 — Articles */}
-          {step === 2 && (
+          {/*step === 2 && (
             <div className="space-y-3">
               {articles.map((a, i) => (
                 <div key={i} className="grid grid-cols-12 gap-2 items-end bg-gray-50 p-3 rounded-xl">
@@ -225,10 +224,10 @@ export default function CreerSouscriptionPage() {
                 </div>
               </div>
             </div>
-          )}
+          )*/}
 
           {/* ÉTAPE 3 — Confirmation */}
-          {step === 3 && (
+          {step === 2 && (
             <div className="space-y-4">
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
                 <h3 className="text-sm font-semibold text-amber-800 mb-3">Récapitulatif de la souscription</h3>
