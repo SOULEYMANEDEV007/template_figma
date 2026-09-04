@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-const STEPS = ["Souscripteur", "Souscription", "Articles", "Confirmation"];
+const STEPS = ["Souscripteur", "Souscription", "Confirmation"];
 
 function StepIndicator({ current }: { current: number }) {
   return (

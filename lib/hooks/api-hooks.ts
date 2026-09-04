@@ -93,10 +93,12 @@ export const useLogin = (
         mutationFn: api.auth.login,
         onSuccess: (data, variables, context) => {
             queryClient.setQueryData(queryKeys.auth.me, data.user);
-            options?.onSuccess?.(data, variables, context);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (options?.onSuccess as any)?.(data, variables, context);
         },
         onError: (error, variables, context) => {
-            options?.onError?.(handleApiError(error), variables, context);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (options?.onError as any)?.(handleApiError(error), variables, context);
         },
         ...options,
     });
@@ -110,10 +112,12 @@ export const useLogout = (
         mutationFn: api.auth.logout,
         onSuccess: (data, variables, context) => {
             queryClient.clear();
-            options?.onSuccess?.(data, variables, context);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (options?.onSuccess as any)?.(data, variables, context);
         },
         onError: (error, variables, context) => {
-            options?.onError?.(handleApiError(error), variables, context);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (options?.onError as any)?.(handleApiError(error), variables, context);
         },
         ...options,
     });
@@ -203,7 +207,7 @@ export const useCreateClassroom = (
         mutationFn: api.classrooms.create,
         onSuccess: (data, variables, context) => {
             queryClient.invalidateQueries({ queryKey: ["classrooms"] });
-            options?.onSuccess?.(data, variables, context);
+            (options?.onSuccess as any)?.(data, variables, context);
         },
         onError: (error, variables, context) => {
             options?.onError?.(handleApiError(error), variables, context);
@@ -228,7 +232,7 @@ export const useUpdateClassroom = (
                 queryKeys.classrooms.detail(variables.slug),
                 data
             );
-            options?.onSuccess?.(data, variables, context);
+            (options?.onSuccess as any)?.(data, variables, context);
         },
         onError: (error, variables, context) => {
             options?.onError?.(handleApiError(error), variables, context);
@@ -248,7 +252,7 @@ export const useDeleteClassroom = (
             queryClient.removeQueries({
                 queryKey: queryKeys.classrooms.detail(slug),
             });
-            options?.onSuccess?.(data, slug, context);
+            (options?.onSuccess as any)?.(data, slug, context);
         },
         onError: (error, slug, context) => {
             options?.onError?.(handleApiError(error), slug, context);
@@ -327,7 +331,7 @@ export const useCreateStudent = (
         onSuccess: (data, variables, context) => {
             queryClient.invalidateQueries({ queryKey: ["students"] });
             queryClient.invalidateQueries({ queryKey: ["classrooms"] });
-            options?.onSuccess?.(data, variables, context);
+            (options?.onSuccess as any)?.(data, variables, context);
         },
         onError: (error, variables, context) => {
             options?.onError?.(handleApiError(error), variables, context);
@@ -428,7 +432,7 @@ export const useCreateTextbook = (
                 queryKey: ["textbooks"],
                 exact: false,
             });
-            options?.onSuccess?.(data, variables, context);
+            (options?.onSuccess as any)?.(data, variables, context);
         },
         onSettled: () => {
             queryClient.invalidateQueries({
@@ -525,7 +529,7 @@ export const useUpdateTextbook = (
                 queryKey: ["textbooks"],
                 exact: false,
             });
-            options?.onSuccess?.(data, variables, context);
+            (options?.onSuccess as any)?.(data, variables, context);
         },
         onSettled: (data, error, variables) => {
             queryClient.invalidateQueries({
@@ -578,7 +582,7 @@ export const useDeleteTextbook = (
                 queryKey: ["textbooks"],
                 exact: false,
             });
-            options?.onSuccess?.(data, slug, context);
+            (options?.onSuccess as any)?.(data, slug, context);
         },
         onSettled: () => {
             queryClient.invalidateQueries({
@@ -668,7 +672,7 @@ export const useSubmitTextbook = (
                     ),
                 };
             });
-            options?.onSuccess?.(data, slug, context);
+            (options?.onSuccess as any)?.(data, slug, context);
         },
         onSettled: (data, error, slug) => {
             queryClient.invalidateQueries({
@@ -761,7 +765,7 @@ export const useCreateAttendance = (
             queryClient.invalidateQueries({ queryKey: ["attendance"] });
             queryClient.invalidateQueries({ queryKey: ["classrooms"] });
             queryClient.invalidateQueries({ queryKey: ["students"] });
-            options?.onSuccess?.(data, variables, context);
+            (options?.onSuccess as any)?.(data, variables, context);
         },
         onError: (error, variables, context) => {
             options?.onError?.(handleApiError(error), variables, context);
@@ -780,7 +784,7 @@ export const useBulkCreateAttendance = (
             queryClient.invalidateQueries({ queryKey: ["attendance"] });
             queryClient.invalidateQueries({ queryKey: ["classrooms"] });
             queryClient.invalidateQueries({ queryKey: ["students"] });
-            options?.onSuccess?.(data, variables, context);
+            (options?.onSuccess as any)?.(data, variables, context);
         },
         onError: (error, variables, context) => {
             options?.onError?.(handleApiError(error), variables, context);
@@ -873,7 +877,7 @@ export const useUpdatePrincipalComment = (
                 queryKey: ["textbooks", "principal-reviews"],
                 exact: false,
             });
-            options?.onSuccess?.(data, variables, context);
+            (options?.onSuccess as any)?.(data, variables, context);
         },
         onError: (error, variables, context) => {
             options?.onError?.(handleApiError(error), variables, context);
@@ -916,7 +920,7 @@ export const useUpdateInspectorComment = (
                 queryKey: ["textbooks", "inspector-reviews"],
                 exact: false,
             });
-            options?.onSuccess?.(data, variables, context);
+            (options?.onSuccess as any)?.(data, variables, context);
         },
         onError: (error, variables, context) => {
             options?.onError?.(handleApiError(error), variables, context);
@@ -1298,7 +1302,7 @@ export const useInspectorUpdateTextbookStatus = (
                 exact: false,
             });
 
-            options?.onSuccess?.(data, variables, context);
+            (options?.onSuccess as any)?.(data, variables, context);
         },
         onError: (error, variables, context) => {
             options?.onError?.(handleApiError(error), variables, context);
