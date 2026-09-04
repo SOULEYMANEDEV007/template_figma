@@ -210,7 +210,7 @@ export const useCreateClassroom = (
             (options?.onSuccess as any)?.(data, variables, context);
         },
         onError: (error, variables, context) => {
-            options?.onError?.(handleApiError(error), variables, context);
+            (options?.onError as any)?.(handleApiError(error), variables, context);
         },
         ...options,
     });
@@ -235,7 +235,7 @@ export const useUpdateClassroom = (
             (options?.onSuccess as any)?.(data, variables, context);
         },
         onError: (error, variables, context) => {
-            options?.onError?.(handleApiError(error), variables, context);
+            (options?.onError as any)?.(handleApiError(error), variables, context);
         },
         ...options,
     });
@@ -255,7 +255,7 @@ export const useDeleteClassroom = (
             (options?.onSuccess as any)?.(data, slug, context);
         },
         onError: (error, slug, context) => {
-            options?.onError?.(handleApiError(error), slug, context);
+            (options?.onError as any)?.(handleApiError(error), slug, context);
         },
         ...options,
     });
@@ -334,7 +334,7 @@ export const useCreateStudent = (
             (options?.onSuccess as any)?.(data, variables, context);
         },
         onError: (error, variables, context) => {
-            options?.onError?.(handleApiError(error), variables, context);
+            (options?.onError as any)?.(handleApiError(error), variables, context);
         },
         ...options,
     });
@@ -415,7 +415,7 @@ export const useCreateTextbook = (
                     context.previousTextbooks
                 );
             }
-            options?.onError?.(handleApiError(err), newData, context);
+            (options?.onError as any)?.(handleApiError(err), newData, context);
         },
         onSuccess: (data, variables, context) => {
             queryClient.setQueryData(["textbooks", "list"], (old: any) => {
@@ -509,7 +509,7 @@ export const useUpdateTextbook = (
                     context.previousTextbook
                 );
             }
-            options?.onError?.(handleApiError(err), variables, context);
+            (options?.onError as any)?.(handleApiError(err), variables, context);
         },
         onSuccess: (data, variables, context) => {
             queryClient.setQueryData(
@@ -572,7 +572,7 @@ export const useDeleteTextbook = (
                     context.previousTextbooks
                 );
             }
-            options?.onError?.(handleApiError(err), slug, context);
+            (options?.onError as any)?.(handleApiError(err), slug, context);
         },
         onSuccess: (data, slug, context) => {
             queryClient.removeQueries({
@@ -659,7 +659,7 @@ export const useSubmitTextbook = (
                     context.previousTextbook
                 );
             }
-            options?.onError?.(handleApiError(err), slug, context);
+            (options?.onError as any)?.(handleApiError(err), slug, context);
         },
         onSuccess: (data, slug, context) => {
             queryClient.setQueryData(["textbooks", "detail", slug], data);
@@ -768,7 +768,7 @@ export const useCreateAttendance = (
             (options?.onSuccess as any)?.(data, variables, context);
         },
         onError: (error, variables, context) => {
-            options?.onError?.(handleApiError(error), variables, context);
+            (options?.onError as any)?.(handleApiError(error), variables, context);
         },
         ...options,
     });
@@ -787,7 +787,7 @@ export const useBulkCreateAttendance = (
             (options?.onSuccess as any)?.(data, variables, context);
         },
         onError: (error, variables, context) => {
-            options?.onError?.(handleApiError(error), variables, context);
+            (options?.onError as any)?.(handleApiError(error), variables, context);
         },
         ...options,
     });
@@ -880,7 +880,7 @@ export const useUpdatePrincipalComment = (
             (options?.onSuccess as any)?.(data, variables, context);
         },
         onError: (error, variables, context) => {
-            options?.onError?.(handleApiError(error), variables, context);
+            (options?.onError as any)?.(handleApiError(error), variables, context);
         },
         ...options,
     });
@@ -923,7 +923,7 @@ export const useUpdateInspectorComment = (
             (options?.onSuccess as any)?.(data, variables, context);
         },
         onError: (error, variables, context) => {
-            options?.onError?.(handleApiError(error), variables, context);
+            (options?.onError as any)?.(handleApiError(error), variables, context);
         },
         ...options,
     });
@@ -1305,7 +1305,7 @@ export const useInspectorUpdateTextbookStatus = (
             (options?.onSuccess as any)?.(data, variables, context);
         },
         onError: (error, variables, context) => {
-            options?.onError?.(handleApiError(error), variables, context);
+            (options?.onError as any)?.(handleApiError(error), variables, context);
         },
         ...options,
     });
