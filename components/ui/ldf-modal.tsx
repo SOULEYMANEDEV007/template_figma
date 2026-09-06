@@ -79,14 +79,14 @@ interface ConfirmModalProps {
 
 const CONFIRM_ICONS = {
   danger:  { Icon: XCircle,       color: "text-red-500",    bg: "bg-red-50"    },
-  warning: { Icon: AlertTriangle,  color: "text-amber-500",  bg: "bg-amber-50"  },
+  warning: { Icon: AlertTriangle,  color: "text-cyan-500",  bg: "bg-cyan-50"  },
   success: { Icon: CheckCircle2,   color: "text-emerald-500",bg: "bg-emerald-50"},
   info:    { Icon: Info,           color: "text-blue-500",   bg: "bg-blue-50"   },
 };
 
 const CONFIRM_BTN = {
   danger:  "bg-red-600 hover:bg-red-700 text-white",
-  warning: "gradient-yellow text-amber-900",
+  warning: "gradient-primary text-white",
   success: "gradient-green text-white",
   info:    "bg-blue-600 hover:bg-blue-700 text-white",
 };

@@ -17,10 +17,10 @@ interface KPICardProps {
 
 const VARIANT_STYLES = {
   yellow: {
-    iconBg: "bg-amber-100",
-    iconColor: "text-amber-600",
-    border: "border-l-amber-400",
-    gradient: "from-amber-50/50 to-transparent",
+    iconBg: "bg-cyan-100",
+    iconColor: "text-cyan-600",
+    border: "border-l-cyan-400",
+    gradient: "from-cyan-50/50 to-transparent",
   },
   green: {
     iconBg: "bg-emerald-100",

@@ -1,13 +1,9 @@
-// types/api.ts
-export interface ApiResponse<T = any> {
-    success: boolean;
-    message: string;
-    data: T;
-    errors?: Record<string, string[]>;
-    code?: string;
-}
+// types/api.ts - Types API ViFlo Finance
 
-// User Types
+// ═══════════════════════════════════════════════════════════
+// USER & AUTH TYPES
+// ═══════════════════════════════════════════════════════════
+
 export interface User {
     id: number;
     slug: string;
@@ -15,304 +11,277 @@ export interface User {
     lastName: string;
     fullName: string;
     email: string;
-    role: "teacher" | "principal" | "inspector" | "super_admin" | "admin";
+    role: "admin" | "banque" | "fournisseur";
+    roleId: number;
     roleLabel: string;
     matricule: string;
     phone?: string;
     avatar?: string;
     isActive: boolean;
-    school?: School;
-    classes?: Classroom[];
+    organisationName?: string;
+    organisationId?: number;
     permissions?: string[];
     lastLoginAt?: string;
     createdAt: string;
     updatedAt: string;
 }
 
-// School Types
-export interface School {
-    id: number;
-    slug: string;
-    name: string;
-    address?: string;
-    phone?: string;
-    email?: string;
-}
-
-// Classroom Types
-export interface Classroom {
-    id: number;
-    slug: string;
-    name: string;
-    level: string;
-    academicYear: string;
-    isActive: boolean;
-    totalStudents?: number;
-    boysCount?: number;
-    girlsCount?: number;
-    absentCount?: number;
-    teacher?: Teacher;
-    school?: School;
-    students?: Student[];
-    studentsCount?: number;
-    recentTextbookEntries?: TextbookEntry[];
-    statistics?: any;
-    createdAt: string;
-    updatedAt: string;
-}
-
-// Teacher subset of User
-export interface Teacher {
-    id: number;
-    slug: string;
-    firstName: string;
-    lastName: string;
-    fullName: string;
-    email: string;
-    phone?: string;
-    avatar?: string;
-}
-
-// Student Types
-export interface Student {
-    id: number;
-    slug: string;
-    first_name: string;
-    last_name: string;
-    full_name: string;
-    matricule: string;
-    date_of_birth?: string;
-    age?: number;
-    gender: "male" | "female";
-    gender_label: string;
-    avatar?: string;
-    parent_phone?: string;
-    parent_email?: string;
-    is_active: boolean;
-    class?: Classroom;
-    recent_attendance?: Attendance[];
-    attendance_summary?: AttendanceSummary;
-    created_at: string;
-    updated_at: string;
-}
-
-// Attendance Types
-export interface Attendance {
-    id: number;
-    slug: string;
-    date: string;
-    status: "present" | "absent" | "late" | "excused";
-    notes?: string;
-    isOfflineCreated: boolean;
-    syncVersion?: number;
-    student?: Student;
-    class?: Classroom;
-    teacher?: Teacher;
-    sync_metadata?: SyncMetadata;
-    createdAt: string;
-    updatedAt: string;
-}
-
-export interface AttendanceSummary {
-    total_records: number;
-    present: number;
-    absent: number;
-    late: number;
-    excused: number;
-    attendance_rate: number;
-}
-
-// Textbook Entry Types
-export interface TextbookEntry {
-    id: number;
-    slug: string;
-    title: string;
-    description?: string;
-    subject: string;
-    content: string;
-    sessionDate: string;
-    sessionTime?: string;
-    nextSession?: string;
-    nextSessionTime?: string;
-    submissionDate?: string;
-    isSubmitted: boolean;
-    isOfflineCreated: boolean;
-    syncVersion?: number;
-    syncMetadata?: SyncMetadata;
-    class?: Classroom;
-    teacher?: Teacher;
-    school?: string;
-    principalTeacher?: string;
-    classroom?: string;
-    principalStatus: "pending" | "viewed" | "validated" | "rejected";
-    principalComment?: string;
-    principalCommentedAt?: string;
-    inspectorStatus: "pending" | "viewed" | "validated" | "rejected";
-    inspectorComment?: string;
-    inspectorCommentedAt?: string;
-    createdAt: string;
-    updatedAt: string;
-}
-
-// Sync Metadata Types
-export interface SyncMetadata {
-    id: number;
-    syncStatus: "pending" | "synced" | "conflict" | "failed";
-    lastSyncAt?: string;
-    hasConflict: boolean;
-}
-
-// Auth Types
-export interface LoginCredentials {
+export interface LoginRequest {
     email: string;
     password: string;
-    role?: string;
 }
 
-export interface AuthResponse {
+export interface LoginResponse {
     user: User;
     token: string;
-    expires_at: string;
+    refreshToken?: string;
 }
 
-export interface UpdateProfileData {
-    firstName?: string;
-    lastName?: string;
-    phone?: string;
-    avatar?: string;
+// ═══════════════════════════════════════════════════════════
+// SOUSCRIPTION TYPES
+// ═══════════════════════════════════════════════════════════
+
+export interface Souscription {
+    id: number;
+    slug: string;
+    reference: string;
+    souscripteurNom: string;
+    souscripteurPrenom: string;
+    souscripteurEmail: string;
+    souscripteurTelephone: string;
+    fournisseurId: number;
+    fournisseurNom: string;
+    banqueId: number;
+    banqueNom: string;
+    montantTotal: number;
+    statut: "brouillon" | "soumise" | "validee" | "rejetee" | "payee" | "servie";
+    articles: SouscriptionArticle[];
+    dateCreation: string;
+    dateValidation?: string;
+    dateService?: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
-export interface UpdatePasswordData {
-    current_password: string;
-    new_password: string;
-    new_password_confirmation: string;
+export interface SouscriptionArticle {
+    id: number;
+    articleNom: string;
+    quantite: number;
+    prixUnitaire: number;
+    montantTotal: number;
 }
 
-// Request Types
-export interface CreateClassroomData {
-    name: string;
-    level: string;
-    academic_year: string;
-    teacher_id?: number;
+export interface CreateSouscriptionData {
+    souscripteurNom: string;
+    souscripteurPrenom: string;
+    souscripteurEmail: string;
+    souscripteurTelephone: string;
+    fournisseurId: number;
+    banqueId: number;
+    articles: Array<{
+        articleNom: string;
+        quantite: number;
+        prixUnitaire: number;
+    }>;
 }
 
-export interface UpdateClassroomData {
-    name?: string;
-    level?: string;
-    academic_year?: string;
-    teacher_id?: number;
-    is_active?: boolean;
+// ═══════════════════════════════════════════════════════════
+// DEVIS TYPES
+// ═══════════════════════════════════════════════════════════
+
+export interface Devis {
+    id: number;
+    slug: string;
+    reference: string;
+    souscriptionId: number;
+    souscriptionReference: string;
+    souscripteurNom: string;
+    fournisseurId: number;
+    fournisseurNom: string;
+    banqueId: number;
+    banqueNom: string;
+    montantTotal: number;
+    statut: "envoye" | "en_attente_validation" | "valide" | "refuse" | "expire";
+    articles: DevisArticle[];
+    dateEnvoi: string;
+    dateExpiration?: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
-export interface CreateStudentData {
-    first_name: string;
-    last_name: string;
-    date_of_birth?: string;
-    gender: "male" | "female";
-    matricule: string;
-    class_id: number;
-    parent_phone?: string;
-    parent_email?: string;
+export interface DevisArticle {
+    id: number;
+    articleNom: string;
+    quantite: number;
+    prixUnitaire: number;
+    montantTotal: number;
 }
 
-export interface UpdateStudentData {
-    first_name?: string;
-    last_name?: string;
-    date_of_birth?: string;
-    gender?: "male" | "female";
-    matricule?: string;
-    class_id?: number;
-    parent_phone?: string;
-    parent_email?: string;
-    is_active?: boolean;
+// ═══════════════════════════════════════════════════════════
+// DOSSIER TYPES
+// ═══════════════════════════════════════════════════════════
+
+export interface Dossier {
+    id: number;
+    slug: string;
+    reference: string;
+    souscriptionId: number;
+    souscriptionReference: string;
+    devisId: number;
+    devisReference: string;
+    souscripteurNom: string;
+    souscripteurPrenom: string;
+    banqueId: number;
+    banqueNom: string;
+    montantTotal: number;
+    statut: "recu" | "en_cours_traitement" | "valide" | "rejete" | "informations_demandees";
+    motifRejet?: string;
+    dateReception: string;
+    dateValidation?: string;
+    validePar?: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
-export interface CreateAttendanceData {
-    student_id: number;
-    class_id: number;
+export interface ValidateDossierData {
+    montantApprouve?: number;
+    commentaire?: string;
+}
+
+export interface RejectDossierData {
+    motifRejet: string;
+}
+
+// ═══════════════════════════════════════════════════════════
+// PAIEMENT TYPES
+// ═══════════════════════════════════════════════════════════
+
+export interface Paiement {
+    id: number;
+    slug: string;
+    reference: string;
+    dossierId: number;
+    dossierReference: string;
+    souscripteurNom: string;
+    souscripteurPrenom: string;
+    banqueId: number;
+    banqueNom: string;
+    fournisseurId: number;
+    fournisseurNom: string;
+    montant: number;
+    statut: "en_attente" | "programme" | "en_cours" | "effectue" | "echec" | "encaisse";
+    datePrevue?: string;
+    dateEffective?: string;
+    dateEncaissement?: string;
+    referenceTransaction?: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface UpdatePaiementData {
+    statut?: "en_attente" | "programme" | "en_cours" | "effectue" | "echec" | "encaisse";
+    dateEffective?: string;
+    dateEncaissement?: string;
+    referenceTransaction?: string;
+}
+
+// ═══════════════════════════════════════════════════════════
+// NOTIFICATION TYPES
+// ═══════════════════════════════════════════════════════════
+
+export interface Notification {
+    id: string;
+    titre: string;
+    message: string;
+    categorie: "souscription" | "devis" | "dossier" | "paiement" | "systeme";
+    estLue: boolean;
+    lien?: string;
     date: string;
-    status: "present" | "absent" | "late" | "excused";
-    notes?: string;
+    heure: string;
+    createdAt: string;
 }
 
-export interface UpdateAttendanceData {
-    status?: "present" | "absent" | "late" | "excused";
-    notes?: string;
-}
+// ═══════════════════════════════════════════════════════════
+// DASHBOARD TYPES
+// ═══════════════════════════════════════════════════════════
 
-export interface CreateTextbookEntryData {
-    title: string;
-    description?: string;
-    subject: string;
-    content: string;
-    class_id: number;
-    session_date: string;
-    session_time?: string;
-    next_session_date?: string;
-    next_session_time?: string;
-}
-
-export interface UpdateTextbookEntryData {
-    title?: string;
-    class_id?: number;
-    description?: string;
-    subject?: string;
-    content?: string;
-    session_date?: string;
-    session_time?: string;
-    next_session_date?: string;
-    next_session_time?: string;
-    is_submitted?: boolean;
-    principal_status?: "pending" | "viewed" | "validated" | "rejected";
-    principal_comment?: string;
-    inspector_status?: "pending" | "viewed" | "validated" | "rejected";
-    inspector_comment?: string;
-}
-
-// Dashboard Types
 export interface DashboardStats {
-    totalClasses: number;
-    totalStudents: number;
-    totalTeachers: number;
-    attendanceRate: number;
-    recentActivity: any[];
+    totalSouscriptions: number;
+    montantTotalSouscriptions: number;
+    souscriptionsEnAttente: number;
+    dossiersValides: number;
+    dossiersRejetes: number;
+    devisEnAttente: number;
+    paiementsEncaisses: number;
+    paiementsEnCours: number;
+    montantTotalPaiements: number;
+    articlesServis: number;
 }
 
-// Pagination Types
+// ═══════════════════════════════════════════════════════════
+// PAGINATION & API RESPONSE TYPES
+// ═══════════════════════════════════════════════════════════
+
 export interface PaginationMeta {
-    current_page: number;
-    from: number;
-    last_page: number;
-    per_page: number;
-    to: number;
+    currentPage: number;
+    perPage: number;
     total: number;
+    lastPage: number;
+    from: number;
+    to: number;
 }
 
 export interface PaginatedResponse<T> {
     data: T[];
     meta: PaginationMeta;
-    links: {
-        first: string;
-        last: string;
-        prev: string | null;
-        next: string | null;
-    };
 }
 
-// Query Parameters
-export interface QueryParams {
-    page?: number;
-    per_page?: number;
-    search?: string;
-    sort_by?: string;
-    sort_order?: "asc" | "desc";
-    filter?: Record<string, any>;
+export interface ApiResponse<T = any> {
+    success: boolean;
+    data?: T;
+    message?: string;
+    errors?: Record<string, string[]>;
 }
 
-// Error Types
 export interface ApiError {
     message: string;
     errors?: Record<string, string[]>;
-    code?: string;
-    status?: number;
+    statusCode: number;
+}
+
+// ═══════════════════════════════════════════════════════════
+// FILTER & SORT TYPES
+// ═══════════════════════════════════════════════════════════
+
+export interface BaseFilters {
+    search?: string;
+    page?: number;
+    perPage?: number;
+    sortBy?: string;
+    sortOrder?: "asc" | "desc";
+}
+
+export interface SouscriptionFilters extends BaseFilters {
+    statut?: string;
+    fournisseurId?: number;
+    banqueId?: number;
+    dateDebut?: string;
+    dateFin?: string;
+}
+
+export interface DevisFilters extends BaseFilters {
+    statut?: string;
+    fournisseurId?: number;
+    banqueId?: number;
+}
+
+export interface DossierFilters extends BaseFilters {
+    statut?: string;
+    banqueId?: number;
+}
+
+export interface PaiementFilters extends BaseFilters {
+    statut?: string;
+    banqueId?: number;
+    fournisseurId?: number;
 }

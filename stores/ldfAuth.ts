@@ -1,5 +1,5 @@
 "use client";
-// stores/ldfAuth.ts — Store Zustand LDF avec auth mockée complète
+// stores/ldfAuth.ts — Store Zustand ViFlo avec auth mockée complète
 import { demoAccounts, mockUsers } from "@/lib/ldfData";
 import type { LDFUser, LDFUserRole, Notification } from "@/types/ldf";
 import { deleteCookie, getCookie, setCookie } from "cookies-next";
@@ -132,7 +132,7 @@ export const useLDFAuthStore = create<AuthState & AuthActions>((set, get) => ({
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 export function getRoleLabel(role: LDFUserRole): string {
   const labels: Record<LDFUserRole, string> = {
-    admin: "Administrateur LDF",
+    admin: "Administrateur ViFlo",
     banque: "Responsable Banque",
     fournisseur: "Fournisseur",
   };

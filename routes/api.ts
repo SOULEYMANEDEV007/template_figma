@@ -1,164 +1,147 @@
-// routes/api.ts
+// routes/api.ts - Routes API ViFlo Finance
 export const API_ROUTES = {
-    // Authentication
+    // Auth
     AUTH: {
         LOGIN: "/auth/login",
         LOGOUT: "/auth/logout",
-        ME: "/auth/me",
         REFRESH: "/auth/refresh",
-        UPDATE_PROFILE: "/auth/profile",
-        UPDATE_PASSWORD: "/auth/password",
+        ME: "/auth/me",
+        CHANGE_PASSWORD: "/auth/change-password",
     },
 
-    // Dashboard
-    DASHBOARD: {
-        STATS: "/dashboard/stats",
-        RECENT_ACTIVITY: "/dashboard/recent-activity",
+    // Souscriptions
+    SOUSCRIPTIONS: {
+        INDEX: "/souscriptions",
+        STORE: "/souscriptions",
+        SHOW: (slug: string) => `/souscriptions/${slug}`,
+        UPDATE: (slug: string) => `/souscriptions/${slug}`,
+        DELETE: (slug: string) => `/souscriptions/${slug}`,
+        EXPORT: "/souscriptions/export",
+        STATS: "/souscriptions/stats",
     },
 
-    // Classes/Classrooms
-    CLASSROOMS: {
-        INDEX: "/classrooms",
-        STORE: "/classrooms",
-        SHOW: (slug: string) => `/classrooms/${slug}`,
-        UPDATE: (slug: string) => `/classrooms/${slug}`,
-        DELETE: (slug: string) => `/classrooms/${slug}`,
-        STUDENTS: (slug: string) => `/classrooms/${slug}/students`,
-        ATTENDANCE: (slug: string) => `/classrooms/${slug}/attendance`,
-        TEXTBOOK_ENTRIES: (slug: string) =>
-            `/classrooms/${slug}/textbook-entries`,
-        STATISTICS: (slug: string) => `/classrooms/${slug}/statistics`,
+    // Devis
+    DEVIS: {
+        INDEX: "/devis",
+        STORE: "/devis",
+        SHOW: (slug: string) => `/devis/${slug}`,
+        UPDATE: (slug: string) => `/devis/${slug}`,
+        DELETE: (slug: string) => `/devis/${slug}`,
+        EXPORT: "/devis/export",
+        SEND: (slug: string) => `/devis/${slug}/send`,
     },
 
-    // Students
-    STUDENTS: {
-        INDEX: "/students",
-        STORE: "/students",
-        SHOW: (slug: string) => `/students/${slug}`,
-        UPDATE: (slug: string) => `/students/${slug}`,
-        DELETE: (slug: string) => `/students/${slug}`,
-        IMPORT: "/students/import",
-        EXPORT: "/students/export",
-        ATTENDANCE_HISTORY: (slug: string) => `/students/${slug}/attendance`,
+    // Dossiers
+    DOSSIERS: {
+        INDEX: "/dossiers",
+        SHOW: (slug: string) => `/dossiers/${slug}`,
+        VALIDATE: (slug: string) => `/dossiers/${slug}/validate`,
+        REJECT: (slug: string) => `/dossiers/${slug}/reject`,
+        EXPORT: "/dossiers/export",
     },
 
-    // Attendance
-    ATTENDANCE: {
-        INDEX: "/attendance",
-        STORE: "/attendance",
-        SHOW: (slug: string) => `/attendance/${slug}`,
-        UPDATE: (slug: string) => `/attendance/${slug}`,
-        DELETE: (slug: string) => `/attendance/${slug}`,
-        BULK_STORE: "/attendance/bulk",
-        REPORTS: "/attendance/reports",
-        EXPORT: "/attendance/export",
+    // Paiements
+    PAIEMENTS: {
+        INDEX: "/paiements",
+        SHOW: (slug: string) => `/paiements/${slug}`,
+        UPDATE: (slug: string) => `/paiements/${slug}`,
+        STATS: "/paiements/stats",
+        EXPORT: "/paiements/export",
     },
 
-    // Textbook Entries
-    TEXTBOOKS: {
-        INDEX: "/textbooks",
-        STORE: "/textbooks",
-        SHOW: (slug: string) => `/textbooks/${slug}`,
-        UPDATE: (slug: string) => `/textbooks/${slug}`,
-        DELETE: (slug: string) => `/textbooks/${slug}`,
-        SUBMIT: (slug: string) => `/textbooks/${slug}/submit`,
-        EXPORT: "/textbooks/export",
+    // Articles
+    ARTICLES: {
+        INDEX: "/articles",
+        SHOW: (slug: string) => `/articles/${slug}`,
+        MARK_SERVED: (slug: string) => `/articles/${slug}/served`,
+    },
+
+    // Fournisseurs
+    FOURNISSEURS: {
+        INDEX: "/fournisseurs",
+        STORE: "/fournisseurs",
+        SHOW: (slug: string) => `/fournisseurs/${slug}`,
+        UPDATE: (slug: string) => `/fournisseurs/${slug}`,
+        DELETE: (slug: string) => `/fournisseurs/${slug}`,
+    },
+
+    // Banques
+    BANQUES: {
+        INDEX: "/banques",
+        STORE: "/banques",
+        SHOW: (slug: string) => `/banques/${slug}`,
+        UPDATE: (slug: string) => `/banques/${slug}`,
+        DELETE: (slug: string) => `/banques/${slug}`,
+    },
+
+    // Utilisateurs
+    USERS: {
+        INDEX: "/users",
+        STORE: "/users",
+        SHOW: (slug: string) => `/users/${slug}`,
+        UPDATE: (slug: string) => `/users/${slug}`,
+        DELETE: (slug: string) => `/users/${slug}`,
+    },
+
+    // Notifications
+    NOTIFICATIONS: {
+        INDEX: "/notifications",
+        MARK_READ: (id: string) => `/notifications/${id}/read`,
+        MARK_ALL_READ: "/notifications/mark-all-read",
+        DELETE: (id: string) => `/notifications/${id}`,
     },
 
     // Reports
     REPORTS: {
-        ATTENDANCE: "/reports/attendance",
-        CLASSROOM_PERFORMANCE: "/reports/classroom-performance",
-        TEACHER_ACTIVITY: "/reports/teacher-activity",
+        DASHBOARD: "/reports/dashboard",
+        SOUSCRIPTIONS: "/reports/souscriptions",
+        PAIEMENTS: "/reports/paiements",
         EXPORT: {
-            ATTENDANCE: "/reports/attendance/export",
-            CLASSROOM_PERFORMANCE: "/reports/classroom-performance/export",
-            TEACHER_ACTIVITY: "/reports/teacher-activity/export",
+            SOUSCRIPTIONS: "/reports/souscriptions/export",
+            PAIEMENTS: "/reports/paiements/export",
+            DOSSIERS: "/reports/dossiers/export",
         },
     },
 
-    // Sync
+    // Sync (pour PWA/offline)
     SYNC: {
-        TEXTBOOK_ENTRIES: "/sync/textbook",
-        ATTENDANCE: "/sync/attendance",
+        SOUSCRIPTIONS: "/sync/souscriptions",
+        DEVIS: "/sync/devis",
         CHANGES: "/sync/changes",
         RESOLVE_CONFLICTS: "/sync/resolve-conflicts",
-        STATUS: "/sync/status",
-    },
-
-    // Schools - For inspector access
-    SCHOOLS: {
-        INDEX: "/schools",
-        SHOW: (slug: string) => `/schools/${slug}`,
-        TEXTBOOKS: (slug: string) => `/schools/${slug}/textbooks`,
-        TEACHERS: (slug: string) => `/schools/${slug}/teachers`,
-        STATS: (slug: string) => `/schools/${slug}/stats`,
-    },
-
-    // Inspector specific routes
-    INSPECTOR: {
-        DASHBOARD_STATS: "/inspector/stats",
-        SCHOOLS: "/inspector/schools",
-        SCHOOL_TEXTBOOKS: (schoolSlug: string) =>
-            `/inspector/schools/${schoolSlug}/textbooks`,
-        TEXTBOOK_DETAIL: (schoolSlug: string, textbookSlug: string) =>
-            `/inspector/schools/${schoolSlug}/textbooks/${textbookSlug}`,
-        UPDATE_TEXTBOOK_STATUS: (schoolSlug: string, textbookSlug: string) =>
-            `/inspector/schools/${schoolSlug}/textbooks/${textbookSlug}/status`,
-    },
-
-    // Principal specific routes
-    PRINCIPAL: {
-        DASHBOARD_STATS: "/principal/stats",
-        TEXTBOOKS: "/principal/textbooks",
-        TEXTBOOK_DETAIL: (textbookSlug: string) =>
-            `/principal/textbooks/${textbookSlug}`,
-        UPDATE_TEXTBOOK_STATUS: (textbookSlug: string) =>
-            `/principal/textbooks/${textbookSlug}/status`,
     },
 } as const;
 
-// Helper function to build API URLs with query parameters
+// Helper function to build API URLs with base URL
 export const buildApiUrl = (
-    endpoint: string,
-    params?: Record<string, any>
+    route: string,
+    baseUrl: string = process.env.NEXT_PUBLIC_API_URL || ""
 ): string => {
+    return `${baseUrl}${route}`;
+};
+
+// Helper function to build API URLs with query parameters
+export const buildApiUrlWithParams = (
+    route: string,
+    params?: Record<string, string | number | boolean | undefined>,
+    baseUrl?: string
+): string => {
+    const url = buildApiUrl(route, baseUrl);
+
     if (!params || Object.keys(params).length === 0) {
-        return endpoint;
+        return url;
     }
 
     const searchParams = new URLSearchParams();
-
     Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-            if (Array.isArray(value)) {
-                value.forEach(v =>
-                    searchParams.append(`${key}[]`, v.toString())
-                );
-            } else if (typeof value === "object") {
-                Object.entries(value).forEach(([subKey, subValue]) => {
-                    if (subValue !== undefined && subValue !== null) {
-                        searchParams.append(
-                            `${key}[${subKey}]`,
-                            subValue.toString()
-                        );
-                    }
-                });
-            } else {
-                searchParams.append(key, value.toString());
-            }
+        if (value !== undefined) {
+            searchParams.append(key, value.toString());
         }
     });
 
-    return `${endpoint}?${searchParams.toString()}`;
+    const queryString = searchParams.toString();
+    return queryString ? `${url}?${queryString}` : url;
 };
 
 // Export types for better type safety
-export type AuthRoutes = typeof API_ROUTES.AUTH;
-export type DashboardRoutes = typeof API_ROUTES.DASHBOARD;
-export type ClassroomRoutes = typeof API_ROUTES.CLASSROOMS;
-export type StudentRoutes = typeof API_ROUTES.STUDENTS;
-export type AttendanceRoutes = typeof API_ROUTES.ATTENDANCE;
-export type TextbookRoutes = typeof API_ROUTES.TEXTBOOKS;
-export type ReportRoutes = typeof API_ROUTES.REPORTS;
-export type SyncRoutes = typeof API_ROUTES.SYNC;
+export type ApiRoutes = typeof API_ROUTES;

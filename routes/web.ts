@@ -1,4 +1,4 @@
-// routes/web.ts
+// routes/web.ts - Routes ViFlo Finance
 export const WEB_ROUTES = {
     // Public routes
     HOME: "/",
@@ -7,47 +7,65 @@ export const WEB_ROUTES = {
     // Dashboard routes
     DASHBOARD: {
         INDEX: "/dashboard",
-        SETTINGS: "/dashboard/settings",
+        SETTINGS: "/dashboard/parametres",
     },
 
-    // Classes routes
-    CLASSES: {
-        INDEX: "/dashboard/classes",
-        SHOW: (id: string) => `/dashboard/classes/${id}`,
-        CREATE: "/dashboard/classes/create",
-        EDIT: (id: string) => `/dashboard/classes/${id}/edit`,
+    // Souscriptions routes
+    SOUSCRIPTIONS: {
+        INDEX: "/dashboard/souscriptions",
+        SHOW: (id: string) => `/dashboard/souscriptions/${id}`,
+        CREATE: "/dashboard/souscriptions/nouveau",
     },
 
-    // Students routes (if you plan to add them)
-    STUDENTS: {
-        INDEX: "/dashboard/students",
-        SHOW: (id: string) => `/dashboard/students/${id}`,
-        CREATE: "/dashboard/students/create",
-        EDIT: (id: string) => `/dashboard/students/${id}/edit`,
+    // Devis routes
+    DEVIS: {
+        INDEX: "/dashboard/devis",
+        SHOW: (id: string) => `/dashboard/devis/${id}`,
+        CREATE: "/dashboard/devis/nouveau",
     },
 
-    // Textbooks routes
-    TEXTBOOKS: {
-        INDEX: "/dashboard/textbooks",
-        SHOW: (id: string) => `/dashboard/textbooks/${id}`,
-        CREATE: "/dashboard/textbooks/create",
-        EDIT: (id: string) => `/dashboard/textbooks/${id}/edit`,
+    // Dossiers routes
+    DOSSIERS: {
+        INDEX: "/dashboard/dossiers",
+        SHOW: (id: string) => `/dashboard/dossiers/${id}`,
     },
 
-    // Attendance routes (if you plan to add them)
-    ATTENDANCE: {
-        INDEX: "/dashboard/attendance",
-        CLASS: (classId: string) => `/dashboard/attendance/class/${classId}`,
-        REPORTS: "/dashboard/attendance/reports",
+    // Paiements routes
+    PAIEMENTS: {
+        INDEX: "/dashboard/paiements",
+        SHOW: (id: string) => `/dashboard/paiements/${id}`,
     },
 
-    // Reports routes (if you plan to add them)
+    // Articles routes
+    ARTICLES: {
+        INDEX: "/dashboard/articles",
+    },
+
+    // Admin routes
+    ADMIN: {
+        FOURNISSEURS: "/dashboard/admin/fournisseurs",
+        BANQUES: "/dashboard/admin/banques",
+        UTILISATEURS: "/dashboard/admin/utilisateurs",
+    },
+
+    // Banque routes
+    BANQUE: {
+        SOUSCRIPTEURS: "/dashboard/banque/souscripteurs",
+        DOSSIERS: "/dashboard/banque/dossiers",
+    },
+
+    // Fournisseur routes
+    FOURNISSEUR: {
+        FEEDBACKS: "/dashboard/fournisseur/feedbacks",
+    },
+
+    // Reports routes
     REPORTS: {
-        INDEX: "/dashboard/reports",
-        ATTENDANCE: "/dashboard/reports/attendance",
-        PERFORMANCE: "/dashboard/reports/performance",
-        TEACHER_ACTIVITY: "/dashboard/reports/teacher-activity",
+        INDEX: "/dashboard/rapports",
     },
+
+    // Notifications routes
+    NOTIFICATIONS: "/dashboard/notifications",
 } as const;
 
 // Helper function to check if a route requires authentication
@@ -58,12 +76,17 @@ export const isProtectedRoute = (pathname: string): boolean => {
 
 // Helper function to get the active navigation item
 export const getActiveRoute = (pathname: string): string => {
-    if (pathname.startsWith("/dashboard/classes")) return "classes";
-    if (pathname.startsWith("/dashboard/textbooks")) return "textbooks";
-    if (pathname.startsWith("/dashboard/students")) return "students";
-    if (pathname.startsWith("/dashboard/attendance")) return "attendance";
-    if (pathname.startsWith("/dashboard/reports")) return "reports";
-    if (pathname.startsWith("/dashboard/settings")) return "settings";
+    if (pathname.startsWith("/dashboard/souscriptions")) return "souscriptions";
+    if (pathname.startsWith("/dashboard/devis")) return "devis";
+    if (pathname.startsWith("/dashboard/dossiers")) return "dossiers";
+    if (pathname.startsWith("/dashboard/paiements")) return "paiements";
+    if (pathname.startsWith("/dashboard/articles")) return "articles";
+    if (pathname.startsWith("/dashboard/rapports")) return "rapports";
+    if (pathname.startsWith("/dashboard/notifications")) return "notifications";
+    if (pathname.startsWith("/dashboard/admin")) return "admin";
+    if (pathname.startsWith("/dashboard/banque")) return "banque";
+    if (pathname.startsWith("/dashboard/fournisseur")) return "fournisseur";
+    if (pathname.startsWith("/dashboard/parametres")) return "parametres";
     if (pathname === "/dashboard") return "dashboard";
     return "";
 };
@@ -85,27 +108,38 @@ export const buildWebUrl = (
     return `${route}?${searchParams.toString()}`;
 };
 
-// Navigation items for sidebar/header
+// Navigation items for sidebar/header (basé sur le rôle - voir LDFSidebar.tsx)
 export const NAVIGATION_ITEMS = [
     {
         label: "Dashboard",
         route: WEB_ROUTES.DASHBOARD.INDEX,
-        icon: "dashboard",
+        icon: "home",
         key: "dashboard",
     },
     {
-        label: "Classes",
-        route: WEB_ROUTES.CLASSES.INDEX,
-        icon: "school",
-        key: "classes",
+        label: "Souscriptions",
+        route: WEB_ROUTES.SOUSCRIPTIONS.INDEX,
+        icon: "file-text",
+        key: "souscriptions",
     },
     {
-        label: "Textbooks",
-        route: WEB_ROUTES.TEXTBOOKS.INDEX,
-        icon: "book",
-        key: "textbooks",
+        label: "Devis",
+        route: WEB_ROUTES.DEVIS.INDEX,
+        icon: "book-open",
+        key: "devis",
     },
-    // Add more navigation items as needed
+    {
+        label: "Dossiers",
+        route: WEB_ROUTES.DOSSIERS.INDEX,
+        icon: "shield-check",
+        key: "dossiers",
+    },
+    {
+        label: "Paiements",
+        route: WEB_ROUTES.PAIEMENTS.INDEX,
+        icon: "credit-card",
+        key: "paiements",
+    },
 ] as const;
 
 // Breadcrumb helpers
@@ -116,7 +150,7 @@ export const getBreadcrumbs = (
     const breadcrumbs: Array<{ label: string; href?: string }> = [];
 
     if (segments.length === 0) {
-        return [{ label: "Home" }];
+        return [{ label: "Accueil" }];
     }
 
     // Always start with Dashboard for protected routes
@@ -128,42 +162,59 @@ export const getBreadcrumbs = (
 
         if (segments.length > 1) {
             switch (segments[1]) {
-                case "classes":
+                case "souscriptions":
                     breadcrumbs.push({
-                        label: "Classes",
-                        href:
-                            segments.length === 2
-                                ? undefined
-                                : WEB_ROUTES.CLASSES.INDEX,
+                        label: "Souscriptions",
+                        href: segments.length === 2 ? undefined : WEB_ROUTES.SOUSCRIPTIONS.INDEX,
                     });
-                    if (segments.length > 2 && segments[2] !== "create") {
-                        breadcrumbs.push({ label: "Class Details" });
-                    } else if (segments[2] === "create") {
-                        breadcrumbs.push({ label: "Create Class" });
+                    if (segments.length > 2 && segments[2] !== "nouveau") {
+                        breadcrumbs.push({ label: "Détail souscription" });
+                    } else if (segments[2] === "nouveau") {
+                        breadcrumbs.push({ label: "Nouvelle souscription" });
                     }
                     break;
-                case "textbooks":
+                case "devis":
                     breadcrumbs.push({
-                        label: "Textbooks",
-                        href:
-                            segments.length === 2
-                                ? undefined
-                                : WEB_ROUTES.TEXTBOOKS.INDEX,
+                        label: "Devis",
+                        href: segments.length === 2 ? undefined : WEB_ROUTES.DEVIS.INDEX,
                     });
-                    if (segments.length > 2 && segments[2] !== "create") {
-                        breadcrumbs.push({ label: "Textbook Details" });
-                    } else if (segments[2] === "create") {
-                        breadcrumbs.push({ label: "Create Entry" });
+                    if (segments.length > 2 && segments[2] !== "nouveau") {
+                        breadcrumbs.push({ label: "Détail devis" });
+                    } else if (segments[2] === "nouveau") {
+                        breadcrumbs.push({ label: "Nouveau devis" });
                     }
                     break;
-                case "settings":
-                    breadcrumbs.push({ label: "Settings" });
+                case "dossiers":
+                    breadcrumbs.push({
+                        label: "Dossiers",
+                        href: segments.length === 2 ? undefined : WEB_ROUTES.DOSSIERS.INDEX,
+                    });
+                    if (segments.length > 2) {
+                        breadcrumbs.push({ label: "Détail dossier" });
+                    }
+                    break;
+                case "paiements":
+                    breadcrumbs.push({
+                        label: "Paiements",
+                        href: segments.length === 2 ? undefined : WEB_ROUTES.PAIEMENTS.INDEX,
+                    });
+                    if (segments.length > 2) {
+                        breadcrumbs.push({ label: "Détail paiement" });
+                    }
+                    break;
+                case "parametres":
+                    breadcrumbs.push({ label: "Paramètres" });
+                    break;
+                case "admin":
+                    breadcrumbs.push({ label: "Administration" });
+                    if (segments.length > 2) {
+                        const adminSection = segments[2].charAt(0).toUpperCase() + segments[2].slice(1);
+                        breadcrumbs.push({ label: adminSection });
+                    }
                     break;
                 default:
                     breadcrumbs.push({
-                        label:
-                            segments[1].charAt(0).toUpperCase() +
-                            segments[1].slice(1),
+                        label: segments[1].charAt(0).toUpperCase() + segments[1].slice(1),
                     });
             }
         }
