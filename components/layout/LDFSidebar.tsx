@@ -103,7 +103,7 @@ function NavLink({ item, collapsed, pathname }: { item: NavItem; collapsed: bool
       {item.badge !== undefined && item.badge > 0 && (
         <span className={cn(
           "flex-shrink-0 min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold flex items-center justify-center",
-          "bg-amber-400 text-amber-900",
+          "bg-cyan-400 text-cyan-900",
           collapsed && "absolute -top-1 -right-1",
         )}>
           {item.badge > 99 ? "99+" : item.badge}
@@ -137,25 +137,27 @@ export default function LDFSidebar() {
   const SidebarContent = ({ mobile = false }: { mobile?: boolean }) => (
     <div className="flex flex-col h-full">
 
-      {/* ── Logo ── */}
+      {/* ── Logo ViFlow ── */}
       <div className={cn(
         "flex items-center border-b border-white/10 flex-shrink-0",
         isSidebarCollapsed && !mobile ? "justify-center px-3 py-4" : "px-4 py-4 gap-3",
       )}>
-        <div className="w-9 h-9 rounded-lg overflow-hidden flex-shrink-0 bg-white/10 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center">
           <Image
-            src="/images/ldfgroupe-icon-app.webp"
-            alt="LDF"
-            width={36}
-            height={36}
+            src="/images/viflow_logo.png"
+            alt="ViFlow"
+            width={40}
+            height={40}
             className="object-contain"
             onError={() => {}}
           />
         </div>
         {(!isSidebarCollapsed || mobile) && (
           <div className="min-w-0">
-            <p className="text-white font-bold text-sm leading-none truncate">LDF Groupe</p>
-            <p className="text-xs text-slate-400 mt-0.5 truncate">Plateforme souscriptions</p>
+            <p className="text-white font-bold text-base leading-none truncate">
+              Vi<span className="text-gradient-vf">Flo</span>
+            </p>
+            <p className="text-xs text-cyan-300/80 mt-0.5 truncate">Financements Vitalis</p>
           </div>
         )}
         {mobile && (
@@ -190,13 +192,13 @@ export default function LDFSidebar() {
       )}>
         {!isSidebarCollapsed || mobile ? (
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm text-amber-900"
-              style={{ background: "linear-gradient(135deg,#f6c90e,#f0a500)" }}>
+            <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm text-white"
+              style={{ background: "linear-gradient(135deg, #00bcd4, #00c853)" }}>
               {user.firstName[0]}{user.lastName[0]}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-white text-sm font-semibold truncate">{user.firstName} {user.lastName}</p>
-              <p className="text-slate-400 text-xs truncate">{getRoleLabel(user.role)}</p>
+              <p className="text-cyan-300/80 text-xs truncate">{getRoleLabel(user.role)}</p>
             </div>
             <button
               onClick={logout}
@@ -208,8 +210,8 @@ export default function LDFSidebar() {
           </div>
         ) : (
           <>
-            <div className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm text-amber-900"
-              style={{ background: "linear-gradient(135deg,#f6c90e,#f0a500)" }}>
+            <div className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm text-white"
+              style={{ background: "linear-gradient(135deg, #00bcd4, #00c853)" }}>
               {user.firstName[0]}{user.lastName[0]}
             </div>
             <button

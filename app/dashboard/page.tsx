@@ -23,7 +23,7 @@ const fmtCFA = (v: number) =>
 
 // ─── Activités récentes ───────────────────────────────────────────────────────
 const recentActivities = [
-  { id: 1, icon: FileText,     color: "text-amber-600  bg-amber-50",   text: "Nouvelle souscription SUB-2026-00030 créée",              time: "Il y a 2h",   href: "/dashboard/souscriptions/SUB-030"  },
+  { id: 1, icon: FileText,     color: "text-cyan-600  bg-cyan-50",     text: "Nouvelle souscription SUB-2026-00030 créée",              time: "Il y a 2h",   href: "/dashboard/souscriptions/SUB-030"  },
   { id: 2, icon: BookOpen,     color: "text-blue-600   bg-blue-50",    text: "Devis DEV-2026-00022 envoyé à Coris Bank",               time: "Il y a 4h",   href: "/dashboard/devis/DEV-022"          },
   { id: 3, icon: CheckCircle2, color: "text-emerald-600 bg-emerald-50",text: "Dossier DOS-2026-00021 validé par la BIAO",              time: "Il y a 6h",   href: "/dashboard/dossiers/DOS-021"       },
   { id: 4, icon: CreditCard,   color: "text-green-600  bg-green-50",   text: "Paiement PAY-2026-00017 encaissé — 2 700 000 FCFA",      time: "Il y a 1j",   href: "/dashboard/paiements/PAY-017"      },
@@ -71,7 +71,7 @@ export default function DashboardPage() {
             Bonjour, {user?.firstName} 👋
           </h1>
           <p className="text-sm text-gray-500 mt-0.5">
-            Voici un aperçu de l&apos;activité de la plateforme LDF Groupe.
+            Voici un aperçu de l&apos;activité de la plateforme ViFlo.
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs text-gray-400">
@@ -112,8 +112,8 @@ export default function DashboardPage() {
               <AreaChart data={souscriptionsParMois} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
                 <defs>
                   <linearGradient id="gradYellow" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%"  stopColor="#f6c90e" stopOpacity={0.25} />
-                    <stop offset="95%" stopColor="#f6c90e" stopOpacity={0} />
+                    <stop offset="5%"  stopColor="#00bcd4" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#00bcd4" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="gradGreen" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%"  stopColor="#22c55e" stopOpacity={0.2} />
@@ -124,7 +124,7 @@ export default function DashboardPage() {
                 <XAxis dataKey="mois" tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} />
-                <Area type="monotone" dataKey="souscriptions" name="Souscriptions" stroke="#f6c90e" strokeWidth={2.5} fill="url(#gradYellow)" dot={{ fill: "#f6c90e", r: 4 }} activeDot={{ r: 6 }} />
+                <Area type="monotone" dataKey="souscriptions" name="Souscriptions" stroke="#00bcd4" strokeWidth={2.5} fill="url(#gradYellow)" dot={{ fill: "#00bcd4", r: 4 }} activeDot={{ r: 6 }} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -179,7 +179,7 @@ export default function DashboardPage() {
                 <Tooltip content={<CustomTooltip />} />
                 <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "11px" }} />
                 <Bar dataKey="encaisses" name="Encaissés"  fill="#22c55e" radius={[3, 3, 0, 0]} />
-                <Bar dataKey="enCours"   name="En cours"   fill="#f6c90e" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="enCours"   name="En cours"   fill="#00bcd4" radius={[3, 3, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -198,7 +198,7 @@ export default function DashboardPage() {
                 <XAxis type="number" tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} />
                 <YAxis dataKey="fournisseur" type="category" tick={{ fontSize: 10, fill: "#6b7280" }} axisLine={false} tickLine={false} width={90} />
                 <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="valeur" name="Souscriptions" fill="#f6c90e" radius={[0, 3, 3, 0]} />
+                <Bar dataKey="valeur" name="Souscriptions" fill="#00bcd4" radius={[0, 3, 3, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -241,14 +241,14 @@ export default function DashboardPage() {
         <div className="section-card lg:col-span-2">
           <div className="section-card-header">
             <h3 className="text-sm font-semibold text-gray-800">Activités récentes</h3>
-            <Link href="/dashboard/notifications" className="text-xs text-amber-600 hover:text-amber-700 font-medium">
+            <Link href="/dashboard/notifications" className="text-xs text-cyan-600 hover:text-cyan-700 font-medium">
               Voir tout →
             </Link>
           </div>
           <div className="divide-y divide-gray-50">
             {recentActivities.map((a) => (
               <Link key={a.id} href={a.href}
-                className="flex items-start gap-3 px-5 py-3 hover:bg-amber-50/30 transition-colors">
+                className="flex items-start gap-3 px-5 py-3 hover:bg-cyan-50/30 transition-colors">
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 ${a.color}`}>
                   <a.icon className="w-4 h-4" />
                 </div>
@@ -269,7 +269,7 @@ export default function DashboardPage() {
             <h3 className="text-sm font-semibold text-gray-800">Dernières souscriptions</h3>
             <p className="text-xs text-gray-400 mt-0.5">{mockSouscriptions.length} souscriptions au total</p>
           </div>
-          <Link href="/dashboard/souscriptions" className="text-xs text-amber-600 hover:text-amber-700 font-medium">
+          <Link href="/dashboard/souscriptions" className="text-xs text-cyan-600 hover:text-cyan-700 font-medium">
             Voir tout →
           </Link>
         </div>
@@ -291,7 +291,7 @@ export default function DashboardPage() {
                 <tr key={s.id}>
                   <td>
                     <Link href={`/dashboard/souscriptions/${s.id}`}
-                      className="font-mono text-xs font-semibold text-amber-700 hover:text-amber-800">
+                      className="font-mono text-xs font-semibold text-cyan-700 hover:text-cyan-800">
                       {s.reference}
                     </Link>
                   </td>
@@ -312,13 +312,13 @@ export default function DashboardPage() {
       {user?.role === "admin" && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: "Fournisseurs actifs", value: 7, icon: Building2, href: "/dashboard/admin/fournisseurs", color: "text-amber-600 bg-amber-50" },
-            { label: "Banques partenaires", value: 4, icon: Building2, href: "/dashboard/admin/banques",      color: "text-blue-600 bg-blue-50"   },
+            { label: "Fournisseurs actifs", value: 7, icon: Building2, href: "/dashboard/admin/fournisseurs", color: "text-green-600 bg-green-50" },
+            { label: "Banques partenaires", value: 4, icon: Building2, href: "/dashboard/admin/banques",      color: "text-cyan-600 bg-cyan-50"   },
             { label: "Utilisateurs",        value: 8, icon: Users,     href: "/dashboard/admin/utilisateurs", color: "text-purple-600 bg-purple-50"},
             { label: "Total devis",         value: 22, icon: BookOpen, href: "/dashboard/devis",              color: "text-emerald-600 bg-emerald-50"},
           ].map((s) => (
             <Link key={s.label} href={s.href}
-              className="section-card flex items-center gap-3 p-4 hover:border-amber-200 transition-all group">
+              className="section-card flex items-center gap-3 p-4 hover:border-cyan-200 transition-all group">
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${s.color}`}>
                 <s.icon className="w-5 h-5" />
               </div>

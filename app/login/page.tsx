@@ -55,68 +55,69 @@ export default function LoginPage() {
   const ROLE_ICONS = [ShieldCheck, Building2, TrendingUp];
   const ROLE_COLORS = [
     "border-purple-200 bg-purple-50 hover:border-purple-400 data-[active=true]:border-purple-500 data-[active=true]:bg-purple-50",
-    "border-blue-200 bg-blue-50 hover:border-blue-400 data-[active=true]:border-blue-500 data-[active=true]:bg-blue-50",
-    "border-amber-200 bg-amber-50 hover:border-amber-400 data-[active=true]:border-amber-500 data-[active=true]:bg-amber-50",
+    "border-cyan-200 bg-cyan-50 hover:border-cyan-400 data-[active=true]:border-cyan-500 data-[active=true]:bg-cyan-50",
+    "border-green-200 bg-green-50 hover:border-green-400 data-[active=true]:border-green-500 data-[active=true]:bg-green-50",
   ];
-  const ICON_COLORS = ["text-purple-600", "text-blue-600", "text-amber-600"];
+  const ICON_COLORS = ["text-purple-600", "text-cyan-600", "text-green-600"];
 
   return (
     <div className="min-h-screen flex">
-      {/* ── Colonne gauche — branding ── */}
+      {/* ── Colonne gauche — branding ViFlo ── */}
       <div className="hidden lg:flex lg:w-[45%] relative overflow-hidden flex-col justify-between p-12 gradient-hero">
 
         {/* Pattern décoratif */}
         <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-0 left-0 w-96 h-96 rounded-full bg-amber-400 blur-3xl -translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-emerald-400 blur-3xl translate-x-1/2 translate-y-1/2" />
+          <div className="absolute top-0 left-0 w-96 h-96 rounded-full bg-cyan-400 blur-3xl -translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-green-400 blur-3xl translate-x-1/2 translate-y-1/2" />
           <div className="absolute inset-0" style={{
             backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)",
             backgroundSize: "32px 32px",
           }} />
         </div>
 
-        {/* Logo */}
+        {/* Logo ViFlo */}
         <div className="relative flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl overflow-hidden bg-white/10 flex items-center justify-center">
-            <Image src="/images/ldfgroupe-icon-app.webp" alt="LDF" width={48} height={48} className="object-contain"
+          <div className="w-14 h-14 rounded-xl overflow-hidden flex items-center justify-center">
+            <Image src="/images/viflow_logo.png" alt="ViFlo" width={56} height={56} className="object-contain"
               onError={() => {}} />
           </div>
           <div>
-            <p className="text-white font-bold text-xl leading-none">LDF Groupe</p>
-            <p className="text-slate-400 text-sm mt-0.5">Librairie de France</p>
+            <p className="text-white font-bold text-2xl leading-none">
+              Vi<span className="text-gradient-vf">Flo</span>
+            </p>
+            <p className="text-cyan-300/90 text-sm mt-1">Simplifier le financement</p>
           </div>
         </div>
 
         {/* Contenu central */}
         <div className="relative space-y-8">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/20 mb-4">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span className="text-amber-400 text-xs font-medium">Plateforme de souscriptions</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-400/10 border border-cyan-400/20 mb-4">
+              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="text-cyan-300 text-xs font-medium">Plateforme de gestion et de suivi</span>
             </div>
             <h2 className="text-3xl font-bold text-white leading-tight">
-              Gérez tout le cycle<br />de vos souscriptions<br />
-              <span className="text-transparent bg-clip-text gradient-yellow">
-                en un seul endroit.
-              </span>
+              Simplifier le financement,<br />
+              fluidifier les achats
             </h2>
-            <p className="text-slate-400 text-sm mt-4 leading-relaxed max-w-sm">
-              Suivez chaque étape du processus : souscription, devis, validation bancaire, paiement et service des articles.
+            <p className="text-cyan-100/70 text-sm mt-4 leading-relaxed max-w-md">
+              Plateforme de gestion et de suivi des financements Vitalis.
+              Suivez chaque étape : souscription, devis, validation bancaire, paiement et service.
             </p>
           </div>
 
           {/* Steps */}
           {[
-            { step: "01", label: "Souscription créée", color: "bg-amber-400" },
-            { step: "02", label: "Devis envoyé à la banque", color: "bg-emerald-400" },
-            { step: "03", label: "Validation & Paiement", color: "bg-blue-400" },
+            { step: "01", label: "Souscription créée", color: "bg-cyan-400" },
+            { step: "02", label: "Devis envoyé à la banque", color: "bg-green-400" },
+            { step: "03", label: "Validation & Paiement", color: "bg-emerald-400" },
             { step: "04", label: "Articles servis", color: "bg-teal-400" },
           ].map((s) => (
             <div key={s.step} className="flex items-center gap-3">
               <div className={`w-7 h-7 rounded-lg ${s.color} flex items-center justify-center flex-shrink-0`}>
                 <span className="text-white text-xs font-bold">{s.step}</span>
               </div>
-              <span className="text-slate-300 text-sm">{s.label}</span>
+              <span className="text-cyan-100/80 text-sm">{s.label}</span>
             </div>
           ))}
         </div>
@@ -130,7 +131,7 @@ export default function LoginPage() {
           ].map((s) => (
             <div key={s.label} className="text-center">
               <p className="text-2xl font-bold text-white">{s.value}</p>
-              <p className="text-slate-400 text-xs mt-0.5">{s.label}</p>
+              <p className="text-cyan-300/70 text-xs mt-0.5">{s.label}</p>
             </div>
           ))}
         </div>
@@ -140,21 +141,21 @@ export default function LoginPage() {
       <div className="flex-1 flex flex-col justify-center px-6 py-12 sm:px-12 lg:px-16 bg-gray-50">
         <div className="w-full max-w-md mx-auto">
 
-          {/* Mobile logo */}
+          {/* Mobile logo ViFlo */}
           <div className="lg:hidden flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-100 flex items-center justify-center">
-              <Image src="/images/ldfgroupe-icon-app.webp" alt="LDF" width={40} height={40} className="object-contain" onError={() => {}} />
+            <div className="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center">
+              <Image src="/images/viflow_logo.png" alt="ViFlo" width={48} height={48} className="object-contain" onError={() => {}} />
             </div>
             <div>
-              <p className="font-bold text-gray-900">LDF Groupe</p>
-              <p className="text-xs text-gray-500">Plateforme souscriptions</p>
+              <p className="font-bold text-gray-900 text-lg">ViFlow</p>
+              <p className="text-xs text-gray-500">Financements Vitalis</p>
             </div>
           </div>
 
           {/* Titre */}
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-gray-900">Bienvenue sur votre espace</h1>
-            <p className="text-gray-500 text-sm mt-1.5">Connectez-vous pour accéder à votre tableau de bord.</p>
+            <h1 className="text-2xl font-bold text-gray-900">Bienvenue sur ViFlo</h1>
+            <p className="text-gray-500 text-sm mt-1.5">Simplifier le financement, fluidifier les achats.</p>
           </div>
 
           {/* Formulaire */}
@@ -250,7 +251,7 @@ export default function LoginPage() {
           </div>
 
           <p className="text-xs text-center text-gray-400 mt-6">
-            © {new Date().getFullYear()} Librairie de France Groupe · Tous droits réservés
+            © {new Date().getFullYear()} ViFlo · Plateforme Vitalis · Tous droits réservés
           </p>
         </div>
       </div>

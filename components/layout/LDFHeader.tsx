@@ -58,7 +58,7 @@ function usePageTitle() {
   const pathname = usePathname();
   const parts = pathname.split("/").filter(Boolean);
   const last = parts[parts.length - 1];
-  return ROUTE_LABELS[last] ?? "LDF Groupe";
+  return ROUTE_LABELS[last] ?? "ViFlo";
 }
 
 // ─── Recherche globale ────────────────────────────────────────────────────────
@@ -165,11 +165,11 @@ function GlobalSearch() {
                 <Link
                   href={r.href}
                   onClick={() => { setOpen(false); setQuery(""); }}
-                  className="flex items-center gap-3 px-4 py-2.5 hover:bg-amber-50 transition-colors"
+                  className="flex items-center gap-3 px-4 py-2.5 hover:bg-cyan-50 transition-colors"
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-medium text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">{r.type}</span>
+                      <span className="text-xs font-medium text-cyan-700 bg-cyan-50 px-1.5 py-0.5 rounded">{r.type}</span>
                       <span className="text-sm font-medium text-gray-800 truncate">{r.titre}</span>
                     </div>
                     <p className="text-xs text-gray-500 truncate mt-0.5">{r.description}</p>
@@ -209,7 +209,7 @@ function NotificationsDropdown() {
   const recent = notifications.slice(0, 6);
 
   const CAT_COLORS: Record<string, string> = {
-    souscription: "bg-amber-100 text-amber-700",
+    souscription: "bg-cyan-100 text-cyan-700",
     devis: "bg-blue-100 text-blue-700",
     dossier: "bg-emerald-100 text-emerald-700",
     paiement: "bg-green-100 text-green-700",
@@ -238,7 +238,7 @@ function NotificationsDropdown() {
               {unreadCount > 0 && <p className="text-xs text-gray-400">{unreadCount} non lue{unreadCount > 1 ? "s" : ""}</p>}
             </div>
             {unreadCount > 0 && (
-              <button onClick={markAllNotificationsRead} className="text-xs text-amber-600 hover:text-amber-700 font-medium">
+              <button onClick={markAllNotificationsRead} className="text-xs text-cyan-600 hover:text-cyan-700 font-medium">
                 Tout marquer lu
               </button>
             )}
@@ -252,7 +252,7 @@ function NotificationsDropdown() {
                   <Link
                     href={n.lien ?? "/dashboard/notifications"}
                     onClick={() => { markNotificationRead(n.id); setOpen(false); }}
-                    className={cn("flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors", !n.estLue && "bg-amber-50/50")}
+                    className={cn("flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors", !n.estLue && "bg-cyan-50/50")}
                   >
                     <span className={cn("mt-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium flex-shrink-0", CAT_COLORS[n.categorie] ?? "bg-gray-100 text-gray-600")}>
                       {n.categorie.charAt(0).toUpperCase()}
@@ -261,14 +261,14 @@ function NotificationsDropdown() {
                       <p className={cn("text-xs leading-snug", !n.estLue ? "font-semibold text-gray-900" : "text-gray-700")}>{n.titre}</p>
                       <p className="text-xs text-gray-400 mt-0.5 truncate">{n.date}</p>
                     </div>
-                    {!n.estLue && <span className="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0 mt-1.5" />}
+                    {!n.estLue && <span className="w-2 h-2 rounded-full bg-cyan-400 flex-shrink-0 mt-1.5" />}
                   </Link>
                 </li>
               ))}
           </ul>
 
           <div className="border-t border-gray-100 px-4 py-2.5">
-            <Link href="/dashboard/notifications" onClick={() => setOpen(false)} className="text-xs text-amber-600 hover:text-amber-700 font-medium">
+            <Link href="/dashboard/notifications" onClick={() => setOpen(false)} className="text-xs text-cyan-600 hover:text-cyan-700 font-medium">
               Voir toutes les notifications →
             </Link>
           </div>
@@ -298,13 +298,13 @@ function ProfileDropdown() {
         onClick={() => setOpen(!open)}
         className="flex items-center gap-2.5 pl-1 pr-2 py-1 rounded-lg hover:bg-gray-100 transition-colors"
       >
-        <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-amber-900"
-          style={{ background: "linear-gradient(135deg,#f6c90e,#f0a500)" }}>
+        <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white"
+          style={{ background: "linear-gradient(135deg, #00bcd4, #00c853)" }}>
           {user.firstName[0]}{user.lastName[0]}
         </div>
         <div className="hidden sm:block text-left">
           <p className="text-sm font-semibold text-gray-800 leading-none">{user.firstName} {user.lastName}</p>
-          <p className="text-xs text-gray-500 leading-none mt-0.5">{user.organisationName ?? "LDF Groupe"}</p>
+          <p className="text-xs text-gray-500 leading-none mt-0.5">{user.organisationName ?? "ViFlo"}</p>
         </div>
         <ChevronDown className={cn("w-4 h-4 text-gray-400 transition-transform", open && "rotate-180")} />
       </button>

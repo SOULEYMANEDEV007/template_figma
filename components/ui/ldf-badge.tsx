@@ -14,21 +14,21 @@ type AnyStatut =
 const STATUT_CONFIG: Record<string, { label: string; className: string; dot: string }> = {
   brouillon:               { label: "Brouillon",          className: "bg-gray-100 text-gray-600",     dot: "bg-gray-400"    },
   soumise:                 { label: "Soumise",             className: "bg-blue-50 text-blue-700",      dot: "bg-blue-500"    },
-  en_attente:              { label: "En attente",          className: "bg-amber-50 text-amber-700",    dot: "bg-amber-500"   },
+  en_attente:              { label: "En attente",          className: "bg-cyan-50 text-cyan-700",      dot: "bg-cyan-500"    },
   validee:                 { label: "Validée",             className: "bg-emerald-50 text-emerald-700",dot: "bg-emerald-500" },
   rejetee:                 { label: "Rejetée",             className: "bg-red-50 text-red-700",        dot: "bg-red-500"     },
   payee:                   { label: "Payée",               className: "bg-green-50 text-green-700",    dot: "bg-green-500"   },
   servie:                  { label: "Servie",              className: "bg-teal-50 text-teal-800",      dot: "bg-teal-600"    },
   envoye:                  { label: "Envoyé",              className: "bg-indigo-50 text-indigo-700",  dot: "bg-indigo-500"  },
-  en_attente_validation:   { label: "Validation en attente",className: "bg-amber-50 text-amber-700",  dot: "bg-amber-500"   },
+  en_attente_validation:   { label: "Validation en attente",className: "bg-cyan-50 text-cyan-700",    dot: "bg-cyan-500"    },
   valide:                  { label: "Validé",              className: "bg-emerald-50 text-emerald-700",dot: "bg-emerald-500" },
   refuse:                  { label: "Refusé",              className: "bg-red-50 text-red-700",        dot: "bg-red-500"     },
   expire:                  { label: "Expiré",              className: "bg-gray-100 text-gray-500",     dot: "bg-gray-400"    },
   recu:                    { label: "Reçu",                className: "bg-sky-50 text-sky-700",        dot: "bg-sky-500"     },
-  en_cours_traitement:     { label: "En traitement",       className: "bg-amber-50 text-amber-700",    dot: "bg-amber-500"   },
+  en_cours_traitement:     { label: "En traitement",       className: "bg-cyan-50 text-cyan-700",      dot: "bg-cyan-500"    },
   rejete:                  { label: "Rejeté",              className: "bg-red-50 text-red-700",        dot: "bg-red-500"     },
   informations_demandees:  { label: "Infos demandées",     className: "bg-orange-50 text-orange-700",  dot: "bg-orange-500"  },
-  en_cours:                { label: "En cours",            className: "bg-amber-50 text-amber-700",    dot: "bg-amber-500"   },
+  en_cours:                { label: "En cours",            className: "bg-cyan-50 text-cyan-700",      dot: "bg-cyan-500"    },
   encaisse:                { label: "Encaissé",            className: "bg-green-50 text-green-700",    dot: "bg-green-500"   },
   active:                  { label: "Active",              className: "bg-emerald-50 text-emerald-700",dot: "bg-emerald-500" },
   inactive:                { label: "Inactive",            className: "bg-gray-100 text-gray-500",     dot: "bg-gray-400"    },
@@ -66,8 +66,8 @@ export function StatusBadge({ statut, size = "md", showDot = true, className }: 
 export function RoleBadge({ role }: { role: string }) {
   const config: Record<string, { label: string; className: string }> = {
     admin:       { label: "Administrateur", className: "bg-purple-50 text-purple-700" },
-    banque:      { label: "Banque",         className: "bg-blue-50 text-blue-700"     },
-    fournisseur: { label: "Fournisseur",    className: "bg-amber-50 text-amber-700"   },
+    banque:      { label: "Banque",         className: "bg-cyan-50 text-cyan-700"     },
+    fournisseur: { label: "Fournisseur",    className: "bg-green-50 text-green-700"   },
   };
   const c = config[role] ?? { label: role, className: "bg-gray-100 text-gray-600" };
   return (

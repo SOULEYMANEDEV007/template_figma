@@ -13,8 +13,8 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "LDF Groupe — Plateforme de souscriptions",
-  description: "Plateforme de suivi des souscriptions entre LDF, les fournisseurs et les banques partenaires.",
+  title: "ViFlo — Simplifier le financement, fluidifier les achats",
+  description: "Plateforme de gestion et de suivi des financements Vitalis. Gérez vos souscriptions, devis, validations bancaires et paiements.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

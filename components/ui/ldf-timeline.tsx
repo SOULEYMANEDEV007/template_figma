@@ -42,8 +42,8 @@ export function LDFTimeline({ events }: TimelineProps) {
               )}
               {ev.statut === "en_cours" && (
                 <div className="w-8 h-8 rounded-full flex items-center justify-center shadow-sm"
-                  style={{ background: "linear-gradient(135deg,#f6c90e,#f0a500)" }}>
-                  <Clock className="w-4 h-4 text-amber-900" strokeWidth={2.5} />
+                  style={{ background: "linear-gradient(135deg, #00bcd4, #00c853)" }}>
+                  <Clock className="w-4 h-4 text-white" strokeWidth={2.5} />
                 </div>
               )}
               {ev.statut === "en_attente" && (
@@ -108,7 +108,7 @@ export function ProcessTimeline({ steps, vertical = false }: ProgressTimelinePro
           <div key={step.id} className="flex items-center gap-3">
             <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
               step.statut === "complete" ? "bg-emerald-500 text-white" :
-              step.statut === "current"  ? "bg-amber-400 text-amber-900" :
+              step.statut === "current"  ? "bg-cyan-400 text-white" :
               step.statut === "rejected" ? "bg-red-400 text-white" :
               "bg-gray-100 text-gray-400 border-2 border-gray-200"
             }`}>
@@ -119,7 +119,7 @@ export function ProcessTimeline({ steps, vertical = false }: ProgressTimelinePro
             <div className="flex-1">
               <span className={`text-sm font-medium ${
                 step.statut === "complete" ? "text-gray-800" :
-                step.statut === "current"  ? "text-amber-700" :
+                step.statut === "current"  ? "text-cyan-700" :
                 step.statut === "rejected" ? "text-red-600" : "text-gray-400"
               }`}>{step.label}</span>
               {step.date && <span className="text-xs text-gray-400 ml-2">{step.date}</span>}
@@ -138,7 +138,7 @@ export function ProcessTimeline({ steps, vertical = false }: ProgressTimelinePro
           <div className="flex flex-col items-center gap-1.5 min-w-[80px]">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shadow-sm ${
               step.statut === "complete" ? "bg-emerald-500 text-white" :
-              step.statut === "current"  ? "bg-amber-400 text-amber-900" :
+              step.statut === "current"  ? "bg-cyan-400 text-white" :
               step.statut === "rejected" ? "bg-red-400 text-white" :
               "bg-gray-100 text-gray-400 border-2 border-gray-200"
             }`}>
@@ -148,7 +148,7 @@ export function ProcessTimeline({ steps, vertical = false }: ProgressTimelinePro
             </div>
             <span className={`text-xs font-medium text-center leading-tight ${
               step.statut === "complete" ? "text-emerald-700" :
-              step.statut === "current"  ? "text-amber-700 font-semibold" :
+              step.statut === "current"  ? "text-cyan-700 font-semibold" :
               step.statut === "rejected" ? "text-red-600" : "text-gray-400"
             }`}>{step.label}</span>
           </div>

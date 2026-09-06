@@ -1,4 +1,5 @@
-export type UserRole = "teacher" | "principal" | "inspector";
+// Types génériques pour ViFlo - Plateforme de financement
+export type UserRole = "admin" | "banque" | "fournisseur";
 
 export type User = {
     id: string;
@@ -10,52 +11,15 @@ export type User = {
     avatar?: string;
     matricule?: string;
     phone?: string;
-};
-
-export type Class = {
-    id: string;
-    slug: string;
-    name: string;
-    level: string;
-    totalStudents: number;
-    boysCount: number;
-    girlsCount: number;
-    absentCount: number;
-    createdAt: string;
-};
-
-export type Student = {
-    id: string;
-    slug: string;
-    firstName: string;
-    lastName: string;
-    avatar?: string;
-    classId: string;
-    className: string;
-    isPresent: boolean;
-};
-
-export type CalendarEvent = {
-    id: string;
-    slug: string;
-    title: string;
-    type: "class" | "exam" | "homework" | "meeting";
-    classId?: string;
-    className?: string;
-    time: string;
-    date: string;
-    color: string;
-};
-
-export type AttendanceStats = {
-    month: string;
-    absents: number;
+    organisationName?: string;
 };
 
 export type DashboardData = {
     user: User;
-    classes: Class[];
-    recentStudents: Student[];
-    upcomingEvents: CalendarEvent[];
-    attendanceStats: AttendanceStats[];
+    stats: {
+        totalSouscriptions: number;
+        dossiersValides: number;
+        paiementsEncaisses: number;
+        articlesServis: number;
+    };
 };

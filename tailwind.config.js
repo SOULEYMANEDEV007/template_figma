@@ -51,11 +51,11 @@ module.exports = {
                     DEFAULT: "hsl(var(--card))",
                     foreground: "hsl(var(--card-foreground))",
                 },
-                // Custom colors matching the design
-                classroom: {
-                    primary: "#4ade80", // green-400
-                    secondary: "#22c55e", // green-500
-                    accent: "#f59e0b", // amber-500
+                // Custom colors ViFlo Finance
+                viflo: {
+                    navy: "#1a237e", // bleu marine
+                    cyan: "#00bcd4", // cyan
+                    green: "#00c853", // vert accent
                     purple: "#a855f7", // purple-500
                     red: "#ef4444", // red-500
                 },
