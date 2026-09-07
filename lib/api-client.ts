@@ -2,15 +2,6 @@
 
 import axios from "axios";
 
-import attendanceApi from "./api/attendance";
-import authApi from "./api/auth";
-import classroomsApi from "./api/classrooms";
-import dashboardApi from "./api/dashboard";
-import reportsApi from "./api/reports";
-import studentsApi from "./api/students";
-import syncApi from "./api/sync";
-import textbooksApi from "./api/textbooks";
-
 export interface ApiClientError {
     message: string;
     errors?: Record<string, string[]>;
@@ -20,14 +11,7 @@ export interface ApiClientError {
 
 // Main API client
 export const api = {
-    auth: authApi,
-    classrooms: classroomsApi,
-    students: studentsApi,
-    attendance: attendanceApi,
-    textbooks: textbooksApi,
-    dashboard: dashboardApi,
-    reports: reportsApi,
-    sync: syncApi,
+
 };
 
 // Error handling
