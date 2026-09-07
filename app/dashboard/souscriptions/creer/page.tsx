@@ -37,9 +37,15 @@ export default function CreerSouscriptionPage() {
 
   const [form, setForm] = useState({
     nom: "", prenom: "", telephone: "", email: "", adresse: "",
+    numeroCNI: "",
     banqueId: "", numeroCompte: "",
+    typeSouscription: "",
     fournisseurId: user?.role === "fournisseur" ? user.organisationId ?? "" : "",
-    duree: "12", observations: "",
+    dateDebut: "",
+    duree: "12",
+    frequencePaiement: "Mensuel",
+    observations: "",
+    envoyerIdentifiants: true,
   });
   const [articles, setArticles] = useState([
     { designation: "", reference: "", quantite: 1, prixUnitaire: 0, remise: 0 },
@@ -70,9 +76,8 @@ export default function CreerSouscriptionPage() {
   };
 
   const canNext = () => {
-    if (step === 0) return form.nom && form.prenom && form.telephone && form.banqueId;
-    if (step === 1) return form.fournisseurId && form.duree;
-    if (step === 2) return articles.length > 0 && articles.every(a => a.designation && a.prixUnitaire > 0);
+    if (step === 0) return form.nom && form.prenom && form.telephone && form.banqueId && form.numeroCNI;
+    if (step === 1) return form.typeSouscription && form.fournisseurId && form.dateDebut && form.duree;
     return true;
   };
 
@@ -100,7 +105,6 @@ export default function CreerSouscriptionPage() {
           <div className="flex items-center gap-2">
             {step === 0 && <User className="w-4 h-4 text-amber-500" />}
             {step === 1 && <Package className="w-4 h-4 text-amber-500" />}
-            {/*step === 2 && <Package className="w-4 h-4 text-amber-500" />*/}
             {step === 2 && <Check className="w-4 h-4 text-emerald-500" />}
             <h2 className="text-sm font-semibold text-gray-800">{STEPS[step]}</h2>
           </div>
@@ -112,8 +116,9 @@ export default function CreerSouscriptionPage() {
           {step === 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
-                { key: "nom", label: "Nom *", placeholder: "Coulibaly" },
-                { key: "prenom", label: "Prénom *", placeholder: "Mamadou" },
+                { key: "numeroCNI", label: "N° CNI *", placeholder: "CNI002026..." },
+                { key: "nom", label: "Nom *", placeholder: "Cisse" },
+                { key: "prenom", label: "Prénom *", placeholder: "Souleymane" },
                 { key: "telephone", label: "Téléphone *", placeholder: "+225 07 00 00 00 00" },
                 { key: "email", label: "Email", placeholder: "nom@email.ci", type: "email" },
                 { key: "adresse", label: "Adresse", placeholder: "Quartier, rue..." },
@@ -140,6 +145,15 @@ export default function CreerSouscriptionPage() {
           {step === 1 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
+                <label className="ldf-label">Type de souscription *</label>
+                <select value={form.typeSouscription} onChange={e => set("typeSouscription", e.target.value)} className="ldf-select">
+                  <option value="">Sélectionner le type</option>
+                  <option value="Individuelle">Individuelle</option>
+                  <option value="Groupe">Groupe</option>
+                  <option value="Entreprise">Entreprise</option>
+                </select>
+              </div>
+              <div>
                 <label className="ldf-label">Fournisseur *</label>
                 <select value={form.fournisseurId} onChange={e => set("fournisseurId", e.target.value)}
                   className="ldf-select" disabled={user?.role === "fournisseur"}>
@@ -149,10 +163,28 @@ export default function CreerSouscriptionPage() {
                 </select>
               </div>
               <div>
+                <label className="ldf-label">Date de début souhaitée *</label>
+                <input type="date" value={form.dateDebut} onChange={e => set("dateDebut", e.target.value)} className="ldf-input" />
+              </div>
+              <div>
                 <label className="ldf-label">Durée (mois) *</label>
                 <select value={form.duree} onChange={e => set("duree", e.target.value)} className="ldf-select">
                   {[6, 12, 18, 24, 36].map(d => <option key={d} value={d}>{d} mois</option>)}
                 </select>
+              </div>
+              <div>
+                <label className="ldf-label">Fréquence de paiement</label>
+                <select value={form.frequencePaiement} onChange={e => set("frequencePaiement", e.target.value)} className="ldf-select">
+                  <option value="Mensuel">Mensuel</option>
+                  <option value="Trimestriel">Trimestriel</option>
+                  <option value="Semestriel">Semestriel</option>
+                  <option value="Annuel">Annuel</option>
+                </select>
+              </div>
+              <div>
+                <label className="ldf-label">Montant total estimé</label>
+                <input type="text" value="0 FCFA" disabled className="ldf-input bg-gray-50 text-gray-500 font-medium cursor-not-allowed" />
+                <p className="text-[10px] text-gray-400 mt-1">Sera calculé automatiquement dans le devis</p>
               </div>
               <div className="sm:col-span-2">
                 <label className="ldf-label">Observations</label>
@@ -164,68 +196,6 @@ export default function CreerSouscriptionPage() {
             </div>
           )}
 
-          {/* ÉTAPE 2 — Articles */}
-          {/*step === 2 && (
-            <div className="space-y-3">
-              {articles.map((a, i) => (
-                <div key={i} className="grid grid-cols-12 gap-2 items-end bg-gray-50 p-3 rounded-xl">
-                  <div className="col-span-12 sm:col-span-4">
-                    <label className="ldf-label text-xs">Désignation *</label>
-                    <input value={a.designation} onChange={e => updateArticle(i, "designation", e.target.value)}
-                      placeholder="Ex: Manuel scolaire CE2" className="ldf-input text-sm py-2" />
-                  </div>
-                  <div className="col-span-6 sm:col-span-2">
-                    <label className="ldf-label text-xs">Référence</label>
-                    <input value={a.reference} onChange={e => updateArticle(i, "reference", e.target.value)}
-                      placeholder="REF-001" className="ldf-input text-sm py-2" />
-                  </div>
-                  <div className="col-span-3 sm:col-span-1">
-                    <label className="ldf-label text-xs">Qté</label>
-                    <input type="number" min={1} value={a.quantite}
-                      onChange={e => updateArticle(i, "quantite", parseInt(e.target.value) || 1)}
-                      className="ldf-input text-sm py-2" />
-                  </div>
-                  <div className="col-span-6 sm:col-span-2">
-                    <label className="ldf-label text-xs">Prix unitaire *</label>
-                    <input type="number" min={0} value={a.prixUnitaire}
-                      onChange={e => updateArticle(i, "prixUnitaire", parseFloat(e.target.value) || 0)}
-                      placeholder="0" className="ldf-input text-sm py-2" />
-                  </div>
-                  <div className="col-span-3 sm:col-span-1">
-                    <label className="ldf-label text-xs">Remise %</label>
-                    <input type="number" min={0} max={100} value={a.remise}
-                      onChange={e => updateArticle(i, "remise", parseInt(e.target.value) || 0)}
-                      className="ldf-input text-sm py-2" />
-                  </div>
-                  <div className="col-span-6 sm:col-span-1">
-                    <p className="text-xs text-gray-400 mb-1">Montant HT</p>
-                    <p className="text-sm font-semibold text-gray-800">
-                      {new Intl.NumberFormat("fr-FR").format(a.quantite * a.prixUnitaire * (1 - a.remise / 100))}
-                    </p>
-                  </div>
-                  <div className="col-span-6 sm:col-span-1 flex justify-end sm:justify-center">
-                    {articles.length > 1 && (
-                      <button onClick={() => removeArticle(i)}
-                        className="w-8 h-8 rounded-lg flex items-center justify-center text-red-400 hover:bg-red-50 transition-colors mt-4">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
-              <button onClick={addArticle}
-                className="flex items-center gap-2 text-sm text-amber-600 hover:text-amber-700 font-medium transition-colors px-1">
-                <Plus className="w-4 h-4" /> Ajouter un article
-              </button>
-              <div className="flex justify-end border-t border-gray-100 pt-3">
-                <div className="text-right">
-                  <p className="text-xs text-gray-400">Total HT estimé</p>
-                  <p className="text-xl font-bold text-amber-700">{new Intl.NumberFormat("fr-FR").format(totalHT)} FCFA</p>
-                </div>
-              </div>
-            </div>
-          )*/}
-
           {/* ÉTAPE 3 — Confirmation */}
           {step === 2 && (
             <div className="space-y-4">
@@ -233,11 +203,14 @@ export default function CreerSouscriptionPage() {
                 <h3 className="text-sm font-semibold text-amber-800 mb-3">Récapitulatif de la souscription</h3>
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div><p className="text-xs text-amber-600">Souscripteur</p><p className="font-medium text-gray-800">{form.prenom} {form.nom}</p></div>
+                  <div><p className="text-xs text-amber-600">N° CNI</p><p className="font-medium text-gray-800">{form.numeroCNI || "—"}</p></div>
+                  <div><p className="text-xs text-amber-600">Type de souscription</p><p className="font-medium text-gray-800">{form.typeSouscription || "—"}</p></div>
                   <div><p className="text-xs text-amber-600">Banque</p><p className="font-medium text-gray-800">{mockBanques.find(b => b.id === form.banqueId)?.nom ?? "—"}</p></div>
                   <div><p className="text-xs text-amber-600">Fournisseur</p><p className="font-medium text-gray-800">{mockFournisseurs.find(f => f.id === form.fournisseurId)?.nom ?? "—"}</p></div>
+                  <div><p className="text-xs text-amber-600">Date de début</p><p className="font-medium text-gray-800">{form.dateDebut ? new Date(form.dateDebut).toLocaleDateString("fr-FR") : "—"}</p></div>
                   <div><p className="text-xs text-amber-600">Durée</p><p className="font-medium text-gray-800">{form.duree} mois</p></div>
-                  <div><p className="text-xs text-amber-600">Articles</p><p className="font-medium text-gray-800">{articles.length} article{articles.length > 1 ? "s" : ""}</p></div>
-                  <div><p className="text-xs text-amber-600">Montant total</p><p className="font-bold text-amber-700 text-lg">{new Intl.NumberFormat("fr-FR").format(totalHT)} FCFA</p></div>
+                  <div><p className="text-xs text-amber-600">Fréquence de paiement</p><p className="font-medium text-gray-800">{form.frequencePaiement}</p></div>
+                  <div><p className="text-xs text-amber-600">Articles</p><p className="font-medium text-gray-800 italic text-gray-400 text-xs">À ajouter dans le devis</p></div>
                 </div>
               </div>
               <p className="text-sm text-gray-500">Vérifiez les informations ci-dessus avant de soumettre la souscription.</p>

@@ -59,6 +59,12 @@ export const WEB_ROUTES = {
         FEEDBACKS: "/dashboard/fournisseur/feedbacks",
     },
 
+    // Souscripteur routes
+    SOUSCRIPTEUR: {
+        INDEX: "/dashboard/souscripteur",
+        SOUSCRIPTIONS: "/dashboard/souscripteur/souscriptions",
+    },
+
     // Reports routes
     REPORTS: {
         INDEX: "/dashboard/rapports",
@@ -86,6 +92,7 @@ export const getActiveRoute = (pathname: string): string => {
     if (pathname.startsWith("/dashboard/admin")) return "admin";
     if (pathname.startsWith("/dashboard/banque")) return "banque";
     if (pathname.startsWith("/dashboard/fournisseur")) return "fournisseur";
+    if (pathname.startsWith("/dashboard/souscripteur")) return "souscripteur";
     if (pathname.startsWith("/dashboard/parametres")) return "parametres";
     if (pathname === "/dashboard") return "dashboard";
     return "";

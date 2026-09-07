@@ -1,6 +1,7 @@
 // lib/api-client.ts
-import { AxiosError } from "axios";
-import type { ApiError } from "../types/api";
+
+import axios from "axios";
+
 import attendanceApi from "./api/attendance";
 import authApi from "./api/auth";
 import classroomsApi from "./api/classrooms";
@@ -10,7 +11,14 @@ import studentsApi from "./api/students";
 import syncApi from "./api/sync";
 import textbooksApi from "./api/textbooks";
 
-// Main API client that combines all API modules
+export interface ApiClientError {
+    message: string;
+    errors?: Record<string, string[]>;
+    code?: string;
+    status?: number;
+}
+
+// Main API client
 export const api = {
     auth: authApi,
     classrooms: classroomsApi,
@@ -22,32 +30,30 @@ export const api = {
     sync: syncApi,
 };
 
-// Error handling utilities
-export const handleApiError = (error: unknown): ApiError => {
-    if (error instanceof AxiosError) {
+// Error handling
+export const handleApiError = (error: unknown): ApiClientError => {
+    if (axios.isAxiosError(error)) {
         const response = error.response;
 
-        if (response?.data) {
-            // Laravel validation errors
-            if (response.data.errors) {
-                return {
-                    message: response.data.message || "Validation failed",
-                    errors: response.data.errors,
-                    code: response.data.code,
-                    status: response.status,
-                };
-            }
+        if (response) {
+            const data = response.data as {
+                message?: string;
+                errors?: Record<string, string[]>;
+                code?: string;
+            };
 
-            // General API errors
             return {
-                message: response.data.message || "API request failed",
-                code: response.data.code,
+                message: data?.message || "API request failed",
+                errors: data?.errors,
+                code: data?.code,
                 status: response.status,
             };
         }
 
-        // Network or other axios errors
-        if (error.code === "NETWORK_ERROR") {
+        if (
+            error.code === "ERR_NETWORK" ||
+            error.code === "NETWORK_ERROR"
+        ) {
             return {
                 message:
                     "Network error. Please check your internet connection.",
@@ -56,7 +62,10 @@ export const handleApiError = (error: unknown): ApiError => {
             };
         }
 
-        if (error.code === "ECONNABORTED") {
+        if (
+            error.code === "ECONNABORTED" ||
+            error.code === "ETIMEDOUT"
+        ) {
             return {
                 message: "Request timeout. Please try again.",
                 code: "TIMEOUT",
@@ -71,7 +80,6 @@ export const handleApiError = (error: unknown): ApiError => {
         };
     }
 
-    // Non-axios errors
     if (error instanceof Error) {
         return {
             message: error.message,
@@ -80,7 +88,6 @@ export const handleApiError = (error: unknown): ApiError => {
         };
     }
 
-    // Unknown error type
     return {
         message: "An unexpected error occurred",
         code: "UNKNOWN_ERROR",
@@ -88,76 +95,105 @@ export const handleApiError = (error: unknown): ApiError => {
     };
 };
 
-// Utility function to check if error is a validation error
-export const isValidationError = (error: ApiError): boolean => {
-    return !!(error.errors && Object.keys(error.errors).length > 0);
+// Check validation error
+export const isValidationError = (
+    error: ApiClientError
+): boolean => {
+    return !!(
+        error.errors &&
+        Object.keys(error.errors).length > 0
+    );
 };
 
-// Utility function to get validation errors for a specific field
-export const getFieldErrors = (error: ApiError, field: string): string[] => {
-    return error.errors?.[field] || [];
+// Get field errors
+export const getFieldErrors = (
+    error: ApiClientError,
+    field: string
+): string[] => {
+    return error.errors?.[field] ?? [];
 };
 
-// Utility function to get the first validation error for a field
+// Get first field error
 export const getFirstFieldError = (
-    error: ApiError,
+    error: ApiClientError,
     field: string
 ): string | null => {
     const errors = getFieldErrors(error, field);
+
     return errors.length > 0 ? errors[0] : null;
 };
 
-// Utility function to check if user is unauthorized
-export const isUnauthorizedError = (error: ApiError): boolean => {
-    return error.status === 401 || error.code === "INVALID_CREDENTIALS";
+// Check unauthorized error
+export const isUnauthorizedError = (
+    error: ApiClientError
+): boolean => {
+    return (
+        error.status === 401 ||
+        error.code === "INVALID_CREDENTIALS"
+    );
 };
 
-// Utility function to check if resource is forbidden
-export const isForbiddenError = (error: ApiError): boolean => {
-    return error.status === 403 || error.code === "INVALID_ROLE";
+// Check forbidden error
+export const isForbiddenError = (
+    error: ApiClientError
+): boolean => {
+    return (
+        error.status === 403 ||
+        error.code === "INVALID_ROLE"
+    );
 };
 
-// Utility function to check if resource is not found
-export const isNotFoundError = (error: ApiError): boolean => {
+// Check not found error
+export const isNotFoundError = (
+    error: ApiClientError
+): boolean => {
     return error.status === 404;
 };
 
-// Utility function to check if it's a server error
-export const isServerError = (error: ApiError): boolean => {
-    return (error.status || 0) >= 500;
+// Check server error
+export const isServerError = (
+    error: ApiClientError
+): boolean => {
+    return (error.status ?? 0) >= 500;
 };
 
-// Utility function to check if it's a network error
-export const isNetworkError = (error: ApiError): boolean => {
-    return error.code === "NETWORK_ERROR" || error.status === 0;
+// Check network error
+export const isNetworkError = (
+    error: ApiClientError
+): boolean => {
+    return (
+        error.code === "NETWORK_ERROR" ||
+        error.status === 0
+    );
 };
 
-// Utility function to format error message for display
-export const formatErrorMessage = (error: ApiError): string => {
-    // For validation errors, return the first error message
+// Format error message
+export const formatErrorMessage = (
+    error: ApiClientError
+): string => {
     if (isValidationError(error)) {
-        const firstField = Object.keys(error.errors!)[0];
-        const firstError = error.errors![firstField][0];
-        return firstError;
+        const errors = Object.values(error.errors ?? {});
+
+        for (const fieldErrors of errors) {
+            if (fieldErrors.length > 0) {
+                return fieldErrors[0];
+            }
+        }
     }
 
-    // For other errors, return the main message
     return error.message;
 };
 
-// Utility function to get all validation error messages as a flat array
-export const getAllValidationErrors = (error: ApiError): string[] => {
+// Get all validation errors
+export const getAllValidationErrors = (
+    error: ApiClientError
+): string[] => {
     if (!isValidationError(error)) {
         return [];
     }
 
-    const allErrors: string[] = [];
-    Object.values(error.errors!).forEach(fieldErrors => {
-        allErrors.push(...fieldErrors);
-    });
-
-    return allErrors;
+    return Object.values(error.errors ?? {}).flat();
 };
 
-// Export the main API client as default
+// Default export
 export default api;

@@ -8,10 +8,10 @@ import { toast } from "sonner";
 import type { DevisStatut } from "@/types/ldf";
 import { useLDFAuthStore } from "@/stores/ldfAuth";
 
-const STATUTS: DevisStatut[] = ["brouillon","envoye","en_attente_validation","valide","refuse","expire"];
+const STATUTS: DevisStatut[] = ["brouillon", "envoye", "en_attente_validation", "valide", "refuse", "expire"];
 const LABELS: Record<DevisStatut, string> = {
-  brouillon:"Brouillon", envoye:"Envoyé", en_attente_validation:"En attente",
-  valide:"Validé", refuse:"Refusé", expire:"Expiré",
+  brouillon: "Brouillon", envoye: "Envoyé", en_attente_validation: "En attente",
+  valide: "Validé", refuse: "Refusé", expire: "Expiré",
 };
 const fmtCFA = (v: number) => new Intl.NumberFormat("fr-FR").format(v) + " FCFA";
 

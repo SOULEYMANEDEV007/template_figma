@@ -54,6 +54,12 @@ export function middleware(request: NextRequest) {
       if (fournisseurOnly.some(r => pathname.startsWith(r)) && role !== "fournisseur" && role !== "admin") {
         return NextResponse.redirect(new URL("/dashboard?error=access-denied", request.url));
       }
+
+      // Routes souscripteur uniquement
+      const souscripteurRoutes = ["/dashboard/souscripteur"];
+      if (souscripteurRoutes.some(r => pathname.startsWith(r)) && role !== "souscripteur" && role !== "admin") {
+        return NextResponse.redirect(new URL("/dashboard?error=access-denied", request.url));
+      }
     } catch {
       const res = NextResponse.redirect(new URL("/login", request.url));
       res.cookies.delete("ldf_user");

@@ -52,7 +52,7 @@ module.exports = {
                     foreground: "hsl(var(--card-foreground))",
                 },
                 // Custom colors ViFlo Finance
-                viflo: {
+                viflow: {
                     navy: "#1a237e", // bleu marine
                     cyan: "#00bcd4", // cyan
                     green: "#00c853", // vert accent

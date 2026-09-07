@@ -24,17 +24,17 @@ export default function DossierDetailPage() {
   const router = useRouter();
   const { user } = useLDFAuthStore();
 
-  const [statut, setStatut]               = useState<DossierStatut | null>(null);
-  const [commentaire, setCommentaire]     = useState("");
-  const [showValider, setShowValider]     = useState(false);
-  const [showRejeter, setShowRejeter]     = useState(false);
-  const [showInfos, setShowInfos]         = useState(false);
-  const [infoMessage, setInfoMessage]     = useState("");
-  const [loading, setLoading]             = useState(false);
+  const [statut, setStatut] = useState<DossierStatut | null>(null);
+  const [commentaire, setCommentaire] = useState("");
+  const [showValider, setShowValider] = useState(false);
+  const [showRejeter, setShowRejeter] = useState(false);
+  const [showInfos, setShowInfos] = useState(false);
+  const [infoMessage, setInfoMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const dossier   = getDossierById(id);
-  const devis     = dossier ? getDevisById(dossier.devisId) : null;
-  const sub       = dossier ? getSouscriptionById(dossier.souscriptionId) : null;
+  const dossier = getDossierById(id);
+  const devis = dossier ? getDevisById(dossier.devisId) : null;
+  const sub = dossier ? getSouscriptionById(dossier.souscriptionId) : null;
   const historique = dossier ? getHistoriqueBySouscription(dossier.souscriptionId) : [];
 
   if (!dossier) return (
@@ -51,27 +51,26 @@ export default function DossierDetailPage() {
 
   // Process steps
   const processSteps = [
-    { id: "s1", label: "Souscription",   statut: "complete"  as const },
-    { id: "s2", label: "Devis envoyé",   statut: "complete"  as const },
-    { id: "s3", label: "Dossier reçu",   statut: "complete"  as const },
+    { id: "s1", label: "Souscription", statut: "complete" as const },
+    { id: "s2", label: "Devis validé", statut: "complete" as const },
     {
-      id: "s4", label: "En traitement",
-      statut: currentStatut === "en_cours_traitement" ? "current"  as const :
-              currentStatut === "valide" || currentStatut === "rejete" ? "complete" as const : "pending" as const,
+      id: "s3", label: "En traitement",
+      statut: currentStatut === "en_cours_traitement" ? "current" as const :
+        currentStatut === "valide" || currentStatut === "rejete" ? "complete" as const : "pending" as const,
     },
     {
-      id: "s5", label: "Décision",
-      statut: currentStatut === "valide"  ? "complete"  as const :
-              currentStatut === "rejete"  ? "rejected"  as const :
-              currentStatut === "informations_demandees" ? "current" as const : "pending" as const,
+      id: "s4", label: "Décision",
+      statut: currentStatut === "valide" ? "complete" as const :
+        currentStatut === "rejete" ? "rejected" as const :
+          currentStatut === "informations_demandees" ? "current" as const : "pending" as const,
     },
     {
-      id: "s6", label: "Paiement",
+      id: "s5", label: "Paiement",
       statut: currentStatut === "valide" && sub?.statut === "payee" ? "complete" as const :
-              currentStatut === "valide" && sub?.statut === "servie" ? "complete" as const : "pending" as const,
+        currentStatut === "valide" && sub?.statut === "servie" ? "complete" as const : "pending" as const,
     },
     {
-      id: "s7", label: "Servi",
+      id: "s6", label: "Servi",
       statut: sub?.statut === "servie" ? "complete" as const : "pending" as const,
     },
   ];
@@ -153,16 +152,15 @@ export default function DossierDetailPage() {
 
       {/* Décision affichée si déjà traitée */}
       {(currentStatut === "valide" || currentStatut === "rejete" || currentStatut === "informations_demandees") && (
-        <div className={`p-4 rounded-xl border flex items-start gap-3 ${
-          currentStatut === "valide"  ? "bg-emerald-50 border-emerald-200" :
+        <div className={`p-4 rounded-xl border flex items-start gap-3 ${currentStatut === "valide" ? "bg-emerald-50 border-emerald-200" :
           currentStatut === "rejete" ? "bg-red-50 border-red-200" :
-          "bg-amber-50 border-amber-200"}`}>
-          {currentStatut === "valide"  && <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />}
-          {currentStatut === "rejete" && <XCircle       className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"      />}
+            "bg-amber-50 border-amber-200"}`}>
+          {currentStatut === "valide" && <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />}
+          {currentStatut === "rejete" && <XCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />}
           {currentStatut === "informations_demandees" && <MessageSquare className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />}
           <div>
             <p className="text-sm font-semibold text-gray-900">
-              {currentStatut === "valide"  && "Dossier validé — financement accordé"}
+              {currentStatut === "valide" && "Dossier validé — financement accordé"}
               {currentStatut === "rejete" && "Dossier rejeté"}
               {currentStatut === "informations_demandees" && "Informations complémentaires demandées"}
             </p>
@@ -280,10 +278,9 @@ export default function DossierDetailPage() {
                 )}
               </div>
               {(commentaire || dossier.commentaireBanque) && (
-                <div className={`p-3 rounded-lg text-sm leading-relaxed ${
-                  currentStatut === "valide"  ? "bg-emerald-50 text-emerald-800 border border-emerald-100" :
+                <div className={`p-3 rounded-lg text-sm leading-relaxed ${currentStatut === "valide" ? "bg-emerald-50 text-emerald-800 border border-emerald-100" :
                   currentStatut === "rejete" ? "bg-red-50 text-red-800 border border-red-100" :
-                  "bg-amber-50 text-amber-800 border border-amber-100"}`}>
+                    "bg-amber-50 text-amber-800 border border-amber-100"}`}>
                   {commentaire || dossier.commentaireBanque}
                 </div>
               )}
@@ -338,10 +335,10 @@ export default function DossierDetailPage() {
             </div>
             <div className="section-card-body space-y-3">
               {[
-                { label: "Montant",     value: fmtCFA(dossier.montant), highlight: true },
+                { label: "Montant", value: fmtCFA(dossier.montant), highlight: true },
                 { label: "Fournisseur", value: dossier.fournisseurNom },
-                { label: "Banque",      value: dossier.banqueNom },
-                { label: "Statut",      value: null, badge: currentStatut },
+                { label: "Banque", value: dossier.banqueNom },
+                { label: "Statut", value: null, badge: currentStatut },
               ].map(r => (
                 <div key={r.label} className="flex justify-between items-center border-b border-gray-50 pb-2 last:border-0 last:pb-0">
                   <span className="text-xs text-gray-500">{r.label}</span>

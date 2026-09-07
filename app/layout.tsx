@@ -13,7 +13,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "ViFlo — Simplifier le financement, fluidifier les achats",
+  title: "ViFlow — Simplifier le financement, fluidifier les achats",
   description: "Plateforme de gestion et de suivi des financements Vitalis. Gérez vos souscriptions, devis, validations bancaires et paiements.",
 };
 

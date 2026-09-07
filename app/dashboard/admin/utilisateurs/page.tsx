@@ -75,6 +75,7 @@ export default function AdminUtilisateursPage() {
     admin: "bg-purple-100 text-purple-700",
     banque: "bg-blue-100 text-blue-700",
     fournisseur: "bg-amber-100 text-amber-700",
+    souscripteur: "bg-teal-100 text-teal-700",
   };
 
   return (
