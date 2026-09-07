@@ -3,7 +3,7 @@
 // ============================================================
 // RÔLES
 // ============================================================
-export type LDFUserRole = "admin" | "banque" | "fournisseur";
+export type LDFUserRole = "admin" | "banque" | "fournisseur" | "souscripteur";
 
 export interface LDFUser {
   id: string;
@@ -18,6 +18,21 @@ export interface LDFUser {
   isActive: boolean;
   createdAt: string;
   lastLoginAt?: string;
+}
+
+// ============================================================
+// SOUSCRIPTEUR USER (rôle)
+// ============================================================
+export interface SouscripteurUser extends LDFUser {
+  role: "souscripteur";
+  numeroCNI: string;
+  dateNaissance?: string;
+  lieuNaissance?: string;
+  profession?: string;
+  salaire?: number;
+  banqueId: string;
+  numeroCompte: string;
+  souscriptionIds: string[];
 }
 
 // ============================================================
@@ -246,7 +261,7 @@ export interface HistoriqueEvenement {
   titre: string;
   description: string;
   utilisateur: string;
-  role: LDFUserRole;
+  role: LDFUserRole | "souscripteur";
   date: string;
   heure: string;
   statut: "complete" | "en_cours" | "en_attente" | "rejete";
@@ -272,6 +287,7 @@ export interface Notification {
   reference?: string;
   date: string;
   heure: string;
+  roles?: string[]; // admin, banque, fournisseur, souscripteur
 }
 
 // ============================================================

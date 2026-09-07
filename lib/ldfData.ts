@@ -2,7 +2,7 @@
 import type {
   Article, Banque, Devis, Dossier, FeedbackBanque,
   Fournisseur, HistoriqueEvenement, LDFUser, Notification,
-  Paiement, Souscripteur, Souscription,
+  Paiement, Souscripteur, Souscription, SouscripteurUser,
 } from "@/types/ldf";
 
 // ============================================================
@@ -221,26 +221,26 @@ export const mockHistorique: HistoriqueEvenement[] = [
 // NOTIFICATIONS (20)
 // ============================================================
 export const mockNotifications: Notification[] = [
-  { id: "NOT-001", titre: "Nouvelle souscription créée", message: "La souscription SUB-2026-00030 a été créée par Papeterie Centrale CI.", categorie: "souscription", estLue: false, lien: "/dashboard/souscriptions/SUB-030", reference: "SUB-2026-00030", date: "2026-03-23", heure: "09:15" },
-  { id: "NOT-002", titre: "Devis envoyé à la banque", message: "Le devis DEV-2026-00022 a été transmis à Coris Bank pour validation.", categorie: "devis", estLue: false, lien: "/dashboard/devis/DEV-022", reference: "DEV-2026-00022", date: "2026-03-22", heure: "14:30" },
-  { id: "NOT-003", titre: "Dossier validé", message: "Le dossier DOS-2026-00021 de Dembélé Adama a été validé par la BIAO.", categorie: "dossier", estLue: false, lien: "/dashboard/dossiers/DOS-021", reference: "DOS-2026-00021", date: "2026-04-05", heure: "11:00" },
-  { id: "NOT-004", titre: "Paiement encaissé", message: "Le paiement PAY-2026-00017 de 2 700 000 FCFA a été encaissé.", categorie: "paiement", estLue: false, lien: "/dashboard/paiements/PAY-017", reference: "PAY-2026-00017", date: "2026-04-20", heure: "08:45" },
-  { id: "NOT-005", titre: "Dossier rejeté", message: "Le dossier DOS-2026-00019 a été rejeté par Coris Bank.", categorie: "dossier", estLue: false, lien: "/dashboard/dossiers/DOS-019", reference: "DOS-2026-00019", date: "2026-03-28", heure: "16:20" },
-  { id: "NOT-006", titre: "Articles servis", message: "Les articles de la souscription SUB-2026-00023 ont été servis à Diallo Oumar.", categorie: "souscription", estLue: true, lien: "/dashboard/souscriptions/SUB-023", reference: "SUB-2026-00023", date: "2026-05-01", heure: "10:00" },
-  { id: "NOT-007", titre: "Informations complémentaires demandées", message: "La SGCI demande des informations pour le dossier DOS-2026-00016.", categorie: "dossier", estLue: true, lien: "/dashboard/dossiers/DOS-016", reference: "DOS-2026-00016", date: "2026-03-25", heure: "09:30" },
-  { id: "NOT-008", titre: "Nouveau devis créé", message: "Le devis DEV-2026-00020 a été créé pour Bibliothèque Maximale SARL.", categorie: "devis", estLue: true, lien: "/dashboard/devis/DEV-020", reference: "DEV-2026-00020", date: "2026-03-16", heure: "11:45" },
-  { id: "NOT-009", titre: "Paiement en cours", message: "Le paiement PAY-2026-00008 de 2 470 000 FCFA est en cours de traitement.", categorie: "paiement", estLue: true, lien: "/dashboard/paiements/PAY-008", reference: "PAY-2026-00008", date: "2026-04-08", heure: "14:00" },
-  { id: "NOT-010", titre: "Souscription soumise", message: "La souscription SUB-2026-00028 a été soumise par PedagoTech Solutions.", categorie: "souscription", estLue: true, lien: "/dashboard/souscriptions/SUB-028", reference: "SUB-2026-00028", date: "2026-03-19", heure: "10:30" },
-  { id: "NOT-011", titre: "Dossier en cours de traitement", message: "Le dossier DOS-2026-00022 est en cours d'examen par Coris Bank.", categorie: "dossier", estLue: true, lien: "/dashboard/dossiers/DOS-022", reference: "DOS-2026-00022", date: "2026-04-20", heure: "15:10" },
-  { id: "NOT-012", titre: "Devis validé", message: "Le devis DEV-2026-00009 de Papeterie Centrale CI a été validé par la BICICI.", categorie: "devis", estLue: true, lien: "/dashboard/devis/DEV-009", reference: "DEV-2026-00009", date: "2026-02-18", heure: "09:00" },
-  { id: "NOT-013", titre: "Paiement encaissé", message: "Le paiement PAY-2026-00006 de 3 375 000 FCFA a été encaissé par EduSupply Afrique.", categorie: "paiement", estLue: true, lien: "/dashboard/paiements/PAY-006", reference: "PAY-2026-00006", date: "2026-03-28", heure: "08:30" },
-  { id: "NOT-014", titre: "Articles servis", message: "Les articles de SUB-2026-00007 ont été remis à Ouédraogo Pascal.", categorie: "souscription", estLue: true, lien: "/dashboard/souscriptions/SUB-007", reference: "SUB-2026-00007", date: "2026-04-01", heure: "11:00" },
-  { id: "NOT-015", titre: "Nouveau fournisseur ajouté", message: "Librocoopérative Nationale a été ajoutée comme fournisseur partenaire.", categorie: "systeme", estLue: true, lien: "/dashboard/admin/fournisseurs", date: "2026-05-01", heure: "09:00" },
-  { id: "NOT-016", titre: "Devis refusé", message: "Le devis DEV-2026-00019 a été refusé par Coris Bank International.", categorie: "devis", estLue: true, lien: "/dashboard/devis/DEV-019", reference: "DEV-2026-00019", date: "2026-03-28", heure: "10:00" },
-  { id: "NOT-017", titre: "Souscription validée", message: "La souscription SUB-2026-00024 de Ouédraogo Pascal a été validée.", categorie: "souscription", estLue: true, lien: "/dashboard/souscriptions/SUB-024", reference: "SUB-2026-00024", date: "2026-04-15", heure: "14:00" },
-  { id: "NOT-018", titre: "Rappel : Devis expirant", message: "Le devis DEV-2026-00003 expire dans 7 jours.", categorie: "devis", estLue: true, lien: "/dashboard/devis/DEV-003", reference: "DEV-2026-00003", date: "2026-03-14", heure: "08:00" },
-  { id: "NOT-019", titre: "Paiement servi", message: "Les articles de PAY-2026-00005 ont été livrés à Cissé Nathalie.", categorie: "paiement", estLue: true, lien: "/dashboard/paiements/PAY-005", reference: "PAY-2026-00005", date: "2026-04-15", heure: "16:00" },
-  { id: "NOT-020", titre: "Compte utilisateur créé", message: "Un nouveau compte fournisseur a été créé pour Kalahari Fournitures.", categorie: "systeme", estLue: true, lien: "/dashboard/admin/utilisateurs", date: "2026-04-01", heure: "09:00" },
+  { id: "NOT-001", titre: "Nouvelle souscription créée", message: "La souscription SUB-2026-00030 a été créée par Papeterie Centrale CI.", categorie: "souscription", estLue: false, lien: "/dashboard/souscriptions/SUB-030", reference: "SUB-2026-00030", date: "2026-03-23", heure: "09:15", roles: ["admin", "fournisseur", "souscripteur"] },
+  { id: "NOT-002", titre: "Devis envoyé à la banque", message: "Le devis DEV-2026-00022 a été transmis à Coris Bank pour validation.", categorie: "devis", estLue: false, lien: "/dashboard/devis/DEV-022", reference: "DEV-2026-00022", date: "2026-03-22", heure: "14:30", roles: ["admin", "fournisseur", "banque"] },
+  { id: "NOT-003", titre: "Dossier validé", message: "Le dossier DOS-2026-00021 de Dembélé Adama a été validé par la BIAO.", categorie: "dossier", estLue: false, lien: "/dashboard/dossiers/DOS-021", reference: "DOS-2026-00021", date: "2026-04-05", heure: "11:00", roles: ["admin", "banque", "fournisseur", "souscripteur"] },
+  { id: "NOT-004", titre: "Paiement encaissé", message: "Le paiement PAY-2026-00017 de 2 700 000 FCFA a été encaissé.", categorie: "paiement", estLue: false, lien: "/dashboard/paiements/PAY-017", reference: "PAY-2026-00017", date: "2026-04-20", heure: "08:45", roles: ["admin", "banque", "fournisseur"] },
+  { id: "NOT-005", titre: "Dossier rejeté", message: "Le dossier DOS-2026-00019 a été rejeté par Coris Bank.", categorie: "dossier", estLue: false, lien: "/dashboard/dossiers/DOS-019", reference: "DOS-2026-00019", date: "2026-03-28", heure: "16:20", roles: ["admin", "banque", "fournisseur", "souscripteur"] },
+  { id: "NOT-006", titre: "Articles servis", message: "Les articles de la souscription SUB-2026-00023 ont été servis à Diallo Oumar.", categorie: "souscription", estLue: true, lien: "/dashboard/souscriptions/SUB-023", reference: "SUB-2026-00023", date: "2026-05-01", heure: "10:00", roles: ["admin", "fournisseur", "souscripteur"] },
+  { id: "NOT-007", titre: "Informations complémentaires demandées", message: "La SGCI demande des informations pour le dossier DOS-2026-00016.", categorie: "dossier", estLue: true, lien: "/dashboard/dossiers/DOS-016", reference: "DOS-2026-00016", date: "2026-03-25", heure: "09:30", roles: ["admin", "banque", "fournisseur"] },
+  { id: "NOT-008", titre: "Nouveau devis créé", message: "Le devis DEV-2026-00020 a été créé pour Bibliothèque Maximale SARL.", categorie: "devis", estLue: true, lien: "/dashboard/devis/DEV-020", reference: "DEV-2026-00020", date: "2026-03-16", heure: "11:45", roles: ["admin", "fournisseur"] },
+  { id: "NOT-009", titre: "Paiement en cours", message: "Le paiement PAY-2026-00008 de 2 470 000 FCFA est en cours de traitement.", categorie: "paiement", estLue: true, lien: "/dashboard/paiements/PAY-008", reference: "PAY-2026-00008", date: "2026-04-08", heure: "14:00", roles: ["admin", "banque", "fournisseur"] },
+  { id: "NOT-010", titre: "Souscription soumise", message: "La souscription SUB-2026-00028 a été soumise par PedagoTech Solutions.", categorie: "souscription", estLue: true, lien: "/dashboard/souscriptions/SUB-028", reference: "SUB-2026-00028", date: "2026-03-19", heure: "10:30", roles: ["admin", "fournisseur", "souscripteur"] },
+  { id: "NOT-011", titre: "Dossier en cours de traitement", message: "Le dossier DOS-2026-00022 est en cours d'examen par Coris Bank.", categorie: "dossier", estLue: true, lien: "/dashboard/dossiers/DOS-022", reference: "DOS-2026-00022", date: "2026-04-20", heure: "15:10", roles: ["admin", "banque", "fournisseur"] },
+  { id: "NOT-012", titre: "Devis validé", message: "Le devis DEV-2026-00009 de Papeterie Centrale CI a été validé par la BICICI.", categorie: "devis", estLue: true, lien: "/dashboard/devis/DEV-009", reference: "DEV-2026-00009", date: "2026-02-18", heure: "09:00", roles: ["admin", "banque", "fournisseur"] },
+  { id: "NOT-013", titre: "Paiement encaissé", message: "Le paiement PAY-2026-00006 de 3 375 000 FCFA a été encaissé par EduSupply Afrique.", categorie: "paiement", estLue: true, lien: "/dashboard/paiements/PAY-006", reference: "PAY-2026-00006", date: "2026-03-28", heure: "08:30", roles: ["admin", "banque", "fournisseur"] },
+  { id: "NOT-014", titre: "Articles servis", message: "Les articles de SUB-2026-00007 ont été remis à Ouédraogo Pascal.", categorie: "souscription", estLue: true, lien: "/dashboard/souscriptions/SUB-007", reference: "SUB-2026-00007", date: "2026-04-01", heure: "11:00", roles: ["admin", "fournisseur", "souscripteur"] },
+  { id: "NOT-015", titre: "Nouveau fournisseur ajouté", message: "Librocoopérative Nationale a été ajoutée comme fournisseur partenaire.", categorie: "systeme", estLue: true, lien: "/dashboard/admin/fournisseurs", date: "2026-05-01", heure: "09:00", roles: ["admin"] },
+  { id: "NOT-016", titre: "Devis refusé", message: "Le devis DEV-2026-00019 a été refusé par Coris Bank International.", categorie: "devis", estLue: true, lien: "/dashboard/devis/DEV-019", reference: "DEV-2026-00019", date: "2026-03-28", heure: "10:00", roles: ["admin", "banque", "fournisseur"] },
+  { id: "NOT-017", titre: "Souscription validée", message: "La souscription SUB-2026-00024 de Ouédraogo Pascal a été validée.", categorie: "souscription", estLue: true, lien: "/dashboard/souscriptions/SUB-024", reference: "SUB-2026-00024", date: "2026-04-15", heure: "14:00", roles: ["admin", "banque", "fournisseur", "souscripteur"] },
+  { id: "NOT-018", titre: "Rappel : Devis expirant", message: "Le devis DEV-2026-00003 expire dans 7 jours.", categorie: "devis", estLue: true, lien: "/dashboard/devis/DEV-003", reference: "DEV-2026-00003", date: "2026-03-14", heure: "08:00", roles: ["admin", "fournisseur"] },
+  { id: "NOT-019", titre: "Paiement servi", message: "Les articles de PAY-2026-00005 ont été livrés à Cissé Nathalie.", categorie: "paiement", estLue: true, lien: "/dashboard/paiements/PAY-005", reference: "PAY-2026-00005", date: "2026-04-15", heure: "16:00", roles: ["admin", "banque", "fournisseur", "souscripteur"] },
+  { id: "NOT-020", titre: "Compte utilisateur créé", message: "Un nouveau compte fournisseur a été créé pour Kalahari Fournitures.", categorie: "systeme", estLue: true, lien: "/dashboard/admin/utilisateurs", date: "2026-04-01", heure: "09:00", roles: ["admin"] },
 ];
 
 // ============================================================
@@ -250,7 +250,7 @@ export const mockUsers: LDFUser[] = [
   { id: "USR-001", firstName: "Adrien", lastName: "Kouassi", email: "admin@ldfgroupe.ci", role: "admin", phone: "+225 27 20 00 00 01", isActive: true, createdAt: "2024-01-01", lastLoginAt: "2026-09-02" },
   { id: "USR-002", firstName: "Mariam", lastName: "Touré", email: "m.toure@bicici.ci", role: "banque", phone: "+225 27 20 31 45 67", organisationId: "BNQ-002", organisationName: "BICICI", isActive: true, createdAt: "2024-01-15", lastLoginAt: "2026-09-01" },
   { id: "USR-003", firstName: "Koffi", lastName: "Amenan", email: "k.amenan@sgci.ci", role: "banque", phone: "+225 27 20 20 12 34", organisationId: "BNQ-001", organisationName: "Société Générale CI", isActive: true, createdAt: "2024-01-15", lastLoginAt: "2026-08-30" },
-  { id: "USR-004", firstName: "Seydou", lastName: "Bamba", email: "s.bamba@papetci.ci", role: "fournisseur", phone: "+225 07 08 12 34 56", organisationId: "FRN-001", organisationName: "Papeterie Centrale CI", isActive: true, createdAt: "2024-01-20", lastLoginAt: "2026-09-02" },
+  { id: "USR-004", firstName: "Souleymane", lastName: "Cissé", email: "s.cisse@ldfgroupe.ci", role: "fournisseur", phone: "+225 07 08 12 34 56", organisationId: "FRN-001", organisationName: "Librairie de France Groupe CI", isActive: true, createdAt: "2024-01-20", lastLoginAt: "2026-09-02" },
   { id: "USR-005", firstName: "Aminata", lastName: "Koné", email: "a.kone@livresplus.ci", role: "fournisseur", phone: "+225 07 09 23 45 67", organisationId: "FRN-002", organisationName: "Livres & Plus Distribution", isActive: true, createdAt: "2024-01-22", lastLoginAt: "2026-09-01" },
   { id: "USR-006", firstName: "Ibrahim", lastName: "Diallo", email: "i.diallo@biao-ci.com", role: "banque", phone: "+225 27 20 22 89 10", organisationId: "BNQ-003", organisationName: "BIAO", isActive: true, createdAt: "2024-02-01", lastLoginAt: "2026-08-28" },
   { id: "USR-007", firstName: "Fatoumata", lastName: "Coulibaly", email: "f.coulibaly@corisbank.ci", role: "banque", phone: "+225 27 20 44 56 78", organisationId: "BNQ-004", organisationName: "Coris Bank", isActive: true, createdAt: "2024-03-01", lastLoginAt: "2026-08-25" },
@@ -261,7 +261,90 @@ export const mockUsers: LDFUser[] = [
 export const demoAccounts = [
   { email: "admin@ldfgroupe.ci", password: "Admin2026!", role: "admin" as const, label: "Administrateur LDF" },
   { email: "k.amenan@sgci.ci", password: "Banque2026!", role: "banque" as const, label: "Banque — SGCI" },
-  { email: "s.bamba@papetci.ci", password: "Fourn2026!", role: "fournisseur" as const, label: "Fournisseur — Papeterie CI" },
+  { email: "s.cisse@ldfgroupe.ci", password: "Fourn2026!", role: "fournisseur" as const, label: "Fournisseur — Librairie de France Groupe CI" },
+  { email: "mamadou.coulibaly@gmail.com", password: "Client2026!", role: "souscripteur" as const, label: "Client — Mamadou Coulibaly" },
+];
+
+// ============================================================
+// SOUSCRIPTEURS UTILISATEURS (comptes avec accès)
+// ============================================================
+export const mockSouscripteursUsers: SouscripteurUser[] = [
+  {
+    id: "USR-CLIENT-001",
+    firstName: "Mamadou",
+    lastName: "Coulibaly",
+    email: "mamadou.coulibaly@gmail.com",
+    role: "souscripteur",
+    phone: "+225 07 01 11 22 33",
+    isActive: true,
+    createdAt: "2026-01-05",
+    lastLoginAt: "2026-09-01",
+    numeroCNI: "CNI0020260001",
+    dateNaissance: "1990-01-15",
+    lieuNaissance: "Abidjan",
+    profession: "Enseignant",
+    salaire: 350000,
+    banqueId: "BNQ-001",
+    numeroCompte: "CI93CI0080111301134390173",
+    souscriptionIds: ["SUB-001", "SUB-021"],
+  },
+  {
+    id: "USR-CLIENT-002",
+    firstName: "Aissatou",
+    lastName: "Konaté",
+    email: "aissatou.konate@yahoo.fr",
+    role: "souscripteur",
+    phone: "+225 05 02 22 33 44",
+    isActive: true,
+    createdAt: "2026-01-08",
+    lastLoginAt: "2026-08-25",
+    numeroCNI: "CNI0020260002",
+    dateNaissance: "1985-06-22",
+    lieuNaissance: "Bouaké",
+    profession: "Infirmière",
+    salaire: 420000,
+    banqueId: "BNQ-002",
+    numeroCompte: "CI93CI0080111301134390174",
+    souscriptionIds: ["SUB-002"],
+  },
+  {
+    id: "USR-CLIENT-003",
+    firstName: "Drissa",
+    lastName: "Bamba",
+    email: "drissa.bamba@hotmail.com",
+    role: "souscripteur",
+    phone: "+225 01 03 33 44 55",
+    isActive: true,
+    createdAt: "2026-01-10",
+    lastLoginAt: "2026-08-20",
+    numeroCNI: "CNI0020260003",
+    dateNaissance: "1988-11-08",
+    lieuNaissance: "Korhogo",
+    profession: "Comptable",
+    salaire: 500000,
+    banqueId: "BNQ-003",
+    numeroCompte: "CI93CI0080111301134390175",
+    souscriptionIds: ["SUB-003"],
+  },
+  {
+    id: "USR-CLIENT-004",
+    firstName: "Aminata",
+    lastName: "Touré",
+    email: "aminata.toure@gmail.com",
+    role: "souscripteur",
+    phone: "+225 07 04 44 55 66",
+    isActive: true,
+    createdAt: "2026-01-12",
+    lastLoginAt: "2026-09-02",
+    numeroCNI: "CNI0020260004",
+    dateNaissance: "1992-03-30",
+    lieuNaissance: "Abidjan",
+    profession: "Commerciale",
+    salaire: 280000,
+    banqueId: "BNQ-001",
+    numeroCompte: "CI93CI0080111301134390176",
+    souscriptionIds: ["SUB-004"],
+  },
 ];
 
 // ============================================================
@@ -293,6 +376,26 @@ export const mockDashboardStats = {
   totalPaiements: 20,
   montantTotalSouscriptions: 75485000,
   montantTotalPaiements: 54210000,
+};
+
+// Stats spécifiques pour la Banque
+export const mockDashboardStatsBanque = {
+  dossiersEnAttente: 4,
+  dossiersValides: 11,
+  dossiersRejetes: 3,
+  paiementsEnCours: 10,
+  montantFinanceTotal: 54210000,
+  montantEnCours: 24300000,
+};
+
+// Stats spécifiques pour le Fournisseur
+export const mockDashboardStatsFournisseur = {
+  mesSouscriptions: 12,
+  mesDevis: 9,
+  mesDossiersValides: 7,
+  mesPaiements: 6,
+  montantTotalMesSouscriptions: 28450000,
+  montantTotalMesPaiements: 21300000,
 };
 
 // Données pour graphiques

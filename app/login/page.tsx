@@ -2,8 +2,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { demoAccounts } from "@/lib/ldfData";
-import { useLDFAuthStore } from "@/stores/ldfAuth";
-import { Building2, Eye, EyeOff, Lock, Mail, ShieldCheck, Sparkles, TrendingUp } from "lucide-react";
+import { getDashboardPath, useLDFAuthStore } from "@/stores/ldfAuth";
+import { Building2, Eye, EyeOff, Lock, Mail, ShieldCheck, Sparkles, TrendingUp, User } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -36,8 +36,10 @@ export default function LoginPage() {
     setSubmitting(true);
     try {
       await login(email, password);
+      // Récupérer l'utilisateur depuis le store pour rediriger selon son rôle
+      const { user } = useLDFAuthStore.getState();
       toast.success("Connexion réussie !");
-      router.replace("/dashboard");
+      router.replace(user ? getDashboardPath(user.role) : "/dashboard");
     } catch {
       // error handled via store
     } finally {
@@ -52,13 +54,14 @@ export default function LoginPage() {
     setSelectedDemo(idx);
   };
 
-  const ROLE_ICONS = [ShieldCheck, Building2, TrendingUp];
+  const ROLE_ICONS = [ShieldCheck, Building2, TrendingUp, User];
   const ROLE_COLORS = [
     "border-purple-200 bg-purple-50 hover:border-purple-400 data-[active=true]:border-purple-500 data-[active=true]:bg-purple-50",
     "border-cyan-200 bg-cyan-50 hover:border-cyan-400 data-[active=true]:border-cyan-500 data-[active=true]:bg-cyan-50",
     "border-green-200 bg-green-50 hover:border-green-400 data-[active=true]:border-green-500 data-[active=true]:bg-green-50",
+    "border-amber-200 bg-amber-50 hover:border-amber-400 data-[active=true]:border-amber-500 data-[active=true]:bg-amber-50",
   ];
-  const ICON_COLORS = ["text-purple-600", "text-cyan-600", "text-green-600"];
+  const ICON_COLORS = ["text-purple-600", "text-cyan-600", "text-green-600", "text-amber-600"];
 
   return (
     <div className="min-h-screen flex">
@@ -78,12 +81,12 @@ export default function LoginPage() {
         {/* Logo ViFlo */}
         <div className="relative flex items-center gap-3">
           <div className="w-14 h-14 rounded-xl overflow-hidden flex items-center justify-center">
-            <Image src="/images/viflow_logo.png" alt="ViFlo" width={56} height={56} className="object-contain"
-              onError={() => {}} />
+            <Image src="/images/viflow_logo.png" alt="ViFlow" width={56} height={56} className="object-contain"
+              onError={() => { }} />
           </div>
           <div>
             <p className="text-white font-bold text-2xl leading-none">
-              Vi<span className="text-gradient-vf">Flo</span>
+              Vi<span className="text-gradient-vf">Flow</span>
             </p>
             <p className="text-cyan-300/90 text-sm mt-1">Simplifier le financement</p>
           </div>
@@ -94,23 +97,22 @@ export default function LoginPage() {
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-400/10 border border-cyan-400/20 mb-4">
               <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-              <span className="text-cyan-300 text-xs font-medium">Plateforme de gestion et de suivi</span>
+              <span className="text-cyan-300 text-xs font-medium">Plateforme de gestion et de suivi des financements Vitalis.</span>
             </div>
             <h2 className="text-3xl font-bold text-white leading-tight">
               Simplifier le financement,<br />
               fluidifier les achats
             </h2>
             <p className="text-cyan-100/70 text-sm mt-4 leading-relaxed max-w-md">
-              Plateforme de gestion et de suivi des financements Vitalis.
               Suivez chaque étape : souscription, devis, validation bancaire, paiement et service.
             </p>
           </div>
 
           {/* Steps */}
           {[
-            { step: "01", label: "Souscription créée", color: "bg-cyan-400" },
-            { step: "02", label: "Devis envoyé à la banque", color: "bg-green-400" },
-            { step: "03", label: "Validation & Paiement", color: "bg-emerald-400" },
+            { step: "01", label: "Validation du prêt", color: "bg-cyan-400" },
+            { step: "02", label: "Paiement et Achat des articles", color: "bg-green-400" },
+            { step: "03", label: "Dévis généré et envoyé", color: "bg-emerald-400" },
             { step: "04", label: "Articles servis", color: "bg-teal-400" },
           ].map((s) => (
             <div key={s.step} className="flex items-center gap-3">
@@ -144,7 +146,7 @@ export default function LoginPage() {
           {/* Mobile logo ViFlo */}
           <div className="lg:hidden flex items-center gap-3 mb-8">
             <div className="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center">
-              <Image src="/images/viflow_logo.png" alt="ViFlo" width={48} height={48} className="object-contain" onError={() => {}} />
+              <Image src="/images/viflow_logo.png" alt="ViFlo" width={48} height={48} className="object-contain" onError={() => { }} />
             </div>
             <div>
               <p className="font-bold text-gray-900 text-lg">ViFlow</p>
@@ -154,7 +156,7 @@ export default function LoginPage() {
 
           {/* Titre */}
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-gray-900">Bienvenue sur ViFlo</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Bienvenue sur ViFlow</h1>
             <p className="text-gray-500 text-sm mt-1.5">Simplifier le financement, fluidifier les achats.</p>
           </div>
 

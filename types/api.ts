@@ -1,3 +1,4 @@
+
 // types/api.ts - Types API ViFlo Finance
 
 // ═══════════════════════════════════════════════════════════
@@ -54,7 +55,13 @@ export interface Souscription {
     banqueId: number;
     banqueNom: string;
     montantTotal: number;
-    statut: "brouillon" | "soumise" | "validee" | "rejetee" | "payee" | "servie";
+    statut:
+    | "brouillon"
+    | "soumise"
+    | "validee"
+    | "rejetee"
+    | "payee"
+    | "servie";
     articles: SouscriptionArticle[];
     dateCreation: string;
     dateValidation?: string;
@@ -101,7 +108,12 @@ export interface Devis {
     banqueId: number;
     banqueNom: string;
     montantTotal: number;
-    statut: "envoye" | "en_attente_validation" | "valide" | "refuse" | "expire";
+    statut:
+    | "envoye"
+    | "en_attente_validation"
+    | "valide"
+    | "refuse"
+    | "expire";
     articles: DevisArticle[];
     dateEnvoi: string;
     dateExpiration?: string;
@@ -134,7 +146,12 @@ export interface Dossier {
     banqueId: number;
     banqueNom: string;
     montantTotal: number;
-    statut: "recu" | "en_cours_traitement" | "valide" | "rejete" | "informations_demandees";
+    statut:
+    | "recu"
+    | "en_cours_traitement"
+    | "valide"
+    | "rejete"
+    | "informations_demandees";
     motifRejet?: string;
     dateReception: string;
     dateValidation?: string;
@@ -169,7 +186,13 @@ export interface Paiement {
     fournisseurId: number;
     fournisseurNom: string;
     montant: number;
-    statut: "en_attente" | "programme" | "en_cours" | "effectue" | "echec" | "encaisse";
+    statut:
+    | "en_attente"
+    | "programme"
+    | "en_cours"
+    | "effectue"
+    | "echec"
+    | "encaisse";
     datePrevue?: string;
     dateEffective?: string;
     dateEncaissement?: string;
@@ -179,7 +202,13 @@ export interface Paiement {
 }
 
 export interface UpdatePaiementData {
-    statut?: "en_attente" | "programme" | "en_cours" | "effectue" | "echec" | "encaisse";
+    statut?:
+    | "en_attente"
+    | "programme"
+    | "en_cours"
+    | "effectue"
+    | "echec"
+    | "encaisse";
     dateEffective?: string;
     dateEncaissement?: string;
     referenceTransaction?: string;
@@ -193,7 +222,12 @@ export interface Notification {
     id: string;
     titre: string;
     message: string;
-    categorie: "souscription" | "devis" | "dossier" | "paiement" | "systeme";
+    categorie:
+    | "souscription"
+    | "devis"
+    | "dossier"
+    | "paiement"
+    | "systeme";
     estLue: boolean;
     lien?: string;
     date: string;
@@ -216,6 +250,46 @@ export interface DashboardStats {
     paiementsEnCours: number;
     montantTotalPaiements: number;
     articlesServis: number;
+}
+
+// ═══════════════════════════════════════════════════════════
+// ATTENDANCE TYPES
+// ═══════════════════════════════════════════════════════════
+
+export interface Attendance {
+    id: number;
+    slug?: string;
+
+    userId: number;
+    userName?: string;
+
+    date: string;
+    checkIn?: string;
+    checkOut?: string;
+
+    status?: "present" | "absent" | "late" | "leave";
+
+    notes?: string;
+
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface CreateAttendanceData {
+    userId: number;
+    date: string;
+    checkIn?: string;
+    checkOut?: string;
+    status?: "present" | "absent" | "late" | "leave";
+    notes?: string;
+}
+
+export interface UpdateAttendanceData {
+    date?: string;
+    checkIn?: string;
+    checkOut?: string;
+    status?: "present" | "absent" | "late" | "leave";
+    notes?: string;
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -259,6 +333,10 @@ export interface BaseFilters {
     perPage?: number;
     sortBy?: string;
     sortOrder?: "asc" | "desc";
+}
+
+export interface QueryParams extends BaseFilters {
+    [key: string]: string | number | boolean | undefined;
 }
 
 export interface SouscriptionFilters extends BaseFilters {

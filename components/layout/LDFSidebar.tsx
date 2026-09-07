@@ -62,6 +62,17 @@ function getNav(role: LDFUserRole, unreadCount: number): { main: NavItem[]; bott
     };
   }
 
+  if (role === "souscripteur") {
+    return {
+      main: [
+        { name: "Mes souscriptions", href: "/dashboard/souscripteur", icon: Home, exact: true },
+        { name: "Notifications",     href: "/dashboard/notifications", icon: Bell, badge: unreadCount },
+        { name: "Paramètres",         href: "/dashboard/parametres",    icon: Settings },
+      ],
+      bottom: [],
+    };
+  }
+
   // fournisseur
   return {
     main: [

@@ -1,6 +1,6 @@
 "use client";
-import { useLDFAuthStore } from "@/stores/ldfAuth";
-import { mockNotifications, mockSouscriptions, mockDevis, mockDossiers, mockPaiements } from "@/lib/ldfData";
+import { getFilteredNotifications, useLDFAuthStore } from "@/stores/ldfAuth";
+import { mockSouscriptions, mockDevis, mockDossiers, mockPaiements } from "@/lib/ldfData";
 import { cn } from "@/lib/utils";
 import { Bell, ChevronDown, LogOut, Menu, Search, Settings, User, X } from "lucide-react";
 import Link from "next/link";
@@ -58,7 +58,7 @@ function usePageTitle() {
   const pathname = usePathname();
   const parts = pathname.split("/").filter(Boolean);
   const last = parts[parts.length - 1];
-  return ROUTE_LABELS[last] ?? "ViFlo";
+  return ROUTE_LABELS[last] ?? "ViFlow";
 }
 
 // ─── Recherche globale ────────────────────────────────────────────────────────
@@ -196,8 +196,16 @@ function GlobalSearch() {
 
 // ─── Dropdown notifications ───────────────────────────────────────────────────
 function NotificationsDropdown() {
-  const { notifications, unreadCount, markNotificationRead, markAllNotificationsRead } = useLDFAuthStore();
+  const { user, notifications, unreadCount, markNotificationRead, markAllNotificationsRead, setNotifications } = useLDFAuthStore();
   const [open, setOpen] = useState(false);
+
+  // Charger les notifs filtrées par rôle à l'ouverture
+  useEffect(() => {
+    if (user?.role) {
+      const filtered = getFilteredNotifications(user.role);
+      setNotifications(filtered);
+    }
+  }, [user?.role, setNotifications]);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -304,7 +312,7 @@ function ProfileDropdown() {
         </div>
         <div className="hidden sm:block text-left">
           <p className="text-sm font-semibold text-gray-800 leading-none">{user.firstName} {user.lastName}</p>
-          <p className="text-xs text-gray-500 leading-none mt-0.5">{user.organisationName ?? "ViFlo"}</p>
+          <p className="text-xs text-gray-500 leading-none mt-0.5">{user.organisationName ?? "ViFlow"}</p>
         </div>
         <ChevronDown className={cn("w-4 h-4 text-gray-400 transition-transform", open && "rotate-180")} />
       </button>
@@ -337,8 +345,15 @@ function ProfileDropdown() {
 
 // ─── Header principal ─────────────────────────────────────────────────────────
 export default function LDFHeader() {
-  const { toggleMobileSidebar } = useLDFAuthStore();
+  const { toggleMobileSidebar, user, setNotifications } = useLDFAuthStore();
   const title = usePageTitle();
+
+  // Initialiser les notifications filtrées par rôle
+  useEffect(() => {
+    if (user?.role) {
+      setNotifications(getFilteredNotifications(user.role));
+    }
+  }, [user?.role, setNotifications]);
 
   return (
     <header className="sticky top-0 z-20 h-14 bg-white border-b border-gray-100 flex items-center px-4 gap-3 shadow-sm">

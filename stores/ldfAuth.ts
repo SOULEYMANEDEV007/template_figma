@@ -1,6 +1,6 @@
 "use client";
 // stores/ldfAuth.ts — Store Zustand ViFlo avec auth mockée complète
-import { demoAccounts, mockUsers } from "@/lib/ldfData";
+import { demoAccounts, mockNotifications, mockSouscripteursUsers, mockUsers } from "@/lib/ldfData";
 import type { LDFUser, LDFUserRole, Notification } from "@/types/ldf";
 import { deleteCookie, getCookie, setCookie } from "cookies-next";
 import { create } from "zustand";
@@ -74,7 +74,8 @@ export const useLDFAuthStore = create<AuthState & AuthActions>((set, get) => ({
       throw new Error("Identifiants invalides");
     }
 
-    const user = mockUsers.find((u) => u.email.toLowerCase() === email.toLowerCase());
+    const user = mockUsers.find((u) => u.email.toLowerCase() === email.toLowerCase())
+      ?? mockSouscripteursUsers.find((u) => u.email.toLowerCase() === email.toLowerCase());
     if (!user) {
       set({ isLoading: false, error: "Utilisateur introuvable." });
       throw new Error("Utilisateur introuvable");
@@ -130,15 +131,26 @@ export const useLDFAuthStore = create<AuthState & AuthActions>((set, get) => ({
 }));
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-export function getRoleLabel(role: LDFUserRole): string {
-  const labels: Record<LDFUserRole, string> = {
-    admin: "Administrateur ViFlo",
+export function getRoleLabel(role: string): string {
+  const labels: Record<string, string> = {
+    admin: "Administrateur ViFlow",
     banque: "Responsable Banque",
     fournisseur: "Fournisseur",
+    souscripteur: "Client / Souscripteur",
   };
   return labels[role] ?? role;
 }
 
-export function getDashboardPath(role: LDFUserRole): string {
+export function getDashboardPath(role: string): string {
+  if (role === "souscripteur") return "/dashboard/souscripteur";
   return "/dashboard";
+}
+
+export function getFilteredNotifications(role: string): Notification[] {
+  if (!role) return [];
+  // L'admin voit tout si pas de rôles spécifiés, sinon on filtre strictement
+  return mockNotifications.filter((n) => {
+    if (!n.roles || n.roles.length === 0) return true;
+    return n.roles.includes(role);
+  });
 }

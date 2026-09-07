@@ -34,3 +34,23 @@ export function getGreeting(): string {
 export function generateId(): string {
     return Math.random().toString(36).substr(2, 9);
 }
+
+// ─── Helpers ViFlo ───────────────────────────────────────────────────────────
+
+export function genererMotDePasse(length: number = 10): string {
+    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+    let password = "";
+    for (let i = 0; i < length; i++) {
+        password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return password;
+}
+
+export function formaterNomUtilisateur(nom: string, prenom: string): string {
+    return `${prenom.toLowerCase()}.${nom.toLowerCase()}`;
+}
+
+export function genererReference(prefix: string = "SUB"): string {
+    const n = String(Math.floor(Math.random() * 90000) + 10000);
+    return `${prefix}-2026-${n}`;
+}
