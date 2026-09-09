@@ -66,7 +66,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex">
       {/* ── Colonne gauche — branding ViFlo ── */}
-      <div className="hidden lg:flex lg:w-[45%] relative overflow-hidden flex-col justify-between p-12 gradient-hero">
+      <div className="hidden lg:flex lg:w-[45%] relative overflow-hidden flex-col justify-between p-12 ldf-sidebar">
 
         {/* Pattern décoratif */}
         <div className="absolute inset-0 opacity-5">

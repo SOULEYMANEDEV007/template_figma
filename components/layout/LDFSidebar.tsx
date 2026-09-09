@@ -204,12 +204,12 @@ export default function LDFSidebar() {
         {!isSidebarCollapsed || mobile ? (
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm text-white"
-              style={{ background: "linear-gradient(135deg, #00bcd4, #00c853)" }}>
-              {user.firstName[0]}{user.lastName[0]}
+              style={{ background: "linear-gradient(135deg, #ff6b35, #ff8c42)" }}>
+              {user.prenom?.[0] || user.nom?.[0] || 'U'}{user.nom?.[0] || ''}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-white text-sm font-semibold truncate">{user.firstName} {user.lastName}</p>
-              <p className="text-cyan-300/80 text-xs truncate">{getRoleLabel(user.role)}</p>
+              <p className="text-white text-sm font-semibold truncate">{user.prenom} {user.nom}</p>
+              <p className="text-orange-200/80 text-xs truncate">{getRoleLabel(user.role)}</p>
             </div>
             <button
               onClick={logout}
@@ -222,8 +222,8 @@ export default function LDFSidebar() {
         ) : (
           <>
             <div className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm text-white"
-              style={{ background: "linear-gradient(135deg, #00bcd4, #00c853)" }}>
-              {user.firstName[0]}{user.lastName[0]}
+              style={{ background: "linear-gradient(135deg, #ff6b35, #ff8c42)" }}>
+              {user.prenom?.[0] || user.nom?.[0] || 'U'}{user.nom?.[0] || ''}
             </div>
             <button
               onClick={logout}

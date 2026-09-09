@@ -1,473 +1,309 @@
-// lib/ldfData.ts — Données mockées réalistes LDF Groupe
-import type {
-  Article, Banque, Devis, Dossier, FeedbackBanque,
-  Fournisseur, HistoriqueEvenement, LDFUser, Notification,
-  Paiement, Souscripteur, Souscription, SouscripteurUser,
-} from "@/types/ldf";
+
 
 // ============================================================
-// BANQUES (4)
+// COMPTES DÉMO (Connexion rapide)
 // ============================================================
-export const mockBanques: Banque[] = [
-  { id: "BNQ-001", code: "SGCI", nom: "Société Générale Côte d'Ivoire", sigle: "SGCI", email: "contact@sgci.ci", telephone: "+225 27 20 20 12 34", adresse: "Avenue Noguès, Plateau", ville: "Abidjan", directeur: "M. Koffi Amenan", nombreDossiers: 142, montantFinance: 284500000, statut: "active", createdAt: "2024-01-15" },
-  { id: "BNQ-002", code: "BICICI", nom: "Banque Internationale pour le Commerce et l'Industrie", sigle: "BICICI", email: "info@bicici.ci", telephone: "+225 27 20 31 45 67", adresse: "Avenue Terrasson de Fougères", ville: "Abidjan", directeur: "Mme. Touré Mariam", nombreDossiers: 98, montantFinance: 196000000, statut: "active", createdAt: "2024-01-15" },
-  { id: "BNQ-003", code: "BIAO", nom: "Banque Internationale pour l'Afrique de l'Ouest", sigle: "BIAO", email: "contact@biao-ci.com", telephone: "+225 27 20 22 89 10", adresse: "Boulevard Clozel", ville: "Abidjan", directeur: "M. Diallo Ibrahim", nombreDossiers: 76, montantFinance: 152000000, statut: "active", createdAt: "2024-02-01" },
-  { id: "BNQ-004", code: "CORIS", nom: "Coris Bank International", sigle: "CORIS", email: "info@corisbank.ci", telephone: "+225 27 20 44 56 78", adresse: "Rue des Jardins, Zone 4", ville: "Abidjan", directeur: "Mme. Coulibaly Fatoumata", nombreDossiers: 54, montantFinance: 108000000, statut: "active", createdAt: "2024-03-01" },
-];
-
-// ============================================================
-// FOURNISSEURS (8)
-// ============================================================
-export const mockFournisseurs: Fournisseur[] = [
-  { id: "FRN-001", code: "PAPETCI", nom: "Papeterie Centrale CI", email: "contact@papetci.ci", telephone: "+225 07 08 12 34 56", adresse: "Zone Industrielle de Yopougon", ville: "Abidjan", responsable: "M. Bamba Seydou", nombreSouscriptions: 87, montantTotal: 174000000, statut: "actif", createdAt: "2024-01-10" },
-  { id: "FRN-002", code: "LIVRPLUS", nom: "Livres & Plus Distribution", email: "info@livresplus.ci", telephone: "+225 07 09 23 45 67", adresse: "Rue du Commerce, Plateau", ville: "Abidjan", responsable: "Mme. Koné Aminata", nombreSouscriptions: 64, montantTotal: 128000000, statut: "actif", createdAt: "2024-01-12" },
-  { id: "FRN-003", code: "EDUSUP", nom: "EduSupply Afrique", email: "contact@edusupply.ci", telephone: "+225 05 06 34 56 78", adresse: "Avenue 13, Cocody", ville: "Abidjan", responsable: "M. Ouattara Moussa", nombreSouscriptions: 52, montantTotal: 104000000, statut: "actif", createdAt: "2024-02-01" },
-  { id: "FRN-004", code: "SCOLFR", nom: "Scolaire France Import", email: "contact@scolfrance.ci", telephone: "+225 01 02 45 67 89", adresse: "Boulevard de Marseille", ville: "Abidjan", responsable: "Mme. Traoré Kadiatou", nombreSouscriptions: 43, montantTotal: 86000000, statut: "actif", createdAt: "2024-02-15" },
-  { id: "FRN-005", code: "BIBLIOMAX", nom: "Bibliothèque Maximale SARL", email: "info@bibliomax.ci", telephone: "+225 07 77 56 78 90", adresse: "Rue des Enseignants, Treichville", ville: "Abidjan", responsable: "M. Diabaté Lacina", nombreSouscriptions: 31, montantTotal: 62000000, statut: "actif", createdAt: "2024-03-01" },
-  { id: "FRN-006", code: "PEDAGOTECH", nom: "PedagoTech Solutions", email: "contact@pedagotech.ci", telephone: "+225 05 55 67 89 01", adresse: "Zone Commerciale, Bouaké Centre", ville: "Bouaké", responsable: "Mme. N'Goran Clarisse", nombreSouscriptions: 28, montantTotal: 56000000, statut: "actif", createdAt: "2024-03-15" },
-  { id: "FRN-007", code: "KALAFR", nom: "Kalahari Fournitures", email: "info@kalahari.ci", telephone: "+225 07 44 78 90 12", adresse: "Avenue de l'Indépendance", ville: "Yamoussoukro", responsable: "M. Silué Nangasson", nombreSouscriptions: 19, montantTotal: 38000000, statut: "actif", createdAt: "2024-04-01" },
-  { id: "FRN-008", code: "LIBROCOOP", nom: "Librocoopérative Nationale", email: "contact@librocoop.ci", telephone: "+225 05 33 89 01 23", adresse: "Quartier Commercial, San Pédro", ville: "San Pédro", responsable: "Mme. Bah Fatoumata", nombreSouscriptions: 12, montantTotal: 24000000, statut: "inactif", createdAt: "2024-05-01" },
-];
-
-// ============================================================
-// SOUSCRIPTEURS (20)
-// ============================================================
-export const mockSouscripteurs: Souscripteur[] = [
-  { id: "SCP-001", nom: "Coulibaly", prenom: "Mamadou", telephone: "+225 07 01 11 22 33", email: "mamadou.coulibaly@gmail.com", adresse: "Lot 45 Résidence Les Flamboyants", ville: "Abidjan", banqueId: "BNQ-001", banqueNom: "Société Générale CI", numeroCompte: "CI93CI0080111301134390173", createdAt: "2026-01-05" },
-  { id: "SCP-002", nom: "Konaté", prenom: "Aissatou", telephone: "+225 05 02 22 33 44", email: "aissatou.konate@yahoo.fr", adresse: "Cité SICOGI, Apt 12B", ville: "Abidjan", banqueId: "BNQ-002", banqueNom: "BICICI", numeroCompte: "CI93CI0080111301134390174", createdAt: "2026-01-08" },
-  { id: "SCP-003", nom: "Bamba", prenom: "Drissa", telephone: "+225 01 03 33 44 55", email: "drissa.bamba@hotmail.com", adresse: "Quartier Commerce, Rue 12", ville: "Bouaké", banqueId: "BNQ-003", banqueNom: "BIAO", numeroCompte: "CI93CI0080111301134390175", createdAt: "2026-01-10" },
-  { id: "SCP-004", nom: "Touré", prenom: "Aminata", telephone: "+225 07 04 44 55 66", email: "aminata.toure@gmail.com", adresse: "Villa 7, Cité Verte", ville: "Abidjan", banqueId: "BNQ-001", banqueNom: "Société Générale CI", numeroCompte: "CI93CI0080111301134390176", createdAt: "2026-01-12" },
-  { id: "SCP-005", nom: "Diallo", prenom: "Oumar", telephone: "+225 05 05 55 66 77", email: "oumar.diallo@orange.ci", adresse: "Immeuble Diallo, 3ème étage", ville: "Abidjan", banqueId: "BNQ-004", banqueNom: "Coris Bank", numeroCompte: "CI93CI0080111301134390177", createdAt: "2026-01-14" },
-  { id: "SCP-006", nom: "Koné", prenom: "Mariam", telephone: "+225 01 06 66 77 88", email: "mariam.kone@gmail.com", adresse: "Rue des Manguiers, N°23", ville: "Yamoussoukro", banqueId: "BNQ-002", banqueNom: "BICICI", numeroCompte: "CI93CI0080111301134390178", createdAt: "2026-01-16" },
-  { id: "SCP-007", nom: "Ouédraogo", prenom: "Pascal", telephone: "+225 07 07 77 88 99", email: "pascal.ouedraogo@gmail.com", adresse: "Cité Sicogi Bloc C Appt 5", ville: "Abidjan", banqueId: "BNQ-003", banqueNom: "BIAO", numeroCompte: "CI93CI0080111301134390179", createdAt: "2026-01-18" },
-  { id: "SCP-008", nom: "Guei", prenom: "Florence", telephone: "+225 05 08 88 99 00", email: "florence.guei@yahoo.fr", adresse: "Quartier Zoe-Bruno", ville: "Daloa", banqueId: "BNQ-001", banqueNom: "Société Générale CI", numeroCompte: "CI93CI0080111301134390180", createdAt: "2026-01-20" },
-  { id: "SCP-009", nom: "Traoré", prenom: "Ibrahim", telephone: "+225 01 09 99 00 11", email: "ibrahim.traore@gmail.com", adresse: "Résidence Prestige, Tour B", ville: "Abidjan", banqueId: "BNQ-004", banqueNom: "Coris Bank", numeroCompte: "CI93CI0080111301134390181", createdAt: "2026-01-22" },
-  { id: "SCP-010", nom: "Yao", prenom: "Bernadette", telephone: "+225 07 10 00 11 22", email: "bernadette.yao@hotmail.fr", adresse: "Lotissement Habitat, Lot 89", ville: "Abidjan", banqueId: "BNQ-002", banqueNom: "BICICI", numeroCompte: "CI93CI0080111301134390182", createdAt: "2026-01-24" },
-  { id: "SCP-011", nom: "N'Guessan", prenom: "Serge", telephone: "+225 05 11 11 22 33", email: "serge.nguessan@gmail.com", adresse: "Cité Riviera 3, Villa 45", ville: "Abidjan", banqueId: "BNQ-001", banqueNom: "Société Générale CI", numeroCompte: "CI93CI0080111301134390183", createdAt: "2026-01-26" },
-  { id: "SCP-012", nom: "Sanogo", prenom: "Fatoumata", telephone: "+225 01 12 22 33 44", email: "fatoumata.sanogo@orange.ci", adresse: "Quartier Millionnaire, N°78", ville: "Bouaké", banqueId: "BNQ-003", banqueNom: "BIAO", numeroCompte: "CI93CI0080111301134390184", createdAt: "2026-01-28" },
-  { id: "SCP-013", nom: "Dembélé", prenom: "Adama", telephone: "+225 07 13 33 44 55", email: "adama.dembele@gmail.com", adresse: "Rue des Pêcheurs, N°12", ville: "San Pédro", banqueId: "BNQ-004", banqueNom: "Coris Bank", numeroCompte: "CI93CI0080111301134390185", createdAt: "2026-02-01" },
-  { id: "SCP-014", nom: "Cissé", prenom: "Nathalie", telephone: "+225 05 14 44 55 66", email: "nathalie.cisse@yahoo.fr", adresse: "Immeuble Palmier, 5ème étage", ville: "Abidjan", banqueId: "BNQ-002", banqueNom: "BICICI", numeroCompte: "CI93CI0080111301134390186", createdAt: "2026-02-03" },
-  { id: "SCP-015", nom: "Diabaté", prenom: "Souleymane", telephone: "+225 01 15 55 66 77", email: "souleymane.diabate@gmail.com", adresse: "Résidence Académique, Bâtiment D", ville: "Abidjan", banqueId: "BNQ-001", banqueNom: "Société Générale CI", numeroCompte: "CI93CI0080111301134390187", createdAt: "2026-02-05" },
-  { id: "SCP-016", nom: "Kourouma", prenom: "Kadiatou", telephone: "+225 07 16 66 77 88", email: "kadiatou.kourouma@hotmail.com", adresse: "Quartier Nimba, Rue 34", ville: "Man", banqueId: "BNQ-003", banqueNom: "BIAO", numeroCompte: "CI93CI0080111301134390188", createdAt: "2026-02-07" },
-  { id: "SCP-017", nom: "Brou", prenom: "Clément", telephone: "+225 05 17 77 88 99", email: "clement.brou@gmail.com", adresse: "Cité ATT, Bloc 2 Porte 7", ville: "Abidjan", banqueId: "BNQ-004", banqueNom: "Coris Bank", numeroCompte: "CI93CI0080111301134390189", createdAt: "2026-02-09" },
-  { id: "SCP-018", nom: "Aka", prenom: "Théodore", telephone: "+225 01 18 88 99 00", email: "theodore.aka@orange.ci", adresse: "Rue des Tulipes, N°56", ville: "Gagnoa", banqueId: "BNQ-002", banqueNom: "BICICI", numeroCompte: "CI93CI0080111301134390190", createdAt: "2026-02-11" },
-  { id: "SCP-019", nom: "Ouattara", prenom: "Salimata", telephone: "+225 07 19 99 00 11", email: "salimata.ouattara@gmail.com", adresse: "Quartier Residential, Villa 23", ville: "Abidjan", banqueId: "BNQ-001", banqueNom: "Société Générale CI", numeroCompte: "CI93CI0080111301134390191", createdAt: "2026-02-13" },
-  { id: "SCP-020", nom: "Soro", prenom: "Guillaume", telephone: "+225 05 20 00 11 22", email: "guillaume.soro@yahoo.fr", adresse: "Lotissement Universitaire, Lot 102", ville: "Bouaké", banqueId: "BNQ-003", banqueNom: "BIAO", numeroCompte: "CI93CI0080111301134390192", createdAt: "2026-02-15" },
-];
-
-// ============================================================
-// ARTICLES DE BASE (catalogue)
-// ============================================================
-const catalogueArticles = [
-  { designation: "Manuel scolaire CE2 Mathématiques", reference: "MAN-CE2-MATH" },
-  { designation: "Manuel scolaire CM1 Français", reference: "MAN-CM1-FR" },
-  { designation: "Manuel scolaire 6ème SVT", reference: "MAN-6E-SVT" },
-  { designation: "Cahier de textes grand format", reference: "CAH-GF-001" },
-  { designation: "Dictionnaire Larousse Junior", reference: "DCT-LARO-JR" },
-  { designation: "Atlas géographique Afrique", reference: "ATL-GEO-AFR" },
-  { designation: "Lot cartables scolaires (10 unités)", reference: "LOT-CART-010" },
-  { designation: "Kit fournitures scolaires standard", reference: "KIT-FOUR-STD" },
-  { designation: "Manuel scolaire 4ème Physique-Chimie", reference: "MAN-4E-PHY" },
-  { designation: "Cahier de dessin 24x32 (50 unités)", reference: "CAH-DES-050" },
-];
-
-function makeArticles(count: number, basePrice: number): Article[] {
-  const items = [];
-  for (let i = 0; i < count; i++) {
-    const cat = catalogueArticles[(i + count) % catalogueArticles.length];
-    const qte = Math.floor(Math.random() * 40) + 10;
-    const pu = basePrice * (0.8 + Math.random() * 0.4);
-    const rem = [0, 5, 10][i % 3];
-    const ht = qte * pu * (1 - rem / 100);
-    items.push({ id: `ART-${i + 1}`, designation: cat.designation, reference: cat.reference, quantite: qte, prixUnitaire: Math.round(pu), remise: rem, montantHT: Math.round(ht) });
-  }
-  return items;
-}
-
-// ============================================================
-// SOUSCRIPTIONS (30)
-// ============================================================
-export const mockSouscriptions: Souscription[] = [
-  { id: "SUB-001", reference: "SUB-2026-00001", souscripteurId: "SCP-001", souscripteurNom: "Coulibaly", souscripteurPrenom: "Mamadou", souscripteurTelephone: "+225 07 01 11 22 33", souscripteurEmail: "mamadou.coulibaly@gmail.com", fournisseurId: "FRN-001", fournisseurNom: "Papeterie Centrale CI", banqueId: "BNQ-001", banqueNom: "Société Générale CI", articles: makeArticles(3, 5000), montantTotal: 2450000, duree: 12, observations: "Livraison urgente requise avant la rentrée", statut: "servie", dateCreation: "2026-01-15", dateMiseAJour: "2026-03-10", devisId: "DEV-001", dossierId: "DOS-001", paiementId: "PAY-001" },
-  { id: "SUB-002", reference: "SUB-2026-00002", souscripteurId: "SCP-002", souscripteurNom: "Konaté", souscripteurPrenom: "Aissatou", souscripteurTelephone: "+225 05 02 22 33 44", souscripteurEmail: "aissatou.konate@yahoo.fr", fournisseurId: "FRN-002", fournisseurNom: "Livres & Plus Distribution", banqueId: "BNQ-002", banqueNom: "BICICI", articles: makeArticles(2, 7500), montantTotal: 1875000, duree: 6, statut: "payee", dateCreation: "2026-01-18", dateMiseAJour: "2026-03-05", devisId: "DEV-002", dossierId: "DOS-002", paiementId: "PAY-002" },
-  { id: "SUB-003", reference: "SUB-2026-00003", souscripteurId: "SCP-003", souscripteurNom: "Bamba", souscripteurPrenom: "Drissa", souscripteurTelephone: "+225 01 03 33 44 55", souscripteurEmail: "drissa.bamba@hotmail.com", fournisseurId: "FRN-003", fournisseurNom: "EduSupply Afrique", banqueId: "BNQ-003", banqueNom: "BIAO", articles: makeArticles(4, 4000), montantTotal: 3200000, duree: 18, statut: "validee", dateCreation: "2026-01-20", dateMiseAJour: "2026-02-28", devisId: "DEV-003", dossierId: "DOS-003" },
-  { id: "SUB-004", reference: "SUB-2026-00004", souscripteurId: "SCP-004", souscripteurNom: "Touré", souscripteurPrenom: "Aminata", souscripteurTelephone: "+225 07 04 44 55 66", souscripteurEmail: "aminata.toure@gmail.com", fournisseurId: "FRN-001", fournisseurNom: "Papeterie Centrale CI", banqueId: "BNQ-004", banqueNom: "Coris Bank", articles: makeArticles(2, 6000), montantTotal: 1560000, duree: 12, statut: "en_attente", dateCreation: "2026-01-22", dateMiseAJour: "2026-02-20", devisId: "DEV-004", dossierId: "DOS-004" },
-  { id: "SUB-005", reference: "SUB-2026-00005", souscripteurId: "SCP-005", souscripteurNom: "Diallo", souscripteurPrenom: "Oumar", souscripteurTelephone: "+225 05 05 55 66 77", souscripteurEmail: "oumar.diallo@orange.ci", fournisseurId: "FRN-004", fournisseurNom: "Scolaire France Import", banqueId: "BNQ-001", banqueNom: "Société Générale CI", articles: makeArticles(3, 8000), montantTotal: 2880000, duree: 24, statut: "rejetee", dateCreation: "2026-01-25", dateMiseAJour: "2026-02-15", devisId: "DEV-005", dossierId: "DOS-005" },
-  { id: "SUB-006", reference: "SUB-2026-00006", souscripteurId: "SCP-006", souscripteurNom: "Koné", souscripteurPrenom: "Mariam", souscripteurTelephone: "+225 01 06 66 77 88", souscripteurEmail: "mariam.kone@gmail.com", fournisseurId: "FRN-002", fournisseurNom: "Livres & Plus Distribution", banqueId: "BNQ-002", banqueNom: "BICICI", articles: makeArticles(2, 5500), montantTotal: 1430000, duree: 12, statut: "soumise", dateCreation: "2026-02-01", dateMiseAJour: "2026-02-01" },
-  { id: "SUB-007", reference: "SUB-2026-00007", souscripteurId: "SCP-007", souscripteurNom: "Ouédraogo", souscripteurPrenom: "Pascal", souscripteurTelephone: "+225 07 07 77 88 99", souscripteurEmail: "pascal.ouedraogo@gmail.com", fournisseurId: "FRN-005", fournisseurNom: "Bibliothèque Maximale SARL", banqueId: "BNQ-003", banqueNom: "BIAO", articles: makeArticles(3, 4500), montantTotal: 1890000, duree: 6, statut: "servie", dateCreation: "2026-02-03", dateMiseAJour: "2026-04-01", devisId: "DEV-006", dossierId: "DOS-006", paiementId: "PAY-003" },
-  { id: "SUB-008", reference: "SUB-2026-00008", souscripteurId: "SCP-008", souscripteurNom: "Guei", souscripteurPrenom: "Florence", souscripteurTelephone: "+225 05 08 88 99 00", souscripteurEmail: "florence.guei@yahoo.fr", fournisseurId: "FRN-006", fournisseurNom: "PedagoTech Solutions", banqueId: "BNQ-004", banqueNom: "Coris Bank", articles: makeArticles(2, 9000), montantTotal: 2340000, duree: 12, statut: "validee", dateCreation: "2026-02-05", dateMiseAJour: "2026-03-15", devisId: "DEV-007", dossierId: "DOS-007" },
-  { id: "SUB-009", reference: "SUB-2026-00009", souscripteurId: "SCP-009", souscripteurNom: "Traoré", souscripteurPrenom: "Ibrahim", souscripteurTelephone: "+225 01 09 99 00 11", souscripteurEmail: "ibrahim.traore@gmail.com", fournisseurId: "FRN-003", fournisseurNom: "EduSupply Afrique", banqueId: "BNQ-001", banqueNom: "Société Générale CI", articles: makeArticles(4, 3500), montantTotal: 2800000, duree: 18, statut: "en_attente", dateCreation: "2026-02-08", dateMiseAJour: "2026-03-01", devisId: "DEV-008", dossierId: "DOS-008" },
-  { id: "SUB-010", reference: "SUB-2026-00010", souscripteurId: "SCP-010", souscripteurNom: "Yao", souscripteurPrenom: "Bernadette", souscripteurTelephone: "+225 07 10 00 11 22", souscripteurEmail: "bernadette.yao@hotmail.fr", fournisseurId: "FRN-001", fournisseurNom: "Papeterie Centrale CI", banqueId: "BNQ-002", banqueNom: "BICICI", articles: makeArticles(3, 6500), montantTotal: 3120000, duree: 24, statut: "payee", dateCreation: "2026-02-10", dateMiseAJour: "2026-04-10", devisId: "DEV-009", dossierId: "DOS-009", paiementId: "PAY-004" },
-  { id: "SUB-011", reference: "SUB-2026-00011", souscripteurId: "SCP-011", souscripteurNom: "N'Guessan", souscripteurPrenom: "Serge", souscripteurTelephone: "+225 05 11 11 22 33", souscripteurEmail: "serge.nguessan@gmail.com", fournisseurId: "FRN-007", fournisseurNom: "Kalahari Fournitures", banqueId: "BNQ-003", banqueNom: "BIAO", articles: makeArticles(2, 7000), montantTotal: 1820000, duree: 12, statut: "soumise", dateCreation: "2026-02-12", dateMiseAJour: "2026-02-12" },
-  { id: "SUB-012", reference: "SUB-2026-00012", souscripteurId: "SCP-012", souscripteurNom: "Sanogo", souscripteurPrenom: "Fatoumata", souscripteurTelephone: "+225 01 12 22 33 44", souscripteurEmail: "fatoumata.sanogo@orange.ci", fournisseurId: "FRN-004", fournisseurNom: "Scolaire France Import", banqueId: "BNQ-004", banqueNom: "Coris Bank", articles: makeArticles(3, 5000), montantTotal: 2250000, duree: 12, statut: "brouillon", dateCreation: "2026-02-14", dateMiseAJour: "2026-02-14" },
-  { id: "SUB-013", reference: "SUB-2026-00013", souscripteurId: "SCP-013", souscripteurNom: "Dembélé", souscripteurPrenom: "Adama", souscripteurTelephone: "+225 07 13 33 44 55", souscripteurEmail: "adama.dembele@gmail.com", fournisseurId: "FRN-002", fournisseurNom: "Livres & Plus Distribution", banqueId: "BNQ-001", banqueNom: "Société Générale CI", articles: makeArticles(2, 8500), montantTotal: 2210000, duree: 6, statut: "validee", dateCreation: "2026-02-16", dateMiseAJour: "2026-03-20", devisId: "DEV-010", dossierId: "DOS-010" },
-  { id: "SUB-014", reference: "SUB-2026-00014", souscripteurId: "SCP-014", souscripteurNom: "Cissé", souscripteurPrenom: "Nathalie", souscripteurTelephone: "+225 05 14 44 55 66", souscripteurEmail: "nathalie.cisse@yahoo.fr", fournisseurId: "FRN-005", fournisseurNom: "Bibliothèque Maximale SARL", banqueId: "BNQ-002", banqueNom: "BICICI", articles: makeArticles(4, 4500), montantTotal: 3150000, duree: 18, statut: "servie", dateCreation: "2026-02-18", dateMiseAJour: "2026-04-15", devisId: "DEV-011", dossierId: "DOS-011", paiementId: "PAY-005" },
-  { id: "SUB-015", reference: "SUB-2026-00015", souscripteurId: "SCP-015", souscripteurNom: "Diabaté", souscripteurPrenom: "Souleymane", souscripteurTelephone: "+225 01 15 55 66 77", souscripteurEmail: "souleymane.diabate@gmail.com", fournisseurId: "FRN-006", fournisseurNom: "PedagoTech Solutions", banqueId: "BNQ-003", banqueNom: "BIAO", articles: makeArticles(3, 6000), montantTotal: 2700000, duree: 12, statut: "en_attente", dateCreation: "2026-02-20", dateMiseAJour: "2026-03-10", devisId: "DEV-012", dossierId: "DOS-012" },
-  { id: "SUB-016", reference: "SUB-2026-00016", souscripteurId: "SCP-016", souscripteurNom: "Kourouma", souscripteurPrenom: "Kadiatou", souscripteurTelephone: "+225 07 16 66 77 88", souscripteurEmail: "kadiatou.kourouma@hotmail.com", fournisseurId: "FRN-001", fournisseurNom: "Papeterie Centrale CI", banqueId: "BNQ-004", banqueNom: "Coris Bank", articles: makeArticles(2, 5500), montantTotal: 1650000, duree: 6, statut: "rejetee", dateCreation: "2026-02-22", dateMiseAJour: "2026-03-05", devisId: "DEV-013", dossierId: "DOS-013" },
-  { id: "SUB-017", reference: "SUB-2026-00017", souscripteurId: "SCP-017", souscripteurNom: "Brou", souscripteurPrenom: "Clément", souscripteurTelephone: "+225 05 17 77 88 99", souscripteurEmail: "clement.brou@gmail.com", fournisseurId: "FRN-003", fournisseurNom: "EduSupply Afrique", banqueId: "BNQ-001", banqueNom: "Société Générale CI", articles: makeArticles(3, 7500), montantTotal: 3375000, duree: 24, statut: "payee", dateCreation: "2026-02-24", dateMiseAJour: "2026-04-20", devisId: "DEV-014", dossierId: "DOS-014", paiementId: "PAY-006" },
-  { id: "SUB-018", reference: "SUB-2026-00018", souscripteurId: "SCP-018", souscripteurNom: "Aka", souscripteurPrenom: "Théodore", souscripteurTelephone: "+225 01 18 88 99 00", souscripteurEmail: "theodore.aka@orange.ci", fournisseurId: "FRN-007", fournisseurNom: "Kalahari Fournitures", banqueId: "BNQ-002", banqueNom: "BICICI", articles: makeArticles(2, 4000), montantTotal: 1200000, duree: 12, statut: "soumise", dateCreation: "2026-02-26", dateMiseAJour: "2026-02-26" },
-  { id: "SUB-019", reference: "SUB-2026-00019", souscripteurId: "SCP-019", souscripteurNom: "Ouattara", souscripteurPrenom: "Salimata", souscripteurTelephone: "+225 07 19 99 00 11", souscripteurEmail: "salimata.ouattara@gmail.com", fournisseurId: "FRN-004", fournisseurNom: "Scolaire France Import", banqueId: "BNQ-003", banqueNom: "BIAO", articles: makeArticles(3, 9000), montantTotal: 4050000, duree: 18, statut: "validee", dateCreation: "2026-03-01", dateMiseAJour: "2026-04-05", devisId: "DEV-015", dossierId: "DOS-015" },
-  { id: "SUB-020", reference: "SUB-2026-00020", souscripteurId: "SCP-020", souscripteurNom: "Soro", souscripteurPrenom: "Guillaume", souscripteurTelephone: "+225 05 20 00 11 22", souscripteurEmail: "guillaume.soro@yahoo.fr", fournisseurId: "FRN-005", fournisseurNom: "Bibliothèque Maximale SARL", banqueId: "BNQ-004", banqueNom: "Coris Bank", articles: makeArticles(2, 6500), montantTotal: 1820000, duree: 12, statut: "brouillon", dateCreation: "2026-03-03", dateMiseAJour: "2026-03-03" },
-  { id: "SUB-021", reference: "SUB-2026-00021", souscripteurId: "SCP-001", souscripteurNom: "Coulibaly", souscripteurPrenom: "Mamadou", souscripteurTelephone: "+225 07 01 11 22 33", souscripteurEmail: "mamadou.coulibaly@gmail.com", fournisseurId: "FRN-002", fournisseurNom: "Livres & Plus Distribution", banqueId: "BNQ-001", banqueNom: "Société Générale CI", articles: makeArticles(3, 5500), montantTotal: 2475000, duree: 12, statut: "en_attente", dateCreation: "2026-03-05", dateMiseAJour: "2026-03-25", devisId: "DEV-016", dossierId: "DOS-016" },
-  { id: "SUB-022", reference: "SUB-2026-00022", souscripteurId: "SCP-003", souscripteurNom: "Bamba", souscripteurPrenom: "Drissa", souscripteurTelephone: "+225 01 03 33 44 55", souscripteurEmail: "drissa.bamba@hotmail.com", fournisseurId: "FRN-006", fournisseurNom: "PedagoTech Solutions", banqueId: "BNQ-003", banqueNom: "BIAO", articles: makeArticles(2, 8000), montantTotal: 2080000, duree: 6, statut: "soumise", dateCreation: "2026-03-07", dateMiseAJour: "2026-03-07" },
-  { id: "SUB-023", reference: "SUB-2026-00023", souscripteurId: "SCP-005", souscripteurNom: "Diallo", souscripteurPrenom: "Oumar", souscripteurTelephone: "+225 05 05 55 66 77", souscripteurEmail: "oumar.diallo@orange.ci", fournisseurId: "FRN-001", fournisseurNom: "Papeterie Centrale CI", banqueId: "BNQ-001", banqueNom: "Société Générale CI", articles: makeArticles(4, 4000), montantTotal: 2560000, duree: 24, statut: "servie", dateCreation: "2026-03-09", dateMiseAJour: "2026-05-01", devisId: "DEV-017", dossierId: "DOS-017", paiementId: "PAY-007" },
-  { id: "SUB-024", reference: "SUB-2026-00024", souscripteurId: "SCP-007", souscripteurNom: "Ouédraogo", souscripteurPrenom: "Pascal", souscripteurTelephone: "+225 07 07 77 88 99", souscripteurEmail: "pascal.ouedraogo@gmail.com", fournisseurId: "FRN-004", fournisseurNom: "Scolaire France Import", banqueId: "BNQ-002", banqueNom: "BICICI", articles: makeArticles(3, 7000), montantTotal: 3150000, duree: 12, statut: "validee", dateCreation: "2026-03-11", dateMiseAJour: "2026-04-15", devisId: "DEV-018", dossierId: "DOS-018" },
-  { id: "SUB-025", reference: "SUB-2026-00025", souscripteurId: "SCP-009", souscripteurNom: "Traoré", souscripteurPrenom: "Ibrahim", souscripteurTelephone: "+225 01 09 99 00 11", souscripteurEmail: "ibrahim.traore@gmail.com", fournisseurId: "FRN-003", fournisseurNom: "EduSupply Afrique", banqueId: "BNQ-004", banqueNom: "Coris Bank", articles: makeArticles(2, 6000), montantTotal: 1560000, duree: 6, statut: "rejetee", dateCreation: "2026-03-13", dateMiseAJour: "2026-04-01", devisId: "DEV-019", dossierId: "DOS-019" },
-  { id: "SUB-026", reference: "SUB-2026-00026", souscripteurId: "SCP-011", souscripteurNom: "N'Guessan", souscripteurPrenom: "Serge", souscripteurTelephone: "+225 05 11 11 22 33", souscripteurEmail: "serge.nguessan@gmail.com", fournisseurId: "FRN-005", fournisseurNom: "Bibliothèque Maximale SARL", banqueId: "BNQ-001", banqueNom: "Société Générale CI", articles: makeArticles(3, 5000), montantTotal: 2250000, duree: 18, statut: "en_attente", dateCreation: "2026-03-15", dateMiseAJour: "2026-04-10", devisId: "DEV-020", dossierId: "DOS-020" },
-  { id: "SUB-027", reference: "SUB-2026-00027", souscripteurId: "SCP-013", souscripteurNom: "Dembélé", souscripteurPrenom: "Adama", souscripteurTelephone: "+225 07 13 33 44 55", souscripteurEmail: "adama.dembele@gmail.com", fournisseurId: "FRN-007", fournisseurNom: "Kalahari Fournitures", banqueId: "BNQ-003", banqueNom: "BIAO", articles: makeArticles(2, 9500), montantTotal: 2470000, duree: 12, statut: "payee", dateCreation: "2026-03-17", dateMiseAJour: "2026-05-05", devisId: "DEV-021", dossierId: "DOS-021", paiementId: "PAY-008" },
-  { id: "SUB-028", reference: "SUB-2026-00028", souscripteurId: "SCP-015", souscripteurNom: "Diabaté", souscripteurPrenom: "Souleymane", souscripteurTelephone: "+225 01 15 55 66 77", souscripteurEmail: "souleymane.diabate@gmail.com", fournisseurId: "FRN-006", fournisseurNom: "PedagoTech Solutions", banqueId: "BNQ-002", banqueNom: "BICICI", articles: makeArticles(4, 5500), montantTotal: 3520000, duree: 24, statut: "soumise", dateCreation: "2026-03-19", dateMiseAJour: "2026-03-19" },
-  { id: "SUB-029", reference: "SUB-2026-00029", souscripteurId: "SCP-017", souscripteurNom: "Brou", souscripteurPrenom: "Clément", souscripteurTelephone: "+225 05 17 77 88 99", souscripteurEmail: "clement.brou@gmail.com", fournisseurId: "FRN-002", fournisseurNom: "Livres & Plus Distribution", banqueId: "BNQ-004", banqueNom: "Coris Bank", articles: makeArticles(3, 7000), montantTotal: 2940000, duree: 12, statut: "validee", dateCreation: "2026-03-21", dateMiseAJour: "2026-04-25", devisId: "DEV-022", dossierId: "DOS-022" },
-  { id: "SUB-030", reference: "SUB-2026-00030", souscripteurId: "SCP-019", souscripteurNom: "Ouattara", souscripteurPrenom: "Salimata", souscripteurTelephone: "+225 07 19 99 00 11", souscripteurEmail: "salimata.ouattara@gmail.com", fournisseurId: "FRN-001", fournisseurNom: "Papeterie Centrale CI", banqueId: "BNQ-001", banqueNom: "Société Générale CI", articles: makeArticles(2, 8000), montantTotal: 2080000, duree: 6, statut: "brouillon", dateCreation: "2026-03-23", dateMiseAJour: "2026-03-23" },
-];
-
-// ============================================================
-// DEVIS (22)
-// ============================================================
-export const mockDevis: Devis[] = [
-  { id: "DEV-001", reference: "DEV-2026-00001", souscriptionId: "SUB-001", souscriptionRef: "SUB-2026-00001", souscripteurNom: "Coulibaly Mamadou", souscripteurPrenom: "Mamadou", fournisseurId: "FRN-001", fournisseurNom: "Papeterie Centrale CI", banqueId: "BNQ-001", banqueNom: "Société Générale CI", articles: makeArticles(3, 5000), totalHT: 2250000, tva: 200000, totalTTC: 2450000, conditions: "Livraison sous 30 jours. Paiement à 30 jours fin de mois.", dateCreation: "2026-01-16", dateExpiration: "2026-03-16", statut: "valide", dateMiseAJour: "2026-01-20" },
-  { id: "DEV-002", reference: "DEV-2026-00002", souscriptionId: "SUB-002", souscriptionRef: "SUB-2026-00002", souscripteurNom: "Konaté Aissatou", souscripteurPrenom: "Aissatou", fournisseurId: "FRN-002", fournisseurNom: "Livres & Plus Distribution", banqueId: "BNQ-002", banqueNom: "BICICI", articles: makeArticles(2, 7500), totalHT: 1725000, tva: 150000, totalTTC: 1875000, conditions: "Validité 30 jours. Livraison franco domicile.", dateCreation: "2026-01-19", dateExpiration: "2026-03-19", statut: "valide", dateMiseAJour: "2026-01-22" },
-  { id: "DEV-003", reference: "DEV-2026-00003", souscriptionId: "SUB-003", souscriptionRef: "SUB-2026-00003", souscripteurNom: "Bamba Drissa", souscripteurPrenom: "Drissa", fournisseurId: "FRN-003", fournisseurNom: "EduSupply Afrique", banqueId: "BNQ-003", banqueNom: "BIAO", articles: makeArticles(4, 4000), totalHT: 2944000, tva: 256000, totalTTC: 3200000, conditions: "Livraison sur site. TVA 8.7%.", dateCreation: "2026-01-21", dateExpiration: "2026-03-21", statut: "en_attente_validation", dateMiseAJour: "2026-02-01" },
-  { id: "DEV-004", reference: "DEV-2026-00004", souscriptionId: "SUB-004", souscriptionRef: "SUB-2026-00004", souscripteurNom: "Touré Aminata", souscripteurPrenom: "Aminata", fournisseurId: "FRN-001", fournisseurNom: "Papeterie Centrale CI", banqueId: "BNQ-004", banqueNom: "Coris Bank", articles: makeArticles(2, 6000), totalHT: 1436000, tva: 124000, totalTTC: 1560000, conditions: "Conditions standard LDF.", dateCreation: "2026-01-23", dateExpiration: "2026-03-23", statut: "envoye", dateMiseAJour: "2026-01-24" },
-  { id: "DEV-005", reference: "DEV-2026-00005", souscriptionId: "SUB-005", souscriptionRef: "SUB-2026-00005", souscripteurNom: "Diallo Oumar", souscripteurPrenom: "Oumar", fournisseurId: "FRN-004", fournisseurNom: "Scolaire France Import", banqueId: "BNQ-001", banqueNom: "Société Générale CI", articles: makeArticles(3, 8000), totalHT: 2649600, tva: 230400, totalTTC: 2880000, conditions: "Import France. Délai 45 jours.", dateCreation: "2026-01-26", dateExpiration: "2026-03-26", statut: "refuse", dateMiseAJour: "2026-02-10" },
-  { id: "DEV-006", reference: "DEV-2026-00006", souscriptionId: "SUB-007", souscriptionRef: "SUB-2026-00007", souscripteurNom: "Ouédraogo Pascal", souscripteurPrenom: "Pascal", fournisseurId: "FRN-005", fournisseurNom: "Bibliothèque Maximale SARL", banqueId: "BNQ-003", banqueNom: "BIAO", articles: makeArticles(3, 4500), totalHT: 1738800, tva: 151200, totalTTC: 1890000, conditions: "Livraison 15 jours ouvrés.", dateCreation: "2026-02-04", dateExpiration: "2026-04-04", statut: "valide", dateMiseAJour: "2026-02-10" },
-  { id: "DEV-007", reference: "DEV-2026-00007", souscriptionId: "SUB-008", souscriptionRef: "SUB-2026-00008", souscripteurNom: "Guei Florence", souscripteurPrenom: "Florence", fournisseurId: "FRN-006", fournisseurNom: "PedagoTech Solutions", banqueId: "BNQ-004", banqueNom: "Coris Bank", articles: makeArticles(2, 9000), totalHT: 2152800, tva: 187200, totalTTC: 2340000, conditions: "Matériel pédagogique certifié.", dateCreation: "2026-02-06", dateExpiration: "2026-04-06", statut: "en_attente_validation", dateMiseAJour: "2026-02-15" },
-  { id: "DEV-008", reference: "DEV-2026-00008", souscriptionId: "SUB-009", souscriptionRef: "SUB-2026-00009", souscripteurNom: "Traoré Ibrahim", souscripteurPrenom: "Ibrahim", fournisseurId: "FRN-003", fournisseurNom: "EduSupply Afrique", banqueId: "BNQ-001", banqueNom: "Société Générale CI", articles: makeArticles(4, 3500), totalHT: 2575200, tva: 224800, totalTTC: 2800000, conditions: "Conditions standard.", dateCreation: "2026-02-09", dateExpiration: "2026-04-09", statut: "envoye", dateMiseAJour: "2026-02-12" },
-  { id: "DEV-009", reference: "DEV-2026-00009", souscriptionId: "SUB-010", souscriptionRef: "SUB-2026-00010", souscripteurNom: "Yao Bernadette", souscripteurPrenom: "Bernadette", fournisseurId: "FRN-001", fournisseurNom: "Papeterie Centrale CI", banqueId: "BNQ-002", banqueNom: "BICICI", articles: makeArticles(3, 6500), totalHT: 2870400, tva: 249600, totalTTC: 3120000, conditions: "Validité 45 jours.", dateCreation: "2026-02-11", dateExpiration: "2026-04-11", statut: "valide", dateMiseAJour: "2026-02-18" },
-  { id: "DEV-010", reference: "DEV-2026-00010", souscriptionId: "SUB-013", souscriptionRef: "SUB-2026-00013", souscripteurNom: "Dembélé Adama", souscripteurPrenom: "Adama", fournisseurId: "FRN-002", fournisseurNom: "Livres & Plus Distribution", banqueId: "BNQ-001", banqueNom: "Société Générale CI", articles: makeArticles(2, 8500), totalHT: 2033200, tva: 176800, totalTTC: 2210000, conditions: "Livraison express disponible.", dateCreation: "2026-02-17", dateExpiration: "2026-04-17", statut: "valide", dateMiseAJour: "2026-02-25" },
-  { id: "DEV-011", reference: "DEV-2026-00011", souscriptionId: "SUB-014", souscriptionRef: "SUB-2026-00014", souscripteurNom: "Cissé Nathalie", souscripteurPrenom: "Nathalie", fournisseurId: "FRN-005", fournisseurNom: "Bibliothèque Maximale SARL", banqueId: "BNQ-002", banqueNom: "BICICI", articles: makeArticles(4, 4500), totalHT: 2896200, tva: 253800, totalTTC: 3150000, conditions: "Stock disponible immédiatement.", dateCreation: "2026-02-19", dateExpiration: "2026-04-19", statut: "valide", dateMiseAJour: "2026-02-28" },
-  { id: "DEV-012", reference: "DEV-2026-00012", souscriptionId: "SUB-015", souscriptionRef: "SUB-2026-00015", souscripteurNom: "Diabaté Souleymane", souscripteurPrenom: "Souleymane", fournisseurId: "FRN-006", fournisseurNom: "PedagoTech Solutions", banqueId: "BNQ-003", banqueNom: "BIAO", articles: makeArticles(3, 6000), totalHT: 2484000, tva: 216000, totalTTC: 2700000, conditions: "Matériel sous garantie 1 an.", dateCreation: "2026-02-21", dateExpiration: "2026-04-21", statut: "en_attente_validation", dateMiseAJour: "2026-03-01" },
-  { id: "DEV-013", reference: "DEV-2026-00013", souscriptionId: "SUB-016", souscriptionRef: "SUB-2026-00016", souscripteurNom: "Kourouma Kadiatou", souscripteurPrenom: "Kadiatou", fournisseurId: "FRN-001", fournisseurNom: "Papeterie Centrale CI", banqueId: "BNQ-004", banqueNom: "Coris Bank", articles: makeArticles(2, 5500), totalHT: 1518000, tva: 132000, totalTTC: 1650000, conditions: "Conditions standard.", dateCreation: "2026-02-23", dateExpiration: "2026-04-23", statut: "refuse", dateMiseAJour: "2026-03-02" },
-  { id: "DEV-014", reference: "DEV-2026-00014", souscriptionId: "SUB-017", souscriptionRef: "SUB-2026-00017", souscripteurNom: "Brou Clément", souscripteurPrenom: "Clément", fournisseurId: "FRN-003", fournisseurNom: "EduSupply Afrique", banqueId: "BNQ-001", banqueNom: "Société Générale CI", articles: makeArticles(3, 7500), totalHT: 3104800, tva: 270200, totalTTC: 3375000, conditions: "Livraison en 2 fois.", dateCreation: "2026-02-25", dateExpiration: "2026-04-25", statut: "valide", dateMiseAJour: "2026-03-05" },
-  { id: "DEV-015", reference: "DEV-2026-00015", souscriptionId: "SUB-019", souscriptionRef: "SUB-2026-00019", souscripteurNom: "Ouattara Salimata", souscripteurPrenom: "Salimata", fournisseurId: "FRN-004", fournisseurNom: "Scolaire France Import", banqueId: "BNQ-003", banqueNom: "BIAO", articles: makeArticles(3, 9000), totalHT: 3726000, tva: 324000, totalTTC: 4050000, conditions: "Importation sous LCR.", dateCreation: "2026-03-02", dateExpiration: "2026-05-02", statut: "en_attente_validation", dateMiseAJour: "2026-03-15" },
-  { id: "DEV-016", reference: "DEV-2026-00016", souscriptionId: "SUB-021", souscriptionRef: "SUB-2026-00021", souscripteurNom: "Coulibaly Mamadou", souscripteurPrenom: "Mamadou", fournisseurId: "FRN-002", fournisseurNom: "Livres & Plus Distribution", banqueId: "BNQ-001", banqueNom: "Société Générale CI", articles: makeArticles(3, 5500), totalHT: 2277000, tva: 198000, totalTTC: 2475000, conditions: "Conditions LDF 2026.", dateCreation: "2026-03-06", dateExpiration: "2026-05-06", statut: "envoye", dateMiseAJour: "2026-03-08" },
-  { id: "DEV-017", reference: "DEV-2026-00017", souscriptionId: "SUB-023", souscriptionRef: "SUB-2026-00023", souscripteurNom: "Diallo Oumar", souscripteurPrenom: "Oumar", fournisseurId: "FRN-001", fournisseurNom: "Papeterie Centrale CI", banqueId: "BNQ-001", banqueNom: "Société Générale CI", articles: makeArticles(4, 4000), totalHT: 2355200, tva: 204800, totalTTC: 2560000, conditions: "Livraison standard.", dateCreation: "2026-03-10", dateExpiration: "2026-05-10", statut: "valide", dateMiseAJour: "2026-03-18" },
-  { id: "DEV-018", reference: "DEV-2026-00018", souscriptionId: "SUB-024", souscriptionRef: "SUB-2026-00024", souscripteurNom: "Ouédraogo Pascal", souscripteurPrenom: "Pascal", fournisseurId: "FRN-004", fournisseurNom: "Scolaire France Import", banqueId: "BNQ-002", banqueNom: "BICICI", articles: makeArticles(3, 7000), totalHT: 2898000, tva: 252000, totalTTC: 3150000, conditions: "Garantie produits 6 mois.", dateCreation: "2026-03-12", dateExpiration: "2026-05-12", statut: "en_attente_validation", dateMiseAJour: "2026-03-20" },
-  { id: "DEV-019", reference: "DEV-2026-00019", souscriptionId: "SUB-025", souscriptionRef: "SUB-2026-00025", souscripteurNom: "Traoré Ibrahim", souscripteurPrenom: "Ibrahim", fournisseurId: "FRN-003", fournisseurNom: "EduSupply Afrique", banqueId: "BNQ-004", banqueNom: "Coris Bank", articles: makeArticles(2, 6000), totalHT: 1435200, tva: 124800, totalTTC: 1560000, conditions: "Conditions standard.", dateCreation: "2026-03-14", dateExpiration: "2026-05-14", statut: "refuse", dateMiseAJour: "2026-03-28" },
-  { id: "DEV-020", reference: "DEV-2026-00020", souscriptionId: "SUB-026", souscriptionRef: "SUB-2026-00026", souscripteurNom: "N'Guessan Serge", souscripteurPrenom: "Serge", fournisseurId: "FRN-005", fournisseurNom: "Bibliothèque Maximale SARL", banqueId: "BNQ-001", banqueNom: "Société Générale CI", articles: makeArticles(3, 5000), totalHT: 2070000, tva: 180000, totalTTC: 2250000, conditions: "Livraison en 20 jours.", dateCreation: "2026-03-16", dateExpiration: "2026-05-16", statut: "envoye", dateMiseAJour: "2026-03-20" },
-  { id: "DEV-021", reference: "DEV-2026-00021", souscriptionId: "SUB-027", souscriptionRef: "SUB-2026-00027", souscripteurNom: "Dembélé Adama", souscripteurPrenom: "Adama", fournisseurId: "FRN-007", fournisseurNom: "Kalahari Fournitures", banqueId: "BNQ-003", banqueNom: "BIAO", articles: makeArticles(2, 9500), totalHT: 2272400, tva: 197600, totalTTC: 2470000, conditions: "Gamme premium.", dateCreation: "2026-03-18", dateExpiration: "2026-05-18", statut: "valide", dateMiseAJour: "2026-03-28" },
-  { id: "DEV-022", reference: "DEV-2026-00022", souscriptionId: "SUB-029", souscriptionRef: "SUB-2026-00029", souscripteurNom: "Brou Clément", souscripteurPrenom: "Clément", fournisseurId: "FRN-002", fournisseurNom: "Livres & Plus Distribution", banqueId: "BNQ-004", banqueNom: "Coris Bank", articles: makeArticles(3, 7000), totalHT: 2704800, tva: 235200, totalTTC: 2940000, conditions: "Conditions 2026 renouvelées.", dateCreation: "2026-03-22", dateExpiration: "2026-05-22", statut: "en_attente_validation", dateMiseAJour: "2026-03-30" },
-];
-
-// ============================================================
-// DOSSIERS (22)
-// ============================================================
-export const mockDossiers: Dossier[] = [
-  { id: "DOS-001", reference: "DOS-2026-00001", souscriptionId: "SUB-001", souscriptionRef: "SUB-2026-00001", devisId: "DEV-001", devisRef: "DEV-2026-00001", souscripteurId: "SCP-001", souscripteurNom: "Coulibaly", souscripteurPrenom: "Mamadou", fournisseurId: "FRN-001", fournisseurNom: "Papeterie Centrale CI", banqueId: "BNQ-001", banqueNom: "Société Générale CI", montant: 2450000, statut: "valide", commentaireBanque: "Dossier conforme. Financement accordé.", dateReception: "2026-01-20", dateTraitement: "2026-01-25", dateMiseAJour: "2026-01-25" },
-  { id: "DOS-002", reference: "DOS-2026-00002", souscriptionId: "SUB-002", souscriptionRef: "SUB-2026-00002", devisId: "DEV-002", devisRef: "DEV-2026-00002", souscripteurId: "SCP-002", souscripteurNom: "Konaté", souscripteurPrenom: "Aissatou", fournisseurId: "FRN-002", fournisseurNom: "Livres & Plus Distribution", banqueId: "BNQ-002", banqueNom: "BICICI", montant: 1875000, statut: "valide", commentaireBanque: "Profil bancaire satisfaisant. Dossier approuvé.", dateReception: "2026-01-22", dateTraitement: "2026-01-28", dateMiseAJour: "2026-01-28" },
-  { id: "DOS-003", reference: "DOS-2026-00003", souscriptionId: "SUB-003", souscriptionRef: "SUB-2026-00003", devisId: "DEV-003", devisRef: "DEV-2026-00003", souscripteurId: "SCP-003", souscripteurNom: "Bamba", souscripteurPrenom: "Drissa", fournisseurId: "FRN-003", fournisseurNom: "EduSupply Afrique", banqueId: "BNQ-003", banqueNom: "BIAO", montant: 3200000, statut: "en_cours_traitement", commentaireBanque: "En cours d'examen par le comité de crédit.", dateReception: "2026-02-01", dateMiseAJour: "2026-02-15" },
-  { id: "DOS-004", reference: "DOS-2026-00004", souscriptionId: "SUB-004", souscriptionRef: "SUB-2026-00004", devisId: "DEV-004", devisRef: "DEV-2026-00004", souscripteurId: "SCP-004", souscripteurNom: "Touré", souscripteurPrenom: "Aminata", fournisseurId: "FRN-001", fournisseurNom: "Papeterie Centrale CI", banqueId: "BNQ-004", banqueNom: "Coris Bank", montant: 1560000, statut: "informations_demandees", commentaireBanque: "Merci de fournir les 3 derniers relevés bancaires et la pièce d'identité actualisée.", dateReception: "2026-01-25", dateMiseAJour: "2026-02-05" },
-  { id: "DOS-005", reference: "DOS-2026-00005", souscriptionId: "SUB-005", souscriptionRef: "SUB-2026-00005", devisId: "DEV-005", devisRef: "DEV-2026-00005", souscripteurId: "SCP-005", souscripteurNom: "Diallo", souscripteurPrenom: "Oumar", fournisseurId: "FRN-004", fournisseurNom: "Scolaire France Import", banqueId: "BNQ-001", banqueNom: "Société Générale CI", montant: 2880000, statut: "rejete", commentaireBanque: "Dossier rejeté.", motifRejet: "Insuffisance des garanties bancaires présentées. Le ratio d'endettement dépasse le seuil autorisé de 33%.", dateReception: "2026-01-28", dateTraitement: "2026-02-10", dateMiseAJour: "2026-02-10" },
-  { id: "DOS-006", reference: "DOS-2026-00006", souscriptionId: "SUB-007", souscriptionRef: "SUB-2026-00007", devisId: "DEV-006", devisRef: "DEV-2026-00006", souscripteurId: "SCP-007", souscripteurNom: "Ouédraogo", souscripteurPrenom: "Pascal", fournisseurId: "FRN-005", fournisseurNom: "Bibliothèque Maximale SARL", banqueId: "BNQ-003", banqueNom: "BIAO", montant: 1890000, statut: "valide", commentaireBanque: "Approuvé. Paiement autorisé.", dateReception: "2026-02-08", dateTraitement: "2026-02-18", dateMiseAJour: "2026-02-18" },
-  { id: "DOS-007", reference: "DOS-2026-00007", souscriptionId: "SUB-008", souscriptionRef: "SUB-2026-00008", devisId: "DEV-007", devisRef: "DEV-2026-00007", souscripteurId: "SCP-008", souscripteurNom: "Guei", souscripteurPrenom: "Florence", fournisseurId: "FRN-006", fournisseurNom: "PedagoTech Solutions", banqueId: "BNQ-004", banqueNom: "Coris Bank", montant: 2340000, statut: "en_cours_traitement", dateReception: "2026-02-10", dateMiseAJour: "2026-03-01" },
-  { id: "DOS-008", reference: "DOS-2026-00008", souscriptionId: "SUB-009", souscriptionRef: "SUB-2026-00009", devisId: "DEV-008", devisRef: "DEV-2026-00008", souscripteurId: "SCP-009", souscripteurNom: "Traoré", souscripteurPrenom: "Ibrahim", fournisseurId: "FRN-003", fournisseurNom: "EduSupply Afrique", banqueId: "BNQ-001", banqueNom: "Société Générale CI", montant: 2800000, statut: "informations_demandees", commentaireBanque: "Attestation de revenus complémentaire requise.", dateReception: "2026-02-12", dateMiseAJour: "2026-02-25" },
-  { id: "DOS-009", reference: "DOS-2026-00009", souscriptionId: "SUB-010", souscriptionRef: "SUB-2026-00010", devisId: "DEV-009", devisRef: "DEV-2026-00009", souscripteurId: "SCP-010", souscripteurNom: "Yao", souscripteurPrenom: "Bernadette", fournisseurId: "FRN-001", fournisseurNom: "Papeterie Centrale CI", banqueId: "BNQ-002", banqueNom: "BICICI", montant: 3120000, statut: "valide", commentaireBanque: "Dossier excellent. Financement sur 24 mois accordé.", dateReception: "2026-02-15", dateTraitement: "2026-02-22", dateMiseAJour: "2026-02-22" },
-  { id: "DOS-010", reference: "DOS-2026-00010", souscriptionId: "SUB-013", souscriptionRef: "SUB-2026-00013", devisId: "DEV-010", devisRef: "DEV-2026-00010", souscripteurId: "SCP-013", souscripteurNom: "Dembélé", souscripteurPrenom: "Adama", fournisseurId: "FRN-002", fournisseurNom: "Livres & Plus Distribution", banqueId: "BNQ-001", banqueNom: "Société Générale CI", montant: 2210000, statut: "valide", commentaireBanque: "Validé après vérification des antécédents bancaires.", dateReception: "2026-02-20", dateTraitement: "2026-03-02", dateMiseAJour: "2026-03-02" },
-  { id: "DOS-011", reference: "DOS-2026-00011", souscriptionId: "SUB-014", souscriptionRef: "SUB-2026-00014", devisId: "DEV-011", devisRef: "DEV-2026-00011", souscripteurId: "SCP-014", souscripteurNom: "Cissé", souscripteurPrenom: "Nathalie", fournisseurId: "FRN-005", fournisseurNom: "Bibliothèque Maximale SARL", banqueId: "BNQ-002", banqueNom: "BICICI", montant: 3150000, statut: "valide", commentaireBanque: "Approuvé. Client fidèle.", dateReception: "2026-02-22", dateTraitement: "2026-03-05", dateMiseAJour: "2026-03-05" },
-  { id: "DOS-012", reference: "DOS-2026-00012", souscriptionId: "SUB-015", souscriptionRef: "SUB-2026-00015", devisId: "DEV-012", devisRef: "DEV-2026-00012", souscripteurId: "SCP-015", souscripteurNom: "Diabaté", souscripteurPrenom: "Souleymane", fournisseurId: "FRN-006", fournisseurNom: "PedagoTech Solutions", banqueId: "BNQ-003", banqueNom: "BIAO", montant: 2700000, statut: "en_cours_traitement", dateReception: "2026-03-01", dateMiseAJour: "2026-03-20" },
-  { id: "DOS-013", reference: "DOS-2026-00013", souscriptionId: "SUB-016", souscriptionRef: "SUB-2026-00016", devisId: "DEV-013", devisRef: "DEV-2026-00013", souscripteurId: "SCP-016", souscripteurNom: "Kourouma", souscripteurPrenom: "Kadiatou", fournisseurId: "FRN-001", fournisseurNom: "Papeterie Centrale CI", banqueId: "BNQ-004", banqueNom: "Coris Bank", montant: 1650000, statut: "rejete", commentaireBanque: "Dossier incomplet.", motifRejet: "Absence de justificatif de domicile récent et de la fiche de paie des 3 derniers mois.", dateReception: "2026-02-25", dateTraitement: "2026-03-05", dateMiseAJour: "2026-03-05" },
-  { id: "DOS-014", reference: "DOS-2026-00014", souscriptionId: "SUB-017", souscriptionRef: "SUB-2026-00017", devisId: "DEV-014", devisRef: "DEV-2026-00014", souscripteurId: "SCP-017", souscripteurNom: "Brou", souscripteurPrenom: "Clément", fournisseurId: "FRN-003", fournisseurNom: "EduSupply Afrique", banqueId: "BNQ-001", banqueNom: "Société Générale CI", montant: 3375000, statut: "valide", commentaireBanque: "Dossier complet et conforme. Approuvé.", dateReception: "2026-03-01", dateTraitement: "2026-03-12", dateMiseAJour: "2026-03-12" },
-  { id: "DOS-015", reference: "DOS-2026-00015", souscriptionId: "SUB-019", souscriptionRef: "SUB-2026-00019", devisId: "DEV-015", devisRef: "DEV-2026-00015", souscripteurId: "SCP-019", souscripteurNom: "Ouattara", souscripteurPrenom: "Salimata", fournisseurId: "FRN-004", fournisseurNom: "Scolaire France Import", banqueId: "BNQ-003", banqueNom: "BIAO", montant: 4050000, statut: "en_cours_traitement", dateReception: "2026-03-15", dateMiseAJour: "2026-04-01" },
-  { id: "DOS-016", reference: "DOS-2026-00016", souscriptionId: "SUB-021", souscriptionRef: "SUB-2026-00021", devisId: "DEV-016", devisRef: "DEV-2026-00016", souscripteurId: "SCP-001", souscripteurNom: "Coulibaly", souscripteurPrenom: "Mamadou", fournisseurId: "FRN-002", fournisseurNom: "Livres & Plus Distribution", banqueId: "BNQ-001", banqueNom: "Société Générale CI", montant: 2475000, statut: "informations_demandees", commentaireBanque: "Veuillez soumettre le contrat de travail à durée indéterminée.", dateReception: "2026-03-10", dateMiseAJour: "2026-03-25" },
-  { id: "DOS-017", reference: "DOS-2026-00017", souscriptionId: "SUB-023", souscriptionRef: "SUB-2026-00023", devisId: "DEV-017", devisRef: "DEV-2026-00017", souscripteurId: "SCP-005", souscripteurNom: "Diallo", souscripteurPrenom: "Oumar", fournisseurId: "FRN-001", fournisseurNom: "Papeterie Centrale CI", banqueId: "BNQ-001", banqueNom: "Société Générale CI", montant: 2560000, statut: "valide", commentaireBanque: "Client reconnu. Approbation sans réserve.", dateReception: "2026-03-15", dateTraitement: "2026-03-22", dateMiseAJour: "2026-03-22" },
-  { id: "DOS-018", reference: "DOS-2026-00018", souscriptionId: "SUB-024", souscriptionRef: "SUB-2026-00024", devisId: "DEV-018", devisRef: "DEV-2026-00018", souscripteurId: "SCP-007", souscripteurNom: "Ouédraogo", souscripteurPrenom: "Pascal", fournisseurId: "FRN-004", fournisseurNom: "Scolaire France Import", banqueId: "BNQ-002", banqueNom: "BICICI", montant: 3150000, statut: "en_cours_traitement", dateReception: "2026-03-18", dateMiseAJour: "2026-04-05" },
-  { id: "DOS-019", reference: "DOS-2026-00019", souscriptionId: "SUB-025", souscriptionRef: "SUB-2026-00025", devisId: "DEV-019", devisRef: "DEV-2026-00019", souscripteurId: "SCP-009", souscripteurNom: "Traoré", souscripteurPrenom: "Ibrahim", fournisseurId: "FRN-003", fournisseurNom: "EduSupply Afrique", banqueId: "BNQ-004", banqueNom: "Coris Bank", montant: 1560000, statut: "rejete", commentaireBanque: "Rejeté.", motifRejet: "Dossier présenté antérieurement refusé. Délai de nouvelle soumission : 6 mois.", dateReception: "2026-03-20", dateTraitement: "2026-03-28", dateMiseAJour: "2026-03-28" },
-  { id: "DOS-020", reference: "DOS-2026-00020", souscriptionId: "SUB-026", souscriptionRef: "SUB-2026-00026", devisId: "DEV-020", devisRef: "DEV-2026-00020", souscripteurId: "SCP-011", souscripteurNom: "N'Guessan", souscripteurPrenom: "Serge", fournisseurId: "FRN-005", fournisseurNom: "Bibliothèque Maximale SARL", banqueId: "BNQ-001", banqueNom: "Société Générale CI", montant: 2250000, statut: "en_cours_traitement", dateReception: "2026-03-22", dateMiseAJour: "2026-04-10" },
-  { id: "DOS-021", reference: "DOS-2026-00021", souscriptionId: "SUB-027", souscriptionRef: "SUB-2026-00027", devisId: "DEV-021", devisRef: "DEV-2026-00021", souscripteurId: "SCP-013", souscripteurNom: "Dembélé", souscripteurPrenom: "Adama", fournisseurId: "FRN-007", fournisseurNom: "Kalahari Fournitures", banqueId: "BNQ-003", banqueNom: "BIAO", montant: 2470000, statut: "valide", commentaireBanque: "Validé. Paiement programmé.", dateReception: "2026-03-25", dateTraitement: "2026-04-05", dateMiseAJour: "2026-04-05" },
-  { id: "DOS-022", reference: "DOS-2026-00022", souscriptionId: "SUB-029", souscriptionRef: "SUB-2026-00029", devisId: "DEV-022", devisRef: "DEV-2026-00022", souscripteurId: "SCP-017", souscripteurNom: "Brou", souscripteurPrenom: "Clément", fournisseurId: "FRN-002", fournisseurNom: "Livres & Plus Distribution", banqueId: "BNQ-004", banqueNom: "Coris Bank", montant: 2940000, statut: "en_cours_traitement", dateReception: "2026-03-28", dateMiseAJour: "2026-04-20" },
-];
-
-// ============================================================
-// PAIEMENTS (20)
-// ============================================================
-export const mockPaiements: Paiement[] = [
-  { id: "PAY-001", reference: "PAY-2026-00001", souscriptionId: "SUB-001", souscriptionRef: "SUB-2026-00001", devisId: "DEV-001", devisRef: "DEV-2026-00001", souscripteurNom: "Coulibaly", souscripteurPrenom: "Mamadou", fournisseurId: "FRN-001", fournisseurNom: "Papeterie Centrale CI", banqueId: "BNQ-001", banqueNom: "Société Générale CI", montant: 2450000, statut: "servi", datePaiement: "2026-01-28", dateEncaissement: "2026-02-05", dateService: "2026-03-10", dateMiseAJour: "2026-03-10" },
-  { id: "PAY-002", reference: "PAY-2026-00002", souscriptionId: "SUB-002", souscriptionRef: "SUB-2026-00002", devisId: "DEV-002", devisRef: "DEV-2026-00002", souscripteurNom: "Konaté", souscripteurPrenom: "Aissatou", fournisseurId: "FRN-002", fournisseurNom: "Livres & Plus Distribution", banqueId: "BNQ-002", banqueNom: "BICICI", montant: 1875000, statut: "encaisse", datePaiement: "2026-02-01", dateEncaissement: "2026-02-15", dateMiseAJour: "2026-02-15" },
-  { id: "PAY-003", reference: "PAY-2026-00003", souscriptionId: "SUB-007", souscriptionRef: "SUB-2026-00007", devisId: "DEV-006", devisRef: "DEV-2026-00006", souscripteurNom: "Ouédraogo", souscripteurPrenom: "Pascal", fournisseurId: "FRN-005", fournisseurNom: "Bibliothèque Maximale SARL", banqueId: "BNQ-003", banqueNom: "BIAO", montant: 1890000, statut: "servi", datePaiement: "2026-02-20", dateEncaissement: "2026-03-01", dateService: "2026-04-01", dateMiseAJour: "2026-04-01" },
-  { id: "PAY-004", reference: "PAY-2026-00004", souscriptionId: "SUB-010", souscriptionRef: "SUB-2026-00010", devisId: "DEV-009", devisRef: "DEV-2026-00009", souscripteurNom: "Yao", souscripteurPrenom: "Bernadette", fournisseurId: "FRN-001", fournisseurNom: "Papeterie Centrale CI", banqueId: "BNQ-002", banqueNom: "BICICI", montant: 3120000, statut: "encaisse", datePaiement: "2026-02-25", dateEncaissement: "2026-03-10", dateMiseAJour: "2026-03-10" },
-  { id: "PAY-005", reference: "PAY-2026-00005", souscriptionId: "SUB-014", souscriptionRef: "SUB-2026-00014", devisId: "DEV-011", devisRef: "DEV-2026-00011", souscripteurNom: "Cissé", souscripteurPrenom: "Nathalie", fournisseurId: "FRN-005", fournisseurNom: "Bibliothèque Maximale SARL", banqueId: "BNQ-002", banqueNom: "BICICI", montant: 3150000, statut: "servi", datePaiement: "2026-03-08", dateEncaissement: "2026-03-20", dateService: "2026-04-15", dateMiseAJour: "2026-04-15" },
-  { id: "PAY-006", reference: "PAY-2026-00006", souscriptionId: "SUB-017", souscriptionRef: "SUB-2026-00017", devisId: "DEV-014", devisRef: "DEV-2026-00014", souscripteurNom: "Brou", souscripteurPrenom: "Clément", fournisseurId: "FRN-003", fournisseurNom: "EduSupply Afrique", banqueId: "BNQ-001", banqueNom: "Société Générale CI", montant: 3375000, statut: "encaisse", datePaiement: "2026-03-15", dateEncaissement: "2026-03-28", dateMiseAJour: "2026-03-28" },
-  { id: "PAY-007", reference: "PAY-2026-00007", souscriptionId: "SUB-023", souscriptionRef: "SUB-2026-00023", devisId: "DEV-017", devisRef: "DEV-2026-00017", souscripteurNom: "Diallo", souscripteurPrenom: "Oumar", fournisseurId: "FRN-001", fournisseurNom: "Papeterie Centrale CI", banqueId: "BNQ-001", banqueNom: "Société Générale CI", montant: 2560000, statut: "servi", datePaiement: "2026-03-25", dateEncaissement: "2026-04-05", dateService: "2026-05-01", dateMiseAJour: "2026-05-01" },
-  { id: "PAY-008", reference: "PAY-2026-00008", souscriptionId: "SUB-027", souscriptionRef: "SUB-2026-00027", devisId: "DEV-021", devisRef: "DEV-2026-00021", souscripteurNom: "Dembélé", souscripteurPrenom: "Adama", fournisseurId: "FRN-007", fournisseurNom: "Kalahari Fournitures", banqueId: "BNQ-003", banqueNom: "BIAO", montant: 2470000, statut: "en_cours", datePaiement: "2026-04-08", dateMiseAJour: "2026-04-08" },
-  { id: "PAY-009", reference: "PAY-2026-00009", souscriptionId: "SUB-003", souscriptionRef: "SUB-2026-00003", devisId: "DEV-003", devisRef: "DEV-2026-00003", souscripteurNom: "Bamba", souscripteurPrenom: "Drissa", fournisseurId: "FRN-003", fournisseurNom: "EduSupply Afrique", banqueId: "BNQ-003", banqueNom: "BIAO", montant: 3200000, statut: "en_cours", datePaiement: "2026-04-10", dateMiseAJour: "2026-04-10" },
-  { id: "PAY-010", reference: "PAY-2026-00010", souscriptionId: "SUB-008", souscriptionRef: "SUB-2026-00008", devisId: "DEV-007", devisRef: "DEV-2026-00007", souscripteurNom: "Guei", souscripteurPrenom: "Florence", fournisseurId: "FRN-006", fournisseurNom: "PedagoTech Solutions", banqueId: "BNQ-004", banqueNom: "Coris Bank", montant: 2340000, statut: "en_cours", datePaiement: "2026-04-12", dateMiseAJour: "2026-04-12" },
-  { id: "PAY-011", reference: "PAY-2026-00011", souscriptionId: "SUB-013", souscriptionRef: "SUB-2026-00013", devisId: "DEV-010", devisRef: "DEV-2026-00010", souscripteurNom: "Dembélé", souscripteurPrenom: "Adama", fournisseurId: "FRN-002", fournisseurNom: "Livres & Plus Distribution", banqueId: "BNQ-001", banqueNom: "Société Générale CI", montant: 2210000, statut: "encaisse", datePaiement: "2026-03-20", dateEncaissement: "2026-04-02", dateMiseAJour: "2026-04-02" },
-  { id: "PAY-012", reference: "PAY-2026-00012", souscriptionId: "SUB-019", souscriptionRef: "SUB-2026-00019", devisId: "DEV-015", devisRef: "DEV-2026-00015", souscripteurNom: "Ouattara", souscripteurPrenom: "Salimata", fournisseurId: "FRN-004", fournisseurNom: "Scolaire France Import", banqueId: "BNQ-003", banqueNom: "BIAO", montant: 4050000, statut: "en_cours", datePaiement: "2026-04-15", dateMiseAJour: "2026-04-15" },
-  { id: "PAY-013", reference: "PAY-2026-00013", souscriptionId: "SUB-024", souscriptionRef: "SUB-2026-00024", devisId: "DEV-018", devisRef: "DEV-2026-00018", souscripteurNom: "Ouédraogo", souscripteurPrenom: "Pascal", fournisseurId: "FRN-004", fournisseurNom: "Scolaire France Import", banqueId: "BNQ-002", banqueNom: "BICICI", montant: 3150000, statut: "en_cours", datePaiement: "2026-04-18", dateMiseAJour: "2026-04-18" },
-  { id: "PAY-014", reference: "PAY-2026-00014", souscriptionId: "SUB-029", souscriptionRef: "SUB-2026-00029", devisId: "DEV-022", devisRef: "DEV-2026-00022", souscripteurNom: "Brou", souscripteurPrenom: "Clément", fournisseurId: "FRN-002", fournisseurNom: "Livres & Plus Distribution", banqueId: "BNQ-004", banqueNom: "Coris Bank", montant: 2940000, statut: "en_cours", datePaiement: "2026-04-20", dateMiseAJour: "2026-04-20" },
-  { id: "PAY-015", reference: "PAY-2026-00015", souscriptionId: "SUB-006", souscriptionRef: "SUB-2026-00006", devisId: "DEV-006", devisRef: "DEV-2026-00006", souscripteurNom: "Koné", souscripteurPrenom: "Mariam", fournisseurId: "FRN-002", fournisseurNom: "Livres & Plus Distribution", banqueId: "BNQ-002", banqueNom: "BICICI", montant: 1430000, statut: "en_cours", datePaiement: "2026-04-22", dateMiseAJour: "2026-04-22" },
-  { id: "PAY-016", reference: "PAY-2026-00016", souscriptionId: "SUB-011", souscriptionRef: "SUB-2026-00011", devisId: "DEV-020", devisRef: "DEV-2026-00020", souscripteurNom: "N'Guessan", souscripteurPrenom: "Serge", fournisseurId: "FRN-007", fournisseurNom: "Kalahari Fournitures", banqueId: "BNQ-003", banqueNom: "BIAO", montant: 1820000, statut: "en_cours", datePaiement: "2026-04-25", dateMiseAJour: "2026-04-25" },
-  { id: "PAY-017", reference: "PAY-2026-00017", souscriptionId: "SUB-015", souscriptionRef: "SUB-2026-00015", devisId: "DEV-012", devisRef: "DEV-2026-00012", souscripteurNom: "Diabaté", souscripteurPrenom: "Souleymane", fournisseurId: "FRN-006", fournisseurNom: "PedagoTech Solutions", banqueId: "BNQ-003", banqueNom: "BIAO", montant: 2700000, statut: "encaisse", datePaiement: "2026-04-05", dateEncaissement: "2026-04-20", dateMiseAJour: "2026-04-20" },
-  { id: "PAY-018", reference: "PAY-2026-00018", souscriptionId: "SUB-004", souscriptionRef: "SUB-2026-00004", devisId: "DEV-004", devisRef: "DEV-2026-00004", souscripteurNom: "Touré", souscripteurPrenom: "Aminata", fournisseurId: "FRN-001", fournisseurNom: "Papeterie Centrale CI", banqueId: "BNQ-004", banqueNom: "Coris Bank", montant: 1560000, statut: "en_cours", datePaiement: "2026-05-01", dateMiseAJour: "2026-05-01" },
-  { id: "PAY-019", reference: "PAY-2026-00019", souscriptionId: "SUB-009", souscriptionRef: "SUB-2026-00009", devisId: "DEV-008", devisRef: "DEV-2026-00008", souscripteurNom: "Traoré", souscripteurPrenom: "Ibrahim", fournisseurId: "FRN-003", fournisseurNom: "EduSupply Afrique", banqueId: "BNQ-001", banqueNom: "Société Générale CI", montant: 2800000, statut: "en_cours", datePaiement: "2026-05-03", dateMiseAJour: "2026-05-03" },
-  { id: "PAY-020", reference: "PAY-2026-00020", souscriptionId: "SUB-021", souscriptionRef: "SUB-2026-00021", devisId: "DEV-016", devisRef: "DEV-2026-00016", souscripteurNom: "Coulibaly", souscripteurPrenom: "Mamadou", fournisseurId: "FRN-002", fournisseurNom: "Livres & Plus Distribution", banqueId: "BNQ-001", banqueNom: "Société Générale CI", montant: 2475000, statut: "en_cours", datePaiement: "2026-05-05", dateMiseAJour: "2026-05-05" },
-];
-
-// ============================================================
-// HISTORIQUE / TIMELINE (pour SUB-001)
-// ============================================================
-export const mockHistorique: HistoriqueEvenement[] = [
-  { id: "HIS-001", souscriptionId: "SUB-001", etape: "souscription_creee", titre: "Souscription créée", description: "La souscription SUB-2026-00001 a été créée avec succès.", utilisateur: "Bamba Seydou", role: "fournisseur", date: "2026-01-15", heure: "09:32", statut: "complete" },
-  { id: "HIS-002", souscriptionId: "SUB-001", etape: "souscription_envoyee", titre: "Souscription envoyée", description: "Le dossier a été soumis pour traitement.", utilisateur: "Bamba Seydou", role: "fournisseur", date: "2026-01-15", heure: "09:45", statut: "complete" },
-  { id: "HIS-003", souscriptionId: "SUB-001", etape: "devis_cree", titre: "Devis créé", description: "Le devis DEV-2026-00001 a été généré pour un montant de 2 450 000 FCFA.", utilisateur: "Bamba Seydou", role: "fournisseur", date: "2026-01-16", heure: "10:15", statut: "complete" },
-  { id: "HIS-004", souscriptionId: "SUB-001", etape: "devis_envoye", titre: "Devis envoyé à la banque", description: "Le devis a été transmis à la Société Générale CI pour validation.", utilisateur: "Bamba Seydou", role: "fournisseur", date: "2026-01-16", heure: "10:30", statut: "complete" },
-  { id: "HIS-005", souscriptionId: "SUB-001", etape: "dossier_recu", titre: "Dossier reçu par la banque", description: "La SGCI a réceptionné le dossier DOS-2026-00001.", utilisateur: "Koffi Amenan", role: "banque", date: "2026-01-20", heure: "14:20", statut: "complete" },
-  { id: "HIS-006", souscriptionId: "SUB-001", etape: "dossier_valide", titre: "Dossier validé", description: "Le comité de crédit a approuvé le financement. Dossier conforme.", utilisateur: "Koffi Amenan", role: "banque", date: "2026-01-25", heure: "11:00", statut: "complete" },
-  { id: "HIS-007", souscriptionId: "SUB-001", etape: "paiement_effectue", titre: "Paiement effectué en magasin", description: "Le paiement PAY-2026-00001 a été initié par la banque.", utilisateur: "Koffi Amenan", role: "banque", date: "2026-01-28", heure: "09:00", statut: "complete" },
-  { id: "HIS-008", souscriptionId: "SUB-001", etape: "paiement_encaisse", titre: "Paiement encaissé", description: "Le montant de 2 450 000 FCFA a été encaissé par Papeterie Centrale CI.", utilisateur: "Système LDF", role: "admin", date: "2026-02-05", heure: "08:45", statut: "complete" },
-  { id: "HIS-009", souscriptionId: "SUB-001", etape: "articles_servis", titre: "Articles servis", description: "Tous les articles ont été livrés au souscripteur Coulibaly Mamadou.", utilisateur: "Bamba Seydou", role: "fournisseur", date: "2026-03-10", heure: "16:30", statut: "complete" },
-];
-
-// ============================================================
-// NOTIFICATIONS (20)
-// ============================================================
-export const mockNotifications: Notification[] = [
-  { id: "NOT-001", titre: "Nouvelle souscription créée", message: "La souscription SUB-2026-00030 a été créée par Papeterie Centrale CI.", categorie: "souscription", estLue: false, lien: "/dashboard/souscriptions/SUB-030", reference: "SUB-2026-00030", date: "2026-03-23", heure: "09:15", roles: ["admin", "fournisseur", "souscripteur"] },
-  { id: "NOT-002", titre: "Devis envoyé à la banque", message: "Le devis DEV-2026-00022 a été transmis à Coris Bank pour validation.", categorie: "devis", estLue: false, lien: "/dashboard/devis/DEV-022", reference: "DEV-2026-00022", date: "2026-03-22", heure: "14:30", roles: ["admin", "fournisseur", "banque"] },
-  { id: "NOT-003", titre: "Dossier validé", message: "Le dossier DOS-2026-00021 de Dembélé Adama a été validé par la BIAO.", categorie: "dossier", estLue: false, lien: "/dashboard/dossiers/DOS-021", reference: "DOS-2026-00021", date: "2026-04-05", heure: "11:00", roles: ["admin", "banque", "fournisseur", "souscripteur"] },
-  { id: "NOT-004", titre: "Paiement encaissé", message: "Le paiement PAY-2026-00017 de 2 700 000 FCFA a été encaissé.", categorie: "paiement", estLue: false, lien: "/dashboard/paiements/PAY-017", reference: "PAY-2026-00017", date: "2026-04-20", heure: "08:45", roles: ["admin", "banque", "fournisseur"] },
-  { id: "NOT-005", titre: "Dossier rejeté", message: "Le dossier DOS-2026-00019 a été rejeté par Coris Bank.", categorie: "dossier", estLue: false, lien: "/dashboard/dossiers/DOS-019", reference: "DOS-2026-00019", date: "2026-03-28", heure: "16:20", roles: ["admin", "banque", "fournisseur", "souscripteur"] },
-  { id: "NOT-006", titre: "Articles servis", message: "Les articles de la souscription SUB-2026-00023 ont été servis à Diallo Oumar.", categorie: "souscription", estLue: true, lien: "/dashboard/souscriptions/SUB-023", reference: "SUB-2026-00023", date: "2026-05-01", heure: "10:00", roles: ["admin", "fournisseur", "souscripteur"] },
-  { id: "NOT-007", titre: "Informations complémentaires demandées", message: "La SGCI demande des informations pour le dossier DOS-2026-00016.", categorie: "dossier", estLue: true, lien: "/dashboard/dossiers/DOS-016", reference: "DOS-2026-00016", date: "2026-03-25", heure: "09:30", roles: ["admin", "banque", "fournisseur"] },
-  { id: "NOT-008", titre: "Nouveau devis créé", message: "Le devis DEV-2026-00020 a été créé pour Bibliothèque Maximale SARL.", categorie: "devis", estLue: true, lien: "/dashboard/devis/DEV-020", reference: "DEV-2026-00020", date: "2026-03-16", heure: "11:45", roles: ["admin", "fournisseur"] },
-  { id: "NOT-009", titre: "Paiement en cours", message: "Le paiement PAY-2026-00008 de 2 470 000 FCFA est en cours de traitement.", categorie: "paiement", estLue: true, lien: "/dashboard/paiements/PAY-008", reference: "PAY-2026-00008", date: "2026-04-08", heure: "14:00", roles: ["admin", "banque", "fournisseur"] },
-  { id: "NOT-010", titre: "Souscription soumise", message: "La souscription SUB-2026-00028 a été soumise par PedagoTech Solutions.", categorie: "souscription", estLue: true, lien: "/dashboard/souscriptions/SUB-028", reference: "SUB-2026-00028", date: "2026-03-19", heure: "10:30", roles: ["admin", "fournisseur", "souscripteur"] },
-  { id: "NOT-011", titre: "Dossier en cours de traitement", message: "Le dossier DOS-2026-00022 est en cours d'examen par Coris Bank.", categorie: "dossier", estLue: true, lien: "/dashboard/dossiers/DOS-022", reference: "DOS-2026-00022", date: "2026-04-20", heure: "15:10", roles: ["admin", "banque", "fournisseur"] },
-  { id: "NOT-012", titre: "Devis validé", message: "Le devis DEV-2026-00009 de Papeterie Centrale CI a été validé par la BICICI.", categorie: "devis", estLue: true, lien: "/dashboard/devis/DEV-009", reference: "DEV-2026-00009", date: "2026-02-18", heure: "09:00", roles: ["admin", "banque", "fournisseur"] },
-  { id: "NOT-013", titre: "Paiement encaissé", message: "Le paiement PAY-2026-00006 de 3 375 000 FCFA a été encaissé par EduSupply Afrique.", categorie: "paiement", estLue: true, lien: "/dashboard/paiements/PAY-006", reference: "PAY-2026-00006", date: "2026-03-28", heure: "08:30", roles: ["admin", "banque", "fournisseur"] },
-  { id: "NOT-014", titre: "Articles servis", message: "Les articles de SUB-2026-00007 ont été remis à Ouédraogo Pascal.", categorie: "souscription", estLue: true, lien: "/dashboard/souscriptions/SUB-007", reference: "SUB-2026-00007", date: "2026-04-01", heure: "11:00", roles: ["admin", "fournisseur", "souscripteur"] },
-  { id: "NOT-015", titre: "Nouveau fournisseur ajouté", message: "Librocoopérative Nationale a été ajoutée comme fournisseur partenaire.", categorie: "systeme", estLue: true, lien: "/dashboard/admin/fournisseurs", date: "2026-05-01", heure: "09:00", roles: ["admin"] },
-  { id: "NOT-016", titre: "Devis refusé", message: "Le devis DEV-2026-00019 a été refusé par Coris Bank International.", categorie: "devis", estLue: true, lien: "/dashboard/devis/DEV-019", reference: "DEV-2026-00019", date: "2026-03-28", heure: "10:00", roles: ["admin", "banque", "fournisseur"] },
-  { id: "NOT-017", titre: "Souscription validée", message: "La souscription SUB-2026-00024 de Ouédraogo Pascal a été validée.", categorie: "souscription", estLue: true, lien: "/dashboard/souscriptions/SUB-024", reference: "SUB-2026-00024", date: "2026-04-15", heure: "14:00", roles: ["admin", "banque", "fournisseur", "souscripteur"] },
-  { id: "NOT-018", titre: "Rappel : Devis expirant", message: "Le devis DEV-2026-00003 expire dans 7 jours.", categorie: "devis", estLue: true, lien: "/dashboard/devis/DEV-003", reference: "DEV-2026-00003", date: "2026-03-14", heure: "08:00", roles: ["admin", "fournisseur"] },
-  { id: "NOT-019", titre: "Paiement servi", message: "Les articles de PAY-2026-00005 ont été livrés à Cissé Nathalie.", categorie: "paiement", estLue: true, lien: "/dashboard/paiements/PAY-005", reference: "PAY-2026-00005", date: "2026-04-15", heure: "16:00", roles: ["admin", "banque", "fournisseur", "souscripteur"] },
-  { id: "NOT-020", titre: "Compte utilisateur créé", message: "Un nouveau compte fournisseur a été créé pour Kalahari Fournitures.", categorie: "systeme", estLue: true, lien: "/dashboard/admin/utilisateurs", date: "2026-04-01", heure: "09:00", roles: ["admin"] },
-];
-
-// ============================================================
-// UTILISATEURS MOCKÉS (pour la démo)
-// ============================================================
-export const mockUsers: LDFUser[] = [
-  { id: "USR-001", firstName: "Adrien", lastName: "Kouassi", email: "admin@ldfgroupe.ci", role: "admin", phone: "+225 27 20 00 00 01", isActive: true, createdAt: "2024-01-01", lastLoginAt: "2026-09-02" },
-  { id: "USR-002", firstName: "Mariam", lastName: "Touré", email: "m.toure@bicici.ci", role: "banque", phone: "+225 27 20 31 45 67", organisationId: "BNQ-002", organisationName: "BICICI", isActive: true, createdAt: "2024-01-15", lastLoginAt: "2026-09-01" },
-  { id: "USR-003", firstName: "Koffi", lastName: "Amenan", email: "k.amenan@sgci.ci", role: "banque", phone: "+225 27 20 20 12 34", organisationId: "BNQ-001", organisationName: "Société Générale CI", isActive: true, createdAt: "2024-01-15", lastLoginAt: "2026-08-30" },
-  { id: "USR-004", firstName: "Souleymane", lastName: "Cissé", email: "s.cisse@ldfgroupe.ci", role: "fournisseur", phone: "+225 07 08 12 34 56", organisationId: "FRN-001", organisationName: "Librairie de France Groupe CI", isActive: true, createdAt: "2024-01-20", lastLoginAt: "2026-09-02" },
-  { id: "USR-005", firstName: "Aminata", lastName: "Koné", email: "a.kone@livresplus.ci", role: "fournisseur", phone: "+225 07 09 23 45 67", organisationId: "FRN-002", organisationName: "Livres & Plus Distribution", isActive: true, createdAt: "2024-01-22", lastLoginAt: "2026-09-01" },
-  { id: "USR-006", firstName: "Ibrahim", lastName: "Diallo", email: "i.diallo@biao-ci.com", role: "banque", phone: "+225 27 20 22 89 10", organisationId: "BNQ-003", organisationName: "BIAO", isActive: true, createdAt: "2024-02-01", lastLoginAt: "2026-08-28" },
-  { id: "USR-007", firstName: "Fatoumata", lastName: "Coulibaly", email: "f.coulibaly@corisbank.ci", role: "banque", phone: "+225 27 20 44 56 78", organisationId: "BNQ-004", organisationName: "Coris Bank", isActive: true, createdAt: "2024-03-01", lastLoginAt: "2026-08-25" },
-  { id: "USR-008", firstName: "Moussa", lastName: "Ouattara", email: "m.ouattara@edusupply.ci", role: "fournisseur", phone: "+225 05 06 34 56 78", organisationId: "FRN-003", organisationName: "EduSupply Afrique", isActive: true, createdAt: "2024-02-01", lastLoginAt: "2026-08-29" },
-];
-
-// Comptes de démo pour la connexion
 export const demoAccounts = [
-  { email: "admin@ldfgroupe.ci", password: "Admin2026!", role: "admin" as const, label: "Administrateur LDF" },
-  { email: "k.amenan@sgci.ci", password: "Banque2026!", role: "banque" as const, label: "Banque — SGCI" },
-  { email: "s.cisse@ldfgroupe.ci", password: "Fourn2026!", role: "fournisseur" as const, label: "Fournisseur — Librairie de France Groupe CI" },
-  { email: "mamadou.coulibaly@gmail.com", password: "Client2026!", role: "souscripteur" as const, label: "Client — Mamadou Coulibaly" },
+  {
+    email: "admin@viflow.ci",
+    password: "admin123",
+    role: "admin",
+    nom: "Admin",
+    prenom: "Système",
+    banqueId: "AFG-001",
+    banqueNom: "AFG Bank",
+  },
+  {
+    email: "banque@afgbank.ci",
+    password: "banque123",
+    role: "banque",
+    nom: "Traoré",
+    prenom: "Abdoulaye",
+    banqueId: "AFG-001",
+    banqueNom: "AFG Bank",
+  },
+  {
+    email: "fournisseur@ldf.ci",
+    password: "fournisseur123",
+    role: "fournisseur",
+    nom: "Librairie de France",
+    prenom: "Groupe",
+    banqueId: "AFG-001",
+    banqueNom: "AFG Bank",
+  },
+  {
+    email: "client@viflow.ci",
+    password: "client123",
+    role: "souscripteur",
+    nom: "Coulibaly",
+    prenom: "Mamadou",
+    banqueId: "AFG-001",
+    banqueNom: "AFG Bank",
+  },
 ];
 
 // ============================================================
-// SOUSCRIPTEURS UTILISATEURS (comptes avec accès)
+// NOTIFICATIONS (vide par défaut)
 // ============================================================
-export const mockSouscripteursUsers: SouscripteurUser[] = [
+export const mockNotifications: any[] = [];
+
+// ============================================================
+// UTILISATEURS SYSTÈME
+// ============================================================
+export const mockUsers = [
   {
-    id: "USR-CLIENT-001",
-    firstName: "Mamadou",
-    lastName: "Coulibaly",
-    email: "mamadou.coulibaly@gmail.com",
+    id: "USR-001",
+    email: "admin@viflow.ci",
+    password: "admin123",
+    nom: "Admin",
+    prenom: "Système",
+    role: "admin",
+    telephone: "+225 07 00 00 00 00",
+    statut: "actif",
+    createdAt: "2024-01-01",
+  },
+  {
+    id: "USR-002",
+    email: "banque@afgbank.ci",
+    password: "banque123",
+    nom: "Traoré",
+    prenom: "Abdoulaye",
+    role: "banque",
+    banqueId: "AFG-001",
+    telephone: "+225 07 01 00 00 00",
+    statut: "actif",
+    createdAt: "2024-01-01",
+  },
+  {
+    id: "USR-003",
+    email: "fournisseur@ldf.ci",
+    password: "fournisseur123",
+    nom: "Librairie de France",
+    prenom: "Groupe",
+    role: "fournisseur",
+    fournisseurId: "FRN-001",
+    telephone: "+225 07 02 00 00 00",
+    statut: "actif",
+    createdAt: "2024-01-01",
+  },
+];
+
+// ============================================================
+// UTILISATEURS SOUSCRIPTEURS
+// ============================================================
+export const mockSouscripteursUsers = [
+  {
+    id: "USRSCP-001",
+    email: "client@viflow.ci",
+    password: "client123",
+    nom: "Coulibaly",
+    prenom: "Mamadou",
     role: "souscripteur",
-    phone: "+225 07 01 11 22 33",
-    isActive: true,
+    souscripteurId: "SCP-001",
+    telephone: "+225 07 01 11 22 33",
+    statut: "actif",
     createdAt: "2026-01-05",
-    lastLoginAt: "2026-09-01",
-    numeroCNI: "CNI0020260001",
-    dateNaissance: "1990-01-15",
-    lieuNaissance: "Abidjan",
-    profession: "Enseignant",
-    salaire: 350000,
-    banqueId: "BNQ-001",
-    numeroCompte: "CI93CI0080111301134390173",
-    souscriptionIds: ["SUB-001", "SUB-021"],
-  },
-  {
-    id: "USR-CLIENT-002",
-    firstName: "Aissatou",
-    lastName: "Konaté",
-    email: "aissatou.konate@yahoo.fr",
-    role: "souscripteur",
-    phone: "+225 05 02 22 33 44",
-    isActive: true,
-    createdAt: "2026-01-08",
-    lastLoginAt: "2026-08-25",
-    numeroCNI: "CNI0020260002",
-    dateNaissance: "1985-06-22",
-    lieuNaissance: "Bouaké",
-    profession: "Infirmière",
-    salaire: 420000,
-    banqueId: "BNQ-002",
-    numeroCompte: "CI93CI0080111301134390174",
-    souscriptionIds: ["SUB-002"],
-  },
-  {
-    id: "USR-CLIENT-003",
-    firstName: "Drissa",
-    lastName: "Bamba",
-    email: "drissa.bamba@hotmail.com",
-    role: "souscripteur",
-    phone: "+225 01 03 33 44 55",
-    isActive: true,
-    createdAt: "2026-01-10",
-    lastLoginAt: "2026-08-20",
-    numeroCNI: "CNI0020260003",
-    dateNaissance: "1988-11-08",
-    lieuNaissance: "Korhogo",
-    profession: "Comptable",
-    salaire: 500000,
-    banqueId: "BNQ-003",
-    numeroCompte: "CI93CI0080111301134390175",
-    souscriptionIds: ["SUB-003"],
-  },
-  {
-    id: "USR-CLIENT-004",
-    firstName: "Aminata",
-    lastName: "Touré",
-    email: "aminata.toure@gmail.com",
-    role: "souscripteur",
-    phone: "+225 07 04 44 55 66",
-    isActive: true,
-    createdAt: "2026-01-12",
-    lastLoginAt: "2026-09-02",
-    numeroCNI: "CNI0020260004",
-    dateNaissance: "1992-03-30",
-    lieuNaissance: "Abidjan",
-    profession: "Commerciale",
-    salaire: 280000,
-    banqueId: "BNQ-001",
-    numeroCompte: "CI93CI0080111301134390176",
-    souscriptionIds: ["SUB-004"],
   },
 ];
 
 // ============================================================
-// FEEDBACKS BANQUE
+// BANQUES (AFG Bank uniquement)
 // ============================================================
-export const mockFeedbacks: FeedbackBanque[] = [
-  { id: "FBK-001", dossierId: "DOS-001", dossierRef: "DOS-2026-00001", souscripteurNom: "Coulibaly Mamadou", banqueId: "BNQ-001", banqueNom: "Société Générale CI", fournisseurId: "FRN-001", statut: "valide", commentaire: "Votre dossier a été validé. Le financement de 2 450 000 FCFA est accordé.", date: "2026-01-25" },
-  { id: "FBK-002", dossierId: "DOS-002", dossierRef: "DOS-2026-00002", souscripteurNom: "Konaté Aissatou", banqueId: "BNQ-002", banqueNom: "BICICI", fournisseurId: "FRN-002", statut: "valide", commentaire: "Dossier approuvé. Vous pouvez procéder à la livraison.", date: "2026-01-28" },
-  { id: "FBK-003", dossierId: "DOS-004", dossierRef: "DOS-2026-00004", souscripteurNom: "Touré Aminata", banqueId: "BNQ-004", banqueNom: "Coris Bank", fournisseurId: "FRN-001", statut: "informations_demandees", commentaire: "Documents complémentaires nécessaires : 3 derniers relevés bancaires et pièce d'identité actualisée.", date: "2026-02-05" },
-  { id: "FBK-004", dossierId: "DOS-005", dossierRef: "DOS-2026-00005", souscripteurNom: "Diallo Oumar", banqueId: "BNQ-001", banqueNom: "Société Générale CI", fournisseurId: "FRN-004", statut: "rejete", commentaire: "Dossier rejeté : informations bancaires incomplètes. Ratio d'endettement au-delà du seuil autorisé.", date: "2026-02-10" },
-  { id: "FBK-005", dossierId: "DOS-013", dossierRef: "DOS-2026-00013", souscripteurNom: "Kourouma Kadiatou", banqueId: "BNQ-004", banqueNom: "Coris Bank", fournisseurId: "FRN-001", statut: "rejete", commentaire: "Dossier incomplet. Justificatif de domicile et fiches de paie manquants.", date: "2026-03-05" },
+export const mockBanques = [{
+  id: "AFG-001",
+  code: "AFG",
+  nom: "AFG Bank",
+  sigle: "AFG",
+  statut: "actif"
+}];
+
+// ============================================================
+// FOURNISSEURS
+// ============================================================
+export const mockFournisseurs = [
+  { id: "FOUR-LDF-001", code: "LDF", nom: "Librairie de France Groupe", statut: "actif" },
+  { id: "FOUR-DRO-002", code: "DRO", nom: "Drocolor", statut: "actif" },
+];
+
+// ============================================================
+// SOUSCRIPTIONS
+// ============================================================
+export const mockSouscriptions = [
+  {
+    id: "SOUS-001",
+    reference: "VF-2026-001",
+    souscripteurNom: "Kouassi",
+    souscripteurPrenom: "Jean-Marc",
+    souscripteurEmail: "client@viflow.ci",
+    banqueId: "AFG-001",
+    banqueNom: "AFG Bank",
+    fournisseurId: "FOUR-LDF-001",
+    fournisseurNom: "Librairie de France Groupe",
+    montantTotal: 850000,
+    statut: "validee",
+    dateCreation: "2026-09-01",
+    articles: [
+      { designation: "Cahiers 96 pages", quantite: 50, prixUnitaire: 500 },
+      { designation: "Stylos bleus", quantite: 100, prixUnitaire: 200 },
+    ],
+  },
+  {
+    id: "SOUS-002",
+    reference: "VF-2026-002",
+    souscripteurNom: "Touré",
+    souscripteurPrenom: "Aminata",
+    souscripteurEmail: "a.toure@education.gouv.ci",
+    banqueId: "AFG-001",
+    banqueNom: "AFG Bank",
+    fournisseurId: "FOUR-DRO-002",
+    fournisseurNom: "Drocolor",
+    montantTotal: 650000,
+    statut: "en_cours",
+    dateCreation: "2026-09-05",
+    articles: [
+      { designation: "Cartables", quantite: 30, prixUnitaire: 15000 },
+    ],
+  },
+];
+
+// ============================================================
+// DEVIS
+// ============================================================
+export const mockDevis = [
+  {
+    id: "DEV-001",
+    reference: "DEV-2026-001",
+    souscriptionId: "SOUS-001",
+    souscripteurNom: "Kouassi Jean-Marc",
+    fournisseurId: "FOUR-LDF-001",
+    fournisseurNom: "Librairie de France Groupe",
+    montantHT: 780000,
+    montantTTC: 850000,
+    statut: "valide",
+    dateCreation: "2026-09-02",
+  },
+];
+
+// ============================================================
+// DOSSIERS
+// ============================================================
+export const mockDossiers = [
+  {
+    id: "DOS-001",
+    reference: "DOS-2026-001",
+    souscriptionId: "SOUS-001",
+    souscripteurNom: "Kouassi Jean-Marc",
+    banqueId: "AFG-001",
+    statut: "approuve",
+    montant: 850000,
+    dateCreation: "2026-09-03",
+  },
+];
+
+// ============================================================
+// PAIEMENTS
+// ============================================================
+export const mockPaiements = [
+  {
+    id: "PAY-001",
+    reference: "PAY-2026-001",
+    souscriptionId: "SOUS-001",
+    souscripteurNom: "Kouassi Jean-Marc",
+    fournisseurId: "FOUR-LDF-001",
+    montant: 850000,
+    statut: "effectue",
+    dateCreation: "2026-09-04",
+  },
+];
+
+// ============================================================
+// FEEDBACKS
+// ============================================================
+export const mockFeedbacks = [
+  {
+    id: "FEED-001",
+    souscriptionId: "SOUS-001",
+    fournisseurId: "FOUR-LDF-001",
+    note: 5,
+    commentaire: "Excellent service",
+    dateCreation: "2026-09-06",
+  },
 ];
 
 // ============================================================
 // STATS DASHBOARD
 // ============================================================
 export const mockDashboardStats = {
-  totalSouscriptions: 30,
-  souscriptionsEnAttente: 5,
-  dossiersValides: 11,
-  dossiersRejetes: 3,
-  devisEnAttente: 6,
-  paiementsEnCours: 10,
-  paiementsEncaisses: 5,
-  articlesServis: 5,
-  totalFournisseurs: 8,
-  totalBanques: 4,
-  totalDevis: 22,
-  totalPaiements: 20,
-  montantTotalSouscriptions: 75485000,
-  montantTotalPaiements: 54210000,
+  totalSouscriptions: 2,
+  souscriptionsEnCours: 1,
+  totalPaiements: 1,
+  tauxReussite: 95,
+  montantTotal: 1500000,
 };
 
-// Stats spécifiques pour la Banque
 export const mockDashboardStatsBanque = {
-  dossiersEnAttente: 4,
-  dossiersValides: 11,
-  dossiersRejetes: 3,
-  paiementsEnCours: 10,
-  montantFinanceTotal: 54210000,
-  montantEnCours: 24300000,
+  dossiersRecus: 1,
+  dossiersTraites: 1,
+  montantTotal: 850000,
+  tauxApprobation: 100,
 };
 
-// Stats spécifiques pour le Fournisseur
 export const mockDashboardStatsFournisseur = {
-  mesSouscriptions: 12,
-  mesDevis: 9,
-  mesDossiersValides: 7,
-  mesPaiements: 6,
-  montantTotalMesSouscriptions: 28450000,
-  montantTotalMesPaiements: 21300000,
+  mesSouscriptions: 1,
+  mesDevis: 1,
+  mesDossiersValides: 1,
+  mesPaiements: 1,
+  montantTotalMesSouscriptions: 850000,
+  montantTotalMesPaiements: 850000,
+  commandesRecues: 1,
+  commandesLivrees: 1,
+  montantTotal: 850000,
+  tauxLivraison: 100,
 };
 
-// Données pour graphiques
-export const souscriptionsParMois = [
-  { mois: "Jan", souscriptions: 7, montant: 14200000 },
-  { mois: "Fév", souscriptions: 9, montant: 18600000 },
-  { mois: "Mar", souscriptions: 11, montant: 22500000 },
-  { mois: "Avr", souscriptions: 3, montant: 6400000 },
-  { mois: "Mai", souscriptions: 0, montant: 0 },
-  { mois: "Juin", souscriptions: 0, montant: 0 },
-];
-
-export const souscriptionsParFournisseur = [
-  { fournisseur: "Papeterie CI", valeur: 8 },
-  { fournisseur: "Livres & Plus", valeur: 6 },
-  { fournisseur: "EduSupply", valeur: 5 },
-  { fournisseur: "Scolaire France", valeur: 4 },
-  { fournisseur: "Bibliothèque Max", valeur: 3 },
-  { fournisseur: "Autres", valeur: 4 },
+// ============================================================
+// DONNÉES GRAPHIQUES
+// ============================================================
+export const paiementsParMois = [
+  { mois: "Janv", montant: 250000 },
+  { mois: "Févr", montant: 320000 },
+  { mois: "Mars", montant: 280000 },
+  { mois: "Avr", montant: 350000 },
+  { mois: "Mai", montant: 420000 },
+  { mois: "Juin", montant: 380000 },
 ];
 
 export const souscriptionsParBanque = [
-  { banque: "SGCI", valeur: 11, couleur: "#f59e0b" },
-  { banque: "BICICI", valeur: 8, couleur: "#22c55e" },
-  { banque: "BIAO", valeur: 7, couleur: "#3b82f6" },
-  { banque: "Coris Bank", valeur: 4, couleur: "#8b5cf6" },
+  { banque: "AFG Bank", valeur: 100, couleur: "#ff6b35" },
+];
+
+export const souscriptionsParFournisseur = [
+  { fournisseur: "LDF Groupe", valeur: 50, couleur: "#ff6b35" },
+  { fournisseur: "Drocolor", valeur: 50, couleur: "#ff8c42" },
+];
+
+export const souscriptionsParMois = [
+  { mois: "Janv", nombre: 5 },
+  { mois: "Févr", nombre: 8 },
+  { mois: "Mars", nombre: 6 },
+  { mois: "Avr", nombre: 10 },
+  { mois: "Mai", nombre: 12 },
+  { mois: "Juin", nombre: 9 },
 ];
 
 export const dossiersParStatut = [
-  { statut: "Validés", valeur: 11, couleur: "#22c55e" },
-  { statut: "En cours", valeur: 6, couleur: "#f59e0b" },
-  { statut: "Rejetés", valeur: 3, couleur: "#ef4444" },
-  { statut: "Infos demandées", valeur: 2, couleur: "#f97316" },
-];
-
-export const paiementsParMois = [
-  { mois: "Jan", encaisses: 0, enCours: 1 },
-  { mois: "Fév", encaisses: 3, enCours: 1 },
-  { mois: "Mar", encaisses: 2, enCours: 2 },
-  { mois: "Avr", encaisses: 2, enCours: 8 },
-  { mois: "Mai", encaisses: 1, enCours: 2 },
+  { statut: "Approuvé", nombre: 1, couleur: "#00c853" },
+  { statut: "En cours", nombre: 0, couleur: "#ff8c42" },
+  { statut: "Rejeté", nombre: 0, couleur: "#d84315" },
 ];
 
 // ============================================================
-// HELPERS
+// FONCTIONS HELPER
 // ============================================================
-export const getSouscriptionById = (id: string) =>
-  mockSouscriptions.find((s) => s.id === id);
-
-export const getDevisById = (id: string) =>
-  mockDevis.find((d) => d.id === id);
-
-export const getDossierById = (id: string) =>
-  mockDossiers.find((d) => d.id === id);
-
-export const getPaiementById = (id: string) =>
-  mockPaiements.find((p) => p.id === id);
-
-export const getSouscripteurById = (id: string) =>
-  mockSouscripteurs.find((s) => s.id === id);
-
-export const getFournisseurById = (id: string) =>
-  mockFournisseurs.find((f) => f.id === id);
-
-export const getBanqueById = (id: string) =>
-  mockBanques.find((b) => b.id === id);
-
-export const getHistoriqueBySouscription = (souscriptionId: string) =>
-  mockHistorique.filter((h) => h.souscriptionId === souscriptionId);
-
-export const getDossierBySouscription = (souscriptionId: string) =>
-  mockDossiers.find((d) => d.souscriptionId === souscriptionId);
-
-export const getDevisBySouscription = (souscriptionId: string) =>
-  mockDevis.find((d) => d.souscriptionId === souscriptionId);
+export const getDevisById = (id: string) => mockDevis.find(d => d.id === id) || null;
+export const getSouscriptionById = (id: string) => mockSouscriptions.find(s => s.id === id) || null;
+export const getPaiementById = (id: string) => mockPaiements.find(p => p.id === id) || null;
+export const getDossierById = (id: string) => mockDossiers.find(d => d.id === id) || null;
+export const getDevisBySouscription = (id: string) => mockDevis.filter(d => d.souscriptionId === id);
+export const getDossierBySouscription = (id: string) => mockDossiers.find(d => d.souscriptionId === id) || null;
+export const getHistoriqueBySouscription = (id: string) => [];

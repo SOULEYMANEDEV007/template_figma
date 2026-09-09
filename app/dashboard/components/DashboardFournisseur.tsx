@@ -27,6 +27,25 @@ export default function DashboardFournisseur() {
 
   return (
     <div className="space-y-6 fade-in">
+      {/* Note importante */}
+      <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-500 rounded-lg p-4 shadow-sm">
+        <div className="flex items-start gap-3">
+          <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div className="flex-1">
+            <h3 className="text-sm font-bold text-orange-900 mb-1">📢 Note importante</h3>
+            <p className="text-sm text-orange-800 leading-relaxed">
+              En tant que fournisseur, vous êtes responsable de la création des souscriptions pour vos clients. 
+              Assurez-vous de vérifier toutes les informations avant la soumission. Une fois validées par la banque, 
+              vous recevrez les bons de commande pour livraison des fournitures scolaires.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <KPICard title="Mes souscriptions"    value={stats.mesSouscriptions}   icon={FileText}     variant="yellow" subtitle={fmtCFA(stats.montantTotalMesSouscriptions)} />

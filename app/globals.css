@@ -4,8 +4,8 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ═══════════════════════════════════════════════════════════════
-   DESIGN SYSTEM — ViFlo
-   Bleu marine #1a237e · Cyan #00bcd4 · Vert #00c853
+   DESIGN SYSTEM — ViFlow (Thème Orange Dégradé)
+   Orange sunset #ff6b35 · Corail #ff8c42 · Amber #ffc947
    Financer. Connecter. Développer.
    ═══════════════════════════════════════════════════════════════ */
 
@@ -45,76 +45,81 @@
   --radius: 0.75rem;
 
   /* ── Base ── */
-  --background: oklch(0.98 0.004 240);
-  --foreground: oklch(0.15 0.03 260);
+  --background: oklch(0.99 0.008 60);
+  --foreground: oklch(0.20 0.02 30);
 
   /* ── Card ── */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.03 260);
+  --card-foreground: oklch(0.20 0.02 30);
 
   /* ── Popover ── */
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0.03 260);
+  --popover-foreground: oklch(0.20 0.02 30);
 
-  /* ── Primary — Bleu marine ViFlo ── */
-  --primary: oklch(0.32 0.18 265);
+  /* ── Primary — Orange sunset ── */
+  --primary: oklch(0.65 0.20 40);
   --primary-foreground: oklch(1 0 0);
 
-  /* ── Secondary — Cyan ViFlo ── */
-  --secondary: oklch(0.72 0.14 200);
+  /* ── Secondary — Corail chaleureux ── */
+  --secondary: oklch(0.72 0.18 50);
   --secondary-foreground: oklch(1 0 0);
 
   /* ── Muted ── */
-  --muted: oklch(0.96 0.006 240);
-  --muted-foreground: oklch(0.52 0.02 260);
+  --muted: oklch(0.97 0.006 60);
+  --muted-foreground: oklch(0.55 0.02 40);
 
   /* ── Accent ── */
-  --accent: oklch(0.94 0.03 220);
-  --accent-foreground: oklch(0.15 0.03 260);
+  --accent: oklch(0.95 0.05 60);
+  --accent-foreground: oklch(0.20 0.02 30);
 
   /* ── Destructive ── */
   --destructive: oklch(0.58 0.23 27);
 
   /* ── Border / Input / Ring ── */
-  --border: oklch(0.90 0.008 230);
-  --input:  oklch(0.90 0.008 230);
-  --ring:   oklch(0.55 0.18 220);
+  --border: oklch(0.92 0.008 60);
+  --input:  oklch(0.92 0.008 60);
+  --ring:   oklch(0.70 0.18 50);
 
   /* ── Charts ── */
-  --chart-1: oklch(0.32 0.18 265);  /* bleu marine */
-  --chart-2: oklch(0.72 0.14 200);  /* cyan        */
-  --chart-3: oklch(0.65 0.22 145);  /* vert        */
-  --chart-4: oklch(0.58 0.23 27);   /* orange/rouge*/
-  --chart-5: oklch(0.55 0.16 300);  /* violet      */
+  --chart-1: oklch(0.65 0.20 40);  /* orange sunset */
+  --chart-2: oklch(0.72 0.18 50);  /* corail */
+  --chart-3: oklch(0.78 0.15 80);  /* amber */
+  --chart-4: oklch(0.58 0.23 27);  /* rouge */
+  --chart-5: oklch(0.68 0.16 320); /* rose */
 
   /* ── Font ── */
   --font-nunito: "Nunito", sans-serif;
 
   /* ══════════════════════════════════════════════
-     PALETTE VIFLOW
+     PALETTE VIFLOW — ORANGE SUNSET
      ══════════════════════════════════════════════ */
 
-  /* Bleu marine principal */
-  --vf-navy:        #1a237e;
-  --vf-navy-dark:   #0d1453;
-  --vf-navy-light:  #283593;
+  /* Orange sunset principal */
+  --vf-orange:        #ff6b35;
+  --vf-orange-dark:   #e64a19;
+  --vf-orange-light:  #ff8a50;
 
-  /* Cyan / teal */
-  --vf-cyan:        #00bcd4;
-  --vf-cyan-light:  #26c6da;
-  --vf-cyan-dark:   #0097a7;
+  /* Corail chaleureux */
+  --vf-coral:         #ff8c42;
+  --vf-coral-light:   #ffa05a;
+  --vf-coral-dark:    #ff7043;
 
-  /* Vert (flèche ascendante) */
-  --vf-green:       #00c853;
-  --vf-green-light: #69f0ae;
-  --vf-green-dark:  #00a040;
+  /* Amber doré */
+  --vf-amber:         #ffc947;
+  --vf-amber-light:   #ffd54f;
+  --vf-amber-dark:    #ffb300;
+
+  /* Terracotta (contraste) */
+  --vf-terra:         #d84315;
+  --vf-terra-light:   #e64a19;
+  --vf-terra-dark:    #bf360c;
 
   /* Sidebar */
-  --vf-sidebar-bg:          #0d1453;
-  --vf-sidebar-text:        #93aed6;
-  --vf-sidebar-active-bg:   rgba(0,188,212,0.15);
-  --vf-sidebar-active-text: #26c6da;
-  --vf-sidebar-active-border: #00bcd4;
+  --vf-sidebar-bg:          linear-gradient(180deg, #ff6b35 0%, #ff8c42 100%);
+  --vf-sidebar-text:        #ffccbc;
+  --vf-sidebar-active-bg:   rgba(255,140,66,0.15);
+  --vf-sidebar-active-text: #ffa05a;
+  --vf-sidebar-active-border: #ff8c42;
 }
 
 /* ─── Layout général ─────────────────────────────────────── */
@@ -127,41 +132,44 @@
   }
 }
 
-/* ─── Gradients ViFlo ────────────────────────────────────── */
+/* ─── Gradients Orange Sunset ───────────────────────────── */
 .gradient-primary {
-  background: linear-gradient(135deg, var(--vf-navy) 0%, var(--vf-cyan) 100%);
+  background: linear-gradient(135deg, var(--vf-orange) 0%, var(--vf-coral) 100%);
 }
 .gradient-primary-h {
-  background: linear-gradient(90deg, var(--vf-navy) 0%, var(--vf-cyan) 100%);
+  background: linear-gradient(90deg, var(--vf-orange) 0%, var(--vf-amber) 100%);
 }
 .gradient-secondary {
-  background: linear-gradient(135deg, var(--vf-cyan) 0%, var(--vf-green) 100%);
+  background: linear-gradient(135deg, var(--vf-coral) 0%, var(--vf-amber) 100%);
 }
 .gradient-green {
-  background: linear-gradient(135deg, var(--vf-green) 0%, var(--vf-green-dark) 100%);
+  background: linear-gradient(135deg, #00c853 0%, #00a040 100%);
 }
 .gradient-hero {
-  background: linear-gradient(145deg, #0a0f3d 0%, #0d1453 50%, #0a0f3d 100%);
+  background: linear-gradient(145deg, #2d1810 0%, #1a0f0a 50%, #0f0806 100%);
 }
-.gradient-card-blue {
-  background: linear-gradient(135deg, rgba(26,35,126,0.06) 0%, rgba(0,188,212,0.03) 100%);
+.gradient-card-orange {
+  background: linear-gradient(135deg, rgba(255,107,53,0.08) 0%, rgba(255,107,53,0.03) 100%);
 }
-.gradient-card-cyan {
-  background: linear-gradient(135deg, rgba(0,188,212,0.08) 0%, rgba(0,188,212,0.03) 100%);
+.gradient-card-coral {
+  background: linear-gradient(135deg, rgba(255,140,66,0.10) 0%, rgba(255,140,66,0.04) 100%);
 }
-.gradient-card-green {
-  background: linear-gradient(135deg, rgba(0,200,83,0.08) 0%, rgba(0,200,83,0.03) 100%);
+.gradient-card-amber {
+  background: linear-gradient(135deg, rgba(255,201,71,0.12) 0%, rgba(255,201,71,0.05) 100%);
+}
+.gradient-yellow {
+  background: linear-gradient(135deg, var(--vf-orange) 0%, var(--vf-amber) 100%);
 }
 
-/* ─── Texte dégradé ViFlo ────────────────────────────────── */
+/* ─── Texte dégradé Orange ───────────────────────────────── */
 .text-gradient-vf {
-  background: linear-gradient(90deg, var(--vf-navy) 0%, var(--vf-cyan) 100%);
+  background: linear-gradient(90deg, var(--vf-orange) 0%, var(--vf-amber) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* ─── Sidebar ────────────────────────────────────────────── */
+/* ─── Sidebar Orange ─────────────────────────────────────── */
 @layer utilities {
   .ldf-sidebar {
     background: var(--vf-sidebar-bg);
@@ -172,8 +180,8 @@
     color: var(--vf-sidebar-text);
   }
   .ldf-sidebar-item:hover {
-    background: rgba(255,255,255,0.06);
-    color: #e0f7fa;
+    background: rgba(255,140,66,0.10);
+    color: #fff8e1;
   }
   .ldf-sidebar-item.active {
     background: var(--vf-sidebar-active-bg);
@@ -183,22 +191,35 @@
   }
 }
 
-/* ─── Cards KPI ──────────────────────────────────────────── */
+/* ─── Cards KPI Orange ───────────────────────────────────── */
 @layer utilities {
   .kpi-card {
     @apply bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow duration-200;
   }
+  .kpi-card-orange {
+    @apply bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow duration-200;
+    border-left: 4px solid #ff6b35;
+  }
+  .kpi-card-coral {
+    @apply bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow duration-200;
+    border-left: 4px solid #ff8c42;
+  }
+  .kpi-card-amber {
+    @apply bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow duration-200;
+    border-left: 4px solid #ffc947;
+  }
+  /* Aliases pour compatibilité */
   .kpi-card-blue {
     @apply bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow duration-200;
-    border-left: 4px solid var(--vf-navy);
+    border-left: 4px solid #ff6b35;
   }
   .kpi-card-cyan {
     @apply bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow duration-200;
-    border-left: 4px solid var(--vf-cyan);
+    border-left: 4px solid #ff8c42;
   }
   .kpi-card-green {
     @apply bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow duration-200;
-    border-left: 4px solid var(--vf-green);
+    border-left: 4px solid #00c853;
   }
 }
 
@@ -208,13 +229,13 @@
     @apply w-full text-sm;
   }
   .ldf-table thead th {
-    @apply px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-100;
+    @apply px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider bg-orange-50/50 border-b border-orange-100;
   }
   .ldf-table tbody tr {
     @apply border-b border-gray-50 transition-colors duration-150;
   }
   .ldf-table tbody tr:hover {
-    background: rgba(0, 188, 212, 0.04);
+    background: rgba(255, 140, 66, 0.05);
   }
   .ldf-table tbody td {
     @apply px-4 py-3.5 text-gray-700;
@@ -224,70 +245,70 @@
 /* ─── Badges statut ──────────────────────────────────────── */
 @layer utilities {
   .badge-brouillon    { @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600; }
-  .badge-soumise      { @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700; }
-  .badge-en_attente   { @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-cyan-50 text-cyan-700; }
+  .badge-soumise      { @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-orange-50 text-orange-700; }
+  .badge-en_attente   { @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700; }
   .badge-validee      { @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700; }
   .badge-rejetee      { @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-50 text-red-700; }
   .badge-payee        { @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700; }
   .badge-servie       { @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-teal-50 text-teal-800; }
-  .badge-en_cours     { @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-cyan-50 text-cyan-700; }
+  .badge-en_cours     { @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700; }
   .badge-encaisse     { @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700; }
 }
 
-/* ─── Buttons ViFlo ──────────────────────────────────────── */
+/* ─── Buttons Orange Sunset ──────────────────────────────── */
 @layer utilities {
   .btn-ldf-primary {
     @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 shadow-sm text-white;
-    background: linear-gradient(135deg, var(--vf-navy) 0%, var(--vf-cyan) 100%);
+    background: linear-gradient(135deg, var(--vf-orange) 0%, var(--vf-coral) 100%);
   }
   .btn-ldf-primary:hover {
     filter: brightness(1.1);
-    box-shadow: 0 4px 14px rgba(26, 35, 126, 0.35);
+    box-shadow: 0 6px 20px rgba(255, 107, 53, 0.40);
   }
   .btn-ldf-secondary {
     @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 shadow-sm text-white;
-    background: linear-gradient(135deg, var(--vf-cyan) 0%, var(--vf-green) 100%);
+    background: linear-gradient(135deg, var(--vf-coral) 0%, var(--vf-amber) 100%);
   }
   .btn-ldf-secondary:hover {
     filter: brightness(1.08);
-    box-shadow: 0 4px 14px rgba(0, 188, 212, 0.4);
+    box-shadow: 0 6px 20px rgba(255, 140, 66, 0.40);
   }
   .btn-ldf-outline {
-    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-all duration-200;
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium rounded-lg border-2 border-orange-200 bg-white text-orange-700 hover:bg-orange-50 transition-all duration-200;
   }
   .btn-ldf-danger {
-    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg bg-red-600 text-white hover:bg-red-700 transition-all duration-200;
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg bg-red-600 text-white hover:bg-red-700 transition-all duration-200 shadow-sm;
   }
 }
 
-/* ─── Timeline ───────────────────────────────────────────── */
+/* ─── Timeline Orange ────────────────────────────────────── */
 @layer utilities {
   .timeline-dot-complete {
     @apply w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0 z-10;
   }
   .timeline-dot-current {
     @apply w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 z-10;
-    background: linear-gradient(135deg, var(--vf-navy), var(--vf-cyan));
+    background: linear-gradient(135deg, var(--vf-orange), var(--vf-coral));
   }
   .timeline-dot-pending {
-    @apply w-8 h-8 rounded-full bg-gray-100 border-2 border-gray-200 flex items-center justify-center flex-shrink-0 z-10;
+    @apply w-8 h-8 rounded-full bg-orange-50 border-2 border-orange-200 flex items-center justify-center flex-shrink-0 z-10;
   }
   .timeline-dot-rejected {
     @apply w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 z-10;
   }
 }
 
-/* ─── Forms ──────────────────────────────────────────────── */
+/* ─── Forms Orange ───────────────────────────────────────── */
 @layer utilities {
   .ldf-input {
     @apply w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-lg bg-white text-gray-800 placeholder-gray-400
            focus:outline-none focus:ring-2 transition-all duration-200;
-    --tw-ring-color: rgba(0, 188, 212, 0.4);
+    --tw-ring-color: rgba(255, 140, 66, 0.4);
     border-color: #e5e7eb;
   }
   .ldf-input:focus {
-    border-color: var(--vf-cyan);
-    box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.15);
+    border-color: var(--vf-coral);
+    box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.15);
   }
   .ldf-label {
     @apply block text-sm font-medium text-gray-700 mb-1.5;
@@ -297,8 +318,8 @@
            focus:outline-none transition-all duration-200 appearance-none cursor-pointer;
   }
   .ldf-select:focus {
-    border-color: var(--vf-cyan);
-    box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.15);
+    border-color: var(--vf-coral);
+    box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.15);
   }
 }
 
@@ -328,11 +349,11 @@
   }
 }
 
-/* ─── Scrollbar ──────────────────────────────────────────── */
+/* ─── Scrollbar Orange ───────────────────────────────────── */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: #f0f4ff; }
-::-webkit-scrollbar-thumb { background: #90caf9; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #42a5f5; }
+::-webkit-scrollbar-track { background: #fff8f0; }
+::-webkit-scrollbar-thumb { background: #ffb74d; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #ff9800; }
 
 /* ─── Animations ─────────────────────────────────────────── */
 @keyframes fadeIn {
@@ -347,15 +368,16 @@
 }
 .slide-in { animation: slideInRight 0.3s ease-out both; }
 
-/* ─── gradient-yellow compat → redirigé vers primary ViFlo ─ */
-.gradient-yellow {
-  background: linear-gradient(135deg, var(--vf-navy) 0%, var(--vf-cyan) 100%);
+@keyframes pulse-orange {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(255, 107, 53, 0); }
 }
-.gradient-green {
-  background: linear-gradient(135deg, var(--vf-green) 0%, var(--vf-green-dark) 100%);
-}
+.pulse-orange { animation: pulse-orange 2s infinite; }
 
 /* ─── Print ──────────────────────────────────────────────── */
 @media print {
   .no-print { display: none !important; }
+  .gradient-primary, .gradient-secondary {
+    background: #ff6b35 !important;
+  }
 }

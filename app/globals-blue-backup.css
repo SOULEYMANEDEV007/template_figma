@@ -1,0 +1,12 @@
+/* ═══════════════════════════════════════════════════════════════
+   BACKUP — Thème Bleu original
+   À restaurer si besoin : renommer en globals.css
+   ═══════════════════════════════════════════════════════════ */
+   
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Contenu original sauvegardé... */
+/* Pour restaurer : supprimer globals.css et renommer ce fichier */

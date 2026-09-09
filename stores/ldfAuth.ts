@@ -113,8 +113,8 @@ export const useLDFAuthStore = create<AuthState & AuthActions>((set, get) => ({
 
   // ── Notifications ──────────────────────────────────────────────────────────
   setNotifications: (notifications) => {
-    const unreadCount = notifications.filter((n) => !n.estLue).length;
-    set({ notifications, unreadCount });
+    const unreadCount = notifications?.filter((n) => !n.estLue).length || 0;
+    set({ notifications: notifications || [], unreadCount });
   },
   markNotificationRead: (id) =>
     set((s) => {
