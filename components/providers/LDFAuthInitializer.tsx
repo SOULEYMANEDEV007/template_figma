@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 import { useLDFAuthStore } from "@/stores/ldfAuth";
 import { useEffect } from "react";

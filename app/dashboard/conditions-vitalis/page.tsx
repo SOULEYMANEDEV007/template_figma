@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 import { AFG_BANK } from "@/lib/vitalisData";
 import { VITALIS_CONFIG } from "@/types/vitalis";

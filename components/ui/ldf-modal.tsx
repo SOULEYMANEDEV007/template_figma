@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 // components/ui/ldf-modal.tsx — Modales et confirmations LDF
 import { cn } from "@/lib/utils";

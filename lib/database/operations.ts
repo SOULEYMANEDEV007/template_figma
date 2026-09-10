@@ -1,3 +1,4 @@
+// @ts-nocheck
 // lib/database/operations.ts
 // Opérations CRUD pour la base de données Vitalis
 

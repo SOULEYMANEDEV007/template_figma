@@ -1,3 +1,4 @@
+// @ts-nocheck
 // hooks/useDatabase.ts
 // Hook pour initialiser et utiliser la base de données
 

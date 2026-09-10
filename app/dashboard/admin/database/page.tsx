@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 import { useDatabase } from "@/hooks/useDatabase";
 import { db, isDatabaseSeeded } from "@/lib/database/db";

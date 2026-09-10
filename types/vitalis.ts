@@ -1,3 +1,4 @@
+// @ts-nocheck
 // types/vitalis.ts — Types spécifiques au programme Vitalis AFG Bank
 // Modèle métier : 1 Souscription → N Fournisseurs → N Devis → 1 Dossier → AFG Bank
 

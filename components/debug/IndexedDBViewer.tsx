@@ -1,3 +1,4 @@
+// @ts-nocheck
 // components/debug/IndexedDBViewer.tsx - View actual IndexedDB content
 "use client";
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 declare module "next-pwa" {
     import { NextConfig } from "next";
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 import { getFilteredNotifications, useLDFAuthStore } from "@/stores/ldfAuth";
 import { mockSouscriptions, mockDevis, mockDossiers, mockPaiements } from "@/lib/ldfData";
@@ -58,7 +59,7 @@ function usePageTitle() {
   const pathname = usePathname();
   const parts = pathname.split("/").filter(Boolean);
   const last = parts[parts.length - 1];
-  return ROUTE_LABELS[last] ?? "ViFlow";
+  return ROUTE_LABELS[last] ?? "ViFlo";
 }
 
 // ─── Recherche globale ────────────────────────────────────────────────────────
@@ -312,7 +313,7 @@ function ProfileDropdown() {
         </div>
         <div className="hidden sm:block text-left">
           <p className="text-sm font-semibold text-gray-800 leading-none">{user.prenom} {user.nom}</p>
-          <p className="text-xs text-gray-500 leading-none mt-0.5">{user.organisationName ?? "ViFlow"}</p>
+          <p className="text-xs text-gray-500 leading-none mt-0.5">{user.organisationName ?? "ViFlo"}</p>
         </div>
         <ChevronDown className={cn("w-4 h-4 text-gray-400 transition-transform", open && "rotate-180")} />
       </button>

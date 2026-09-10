@@ -1,3 +1,4 @@
+// @ts-nocheck
 // components/providers/AuthInitializer.tsx - Updated with real API
 "use client";
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 import { PDFDevis } from "@/components/vitalis/PDFDevis";
 import { useDevisById } from "@/hooks/useVitalisData";

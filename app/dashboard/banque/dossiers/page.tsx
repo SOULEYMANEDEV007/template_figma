@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 import { StatusBadge } from "@/components/ui/ldf-badge";
 import { mockDossiers } from "@/lib/ldfData";

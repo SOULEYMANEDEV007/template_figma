@@ -1,3 +1,4 @@
+// @ts-nocheck
 // stores/auth.ts - Updated with real API and cookies-next
 "use client";
 

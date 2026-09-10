@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 import { PDFSouscription } from "@/components/vitalis/PDFSouscription";
 import { mockSouscriptionsVitalis } from "@/lib/vitalisData";

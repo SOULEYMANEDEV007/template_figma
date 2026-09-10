@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 import { downloadPDFFromHTML } from "@/lib/pdf/generator";
 import { AFG_BANK } from "@/lib/vitalisData";

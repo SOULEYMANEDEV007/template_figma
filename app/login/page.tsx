@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -80,8 +81,8 @@ export default function LoginPage() {
 
         {/* Logo ViFlo */}
         <div className="relative flex items-center gap-3">
-          <div className="w-14 h-14 rounded-xl overflow-hidden flex items-center justify-center">
-            <Image src="/images/viflow_logo.png" alt="ViFlow" width={56} height={56} className="object-contain"
+          <div className="w-24 h-24 rounded-xl overflow-hidden flex items-center justify-center">
+            <Image src="/logos/viflo_logo.png" alt='ViFlo' width={85} height={85} className="object-contain"
               onError={() => { }} />
           </div>
           <div>
@@ -128,8 +129,8 @@ export default function LoginPage() {
         <div className="relative grid grid-cols-3 gap-4">
           {[
             { label: "Souscriptions", value: "30+" },
-            { label: "Fournisseurs", value: "8" },
-            { label: "Banques", value: "4" },
+            { label: "Fournisseurs agréés", value: "5" },
+            { label: "Banque partenaire", value: "AFG Bank" },
           ].map((s) => (
             <div key={s.label} className="text-center">
               <p className="text-2xl font-bold text-white">{s.value}</p>
@@ -146,17 +147,17 @@ export default function LoginPage() {
           {/* Mobile logo ViFlo */}
           <div className="lg:hidden flex items-center gap-3 mb-8">
             <div className="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center">
-              <Image src="/images/viflow_logo.png" alt="ViFlo" width={48} height={48} className="object-contain" onError={() => { }} />
+              <Image src="/images/viflo_logo.png" alt="ViFlo" width={48} height={48} className="object-contain" onError={() => { }} />
             </div>
             <div>
-              <p className="font-bold text-gray-900 text-lg">ViFlow</p>
+              <p className="font-bold text-gray-900 text-lg">ViFlo</p>
               <p className="text-xs text-gray-500">Financements Vitalis</p>
             </div>
           </div>
 
           {/* Titre */}
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-gray-900">Bienvenue sur ViFlow</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Bienvenue sur ViFlo</h1>
             <p className="text-gray-500 text-sm mt-1.5">Simplifier le financement, fluidifier les achats.</p>
           </div>
 

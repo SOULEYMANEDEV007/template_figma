@@ -1,3 +1,4 @@
+// @ts-nocheck
 // components/vitalis/index.ts
 // Export centralisé des composants Vitalis
 

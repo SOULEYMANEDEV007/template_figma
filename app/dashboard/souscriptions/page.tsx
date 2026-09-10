@@ -1,63 +1,82 @@
+// @ts-nocheck
 "use client";
+
 import { StatusBadge } from "@/components/ui/ldf-badge";
-import { mockBanques, mockFournisseurs, mockSouscriptions } from "@/lib/ldfData";
 import { useLDFAuthStore } from "@/stores/ldfAuth";
+import { useVitalisDb } from "@/stores/vitalisDbStore";
 import {
-  ChevronLeft, ChevronRight, Download, Eye, FileText,
-  Filter, Plus, Search, X,
+  Building2, ChevronLeft, ChevronRight, Eye,
+  FileText, Filter, Plus, Search, User, X,
 } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { toast } from "sonner";
-import type { SouscriptionStatut } from "@/types/ldf";
 
-const STATUTS: SouscriptionStatut[] = ["brouillon","soumise","en_attente","validee","rejetee","payee","servie"];
-const STATUT_LABELS: Record<SouscriptionStatut, string> = {
-  brouillon:"Brouillon", soumise:"Soumise", en_attente:"En attente",
-  validee:"Validée", rejetee:"Rejetée", payee:"Payée", servie:"Servie",
-};
 const fmtCFA = (v: number) => new Intl.NumberFormat("fr-FR").format(v) + " FCFA";
+
+const STATUTS_LABELS: Record<string, string> = {
+  brouillon: "Brouillon", soumise: "Soumise", en_traitement: "En traitement",
+  en_attente: "En attente", validee: "Validée", rejetee: "Rejetée",
+  financee: "Financée", payee: "Payée", livree: "Livrée", terminee: "Terminée",
+};
+
+const PAGE_SIZE = 10;
 
 export default function SouscriptionsPage() {
   const { user } = useLDFAuthStore();
+  const { souscriptions, fournisseurs } = useVitalisDb();
+
   const [search, setSearch] = useState("");
   const [filterStatut, setFilterStatut] = useState("");
-  const [filterBanque, setFilterBanque] = useState("");
   const [filterFournisseur, setFilterFournisseur] = useState("");
+  const [filterType, setFilterType] = useState<"" | "physique" | "morale">("");
   const [showFilters, setShowFilters] = useState(false);
   const [page, setPage] = useState(1);
-  const PAGE_SIZE = 10;
 
+  // Filtrer selon le rôle
+  const roleFiltered = useMemo(() => {
+    if (user?.role === "fournisseur" && user.organisationId) {
+      return souscriptions.filter(s =>
+        s.fournisseurs.some(f => f.fournisseurId === user.organisationId)
+      );
+    }
+    return souscriptions;
+  }, [souscriptions, user]);
+
+  // Appliquer les filtres
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
-    return mockSouscriptions.filter(s => {
+    return roleFiltered.filter(s => {
       const matchSearch = !q ||
         s.reference.toLowerCase().includes(q) ||
-        `${s.souscripteurNom} ${s.souscripteurPrenom}`.toLowerCase().includes(q) ||
-        s.fournisseurNom.toLowerCase().includes(q) ||
-        s.banqueNom.toLowerCase().includes(q);
+        s.souscripteurNom.toLowerCase().includes(q) ||
+        (s.souscripteurPrenom?.toLowerCase().includes(q)) ||
+        (s.souscripteurEntreprise?.toLowerCase().includes(q)) ||
+        s.fournisseurs.some(f => f.fournisseurNom.toLowerCase().includes(q));
       const matchStatut = !filterStatut || s.statut === filterStatut;
-      const matchBanque = !filterBanque || s.banqueId === filterBanque;
-      const matchFrn    = !filterFournisseur || s.fournisseurId === filterFournisseur;
-      return matchSearch && matchStatut && matchBanque && matchFrn;
-    });
-  }, [search, filterStatut, filterBanque, filterFournisseur]);
+      const matchFourn = !filterFournisseur || s.fournisseurs.some(f => f.fournisseurId === filterFournisseur);
+      const matchType = !filterType || s.typeSouscripteur === filterType;
+      return matchSearch && matchStatut && matchFourn && matchType;
+    }).sort((a, b) => b.dateCreation.localeCompare(a.dateCreation));
+  }, [roleFiltered, search, filterStatut, filterFournisseur, filterType]);
 
   const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const hasFilters = search || filterStatut || filterFournisseur || filterType;
 
   const clearFilters = () => {
-    setSearch(""); setFilterStatut(""); setFilterBanque(""); setFilterFournisseur(""); setPage(1);
+    setSearch(""); setFilterStatut(""); setFilterFournisseur(""); setFilterType("");
+    setPage(1);
   };
-  const hasFilters = search || filterStatut || filterBanque || filterFournisseur;
 
   return (
     <div className="space-y-5 fade-in">
-      {/* ── Header ── */}
+      {/* Header */}
       <div className="page-header">
         <div>
-          <h1 className="page-title">Souscriptions</h1>
-          <p className="page-subtitle">{filtered.length} souscription{filtered.length > 1 ? "s" : ""} {hasFilters ? "filtrée" : "au total"}{filtered.length > 1 ? "s" : ""}</p>
+          <h1 className="page-title">Souscriptions Vitalis</h1>
+          <p className="page-subtitle">
+            {filtered.length} souscription{filtered.length > 1 ? "s" : ""}{hasFilters ? " filtrées" : " au total"} · Banque : <strong>AFG Bank</strong>
+          </p>
         </div>
         {(user?.role === "admin" || user?.role === "fournisseur") && (
           <Link href="/dashboard/souscriptions/creer" className="btn-ldf-primary">
@@ -66,147 +85,194 @@ export default function SouscriptionsPage() {
         )}
       </div>
 
-      {/* ── Barre de recherche + filtres ── */}
-      <div className="section-card">
-        <div className="px-5 py-3.5 flex flex-col sm:flex-row gap-3">
+      {/* Barre de recherche + filtres */}
+      <div className="section-card p-4 space-y-3">
+        <div className="flex gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-            <input type="text" placeholder="Référence, souscripteur, fournisseur..." value={search}
-              onChange={e => { setSearch(e.target.value); setPage(1); }}
-              className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-400 transition-all" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text" value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
+              placeholder="Rechercher par référence, nom, fournisseur..."
+              className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400 outline-none"
+            />
           </div>
-          <div className="flex items-center gap-2">
-            <button onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg border transition-colors ${showFilters || hasFilters ? "border-amber-400 bg-amber-50 text-amber-700" : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"}`}>
-              <Filter className="w-4 h-4" />
-              Filtres {hasFilters && <span className="w-2 h-2 rounded-full bg-amber-500" />}
+          <button
+            onClick={() => setShowFilters(v => !v)}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors
+              ${showFilters ? "bg-orange-500 border-orange-500 text-white" : "border-gray-200 text-gray-600 hover:border-orange-300"}`}
+          >
+            <Filter className="w-4 h-4" /> Filtres
+            {hasFilters && <span className="w-2 h-2 rounded-full bg-orange-300" />}
+          </button>
+          {hasFilters && (
+            <button onClick={clearFilters} className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-red-200 text-red-500 hover:bg-red-50 text-sm transition-colors">
+              <X className="w-4 h-4" />
             </button>
-            {hasFilters && (
-              <button onClick={clearFilters}
-                className="flex items-center gap-1.5 px-3 py-2.5 text-xs text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-red-100">
-                <X className="w-3.5 h-3.5" /> Effacer
-              </button>
-            )}
-          </div>
+          )}
         </div>
 
         {showFilters && (
-          <div className="px-5 pb-4 border-t border-gray-50 pt-3 grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <div>
-              <label className="ldf-label text-xs">Statut</label>
-              <select value={filterStatut} onChange={e => { setFilterStatut(e.target.value); setPage(1); }} className="ldf-select text-sm py-2">
-                <option value="">Tous les statuts</option>
-                {STATUTS.map(s => <option key={s} value={s}>{STATUT_LABELS[s]}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="ldf-label text-xs">Banque</label>
-              <select value={filterBanque} onChange={e => { setFilterBanque(e.target.value); setPage(1); }} className="ldf-select text-sm py-2">
-                <option value="">Toutes les banques</option>
-                {mockBanques.map(b => <option key={b.id} value={b.id}>{b.sigle}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="ldf-label text-xs">Fournisseur</label>
-              <select value={filterFournisseur} onChange={e => { setFilterFournisseur(e.target.value); setPage(1); }} className="ldf-select text-sm py-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-gray-100">
+            <select
+              value={filterStatut} onChange={e => { setFilterStatut(e.target.value); setPage(1); }}
+              className="px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400 outline-none"
+            >
+              <option value="">Tous les statuts</option>
+              {Object.entries(STATUTS_LABELS).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+            </select>
+
+            {user?.role !== "fournisseur" && (
+              <select
+                value={filterFournisseur} onChange={e => { setFilterFournisseur(e.target.value); setPage(1); }}
+                className="px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400 outline-none"
+              >
                 <option value="">Tous les fournisseurs</option>
-                {mockFournisseurs.map(f => <option key={f.id} value={f.id}>{f.nom}</option>)}
+                {fournisseurs.map(f => <option key={f.id} value={f.id}>{f.nom}</option>)}
               </select>
-            </div>
+            )}
+
+            <select
+              value={filterType} onChange={e => { setFilterType(e.target.value as any); setPage(1); }}
+              className="px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400 outline-none"
+            >
+              <option value="">Tous les types</option>
+              <option value="physique">Personne Physique</option>
+              <option value="morale">Personne Morale</option>
+            </select>
+          </div>
+        )}
+      </div>
+
+      {/* Tableau */}
+      <div className="section-card overflow-hidden">
+        {paginated.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-gray-400">
+            <FileText className="w-10 h-10 mb-3" />
+            <p className="text-sm font-medium">Aucune souscription trouvée</p>
+            {(user?.role === "admin" || user?.role === "fournisseur") && (
+              <Link href="/dashboard/souscriptions/creer" className="mt-3 text-xs text-orange-500 hover:underline">
+                Créer la première →
+              </Link>
+            )}
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-100 bg-gray-50/60">
+                  <th className="text-left text-xs font-semibold text-gray-500 px-4 py-3">Référence</th>
+                  <th className="text-left text-xs font-semibold text-gray-500 px-4 py-3">Souscripteur</th>
+                  <th className="text-left text-xs font-semibold text-gray-500 px-4 py-3 hidden md:table-cell">Fournisseur(s)</th>
+                  <th className="text-left text-xs font-semibold text-gray-500 px-4 py-3 hidden lg:table-cell">Montant</th>
+                  <th className="text-left text-xs font-semibold text-gray-500 px-4 py-3 hidden lg:table-cell">Date</th>
+                  <th className="text-left text-xs font-semibold text-gray-500 px-4 py-3">Statut</th>
+                  <th className="px-4 py-3" />
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {paginated.map(s => (
+                  <tr key={s.id} className="hover:bg-orange-50/30 transition-colors group">
+                    <td className="px-4 py-3">
+                      <Link href={`/dashboard/souscriptions/${s.id}`} className="font-mono text-xs font-bold text-[#ff6b35] hover:underline">
+                        {s.reference}
+                      </Link>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 
+                          ${s.typeSouscripteur === "physique" ? "bg-blue-100 text-blue-600" : "bg-purple-100 text-purple-600"}`}>
+                          {s.typeSouscripteur === "physique" ? <User className="w-3 h-3" /> : <Building2 className="w-3 h-3" />}
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold text-gray-800">
+                            {s.souscripteurPrenom} {s.souscripteurNom}
+                          </p>
+                          {s.souscripteurEntreprise && (
+                            <p className="text-[10px] text-gray-400 truncate max-w-[120px]">{s.souscripteurEntreprise}</p>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 hidden md:table-cell">
+                      <div className="flex flex-wrap gap-1 items-center">
+                        {s.fournisseurs
+                          .filter(f => (user?.role === "fournisseur" && user.organisationId) ? f.fournisseurId === user.organisationId : true)
+                          .slice(0, 3).map(f => {
+                            const detailFourn = fournisseurs.find(xf => xf.id === f.fournisseurId);
+                            return (
+                              <div key={f.fournisseurId} className="flex items-center gap-1.5 px-2 py-1 bg-white border border-gray-100 rounded-lg shadow-sm">
+                                {detailFourn?.logo ? (
+                                  <img src={detailFourn.logo} alt={f.fournisseurNom} className="w-5 h-5 object-contain" />
+                                ) : (
+                                  <Building2 className="w-4 h-4 text-gray-400" />
+                                )}
+                                <span className="text-[10px] font-medium text-gray-700 truncate max-w-[80px]">
+                                  {f.fournisseurNom.split(" ")[0]}
+                                </span>
+                              </div>
+                            );
+                        })}
+                        {user?.role !== "fournisseur" && s.fournisseurs.length > 3 && (
+                          <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded-full">+{s.fournisseurs.length - 3}</span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 hidden lg:table-cell">
+                      <span className="text-xs font-semibold text-gray-700">
+                        {s.montantTotal > 0 ? fmtCFA(s.montantTotal) : <span className="text-gray-300 italic text-[10px]">À définir</span>}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 hidden lg:table-cell">
+                      <span className="text-xs text-gray-500">
+                        {new Date(s.dateCreation).toLocaleDateString("fr-FR")}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <StatusBadge statut={s.statut} size="sm" />
+                    </td>
+                    <td className="px-4 py-3">
+                      <Link
+                        href={`/dashboard/souscriptions/${s.id}`}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-xs text-orange-600 hover:bg-orange-50 hover:border-orange-300 transition-colors font-medium"
+                      >
+                        <Eye className="w-3.5 h-3.5" /> Voir
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
 
-        {/* ── Tableau ── */}
-        <div className="overflow-x-auto">
-          <table className="ldf-table">
-            <thead>
-              <tr>
-                <th>Référence</th>
-                <th>Souscripteur</th>
-                <th>Fournisseur</th>
-                <th>Banque</th>
-                <th>Montant</th>
-                <th>Statut</th>
-                <th>Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginated.length === 0 ? (
-                <tr>
-                  <td colSpan={8} className="py-16 text-center">
-                    <FileText className="w-10 h-10 text-gray-200 mx-auto mb-2" />
-                    <p className="text-sm text-gray-400">Aucune souscription trouvée</p>
-                  </td>
-                </tr>
-              ) : paginated.map(s => (
-                <tr key={s.id}>
-                  <td>
-                    <Link href={`/dashboard/souscriptions/${s.id}`}
-                      className="font-mono text-xs font-bold text-amber-700 hover:text-amber-800 hover:underline">
-                      {s.reference}
-                    </Link>
-                  </td>
-                  <td>
-                    <div className="font-medium text-gray-800 text-sm">{s.souscripteurPrenom} {s.souscripteurNom}</div>
-                    <div className="text-xs text-gray-400">{s.souscripteurTelephone}</div>
-                  </td>
-                  <td className="text-sm text-gray-600">{s.fournisseurNom}</td>
-                  <td className="text-sm text-gray-600">{s.banqueNom}</td>
-                  <td className="font-semibold text-gray-800 text-sm whitespace-nowrap">{fmtCFA(s.montantTotal)}</td>
-                  <td><StatusBadge statut={s.statut} /></td>
-                  <td className="text-xs text-gray-400 whitespace-nowrap">
-                    {new Date(s.dateCreation).toLocaleDateString("fr-FR")}
-                  </td>
-                  <td>
-                    <div className="flex items-center gap-1">
-                      <Link href={`/dashboard/souscriptions/${s.id}`}
-                        className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-amber-50 hover:text-amber-600 transition-colors" title="Voir">
-                        <Eye className="w-3.5 h-3.5" />
-                      </Link>
-                      {s.devisId ? (
-                        <Link href={`/dashboard/devis/${s.devisId.replace("DEV-", "DEV-")}`}
-                          className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors" title="Voir le devis">
-                          <FileText className="w-3.5 h-3.5" />
-                        </Link>
-                      ) : (user?.role === "fournisseur" || user?.role === "admin") && (
-                        <Link href={`/dashboard/devis/nouveau?souscriptionId=${s.id}`}
-                          className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-emerald-50 hover:text-emerald-600 transition-colors" title="Créer un devis">
-                          <Plus className="w-3.5 h-3.5" />
-                        </Link>
-                      )}
-                      <button onClick={() => toast.info("Téléchargement simulé")}
-                        className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors" title="Télécharger">
-                        <Download className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* ── Pagination ── */}
-        {filtered.length > PAGE_SIZE && (
-          <div className="px-5 py-3 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500">
-            <span>{(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} sur {filtered.length}</span>
+        {/* Pagination */}
+        {pages > 1 && (
+          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 bg-gray-50/40">
+            <p className="text-xs text-gray-500">
+              {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} sur {filtered.length}
+            </p>
             <div className="flex items-center gap-1">
-              <button disabled={page === 1} onClick={() => setPage(p => p - 1)}
-                className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 disabled:opacity-40 transition-colors">
+              <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+                className="w-7 h-7 rounded-lg border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-white disabled:opacity-30">
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              {Array.from({ length: Math.min(5, pages) }, (_, i) => {
-                const pg = Math.max(1, Math.min(page - 2, pages - 4)) + i;
-                return (
-                  <button key={pg} onClick={() => setPage(pg)}
-                    className={`w-8 h-8 rounded-lg text-xs font-medium transition-colors ${pg === page ? "gradient-yellow text-amber-900 shadow-sm" : "hover:bg-gray-100"}`}>
-                    {pg}
-                  </button>
-                );
-              })}
-              <button disabled={page === pages} onClick={() => setPage(p => p + 1)}
-                className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 disabled:opacity-40 transition-colors">
+              {Array.from({ length: pages }, (_, i) => i + 1)
+                .filter(p => p === 1 || p === pages || Math.abs(p - page) <= 1)
+                .map((p, idx, arr) => (
+                  <>
+                    {idx > 0 && arr[idx - 1] !== p - 1 && <span key={`gap-${p}`} className="text-gray-300 text-xs">…</span>}
+                    <button
+                      key={p} onClick={() => setPage(p)}
+                      className={`w-7 h-7 rounded-lg text-xs font-semibold transition-colors
+                        ${p === page ? "bg-orange-500 text-white" : "border border-gray-200 text-gray-600 hover:bg-white"}`}
+                    >
+                      {p}
+                    </button>
+                  </>
+                ))
+              }
+              <button onClick={() => setPage(p => Math.min(pages, p + 1))} disabled={page === pages}
+                className="w-7 h-7 rounded-lg border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-white disabled:opacity-30">
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>

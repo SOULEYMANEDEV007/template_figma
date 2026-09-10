@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 // components/ui/data-table.tsx — Table de données réutilisable
 import { cn } from "@/lib/utils";

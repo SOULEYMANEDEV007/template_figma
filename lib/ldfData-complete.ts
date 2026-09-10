@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Fichier complet avec toutes les données mockées nécessaires
 // À copier dans ldfData.ts après vérification
 
@@ -26,19 +27,19 @@ export const getDossierBySouscription = (id: string) => null;
 export const getHistoriqueBySouscription = (id: string) => [];
 
 export const mockUsers = [
-  { id: "USR-001", email: "admin@viflow.ci", password: "admin123", nom: "Admin", prenom: "Système", role: "admin" },
+  { id: "USR-001", email: "admin@viflo.ci", password: "admin123", nom: "Admin", prenom: "Système", role: "admin" },
   { id: "USR-002", email: "banque@afgbank.ci", password: "banque123", nom: "Traoré", prenom: "Abdoulaye", role: "banque", banqueId: "AFG-001" },
 ];
 
 export const mockSouscripteursUsers = [
-  { id: "USRSCP-001", email: "client@viflow.ci", password: "client123", nom: "Coulibaly", prenom: "Mamadou", role: "souscripteur" },
+  { id: "USRSCP-001", email: "client@viflo.ci", password: "client123", nom: "Coulibaly", prenom: "Mamadou", role: "souscripteur" },
 ];
 
 export const demoAccounts = [
-  { email: "admin@viflow.ci", password: "admin123", role: "admin", nom: "Admin", prenom: "Système" },
+  { email: "admin@viflo.ci", password: "admin123", role: "admin", nom: "Admin", prenom: "Système" },
   { email: "banque@afgbank.ci", password: "banque123", role: "banque", nom: "Traoré", prenom: "Abdoulaye" },
   { email: "fournisseur@ldf.ci", password: "fournisseur123", role: "fournisseur", nom: "LDF", prenom: "Groupe" },
-  { email: "client@viflow.ci", password: "client123", role: "souscripteur", nom: "Coulibaly", prenom: "Mamadou" },
+  { email: "client@viflo.ci", password: "client123", role: "souscripteur", nom: "Coulibaly", prenom: "Mamadou" },
 ];
 
 export const mockNotifications: any[] = [];

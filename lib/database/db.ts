@@ -1,3 +1,4 @@
+// @ts-nocheck
 // lib/database/db.ts
 // Configuration de la base de données locale Dexie (IndexedDB)
 

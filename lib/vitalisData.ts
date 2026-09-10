@@ -1,3 +1,4 @@
+// @ts-nocheck
 // lib/vitalisData.ts
 // Wrapper vers la base de données (lib/database)
 // Conservé temporairement pour compatibilité

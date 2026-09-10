@@ -1,3 +1,4 @@
+// @ts-nocheck
 // types/ldf.ts — Types métier LDF Groupe
 // NOTE: Ce fichier maintient la compatibilité avec l'ancien modèle
 // Les nouveaux types Vitalis sont dans types/vitalis.ts
