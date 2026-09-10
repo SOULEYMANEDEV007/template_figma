@@ -239,7 +239,7 @@ const SEED_FOURNISSEURS: VFournisseur[] = [
     telephone: '+225 27 23 45 67 89', telephoneCommercial: '+225 05 06 07 08 09',
     adresse: 'Zone Industrielle de Yopougon', ville: 'Abidjan', quartier: 'Yopougon',
     rccm: 'CI-ABJ-2018-B-45678', secteurActivite: 'Matériel informatique et électronique',
-    logo: '/logos/logo-drocolor.jfif', agreVitalis: true, dateAgrementVitalis: '2023-03-20', statut: 'actif',
+    logo: '/images/logo-drocolor.jfif', agreVitalis: true, dateAgrementVitalis: '2023-03-20', statut: 'actif',
   },
   {
     id: 'FOUR-SMT-003', code: 'SMART', nom: 'SMART TECHNOLOGIE', raisonSociale: 'Smart Technologie CI SA',
@@ -247,7 +247,7 @@ const SEED_FOURNISSEURS: VFournisseur[] = [
     telephone: '+225 27 20 12 34 56', telephoneCommercial: '+225 01 52 53 54 55',
     adresse: 'Rue des Jardins, Plateau', ville: 'Abidjan', quartier: 'Plateau',
     rccm: 'CI-ABJ-2020-B-78901', secteurActivite: 'Informatique et solutions digitales',
-    logo: '/logos/logo-smart-techno.png', agreVitalis: true, dateAgrementVitalis: '2023-06-10', statut: 'actif',
+    logo: '/images/logo-smart-techno.png', agreVitalis: true, dateAgrementVitalis: '2023-06-10', statut: 'actif',
   },
   {
     id: 'FOUR-NAS-004', code: 'NASKO', nom: 'NASKO', raisonSociale: 'NASKO Distribution SARL',
@@ -255,7 +255,7 @@ const SEED_FOURNISSEURS: VFournisseur[] = [
     telephone: '+225 27 21 98 76 54', telephoneCommercial: '+225 07 77 88 99 00',
     adresse: 'Boulevard de Marseille, Treichville', ville: 'Abidjan', quartier: 'Treichville',
     rccm: 'CI-ABJ-2019-B-34567', secteurActivite: 'Meubles et équipements de bureau',
-    logo: '/logos/logo-nasko.png', agreVitalis: true, dateAgrementVitalis: '2023-09-05', statut: 'actif',
+    logo: '/images/logo-nasko.png', agreVitalis: true, dateAgrementVitalis: '2023-09-05', statut: 'actif',
   },
   {
     id: 'FOUR-CAR-005', code: 'CARRF', nom: 'CARREFOUR', raisonSociale: "Carrefour Côte d'Ivoire",
@@ -263,7 +263,7 @@ const SEED_FOURNISSEURS: VFournisseur[] = [
     telephone: '+225 27 21 25 00 00', telephoneCommercial: '+225 05 44 55 66 77',
     adresse: 'Centre Commercial Cap Sud, Marcory', ville: 'Abidjan', quartier: 'Marcory',
     rccm: 'CI-ABJ-2017-B-90123', secteurActivite: 'Grande distribution multi-produits',
-    agreVitalis: true, dateAgrementVitalis: '2023-02-28', statut: 'actif',
+    logo: '/images/logo-carrefour.png', agreVitalis: true, dateAgrementVitalis: '2023-02-28', statut: 'actif',
   },
 ];
 
@@ -362,7 +362,7 @@ const DEMO_DEVIS: VDevis[] = [
       { id: 'ART-005', designation: 'Ramettes Papier A4 (500 feuilles)', quantite: 20, prixUnitaire: 5000, remise: 5, montantHT: 95000 },
     ],
     totalHT: 287500, tva: 0, totalTTC: 287500,
-    conditions: 'Paiement à réception de la commande validée par AFG Bank. Livraison franco de port à Abidjan.',
+    conditions: 'Paiement à la réception de la commande validée par AFG Bank. Livraison franco de port à Abidjan.',
     delaiLivraisonAbidjan: '7 jours ouvrés', delaiLivraisonInterieur: '15 jours ouvrés', validiteDevis: '30 jours ouvrés',
     statut: 'valide', dateCreation: oneWeekAgo, dateExpiration: today, dateValidation: twoDaysAgo, dateMiseAJour: twoDaysAgo,
   },
@@ -777,7 +777,7 @@ export const useVitalisDb = create<VitalisDbState>()(
     }),
     {
       name: 'vitalis-db-v1',
-      storage: createJSONStorage(() => (typeof window !== 'undefined' ? localStorage : { getItem: () => null, setItem: () => {}, removeItem: () => {} })),
+      storage: createJSONStorage(() => (typeof window !== 'undefined' ? localStorage : { getItem: () => null, setItem: () => { }, removeItem: () => { } })),
       partialize: (state) => ({
         souscriptions: state.souscriptions,
         devis: state.devis,

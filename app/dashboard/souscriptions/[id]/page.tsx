@@ -203,7 +203,7 @@ export default function SouscriptionDetailPage() {
             <div className="section-card-header">
               <div className="flex items-center gap-2">
                 <Package className="w-4 h-4 text-amber-500" />
-                <h3 className="text-sm font-semibold text-gray-800">Articles ({sub.articles.length})</h3>
+                <h3 className="text-sm font-semibold text-gray-800">Articles ({devis?.articles?.length || 0})</h3>
               </div>
             </div>
             <div className="overflow-x-auto">
@@ -219,13 +219,13 @@ export default function SouscriptionDetailPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {sub.articles.map(a => (
+                  {(devis?.articles || []).map(a => (
                     <tr key={a.id}>
                       <td className="font-medium text-gray-800">{a.designation}</td>
                       <td className="font-mono text-xs text-gray-500">{a.reference}</td>
                       <td>{a.quantite}</td>
                       <td>{fmtCFA(a.prixUnitaire)}</td>
-                      <td>{a.remise > 0 ? `${a.remise}%` : "—"}</td>
+                      <td>{a.remise && a.remise > 0 ? `${a.remise}%` : "—"}</td>
                       <td className="font-semibold text-gray-800">{fmtCFA(a.montantHT)}</td>
                     </tr>
                   ))}

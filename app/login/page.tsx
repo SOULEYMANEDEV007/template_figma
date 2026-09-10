@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { demoAccounts } from "@/lib/ldfData";
 import { getDashboardPath, useLDFAuthStore } from "@/stores/ldfAuth";
-import { Building2, Eye, EyeOff, Lock, Mail, ShieldCheck, Sparkles, TrendingUp, User } from "lucide-react";
+import { Building2, Eye, EyeOff, Lock, Mail, ShieldCheck, Sparkles, TrendingUp, User, CheckCircle2, Folder, Activity, Wallet } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -67,74 +67,74 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex">
       {/* ── Colonne gauche — branding ViFlo ── */}
-      <div className="hidden lg:flex lg:w-[45%] relative overflow-hidden flex-col justify-between p-12 ldf-sidebar">
+      <div className="hidden lg:flex lg:w-[50%] relative overflow-hidden flex-col justify-between p-12 bg-[#FF5E00]">
 
-        {/* Pattern décoratif */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-0 left-0 w-96 h-96 rounded-full bg-cyan-400 blur-3xl -translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-green-400 blur-3xl translate-x-1/2 translate-y-1/2" />
-          <div className="absolute inset-0" style={{
-            backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)",
-            backgroundSize: "32px 32px",
-          }} />
-        </div>
+        {/* Pattern Topographique Décoratif */}
+        <div className="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E")`,
+          backgroundSize: '120px 120px'
+        }} />
+        
+        {/* Cercles de lumière (pour le relief) */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-yellow-400/20 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3 pointer-events-none" />
 
         {/* Logo ViFlo */}
-        <div className="relative flex items-center gap-3">
-          <div className="w-24 h-24 rounded-xl overflow-hidden flex items-center justify-center">
-            <Image src="/logos/viflo_logo.png" alt='ViFlo' width={200} height={200} className="object-contain"
-              onError={() => { }} />
+        <div className="relative z-10 flex items-center gap-3">
+          <div className="w-24 h-24 rounded-xl overflow-hidden flex items-center justify-center bg-white/10 p-2 backdrop-blur-sm border border-white/20">
+            <Image src="/logos/viflo_logo.png" alt='ViFlo' width={200} height={200} className="object-contain" onError={() => { }} />
           </div>
           <div>
-            <p className="text-white font-bold text-2xl leading-none">
-              Plateforme de gestion et de suivi des financements Vitalis
+            <p className="text-white font-bold text-xl leading-none">
+              Plateforme de gestion
             </p>
-            <p className="text-cyan-300/90 text-sm mt-1">Simplifier le financement</p>
+            <p className="text-white/80 text-sm mt-1">Financements Vitalis</p>
           </div>
         </div>
 
         {/* Contenu central */}
-        <div className="relative space-y-8">
+        <div className="relative z-10 space-y-8">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-400/10 border border-cyan-400/20 mb-4">
-              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-              <span className="text-cyan-300 text-xs font-medium">Plateforme de gestion et de suivi des financements Vitalis.</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 mb-4 backdrop-blur-sm">
+              <Sparkles className="w-3.5 h-3.5 text-white" />
+              <span className="text-white text-xs font-medium">Simplifier le financement, fluidifier les achats.</span>
             </div>
-            <h2 className="text-3xl font-bold text-white leading-tight">
-              Simplifier le financement,<br />
-              fluidifier les achats
+            <h2 className="text-4xl font-extrabold text-white leading-tight tracking-tight">
+              Un seul espace pour gérer<br />tous vos financements.
             </h2>
-            <p className="text-cyan-100/70 text-sm mt-4 leading-relaxed max-w-md">
-              Suivez chaque étape : souscription, devis, validation bancaire, paiement et service.
+            <p className="text-white/80 text-sm mt-4 leading-relaxed max-w-md">
+              Suivez chaque étape : souscription, devis, validation bancaire, paiement et service de vos articles.
             </p>
           </div>
 
           {/* Steps */}
-          {[
-            { step: "01", label: "Validation du prêt", color: "bg-cyan-400" },
-            { step: "02", label: "Paiement et Achat des articles", color: "bg-green-400" },
-            { step: "03", label: "Dévis généré et envoyé", color: "bg-emerald-400" },
-            { step: "04", label: "Articles servis", color: "bg-teal-400" },
-          ].map((s) => (
-            <div key={s.step} className="flex items-center gap-3">
-              <div className={`w-7 h-7 rounded-lg ${s.color} flex items-center justify-center flex-shrink-0`}>
-                <span className="text-white text-xs font-bold">{s.step}</span>
+          <div className="space-y-3">
+            {[
+              { step: "01", label: "Validation du prêt par la banque" },
+              { step: "02", label: "Paiement et Achat des articles" },
+              { step: "03", label: "Dévis généré et envoyé" },
+              { step: "04", label: "Articles servis par le fournisseur" },
+            ].map((s) => (
+              <div key={s.step} className="flex items-center gap-3 bg-white/5 border border-white/10 p-2 rounded-xl backdrop-blur-sm w-max pr-6">
+                <div className={`w-8 h-8 rounded-lg bg-white text-[#FF5E00] flex items-center justify-center flex-shrink-0 shadow-sm`}>
+                  <span className="text-xs font-bold">{s.step}</span>
+                </div>
+                <span className="text-white font-medium text-sm">{s.label}</span>
               </div>
-              <span className="text-cyan-100/80 text-sm">{s.label}</span>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
         {/* Stats */}
-        <div className="relative grid grid-cols-3 gap-4">
+        <div className="relative z-10 grid grid-cols-3 gap-4 pt-8 border-t border-white/20">
           {[
             { label: "Souscriptions", value: "30+" },
             { label: "Fournisseurs agréés", value: "5" },
             { label: "Banque partenaire", value: "AFG Bank" },
           ].map((s) => (
-            <div key={s.label} className="text-center">
-              <p className="text-2xl font-bold text-white">{s.value}</p>
-              <p className="text-cyan-300/70 text-xs mt-0.5">{s.label}</p>
+            <div key={s.label}>
+              <p className="text-3xl font-black text-white tracking-tight">{s.value}</p>
+              <p className="text-white/70 text-xs mt-1 uppercase tracking-wider font-semibold">{s.label}</p>
             </div>
           ))}
         </div>
