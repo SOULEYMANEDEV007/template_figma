@@ -82,12 +82,12 @@ export default function LoginPage() {
         {/* Logo ViFlo */}
         <div className="relative flex items-center gap-3">
           <div className="w-24 h-24 rounded-xl overflow-hidden flex items-center justify-center">
-            <Image src="/logos/viflo_logo.png" alt='ViFlo' width={85} height={85} className="object-contain"
+            <Image src="/logos/viflo_logo.png" alt='ViFlo' width={200} height={200} className="object-contain"
               onError={() => { }} />
           </div>
           <div>
             <p className="text-white font-bold text-2xl leading-none">
-              Vi<span className="text-gradient-vf">Flow</span>
+              Plateforme de gestion et de suivi des financements Vitalis
             </p>
             <p className="text-cyan-300/90 text-sm mt-1">Simplifier le financement</p>
           </div>
