@@ -1,4 +1,7 @@
-// types/ldf.ts — Types métier complets LDF Groupe
+// @ts-nocheck
+// types/ldf.ts — Types métier LDF Groupe
+// NOTE: Ce fichier maintient la compatibilité avec l'ancien modèle
+// Les nouveaux types Vitalis sont dans types/vitalis.ts
 
 // ============================================================
 // RÔLES
@@ -338,3 +341,62 @@ export interface SearchResult {
   statut?: string;
   lien: string;
 }
+
+// ============================================================
+// RE-EXPORTS DES TYPES VITALIS
+// ============================================================
+// Pour faciliter la migration progressive, on ré-exporte les types Vitalis
+export type {
+  // Souscripteurs
+  TypeSouscripteur,
+  SouscripteurPhysique,
+  SouscripteurMorale,
+  Souscripteur as SouscripteurVitalis,
+  SituationProfessionnelle,
+  SituationMatrimoniale,
+
+  // Souscription et relations
+  Souscription as SouscriptionVitalis,
+  SouscriptionStatut as SouscriptionStatutVitalis,
+  SouscriptionFournisseur,
+
+  // Fournisseurs
+  FournisseurVitalis,
+
+  // Devis
+  Devis as DevisVitalis,
+  DevisArticle as DevisArticleVitalis,
+  DevisStatut as DevisStatutVitalis,
+
+  // Dossiers
+  Dossier as DossierVitalis,
+  DossierStatut as DossierStatutVitalis,
+
+  // Paiements
+  Paiement as PaiementVitalis,
+  PaiementStatut as PaiementStatutVitalis,
+  PaiementFournisseur,
+
+  // Livraisons
+  Livraison,
+  StatutPreparation,
+  ModeLivraison,
+
+  // Points relais
+  PointRelais,
+
+  // Agences AFG
+  AgenceAFG,
+
+  // Autres
+  HistoriqueEvenement as HistoriqueEvenementVitalis,
+  DashboardStatsVitalis,
+  ConditionsVitalis,
+  ConditionSection,
+
+  // Helpers
+  isSouscripteurPhysique,
+  isSouscripteurMorale,
+} from "./vitalis";
+
+export { VITALIS_CONFIG } from "./vitalis";

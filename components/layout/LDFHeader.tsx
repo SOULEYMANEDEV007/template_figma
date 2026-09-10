@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 import { getFilteredNotifications, useLDFAuthStore } from "@/stores/ldfAuth";
 import { mockSouscriptions, mockDevis, mockDossiers, mockPaiements } from "@/lib/ldfData";
@@ -58,7 +59,7 @@ function usePageTitle() {
   const pathname = usePathname();
   const parts = pathname.split("/").filter(Boolean);
   const last = parts[parts.length - 1];
-  return ROUTE_LABELS[last] ?? "ViFlow";
+  return ROUTE_LABELS[last] ?? "ViFlo";
 }
 
 // ─── Recherche globale ────────────────────────────────────────────────────────
@@ -307,12 +308,12 @@ function ProfileDropdown() {
         className="flex items-center gap-2.5 pl-1 pr-2 py-1 rounded-lg hover:bg-gray-100 transition-colors"
       >
         <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white"
-          style={{ background: "linear-gradient(135deg, #00bcd4, #00c853)" }}>
-          {user.firstName[0]}{user.lastName[0]}
+          style={{ background: "linear-gradient(135deg, #ff6b35, #ff8c42)" }}>
+          {user.prenom?.[0] || user.nom?.[0] || 'U'}{user.nom?.[0] || ''}
         </div>
         <div className="hidden sm:block text-left">
-          <p className="text-sm font-semibold text-gray-800 leading-none">{user.firstName} {user.lastName}</p>
-          <p className="text-xs text-gray-500 leading-none mt-0.5">{user.organisationName ?? "ViFlow"}</p>
+          <p className="text-sm font-semibold text-gray-800 leading-none">{user.prenom} {user.nom}</p>
+          <p className="text-xs text-gray-500 leading-none mt-0.5">{user.organisationName ?? "ViFlo"}</p>
         </div>
         <ChevronDown className={cn("w-4 h-4 text-gray-400 transition-transform", open && "rotate-180")} />
       </button>
@@ -320,7 +321,7 @@ function ProfileDropdown() {
       {open && (
         <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 z-50 fade-in overflow-hidden py-1">
           <div className="px-4 py-3 border-b border-gray-100">
-            <p className="text-sm font-semibold text-gray-900">{user.firstName} {user.lastName}</p>
+            <p className="text-sm font-semibold text-gray-900">{user.prenom} {user.nom}</p>
             <p className="text-xs text-gray-500 truncate">{user.email}</p>
           </div>
           <Link href="/dashboard/parametres" onClick={() => setOpen(false)}

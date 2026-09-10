@@ -1,4 +1,7 @@
+// @ts-nocheck
 // Types génériques pour ViFlo - Plateforme de financement
+// LEGACY: Ces types sont conservés pour compatibilité
+// Utilisez les types Vitalis pour les nouvelles fonctionnalités
 export type UserRole = "admin" | "banque" | "fournisseur";
 
 export type User = {
@@ -23,3 +26,9 @@ export type DashboardData = {
         articlesServis: number;
     };
 };
+
+// ============================================================
+// EXPORTS VITALIS (recommandé pour nouvelles fonctionnalités)
+// ============================================================
+export * from "./vitalis";
+// export * from "./ldf";

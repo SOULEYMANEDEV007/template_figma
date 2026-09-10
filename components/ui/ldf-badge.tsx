@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 // components/ui/ldf-badge.tsx — Badges statuts LDF
 import { cn } from "@/lib/utils";

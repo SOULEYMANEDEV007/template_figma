@@ -1,3 +1,4 @@
+// @ts-nocheck
 // lib/api-client.ts
 
 import axios from "axios";

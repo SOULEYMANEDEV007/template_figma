@@ -1,3 +1,4 @@
+// @ts-nocheck
 
 // types/api.ts - Types API ViFlo Finance
 

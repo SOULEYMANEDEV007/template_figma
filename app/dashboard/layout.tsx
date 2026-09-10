@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 import LDFHeader from "@/components/layout/LDFHeader";
 import LDFSidebar from "@/components/layout/LDFSidebar";

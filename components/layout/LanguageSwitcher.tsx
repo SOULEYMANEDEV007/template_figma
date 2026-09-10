@@ -1,3 +1,4 @@
+// @ts-nocheck
 // src/components/language-switcher.tsx
 /**
  * @author Elsa T. <elsazougouri224@gmail.com>

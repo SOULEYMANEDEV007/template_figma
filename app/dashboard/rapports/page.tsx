@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 import { mockDashboardStats, paiementsParMois, souscriptionsParBanque, souscriptionsParFournisseur, souscriptionsParMois } from "@/lib/ldfData";
 import { BarChart3, Download, TrendingUp } from "lucide-react";

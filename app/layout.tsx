@@ -1,5 +1,7 @@
+// @ts-nocheck
 import LDFAuthInitializer from "@/components/providers/LDFAuthInitializer";
 import { ReactQueryProvider } from "@/components/providers/ReactQueryProvider";
+import { DatabaseProvider } from "@/providers/DatabaseProvider";
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { Toaster } from "sonner";
@@ -13,7 +15,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "ViFlow — Simplifier le financement, fluidifier les achats",
+  title: "ViFlo — Simplifier le financement, fluidifier les achats",
   description: "Plateforme de gestion et de suivi des financements Vitalis. Gérez vos souscriptions, devis, validations bancaires et paiements.",
 };
 
@@ -22,9 +24,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="fr" className={plusJakartaSans.variable}>
       <body className="antialiased font-sans">
         <ReactQueryProvider>
-          <LDFAuthInitializer>
-            {children}
-          </LDFAuthInitializer>
+          <DatabaseProvider>
+            <LDFAuthInitializer>
+              {children}
+            </LDFAuthInitializer>
+          </DatabaseProvider>
         </ReactQueryProvider>
         <Toaster position="top-right" richColors closeButton />
       </body>

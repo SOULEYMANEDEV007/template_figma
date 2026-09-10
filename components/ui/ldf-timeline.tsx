@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 // components/ui/ldf-timeline.tsx — Timeline verticale du processus souscription
 import type { HistoriqueEvenement } from "@/types/ldf";

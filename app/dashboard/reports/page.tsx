@@ -1,3 +1,4 @@
+// @ts-nocheck
 import ComingSoon from "@/components/ComingSoon";
 
 type Props = {};

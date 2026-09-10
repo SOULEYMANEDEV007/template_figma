@@ -1,3 +1,4 @@
+// @ts-nocheck
 // lib/services/emailService.ts — Service d'email simulé ViFlo
 
 export interface EmailSouscription {

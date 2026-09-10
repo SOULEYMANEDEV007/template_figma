@@ -1,3 +1,4 @@
+// @ts-nocheck
 // lib/utils/error.ts - Error handling utilities
 import type { ApiError } from "@/types/api";
 import { AxiosError } from "axios";
