@@ -209,7 +209,7 @@ export default function DossierDetailPage() {
               <div className="section-card-body grid grid-cols-2 gap-4">
                 <div><p className="text-xs text-gray-400 mb-0.5">Fournisseur</p><p className="text-sm font-medium text-gray-800">{sub.fournisseurNom}</p></div>
                 <div><p className="text-xs text-gray-400 mb-0.5">Durée</p><p className="text-sm font-medium text-gray-800">{sub.duree} mois</p></div>
-                <div><p className="text-xs text-gray-400 mb-0.5">Articles</p><p className="text-sm font-medium text-gray-800">{sub.articles.length} article{sub.articles.length > 1 ? "s" : ""}</p></div>
+                <div><p className="text-xs text-gray-400 mb-0.5">Articles</p><p className="text-sm font-medium text-gray-800">{devis?.articles?.length || 0} article{(devis?.articles?.length || 0) > 1 ? "s" : ""}</p></div>
                 <div><p className="text-xs text-gray-400 mb-0.5">Montant total</p><p className="text-sm font-bold text-amber-700">{fmtCFA(sub.montantTotal)}</p></div>
               </div>
             </div>

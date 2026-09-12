@@ -91,35 +91,35 @@
   --font-nunito: "Nunito", sans-serif;
 
   /* ══════════════════════════════════════════════
-     PALETTE VIFLOW — ORANGE SUNSET
+     PALETTE VIFLO — ORANGE SUNSET VIBRANT
      ══════════════════════════════════════════════ */
 
   /* Orange sunset principal */
-  --vf-orange:        #ff6b35;
-  --vf-orange-dark:   #e64a19;
-  --vf-orange-light:  #ff8a50;
+  --vf-orange:        #FF5E00;
+  --vf-orange-dark:   #E64A00;
+  --vf-orange-light:  #FF7B2E;
 
   /* Corail chaleureux */
-  --vf-coral:         #ff8c42;
-  --vf-coral-light:   #ffa05a;
-  --vf-coral-dark:    #ff7043;
+  --vf-coral:         #FF8C00;
+  --vf-coral-light:   #FFA333;
+  --vf-coral-dark:    #E67300;
 
   /* Amber doré */
-  --vf-amber:         #ffc947;
-  --vf-amber-light:   #ffd54f;
-  --vf-amber-dark:    #ffb300;
+  --vf-amber:         #FFB300;
+  --vf-amber-light:   #FFC633;
+  --vf-amber-dark:    #E6A100;
 
   /* Terracotta (contraste) */
-  --vf-terra:         #d84315;
-  --vf-terra-light:   #e64a19;
-  --vf-terra-dark:    #bf360c;
+  --vf-terra:         #D84315;
+  --vf-terra-light:   #E64A19;
+  --vf-terra-dark:    #BF360C;
 
   /* Sidebar */
-  --vf-sidebar-bg:          linear-gradient(180deg, #ff6b35 0%, #ff8c42 100%);
-  --vf-sidebar-text:        #ffccbc;
-  --vf-sidebar-active-bg:   rgba(255,140,66,0.15);
-  --vf-sidebar-active-text: #ffa05a;
-  --vf-sidebar-active-border: #ff8c42;
+  --vf-sidebar-bg:          linear-gradient(160deg, #FF5E00 0%, #FF9E00 100%);
+  --vf-sidebar-text:        #FFE0CC;
+  --vf-sidebar-active-bg:   rgba(255,255,255,0.25);
+  --vf-sidebar-active-text: #FFFFFF;
+  --vf-sidebar-active-border: #FFD280;
 }
 
 /* ─── Layout général ─────────────────────────────────────── */

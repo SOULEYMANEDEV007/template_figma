@@ -10,6 +10,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { downloadPDFFromHTML } from "@/lib/pdf/generator";
+
 const fmtCFA = (v: number) => new Intl.NumberFormat("fr-FR").format(v) + " FCFA";
 
 export default function DevisDetailPage() {
@@ -38,6 +40,17 @@ export default function DevisDetailPage() {
     toast.success(`Devis ${devis.reference} envoyé à ${devis.banqueNom}`);
   };
 
+  const handleExportPDF = async () => {
+    try {
+      const toastId = toast.loading("Génération du PDF en cours...");
+      await downloadPDFFromHTML("devis-pdf-content", `Devis-${devis.reference}`);
+      toast.success("PDF généré avec succès", { id: toastId });
+    } catch (error) {
+      toast.error("Erreur lors de la génération du PDF");
+      console.error(error);
+    }
+  };
+
   return (
     <div className="space-y-5 fade-in max-w-4xl mx-auto">
       {/* Header */}
@@ -64,14 +77,14 @@ export default function DevisDetailPage() {
           <Link href={`/dashboard/souscriptions/${devis.souscriptionId}`} className="btn-ldf-outline text-sm py-2 px-4">
             <Eye className="w-3.5 h-3.5" /> Souscription
           </Link>
-          <button onClick={() => toast.info("Export PDF simulé")} className="btn-ldf-outline text-sm py-2 px-4">
+          <button onClick={handleExportPDF} className="btn-ldf-outline text-sm py-2 px-4">
             <Download className="w-3.5 h-3.5" /> PDF
           </button>
         </div>
       </div>
 
       {/* Preview devis */}
-      <div className="section-card">
+      <div id="devis-pdf-content" className="section-card">
         {/* En-tête du devis */}
         <div className="p-6 border-b border-gray-100">
           <div className="flex justify-between items-start">

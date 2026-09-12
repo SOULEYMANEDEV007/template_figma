@@ -389,7 +389,7 @@ function NouveauDevisContent() {
             <div className="space-y-3">
               <div>
                 <label className="block text-xs font-semibold text-gray-600 mb-1.5">Souscription <span className="text-orange-500">*</span></label>
-                <select className={sel} value={souscriptionId} onChange={e => { setSouscriptionId(e.target.value); setFournisseurId(""); }}>
+                <select className={sel} value={souscriptionId} onChange={e => { setSouscriptionId(e.target.value); }}>
                   <option value="">Sélectionner</option>
                   {souscriptions.filter(s => s.statut !== "terminee" && s.statut !== "rejetee").map(s => (
                     <option key={s.id} value={s.id}>
@@ -407,7 +407,7 @@ function NouveauDevisContent() {
                   onChange={e => setFournisseurId(e.target.value)}
                   disabled={user?.role === "fournisseur"}
                 >
-                  <option value="">Sélectionner</option>
+                  <option value="null">Sélectionner</option>
                   {fournisseursDisponibles.map(f => (
                     <option key={f.id} value={f.id}>{f.nom}</option>
                   ))}
