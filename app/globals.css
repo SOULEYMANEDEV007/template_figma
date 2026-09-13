@@ -403,4 +403,44 @@
   .gradient-primary, .gradient-secondary {
     background: #ff6b35 !important;
   }
+
+  /* Isolation de la zone du PDF */
+  body * {
+    visibility: hidden;
+  }
+  
+  #devis-pdf-content, #devis-pdf-content * {
+    visibility: visible;
+  }
+  
+  #devis-pdf-content {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Rendre visible l'en-tête du devis (logos) sur le document papier */
+  .pdf-only {
+    display: flex !important;
+  }
+  .hide-on-pdf {
+    display: none !important;
+  }
+}
+
+/* ─── Exportation html2canvas ────────────────────────────── */
+.pdf-only {
+  display: none !important;
+}
+
+.pdf-export-mode .pdf-only {
+  display: flex !important;
+}
+
+.pdf-export-mode .hide-on-pdf {
+  display: none !important;
 }

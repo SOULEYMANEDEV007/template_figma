@@ -255,7 +255,7 @@ export default function AdminFournisseursPage() {
             { key: "rccm",                label: "RCCM *",                 placeholder: "CI-ABJ-2021-B-12345",   full: false },
             { key: "compteContribuable",  label: "Compte contribuable",    placeholder: "0123456789",            full: false },
             { key: "situationJuridique",  label: "Forme juridique",        placeholder: "SARL, SA...",           full: false },
-            { key: "nombreEmployes",      label: "Nb. employés",           placeholder: "10",                    full: false },
+            { key: "nombreEmployes",      label: "Nb. employés",           placeholder: "10",                    full: false, type: "number" },
             { key: "ville",               label: "Ville",                  placeholder: "Abidjan",               full: false },
             { key: "region",              label: "Région",                 placeholder: "Abidjan Lagunes",       full: false },
             { key: "adresse",             label: "Adresse",                placeholder: "Zone Industrielle...",  full: true  },
@@ -263,9 +263,31 @@ export default function AdminFournisseursPage() {
           ].map((field: any) => (
             <div key={field.key} className={field.full ? "col-span-2" : ""}>
               <label className="ldf-label">{field.label}</label>
-              <input type="text" value={(form as any)[field.key]}
-                onChange={e => setf(field.key, e.target.value)}
-                placeholder={field.placeholder} className="ldf-input" />
+              {field.type === "number" ? (
+                <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden h-[42px] focus-within:ring-2 focus-within:ring-orange-400/50">
+                  <button type="button" 
+                    onClick={() => setf(field.key, String(Math.max(0, Number((form as any)[field.key] || 0) - 1)))} 
+                    className="w-10 h-full flex items-center justify-center bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-900 border-r border-gray-200 transition-colors font-medium"
+                  >
+                    -
+                  </button>
+                  <input type="text" 
+                    value={(form as any)[field.key]} 
+                    onChange={e => setf(field.key, e.target.value.replace(/\D/g, ''))} 
+                    className="flex-1 w-full h-full text-center outline-none text-sm font-semibold text-gray-700 bg-white" 
+                  />
+                  <button type="button" 
+                    onClick={() => setf(field.key, String(Number((form as any)[field.key] || 0) + 1))} 
+                    className="w-10 h-full flex items-center justify-center bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-900 border-l border-gray-200 transition-colors font-medium"
+                  >
+                    +
+                  </button>
+                </div>
+              ) : (
+                <input type="text" value={(form as any)[field.key]}
+                  onChange={e => setf(field.key, e.target.value)}
+                  placeholder={field.placeholder} className="ldf-input" />
+              )}
             </div>
           ))}
           {editTarget && (

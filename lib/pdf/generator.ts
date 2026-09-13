@@ -25,6 +25,12 @@ export async function generatePDFFromHTML(
 
   console.log(`📄 Génération PDF: ${filename}`);
 
+  // Ajouter une classe pour forcer l'affichage des éléments spécifiques au PDF
+  document.body.classList.add("pdf-export-mode");
+  
+  // Attendre un court instant pour que le DOM se mette à jour
+  await new Promise(resolve => setTimeout(resolve, 50));
+
   // Capturer l'élément HTML en canvas
   const canvas = await html2canvas(element, {
     scale: 2,
@@ -32,6 +38,9 @@ export async function generatePDFFromHTML(
     logging: false,
     backgroundColor: "#ffffff",
   });
+
+  // Retirer la classe
+  document.body.classList.remove("pdf-export-mode");
 
   // Créer le PDF
   const imgData = canvas.toDataURL("image/png");
