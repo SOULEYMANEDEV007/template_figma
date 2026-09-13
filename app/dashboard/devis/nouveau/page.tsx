@@ -64,7 +64,24 @@ function DevisPreview({
 }: any) {
   return (
     <div id="devis-preview" className="bg-white text-gray-900 text-sm font-sans p-8 rounded-xl border border-gray-200 shadow-sm">
-      {/* En-tête */}
+      {/* En-tête Logos (Impression PDF) */}
+      <div className="pdf-only items-center justify-between pb-6 mb-6 border-b-2 border-[#0B2447]/10 bg-white">
+        <div className="flex-1">
+          <img src="/logos/logo-fades.PNG" alt="FADES" className="h-16 object-contain" crossOrigin="anonymous" />
+        </div>
+        <div className="flex-1 flex flex-col items-center border-l border-r border-gray-200 px-4">
+          <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-2">Programme</p>
+          <img src="/logos/new_logo-viflo.JPG" alt="Vitalis" className="h-12 object-contain mix-blend-multiply rounded-xl" crossOrigin="anonymous" />
+        </div>
+        <div className="flex-1 flex flex-col items-end pl-4">
+          <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-2 mr-2">Financement</p>
+          <div className="h-12 px-3 flex items-center justify-center rounded-lg bg-white border border-gray-200 shadow-sm">
+            <img src="/logos/logo-afg-bank_atlantic.png" alt="AFG Bank" className="h-8 object-contain" crossOrigin="anonymous" />
+          </div>
+        </div>
+      </div>
+
+      {/* En-tête Texte */}
       <div className="flex justify-between items-start mb-8">
         <div>
           <div className="text-2xl font-extrabold text-orange-600 mb-1">DEVIS VITALIS</div>

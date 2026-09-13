@@ -96,6 +96,8 @@ export default function SouscriptionDetailPage() {
                 <html><head><title>Fiche de Souscription Vitalis - ${sub.reference}</title>
                 <style>
                   body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; color: #1f2937; line-height: 1.6; }
+                  .header-logos { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f3f4f6; padding-bottom: 15px; }
+                  .header-logos img { height: 40px; object-fit: contain; mix-blend-mode: multiply; }
                   h1 { color: #ea580c; border-bottom: 3px solid #ea580c; padding-bottom: 10px; text-align: center; }
                   h2 { color: #ea580c; margin-top: 24px; font-size: 16px; border-bottom: 1px solid #fed7aa; padding-bottom: 4px;}
                   table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; }
@@ -106,6 +108,11 @@ export default function SouscriptionDetailPage() {
                   @media print { body { margin: 20px; } }
                 </style>
                 </head><body>
+                <div class="header-logos">
+                  <img src="${window.location.origin}/logos/logo-fades.PNG" alt="FADES" />
+                  <img src="${window.location.origin}/logos/new_logo-viflo.JPG" alt="VIFLO" style="height: 50px;" />
+                  <img src="${window.location.origin}/logos/LOGO-AFG-Bank.jpg" alt="AFG Bank" />
+                </div>
                 <h1>Fiche de Souscription VITALIS</h1>
                 
                 <h2>1. Informations Générales</h2>

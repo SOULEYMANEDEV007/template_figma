@@ -15,7 +15,7 @@ export default function RootPage() {
   const [skip, setSkip] = useState(false);
   const [animating, setAnimating] = useState(true);
 
-  // Splash screen timeout: 8 seconds (un peu plus court pour l'UX)
+  // Splash screen timeout: 25 seconds
   useEffect(() => {
     if (isLoading) return;
     if (skip) {
@@ -28,7 +28,7 @@ export default function RootPage() {
       setTimeout(() => {
         router.replace(isAuthenticated ? "/dashboard" : "/login");
       }, 800); // fade out duration
-    }, 8000);
+    }, 25000); // 25 secondes comme demandé
 
     return () => clearTimeout(timer);
   }, [isLoading, skip, isAuthenticated, router]);
@@ -58,18 +58,18 @@ export default function RootPage() {
       <div className="relative w-full max-w-2xl aspect-square flex items-center justify-center">
         
         {/* Centre : Vitalis & FADES */}
-        <div className="absolute z-20 w-44 h-44 bg-white/10 backdrop-blur-xl rounded-full shadow-[0_0_40px_rgba(255,107,53,0.3)] flex flex-col items-center justify-center p-6 border border-white/20">
+        <div className="absolute z-20 w-44 h-44 bg-white/95 backdrop-blur-xl rounded-full shadow-[0_0_40px_rgba(255,107,53,0.3)] flex flex-col items-center justify-center p-6 border border-white/20">
           <Image 
             src="/logos/logo-fades.PNG" 
             alt="FADES" 
             width={80} height={40} 
-            className="object-contain mb-3 drop-shadow-md brightness-0 invert"
+            className="object-contain mb-3 drop-shadow-md"
           />
           <Image 
             src="/logos/new_logo-viflo.JPG" 
             alt="Vitalis" 
             width={90} height={40} 
-            className="object-contain drop-shadow-lg"
+            className="object-contain drop-shadow-lg mix-blend-multiply"
           />
         </div>
 
@@ -115,14 +115,14 @@ export default function RootPage() {
         </p>
 
         {/* Partenaire Bancaire */}
-        <div className="flex items-center gap-4 bg-white/5 backdrop-blur-md px-6 py-3 rounded-2xl border border-white/10">
-          <span className="text-[10px] text-white/50 uppercase tracking-widest font-semibold">Soutenu par</span>
-          <div className="h-6 w-[1px] bg-white/20"></div>
+        <div className="flex items-center gap-4 bg-white/95 backdrop-blur-md px-6 py-3 rounded-2xl border border-white/10">
+          <span className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold">Soutenu par</span>
+          <div className="h-6 w-[1px] bg-gray-200"></div>
           <Image 
-            src="/logos/logo-afg-bank_atlantic.png" 
+            src="/logos/LOGO-AFG-Bank.jpg" 
             alt="AFG Bank" 
             width={80} height={30} 
-            className="object-contain brightness-0 invert opacity-90"
+            className="object-contain opacity-90 mix-blend-multiply"
           />
         </div>
 

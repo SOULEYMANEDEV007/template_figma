@@ -87,7 +87,8 @@ export default function SouscriptionsPage() {
             {filtered.length} souscription{filtered.length > 1 ? "s" : ""}{hasFilters ? " filtrées" : " au total"} · Banque : <strong>AFG Bank</strong>
           </p>
         </div>
-        {(user?.role === "admin" || user?.role === "fournisseur") && (
+        {/* Le fournisseur ne crée plus les souscriptions, on laisse ce bouton admin (au cas où) */}
+        {user?.role === "admin" && (
           <Link href="/dashboard/souscriptions/creer" className="btn-ldf-primary">
             <Plus className="w-4 h-4" /> Nouvelle souscription
           </Link>

@@ -352,20 +352,28 @@ export default function ConditionsVitalisPage() {
       </div>
 
       {/* En-tête document imprimé */}
-      <div className="hidden print:block bg-white border-b-2 border-amber-500 pb-4 mb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">
-              Programme Vitalis — Conditions Générales
-            </h1>
-            <p className="text-sm text-gray-600">
-              {AFG_BANK.nom} | Version {CONDITIONS_VITALIS.version} | {CONDITIONS_VITALIS.datePublication}
-            </p>
-          </div>
-          <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
-            <span className="text-2xl font-bold text-white">AFG</span>
-          </div>
+      <div className="hidden print:flex items-center justify-between p-8 border-b-2 border-gray-100 bg-white mb-6">
+        <div className="flex-1">
+          <img src="/logos/logo-fades.PNG" alt="FADES" className="h-16 object-contain" />
         </div>
+        <div className="flex-1 flex flex-col items-center border-l border-r border-gray-200 px-4">
+          <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-2">Programme</p>
+          <img src="/logos/new_logo-viflo.JPG" alt="Vitalis" className="h-12 object-contain mix-blend-multiply rounded-xl" />
+        </div>
+        <div className="flex-1 flex flex-col items-end pl-4">
+          <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-2 mr-2">Financement</p>
+          <img src="/logos/LOGO-AFG-Bank.jpg" alt="AFG Bank" className="h-10 object-contain" />
+        </div>
+      </div>
+      
+      {/* Titre document imprimé */}
+      <div className="hidden print:block text-center mb-8">
+        <h1 className="text-2xl font-bold text-gray-900 mb-1">
+          Programme Vitalis — Conditions Générales
+        </h1>
+        <p className="text-sm text-gray-600">
+          Version {CONDITIONS_VITALIS.version} | {CONDITIONS_VITALIS.datePublication}
+        </p>
       </div>
 
       {/* Intro */}

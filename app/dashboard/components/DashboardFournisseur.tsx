@@ -80,7 +80,9 @@ export default function DashboardFournisseur() {
                 <html><head><title>Conditions Vitalis — AFG Bank</title>
                 <style>
                   body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; color: #1f2937; line-height: 1.6; }
-                  h1 { color: #ff6b35; border-bottom: 3px solid #ff6b35; padding-bottom: 10px; }
+                  .header-logos { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f3f4f6; padding-bottom: 15px; }
+                  .header-logos img { height: 40px; object-fit: contain; mix-blend-mode: multiply; }
+                  h1 { color: #ff6b35; padding-bottom: 10px; font-size: 24px; }
                   h2 { color: #ea580c; margin-top: 24px; font-size: 15px; }
                   .badge { display: inline-block; background: #fff7ed; border: 1px solid #fed7aa; color: #c2410c; padding: 2px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
                   table { width: 100%; border-collapse: collapse; margin: 12px 0; }
@@ -91,6 +93,13 @@ export default function DashboardFournisseur() {
                   @media print { body { margin: 20px; } }
                 </style>
                 </head><body>
+                
+                <div class="header-logos">
+                  <img src="${window.location.origin}/logos/logo-fades.PNG" alt="FADES" />
+                  <img src="${window.location.origin}/logos/new_logo-viflo.JPG" alt="VIFLO" style="height: 50px;" />
+                  <img src="${window.location.origin}/logos/LOGO-AFG-Bank.jpg" alt="AFG Bank" />
+                </div>
+
                 <h1>📋 Conditions de Souscription — Programme VITALIS</h1>
                 <p><span class="badge">AFG Bank · Banque Financeuse Unique</span> &nbsp; <span class="badge">Durée : 36 mois</span></p>
                 <p>Ce document résume les conditions à remplir pour bénéficier du programme Vitalis financé par <strong>AFG Bank</strong>. Il doit être remis au client avant son inscription.</p>
@@ -212,7 +221,6 @@ export default function DashboardFournisseur() {
             <div className="text-center py-8 text-gray-400">
               <FileText className="w-8 h-8 mx-auto mb-2" />
               <p className="text-sm">Aucune souscription pour le moment</p>
-              <Link href="/dashboard/souscriptions/creer" className="text-xs text-orange-500 hover:underline mt-1 inline-block">Créer la première →</Link>
             </div>
           ) : (
             <div className="space-y-2">
