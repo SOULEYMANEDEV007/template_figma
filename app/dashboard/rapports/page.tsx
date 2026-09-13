@@ -1,4 +1,31 @@
 // @ts-nocheck
+"use client";
+import { mockDashboardStats, paiementsParMois, souscriptionsParBanque, souscriptionsParFournisseur, souscriptionsParMois } from "@/lib/ldfData";
+import { BarChart3, Download, TrendingUp } from "lucide-react";
+import { toast } from "sonner";
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+
+const fmtCFA = (v: number) => new Intl.NumberFormat("fr-FR").format(v) + " FCFA";
+
+export default function RapportsPage() {
+  const stats = mockDashboardStats;
+
+  return (
+    <div className="space-y-6 fade-in">
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">Rapports & Statistiques</h1>
+          <p className="page-subtitle">Vue d'ensemble de l'activité Vitalis FADES — 2026</p>
+        </div>
+        <button onClick={() => toast.info("Export PDF simulé")} className="btn-ldf-outline">
+          <Download className="w-4 h-4" /> Exporter
+        </button>
+      </div>
+
+      {/* KPIs résumé */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: "Total souscriptions", value: stats.totalSouscriptions,    color: "text-amber-700",  bg: "bg-amber-50" },
           { label: "Dossiers validés",    value: stats.dossiersValides,        color: "text-emerald-700",bg: "bg-emerald-50"},
           { label: "Paiements encaissés", value: stats.paiementsEncaisses,     color: "text-green-700",  bg: "bg-green-50"  },
           { label: "Articles servis",     value: stats.articlesServis,         color: "text-teal-700",   bg: "bg-teal-50"   },
