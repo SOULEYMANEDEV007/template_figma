@@ -36,6 +36,7 @@ interface SouscripteurBase {
   email: string;
   pays: string;
   region: string;
+  departement?: string;
   ville: string;
   statut: "actif" | "inactif" | "suspendu";
   createdAt: string;
@@ -90,15 +91,17 @@ export type Souscripteur = SouscripteurPhysique | SouscripteurMorale;
 // SOUSCRIPTION (refonte complète)
 // ============================================================
 export type SouscriptionStatut =
-  | "brouillon"
-  | "soumise"
-  | "en_traitement"
-  | "validee"
-  | "rejetee"
-  | "financee"
-  | "en_preparation"
-  | "livree"
-  | "terminee";
+  | "en_preparation" // 1. EN PRÉPARATION
+  | "pret_pour_depot" // 2. DOSSIER PRÊT POUR DÉPÔT
+  | "depose_banque" // 3. DÉPOSÉ À LA BANQUE
+  | "en_analyse_bancaire" // 4. EN COURS D'ANALYSE BANCAIRE
+  | "accepte" // 5. ACCEPTÉ
+  | "refuse" // 6. REFUSÉ
+  | "finance" // 7. FINANCÉ
+  | "fournisseur_paye" // 8. FOURNISSEUR PAYÉ
+  | "commande_en_preparation" // 9. COMMANDE EN PRÉPARATION
+  | "livre" // 10. LIVRÉ
+  | "cloture"; // 11. DOSSIER CLÔTURÉ
 
 export interface Souscription {
   id: string;
@@ -164,6 +167,7 @@ export interface FournisseurVitalis {
   telephone: string;
   adresse: string;
   ville: string;
+  departement?: string;
   region?: string;
 
   // Spécifique Vitalis
@@ -176,7 +180,7 @@ export interface FournisseurVitalis {
   nombreSouscriptions: number;
   montantTotal: number;
 
-  statut: "actif" | "inactif" | "suspendu";
+  statut: "prospect" | "en_cours_agrement" | "agree" | "actif" | "suspendu" | "expire";
   createdAt: string;
   updatedAt: string;
 }
@@ -235,6 +239,22 @@ export interface Devis {
     validite: string; // "30 jours ouvrés"
   };
 
+  // Géographie (Page 9 du cahier des charges)
+  lieuDevis: {
+    region: string;
+    departement: string;
+    ville: string;
+    agenceOuPointDeVente: string;
+  };
+  lieuLivraison: {
+    region: string;
+    departement: string;
+    ville: string;
+    communeQuartier: string;
+    adressePrecise: string;
+    contactDestinataire: string;
+  };
+
   // Dates
   dateCreation: string;
   dateExpiration: string;
@@ -253,12 +273,7 @@ export interface Devis {
 // ============================================================
 // DOSSIER (un seul dossier pour tous les devis)
 // ============================================================
-export type DossierStatut =
-  | "recu"
-  | "en_analyse"
-  | "informations_demandees"
-  | "valide"
-  | "rejete";
+export type DossierStatut = SouscriptionStatut; // Le statut du dossier suit le statut global de la souscription
 
 export interface Dossier {
   id: string;
@@ -362,12 +377,13 @@ export interface PaiementFournisseur {
 // PRÉPARATION ET LIVRAISON
 // ============================================================
 export type StatutPreparation =
-  | "en_attente"
+  | "commande_reçue"
   | "en_preparation"
-  | "prete"
+  | "disponible"
   | "expediee"
+  | "livraison_programmee"
   | "livree"
-  | "probleme";
+  | "anomalie";
 
 export type ModeLivraison = "domicile" | "point_relais";
 
@@ -415,6 +431,7 @@ export interface PointRelais {
   nom: string;
   adresse: string;
   ville: string;
+  departement?: string;
   region: string;
   codePostal?: string;
   telephone: string;
@@ -443,6 +460,7 @@ export interface AgenceAFG {
   code: string;
   nom: string;
   ville: string;
+  departement?: string;
   region: string;
   adresse: string;
   telephone: string;

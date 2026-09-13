@@ -15,9 +15,17 @@ import { toast } from "sonner";
 const fmtCFA = (v: number) => new Intl.NumberFormat("fr-FR").format(v) + " FCFA";
 
 const STATUTS_LABELS: Record<string, string> = {
-  recu: "Reçu", en_analyse: "En analyse",
-  informations_demandees: "Infos demandées",
-  valide: "Validé", rejete: "Rejeté",
+  en_preparation: "En préparation",
+  pret_pour_depot: "Prêt pour dépôt",
+  depose_banque: "Déposé banque",
+  en_analyse_bancaire: "En analyse",
+  accepte: "Accepté",
+  refuse: "Refusé",
+  finance: "Financé",
+  fournisseur_paye: "Fournisseur payé",
+  commande_en_preparation: "Commande en prép.",
+  livre: "Livré",
+  cloture: "Clôturé",
 };
 
 const PAGE_SIZE = 10;
@@ -52,11 +60,11 @@ export default function DossiersPage() {
     setActionTarget(dossier.id);
     setTimeout(() => {
       updateDossier(dossier.id, {
-        statut: "valide",
+        statut: "accepte",
         dateValidation: new Date().toISOString().split("T")[0],
         commentaireAFG: "Dossier conforme aux conditions du programme Vitalis. Financement accordé.",
       });
-      updateSouscription(dossier.souscriptionId, { statut: "validee" });
+      updateSouscription(dossier.souscriptionId, { statut: "accepte" });
       toast.success(`Dossier ${dossier.reference} validé — Financement AFG accordé ✓`);
       setActionTarget(null);
     }, 800);

@@ -338,18 +338,13 @@ export default function CreerSouscriptionPage() {
         fournisseurs: fournisseursChoisis,
         montantTotal: 0, // Sera mis à jour après création des devis
         duree,
-        statut: asBrouillon ? "brouillon" : "soumise",
+        statut: "en_preparation", // Toujours 'en_preparation' — le bénéficiaire peut ensuite ajouter les devis fournisseurs
         dateCreation: new Date().toISOString().split("T")[0],
         dateMiseAJour: new Date().toISOString().split("T")[0],
         observations,
       });
 
-      toast.success(
-        asBrouillon
-          ? `Brouillon enregistré — ${ref}`
-          : `Souscription ${ref} soumise avec succès !`,
-        { duration: 4000 }
-      );
+      toast.success(`Souscription ${ref} créée — En attente des devis fournisseurs`, { duration: 4000 });
       if (!asBrouillon) {
         setTimeout(() => {
           toast("📧 Accès Viflo envoyés", {

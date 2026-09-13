@@ -40,7 +40,7 @@ export interface VFournisseur {
   logo?: string;
   agreVitalis: boolean;
   dateAgrementVitalis?: string;
-  statut: 'actif' | 'inactif' | 'suspendu';
+  statut: 'prospect' | 'en_cours_agrement' | 'agree' | 'actif' | 'suspendu' | 'expire';
 }
 
 export interface VPointRelais {
@@ -94,7 +94,7 @@ export interface VSouscription {
   montantTotal: number;
   duree: number;
   // Statut
-  statut: 'brouillon' | 'soumise' | 'en_traitement' | 'en_attente' | 'validee' | 'rejetee' | 'financee' | 'payee' | 'livree' | 'terminee';
+  statut: 'en_preparation' | 'pret_pour_depot' | 'depose_banque' | 'en_analyse_bancaire' | 'accepte' | 'refuse' | 'finance' | 'fournisseur_paye' | 'commande_en_preparation' | 'livre' | 'cloture';
   // Dates
   dateCreation: string;
   dateMiseAJour: string;
@@ -131,6 +131,20 @@ export interface VDevis {
   delaiLivraisonAbidjan: string;
   delaiLivraisonInterieur: string;
   validiteDevis: string;
+  lieuDevis?: {
+    region: string;
+    departement: string;
+    ville: string;
+    agenceOuPointDeVente: string;
+  };
+  lieuLivraison?: {
+    region: string;
+    departement: string;
+    ville: string;
+    communeQuartier: string;
+    adressePrecise: string;
+    contactDestinataire: string;
+  };
   // Statut
   statut: 'brouillon' | 'envoye' | 'en_attente_validation' | 'valide' | 'refuse' | 'expire';
   // Dates
@@ -165,7 +179,7 @@ export interface VDossier {
   // Montant total (somme de tous les devis)
   montantTotal: number;
   // Statut
-  statut: 'recu' | 'en_analyse' | 'informations_demandees' | 'valide' | 'rejete';
+  statut: 'en_preparation' | 'pret_pour_depot' | 'depose_banque' | 'en_analyse_bancaire' | 'accepte' | 'refuse' | 'finance' | 'fournisseur_paye' | 'commande_en_preparation' | 'livre' | 'cloture';
   commentaireAFG?: string;
   motifRejet?: string;
   // Dates
@@ -300,7 +314,7 @@ const DEMO_SOUSCRIPTIONS: VSouscription[] = [
     souscripteurTelephone: '+225 07 12 34 56 78', souscripteurEmail: 'jm.kouassi@example.ci',
     banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-001', agenceNom: 'Agence Plateau',
     fournisseurs: [{ fournisseurId: 'FOUR-LDF-001', fournisseurNom: 'Librairie de France Groupe', devisId: 'DEV-001', statut: 'valide' }],
-    montantTotal: 850000, duree: 36, statut: 'validee',
+    montantTotal: 850000, duree: 36, statut: 'accepte',
     dateCreation: oneWeekAgo, dateMiseAJour: twoDaysAgo, dateValidation: twoDaysAgo,
     observations: 'Fournitures scolaires pour école primaire privée.',
   },
@@ -310,7 +324,7 @@ const DEMO_SOUSCRIPTIONS: VSouscription[] = [
     souscripteurTelephone: '+225 05 23 45 67 89', souscripteurEmail: 'a.toure@education.gouv.ci',
     banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-002', agenceNom: 'Agence Cocody',
     fournisseurs: [{ fournisseurId: 'FOUR-DRO-002', fournisseurNom: 'Drocolor', devisId: 'DEV-002', statut: 'devis_cree' }],
-    montantTotal: 650000, duree: 36, statut: 'soumise',
+    montantTotal: 650000, duree: 36, statut: 'pret_pour_depot',
     dateCreation: yesterday, dateMiseAJour: yesterday,
   },
   {
@@ -322,7 +336,7 @@ const DEMO_SOUSCRIPTIONS: VSouscription[] = [
       { fournisseurId: 'FOUR-LDF-001', fournisseurNom: 'Librairie de France Groupe', devisId: 'DEV-003', statut: 'devis_cree' },
       { fournisseurId: 'FOUR-SMT-003', fournisseurNom: 'SMART TECHNOLOGIE', statut: 'en_attente' },
     ],
-    montantTotal: 1200000, duree: 36, statut: 'en_traitement',
+    montantTotal: 1200000, duree: 36, statut: 'en_analyse_bancaire',
     dateCreation: twoDaysAgo, dateMiseAJour: yesterday,
     observations: 'Commande multi-fournisseurs : fournitures + matériel informatique.',
   },
@@ -333,7 +347,7 @@ const DEMO_SOUSCRIPTIONS: VSouscription[] = [
     souscripteurEmail: 'contact@digitalsolutions.ci',
     banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-003', agenceNom: 'Agence Marcory',
     fournisseurs: [{ fournisseurId: 'FOUR-CAR-005', fournisseurNom: 'CARREFOUR', statut: 'en_attente' }],
-    montantTotal: 2500000, duree: 36, statut: 'brouillon',
+    montantTotal: 2500000, duree: 36, statut: 'en_preparation',
     dateCreation: today, dateMiseAJour: today,
     observations: 'Dossier en cours de constitution.',
   },
@@ -343,7 +357,7 @@ const DEMO_SOUSCRIPTIONS: VSouscription[] = [
     souscripteurTelephone: '+225 05 87 65 43 21', souscripteurEmail: 'b.assi@yahoo.fr',
     banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-004', agenceNom: 'Agence Yopougon',
     fournisseurs: [{ fournisseurId: 'FOUR-DRO-002', fournisseurNom: 'Drocolor', devisId: 'DEV-005', statut: 'valide' }],
-    montantTotal: 975000, duree: 36, statut: 'payee',
+    montantTotal: 975000, duree: 36, statut: 'fournisseur_paye',
     dateCreation: oneWeekAgo, dateMiseAJour: yesterday, dateValidation: twoDaysAgo,
   },
 ];
@@ -415,7 +429,7 @@ const DEMO_DOSSIERS: VDossier[] = [
     souscripteurId: 'SCP-001', souscripteurNom: 'KOUASSI', souscripteurPrenom: 'Jean-Marc', typeSouscripteur: 'physique',
     fournisseursNoms: 'Librairie de France Groupe', devisIds: ['DEV-001'],
     banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-001',
-    montantTotal: 850000, statut: 'valide',
+    montantTotal: 850000, statut: 'accepte',
     commentaireAFG: 'Dossier conforme aux conditions du programme Vitalis. Financement accordé.',
     dateCreation: twoDaysAgo, dateReception: twoDaysAgo, dateDebutAnalyse: yesterday, dateValidation: today, dateMiseAJour: today,
   },
@@ -424,7 +438,7 @@ const DEMO_DOSSIERS: VDossier[] = [
     souscripteurId: 'SCP-002', souscripteurNom: 'TOURÉ', souscripteurPrenom: 'Aminata', typeSouscripteur: 'physique',
     fournisseursNoms: 'Drocolor', devisIds: ['DEV-002'],
     banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-002',
-    montantTotal: 650000, statut: 'en_analyse',
+    montantTotal: 650000, statut: 'en_analyse_bancaire',
     dateCreation: yesterday, dateReception: yesterday, dateDebutAnalyse: today, dateMiseAJour: today,
   },
   {
@@ -432,7 +446,7 @@ const DEMO_DOSSIERS: VDossier[] = [
     souscripteurId: 'SCP-003', souscripteurNom: 'KONÉ', souscripteurPrenom: 'Ibrahim', typeSouscripteur: 'physique',
     fournisseursNoms: 'LDF Groupe + SMART TECHNOLOGIE', devisIds: ['DEV-003'],
     banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-001',
-    montantTotal: 1200000, statut: 'recu',
+    montantTotal: 1200000, statut: 'depose_banque',
     dateCreation: today, dateReception: today, dateMiseAJour: today,
   },
   {
@@ -440,7 +454,7 @@ const DEMO_DOSSIERS: VDossier[] = [
     souscripteurId: 'SCP-005', souscripteurNom: 'ASSI', souscripteurPrenom: 'Brice', typeSouscripteur: 'physique',
     fournisseursNoms: 'Drocolor', devisIds: ['DEV-005'],
     banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-004',
-    montantTotal: 975000, statut: 'valide',
+    montantTotal: 975000, statut: 'accepte',
     commentaireAFG: 'Financement accordé — Équipements professionnels conformes au programme.',
     dateCreation: oneWeekAgo, dateReception: oneWeekAgo, dateDebutAnalyse: twoDaysAgo, dateValidation: yesterday, dateMiseAJour: yesterday,
   },
@@ -729,16 +743,16 @@ export const useVitalisDb = create<VitalisDbState>()(
       // ── STATS CALCULÉES ──────────────────────────────────────
       getStatsAdmin: () => {
         const { souscriptions, devis, dossiers, paiements, fournisseurs, agencesAFG, pointsRelais } = get();
-        const statuts_en_cours = ['soumise', 'en_traitement', 'en_attente'];
+        const statuts_en_cours = ['en_preparation', 'pret_pour_depot', 'depose_banque', 'en_analyse_bancaire'];
         return {
           totalSouscriptions: souscriptions.length,
           souscriptionsEnCours: souscriptions.filter(s => statuts_en_cours.includes(s.statut)).length,
-          souscriptionsValidees: souscriptions.filter(s => s.statut === 'validee' || s.statut === 'payee' || s.statut === 'terminee').length,
+          souscriptionsValidees: souscriptions.filter(s => s.statut === 'accepte' || s.statut === 'finance' || s.statut === 'fournisseur_paye' || s.statut === 'cloture').length,
           totalDevis: devis.length,
           devisValides: devis.filter(d => d.statut === 'valide').length,
           totalDossiers: dossiers.length,
-          dossiersEnAnalyse: dossiers.filter(d => d.statut === 'en_analyse' || d.statut === 'recu').length,
-          dossiersValides: dossiers.filter(d => d.statut === 'valide').length,
+          dossiersEnAnalyse: dossiers.filter(d => d.statut === 'en_analyse_bancaire' || d.statut === 'depose_banque').length,
+          dossiersValides: dossiers.filter(d => d.statut === 'accepte').length,
           montantTotalSouscriptions: souscriptions.reduce((acc, s) => acc + s.montantTotal, 0),
           montantTotalPaiements: paiements.filter(p => p.statut === 'termine').reduce((acc, p) => acc + p.montantTotal, 0),
           totalFournisseurs: fournisseurs.length,
@@ -755,7 +769,7 @@ export const useVitalisDb = create<VitalisDbState>()(
         return {
           mesSouscriptions: mesSouscriptions.length,
           mesDevis: mesDevis.length,
-          mesDossiersValides: mesDossiers.filter(d => d.statut === 'valide').length,
+          mesDossiersValides: mesDossiers.filter(d => d.statut === 'accepte').length,
           montantTotal: mesDevis.filter(d => d.statut === 'valide').reduce((acc, d) => acc + d.totalTTC, 0),
         };
       },
@@ -763,14 +777,14 @@ export const useVitalisDb = create<VitalisDbState>()(
       getStatsBanque: () => {
         const { dossiers } = get();
         const total = dossiers.length;
-        const valides = dossiers.filter(d => d.statut === 'valide').length;
-        const rejetes = dossiers.filter(d => d.statut === 'rejete').length;
+        const valides = dossiers.filter(d => d.statut === 'accepte').length;
+        const rejetes = dossiers.filter(d => d.statut === 'refuse').length;
         return {
           dossiersRecus: total,
-          dossiersEnTraitement: dossiers.filter(d => d.statut === 'en_analyse').length,
+          dossiersEnTraitement: dossiers.filter(d => d.statut === 'en_analyse_bancaire').length,
           dossiersValides: valides,
           dossiersRejetes: rejetes,
-          montantTotal: dossiers.filter(d => d.statut === 'valide').reduce((acc, d) => acc + d.montantTotal, 0),
+          montantTotal: dossiers.filter(d => d.statut === 'accepte').reduce((acc, d) => acc + d.montantTotal, 0),
           tauxApprobation: total > 0 ? Math.round((valides / total) * 100) : 0,
         };
       },
