@@ -39,12 +39,12 @@ export function LDFModal({ open, onClose, title, description, children, size = "
       />
       {/* Panel */}
       <div className={cn(
-        "relative w-full bg-white rounded-2xl shadow-2xl fade-in overflow-hidden",
+        "relative w-full bg-white rounded-2xl shadow-2xl fade-in overflow-hidden flex flex-col max-h-[95vh] lg:max-h-[90vh]",
         SIZE_CLASSES[size],
         className,
       )}>
         {(title || description) && (
-          <div className="flex items-start justify-between px-6 py-4 border-b border-gray-100">
+          <div className="flex items-start justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0 bg-white z-10">
             <div>
               {title && <h2 className="text-base font-semibold text-gray-900">{title}</h2>}
               {description && <p className="text-sm text-gray-500 mt-0.5">{description}</p>}
@@ -57,7 +57,7 @@ export function LDFModal({ open, onClose, title, description, children, size = "
             </button>
           </div>
         )}
-        <div className="px-6 py-5">{children}</div>
+        <div className="px-6 py-5 overflow-y-auto no-scrollbar">{children}</div>
       </div>
     </div>
   );

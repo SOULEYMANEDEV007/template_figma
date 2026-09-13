@@ -6,6 +6,7 @@ import { useVitalisDb } from "@/stores/vitalisDbStore";
 import { useLDFAuthStore } from "@/stores/ldfAuth";
 import { ArrowLeft, Building2, CheckCircle2, Download, Eye, FileText, Send } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -84,96 +85,119 @@ export default function DevisDetailPage() {
       </div>
 
       {/* Preview devis */}
-      <div id="devis-pdf-content" className="section-card">
-        {/* En-tête du devis */}
-        <div className="p-6 border-b border-gray-100">
-          <div className="flex justify-between items-start">
+      <div id="devis-pdf-content" className="section-card bg-white flex flex-col">
+        
+        {/* Branding PDF (En-tête horizontal type papier à en-tête) - CACHÉ dans l'app, VISIBLE sur le PDF */}
+        <div className="pdf-only items-center justify-between p-8 border-b-2 border-[#0B2447]/10 bg-white">
+          <div className="flex-1">
+            <img src="/logos/logo-fades.PNG" alt="FADES" className="h-16 object-contain" crossOrigin="anonymous" />
+          </div>
+          
+          <div className="flex-1 flex flex-col items-center border-l border-r border-gray-200 px-4">
+            <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-2">Programme</p>
+            <img src="/logos/new_logo-viflo.JPG" alt="Vitalis" className="h-12 object-contain mix-blend-multiply rounded-xl" crossOrigin="anonymous" />
+          </div>
+          
+          <div className="flex-1 flex flex-col items-end pl-4">
+            <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-2 mr-2">Financement</p>
+            <div className="h-12 px-3 flex items-center justify-center rounded-lg bg-white border border-gray-200 shadow-sm">
+              <img src="/logos/logo-afg-bank_atlantic.png" alt="AFG Bank" className="h-8 object-contain" crossOrigin="anonymous" />
+            </div>
+          </div>
+        </div>
+
+        {/* Contenu principal du devis */}
+        <div className="flex-1 bg-white">
+          {/* Détails du devis */}
+          <div className="p-8 border-b border-gray-100">
+            <div className="flex justify-between items-start">
+              <div>
+                <h2 className="text-xl font-black text-gray-900 tracking-tight">DEVIS COMMERCIAL</h2>
+                <p className="font-mono text-amber-700 font-bold mt-1 text-lg">{devis.reference}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-gray-400 uppercase font-semibold tracking-wider">Date d&apos;émission</p>
+                <p className="text-sm font-bold text-gray-700">{new Date(devis.dateCreation).toLocaleDateString("fr-FR")}</p>
+                <p className="text-xs text-gray-400 uppercase font-semibold tracking-wider mt-2">Date d&apos;expiration</p>
+                <p className="text-sm font-bold text-gray-700">{new Date(devis.dateExpiration).toLocaleDateString("fr-FR")}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Parties */}
+          <div className="grid grid-cols-2 gap-6 p-6 border-b border-gray-100">
             <div>
-              <h2 className="text-lg font-bold text-gray-900">DEVIS</h2>
-              <p className="font-mono text-amber-700 font-semibold">{devis.reference}</p>
+              <div className="flex items-center gap-2 mb-2">
+                <Building2 className="w-4 h-4 text-amber-500" />
+                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider">Émetteur / Fournisseur</h3>
+              </div>
+              <p className="font-bold text-gray-900 text-lg">{devis.fournisseurNom}</p>
+              <p className="text-sm text-gray-500 mt-0.5">Réf. fournisseur : <span className="font-mono">{devis.fournisseurId}</span></p>
             </div>
-            <div className="text-right">
-              <p className="text-xs text-gray-400">Date d&apos;émission</p>
-              <p className="text-sm font-medium text-gray-700">{new Date(devis.dateCreation).toLocaleDateString("fr-FR")}</p>
-              <p className="text-xs text-gray-400 mt-1">Date d&apos;expiration</p>
-              <p className="text-sm font-medium text-gray-700">{new Date(devis.dateExpiration).toLocaleDateString("fr-FR")}</p>
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <CheckCircle2 className="w-4 h-4 text-amber-500" />
+                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider">Destinataire / Souscripteur</h3>
+              </div>
+              <p className="font-bold text-gray-900 text-lg">{devis.souscripteurNom}</p>
+              <p className="text-sm text-gray-500 mt-0.5">Banque partenaire : <span className="font-semibold">{devis.banqueNom}</span></p>
             </div>
           </div>
-        </div>
 
-        {/* Parties */}
-        <div className="grid grid-cols-2 gap-6 p-6 border-b border-gray-100">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Building2 className="w-4 h-4 text-amber-500" />
-              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Fournisseur</h3>
-            </div>
-            <p className="font-semibold text-gray-900">{devis.fournisseurNom}</p>
-            <p className="text-sm text-gray-500 mt-0.5">Réf. fournisseur : {devis.fournisseurId}</p>
-          </div>
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <CheckCircle2 className="w-4 h-4 text-amber-500" />
-              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Destinataire / Banque</h3>
-            </div>
-            <p className="font-semibold text-gray-900">{devis.souscripteurNom}</p>
-            <p className="text-sm text-gray-500 mt-0.5">Banque : {devis.banqueNom}</p>
-          </div>
-        </div>
-
-        {/* Tableau articles */}
-        <div className="overflow-x-auto">
-          <table className="ldf-table">
-            <thead>
-              <tr>
-                <th>Désignation</th>
-                <th>Réf.</th>
-                <th>Qté</th>
-                <th>Prix unitaire</th>
-                <th>Remise</th>
-                <th>Montant HT</th>
-              </tr>
-            </thead>
-            <tbody>
-              {devis.articles.map((a, i) => (
-                <tr key={i}>
-                  <td className="font-medium text-gray-800">{a.designation}</td>
-                  <td className="font-mono text-xs text-gray-500">{a.reference}</td>
-                  <td>{a.quantite}</td>
-                  <td className="whitespace-nowrap">{fmtCFA(a.prixUnitaire)}</td>
-                  <td>{a.remise > 0 ? `${a.remise}%` : "—"}</td>
-                  <td className="font-semibold text-gray-800 whitespace-nowrap">{fmtCFA(a.montantHT)}</td>
+          {/* Tableau articles */}
+          <div className="overflow-x-auto">
+            <table className="ldf-table w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="py-3 px-4 text-left text-xs font-bold text-gray-600 uppercase">Désignation</th>
+                  <th className="py-3 px-4 text-left text-xs font-bold text-gray-600 uppercase">Réf.</th>
+                  <th className="py-3 px-4 text-right text-xs font-bold text-gray-600 uppercase">Qté</th>
+                  <th className="py-3 px-4 text-right text-xs font-bold text-gray-600 uppercase">Prix U.</th>
+                  <th className="py-3 px-4 text-right text-xs font-bold text-gray-600 uppercase">Remise</th>
+                  <th className="py-3 px-4 text-right text-xs font-bold text-gray-600 uppercase">Total HT</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {devis.articles.map((a, i) => (
+                  <tr key={i} className="hover:bg-gray-50/50">
+                    <td className="py-3 px-4 font-semibold text-gray-800">{a.designation}</td>
+                    <td className="py-3 px-4 font-mono text-xs text-gray-500">{a.reference}</td>
+                    <td className="py-3 px-4 text-right font-medium">{a.quantite}</td>
+                    <td className="py-3 px-4 text-right whitespace-nowrap text-gray-700">{fmtCFA(a.prixUnitaire)}</td>
+                    <td className="py-3 px-4 text-right text-gray-500">{a.remise > 0 ? `${a.remise}%` : "—"}</td>
+                    <td className="py-3 px-4 text-right font-bold text-gray-900 whitespace-nowrap">{fmtCFA(a.montantHT)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-        {/* Totaux */}
-        <div className="p-6 flex justify-end">
-          <div className="w-64 space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Total HT</span>
-              <span className="font-medium text-gray-800">{fmtCFA(devis.totalHT)}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-500">TVA</span>
-              <span className="font-medium text-gray-800">{fmtCFA(devis.tva)}</span>
-            </div>
-            <div className="flex justify-between text-base font-bold border-t border-gray-100 pt-2 mt-2">
-              <span className="text-gray-900">Total TTC</span>
-              <span className="text-amber-700">{fmtCFA(devis.totalTTC)}</span>
+          {/* Totaux */}
+          <div className="p-6 flex justify-end bg-gray-50/30">
+            <div className="w-72 space-y-3">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600 font-medium">Total HT</span>
+                <span className="font-bold text-gray-900">{fmtCFA(devis.totalHT)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600 font-medium">TVA (18%)</span>
+                <span className="font-bold text-gray-900">{fmtCFA(devis.tva)}</span>
+              </div>
+              <div className="flex justify-between text-lg font-black border-t-2 border-gray-200 pt-3 mt-3">
+                <span className="text-gray-900">NET À PAYER TTC</span>
+                <span className="text-amber-600">{fmtCFA(devis.totalTTC)}</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Conditions */}
-        {devis.conditions && (
-          <div className="px-6 pb-6">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Conditions</p>
-            <p className="text-sm text-gray-600">{devis.conditions}</p>
-          </div>
-        )}
+          {/* Conditions */}
+          {devis.conditions && (
+            <div className="p-6 border-t border-gray-100 bg-gray-50/50">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Conditions de vente</p>
+              <p className="text-sm text-gray-600 leading-relaxed">{devis.conditions}</p>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Modal envoi */}
