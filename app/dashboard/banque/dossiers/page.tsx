@@ -1,35 +1,82 @@
 // @ts-nocheck
 "use client";
 import { StatusBadge } from "@/components/ui/ldf-badge";
-import { mockDossiers } from "@/lib/ldfData";
+import { useVitalisDb } from "@/stores/vitalisDbStore";
 import { useLDFAuthStore } from "@/stores/ldfAuth";
-import { AlertCircle, CheckCircle2, ChevronRight, Eye, MessageSquare, XCircle } from "lucide-react";
+import { AlertCircle, CheckCircle2, ChevronRight, Eye, XCircle } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 const fmtCFA = (v: number) => new Intl.NumberFormat("fr-FR").format(v) + " FCFA";
 
+// Statuts pour lesquels la banque doit agir
+const STATUTS_EN_ATTENTE = ["depose_banque", "en_analyse_bancaire"];
+
 export default function BanqueDossiersPage() {
   const { user } = useLDFAuthStore();
+  const { dossiers, updateDossier, updateSouscription, getSouscriptionById, addHistorique } = useVitalisDb();
   const [activeTab, setActiveTab] = useState<"en_attente" | "tous">("en_attente");
 
-  const myDossiers = useMemo(() =>
-    mockDossiers.filter(d =>
-      user?.role === "banque" ? d.banqueId === user.organisationId : true
-    ), [user]);
+  const mesDossiers = useMemo(() =>
+    dossiers.filter(d =>
+      user?.role === "banque" && user.organisationId
+        ? d.agenceId === user.organisationId
+        : true
+    ), [dossiers, user]);
 
-  const enAttente = myDossiers.filter(d =>
-    d.statut === "recu" || d.statut === "en_cours_traitement"
-  );
-  const tous = myDossiers;
+  const enAttente = mesDossiers.filter(d => STATUTS_EN_ATTENTE.includes(d.statut));
+  const tous = mesDossiers;
   const displayed = activeTab === "en_attente" ? enAttente : tous;
+
+  const handleAccepter = (dossier: typeof dossiers[0]) => {
+    updateDossier(dossier.id, {
+      statut: "accepte",
+      commentaireAFG: "Dossier conforme — Financement accordé par le comité.",
+    });
+    // Synchroniser le statut de la souscription liée
+    const sous = getSouscriptionById(dossier.souscriptionId);
+    if (sous) updateSouscription(sous.id, { statut: "accepte" });
+    addHistorique({
+      souscriptionId: dossier.souscriptionId,
+      action: "dossier_accepte",
+      description: `Dossier ${dossier.reference} — Décision bancaire : ACCEPTÉ`,
+      date: new Date().toISOString(),
+    });
+    toast.success(`Dossier ${dossier.reference} accepté`);
+  };
+
+  const handleRefuser = (dossier: typeof dossiers[0]) => {
+    updateDossier(dossier.id, {
+      statut: "refuse",
+      motifRejet: "Dossier non conforme aux conditions du programme VITALIS.",
+    });
+    const sous = getSouscriptionById(dossier.souscriptionId);
+    if (sous) updateSouscription(sous.id, { statut: "refuse" });
+    addHistorique({
+      souscriptionId: dossier.souscriptionId,
+      action: "dossier_refuse",
+      description: `Dossier ${dossier.reference} — Décision bancaire : REFUSÉ`,
+      date: new Date().toISOString(),
+    });
+    toast.error(`Dossier ${dossier.reference} refusé`);
+  };
+
+  const handleAnalyser = (dossier: typeof dossiers[0]) => {
+    updateDossier(dossier.id, { statut: "en_analyse_bancaire" });
+    const sous = getSouscriptionById(dossier.souscriptionId);
+    if (sous) updateSouscription(sous.id, { statut: "en_analyse_bancaire" });
+    toast.info(`Dossier ${dossier.reference} — Analyse démarrée`);
+  };
 
   return (
     <div className="space-y-5 fade-in">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Dossiers à traiter</h1>
-          <p className="page-subtitle">{enAttente.length} dossier{enAttente.length > 1 ? "s" : ""} en attente de décision</p>
+          <h1 className="page-title">Dossiers à traiter — AFG Bank</h1>
+          <p className="page-subtitle">
+            {enAttente.length} dossier{enAttente.length > 1 ? "s" : ""} en attente de décision
+          </p>
         </div>
       </div>
 
@@ -39,10 +86,10 @@ export default function BanqueDossiersPage() {
           <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
           <div>
             <p className="text-sm font-semibold text-amber-800">
-              {enAttente.length} dossier{enAttente.length > 1 ? "s" : ""} en attente de votre décision
+              {enAttente.length} dossier{enAttente.length > 1 ? "s" : ""} nécessite{enAttente.length === 1 ? "" : "nt"} votre décision
             </p>
             <p className="text-xs text-amber-600 mt-0.5">
-              Ces dossiers nécessitent une validation ou un rejet de votre part.
+              Traitez chaque dossier en le marquant Accepté ou Refusé. ViFLO ne fait que tracer la décision.
             </p>
           </div>
         </div>
@@ -81,7 +128,9 @@ export default function BanqueDossiersPage() {
                   <div>
                     <Link href={`/dashboard/dossiers/${d.id}`}
                       className="font-mono text-sm font-bold text-amber-700 hover:underline">{d.reference}</Link>
-                    <p className="text-xs text-gray-400 mt-0.5">Reçu le {new Date(d.dateReception).toLocaleDateString("fr-FR")}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      Reçu le {new Date(d.dateReception).toLocaleDateString("fr-FR")}
+                    </p>
                   </div>
                   <StatusBadge statut={d.statut} />
                 </div>
@@ -93,35 +142,50 @@ export default function BanqueDossiersPage() {
                     <p className="text-sm font-medium text-gray-800 truncate">{d.souscripteurPrenom} {d.souscripteurNom}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400">Fournisseur</p>
-                    <p className="text-sm font-medium text-gray-800 truncate">{d.fournisseurNom}</p>
+                    <p className="text-xs text-gray-400">Fournisseurs</p>
+                    <p className="text-sm font-medium text-gray-800 truncate">{d.fournisseursNoms}</p>
                   </div>
                   <div className="col-span-2">
-                    <p className="text-xs text-gray-400">Montant</p>
-                    <p className="text-xl font-bold text-gray-900">{fmtCFA(d.montant)}</p>
+                    <p className="text-xs text-gray-400">Montant total du financement</p>
+                    <p className="text-xl font-bold text-gray-900">{fmtCFA(d.montantTotal)}</p>
                   </div>
                 </div>
 
-                {/* Commentaire si existant */}
-                {d.commentaireBanque && (
+                {/* Commentaire / Motif rejet */}
+                {(d.commentaireAFG || d.motifRejet) && (
                   <div className={`p-2.5 rounded-lg text-xs mb-4 ${
-                    d.statut === "valide" ? "bg-emerald-50 text-emerald-700" :
-                    d.statut === "rejete" ? "bg-red-50 text-red-700" :
+                    d.statut === "accepte" ? "bg-emerald-50 text-emerald-700" :
+                    d.statut === "refuse"  ? "bg-red-50 text-red-700" :
                     "bg-gray-50 text-gray-600"}`}>
-                    {d.commentaireBanque}
+                    {d.commentaireAFG || d.motifRejet}
                   </div>
                 )}
 
-                {/* Actions */}
-                {(d.statut === "recu" || d.statut === "en_cours_traitement") ? (
+                {/* Actions selon statut */}
+                {d.statut === "depose_banque" ? (
                   <div className="flex items-center gap-2">
-                    <Link href={`/dashboard/dossiers/${d.id}`}
-                      className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">
-                      <CheckCircle2 className="w-4 h-4" /> Traiter
-                    </Link>
+                    <button onClick={() => handleAnalyser(d)}
+                      className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors">
+                      Démarrer l'analyse
+                    </button>
                     <Link href={`/dashboard/dossiers/${d.id}`}
                       className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-sm font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
                       <Eye className="w-4 h-4" /> Voir
+                    </Link>
+                  </div>
+                ) : d.statut === "en_analyse_bancaire" ? (
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => handleAccepter(d)}
+                      className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">
+                      <CheckCircle2 className="w-4 h-4" /> Accepter
+                    </button>
+                    <button onClick={() => handleRefuser(d)}
+                      className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors">
+                      <XCircle className="w-4 h-4" /> Refuser
+                    </button>
+                    <Link href={`/dashboard/dossiers/${d.id}`}
+                      className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-sm font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+                      <Eye className="w-4 h-4" />
                     </Link>
                   </div>
                 ) : (

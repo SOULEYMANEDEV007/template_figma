@@ -51,15 +51,14 @@ module.exports = {
                     DEFAULT: "hsl(var(--card))",
                     foreground: "hsl(var(--card-foreground))",
                 },
-                // Custom colors ViFlo Finance
+                // Custom colors ViFlo Finance mapped to globals.css
                 viflow: {
-                    navy: "#1a237e", // bleu marine
-                    cyan: "#00bcd4", // cyan
-                    green: "#00c853", // vert accent
-                    purple: "#a855f7", // purple-500
-                    red: "#ef4444", // red-500
+                    navy: "var(--vf-navy)",
+                    cyan: "var(--vf-cyan)",
+                    green: "var(--vf-green)",
+                    purple: "var(--vf-purple)",
+                    red: "var(--vf-red)",
                 },
-                ...colors,
             },
             fontFamily: {
                 sans: ["var(--font-nunito)", "ui-sans-serif", "system-ui"],

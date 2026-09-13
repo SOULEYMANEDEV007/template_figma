@@ -37,13 +37,20 @@ export default function SouscriptionDetailPage() {
     </div>
   );
 
-  // Process steps
+  // Statuts "positifs" successifs du workflow VITALIS
+  const statutsAvancés = ["accepte", "finance", "fournisseur_paye", "commande_en_preparation", "livre", "cloture"];
+  const isApres = (statut: string, ref: string) => {
+    const ordre = ["en_preparation","pret_pour_depot","depose_banque","en_analyse_bancaire","accepte","finance","fournisseur_paye","commande_en_preparation","livre","cloture"];
+    return ordre.indexOf(statut) >= ordre.indexOf(ref);
+  };
+
   const processSteps = [
-    { id: "sub",      label: "Souscription", statut: "complete" as const, date: sub.dateCreation },
-    { id: "devis",    label: "Devis",        statut: devis ? "complete" as const : "pending" as const },
-    { id: "banque",   label: "Validation",   statut: sub.statut === "validee" || sub.statut === "payee" || sub.statut === "servie" ? "complete" as const : sub.statut === "rejetee" ? "rejected" as const : sub.statut === "en_attente" ? "current" as const : "pending" as const },
-    { id: "paiement", label: "Paiement",     statut: sub.statut === "payee" || sub.statut === "servie" ? "complete" as const : "pending" as const },
-    { id: "articles", label: "Servi",        statut: sub.statut === "servie" ? "complete" as const : "pending" as const },
+    { id: "sub",      label: "Souscription créée",       statut: "complete" as const,    date: sub.dateCreation },
+    { id: "devis",    label: "Devis fournisseur(s)",      statut: devis ? "complete" as const : "pending" as const },
+    { id: "depot",    label: "Dépôt AFG Bank",            statut: isApres(sub.statut, "depose_banque") ? "complete" as const : sub.statut === "pret_pour_depot" ? "current" as const : "pending" as const },
+    { id: "banque",   label: "Analyse bancaire",          statut: isApres(sub.statut, "accepte") ? "complete" as const : sub.statut === "refuse" ? "rejected" as const : sub.statut === "en_analyse_bancaire" ? "current" as const : "pending" as const },
+    { id: "paiement", label: "Financement & Paiement",    statut: isApres(sub.statut, "fournisseur_paye") ? "complete" as const : sub.statut === "finance" ? "current" as const : "pending" as const },
+    { id: "livraison","label": "Commande & Livraison",    statut: sub.statut === "cloture" || sub.statut === "livre" ? "complete" as const : sub.statut === "commande_en_preparation" ? "current" as const : "pending" as const },
   ];
 
   return (

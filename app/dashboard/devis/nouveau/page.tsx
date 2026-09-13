@@ -307,10 +307,16 @@ function NouveauDevisContent() {
         observationsFournisseur: observationsFourn,
       });
 
-      // Mettre à jour le montant total de la souscription
+      // Mettre à jour le montant total + faire avancer la souscription vers 'pret_pour_depot'
       if (souscription) {
+        const nouveauMontant = souscription.montantTotal + totalTTC;
+        const tousDeviscrees = souscription.fournisseurs.every(
+          f => f.statut === 'devis_cree' || f.statut === 'valide'
+        );
         updateSouscription(souscriptionId, {
-          montantTotal: souscription.montantTotal + totalTTC,
+          montantTotal: nouveauMontant,
+          // Si tous les fournisseurs ont leur devis : passage à 'pret_pour_depot'
+          ...(tousDeviscrees && { statut: "pret_pour_depot" as const }),
         });
       }
 
@@ -391,7 +397,7 @@ function NouveauDevisContent() {
                 <label className="block text-xs font-semibold text-gray-600 mb-1.5">Souscription <span className="text-orange-500">*</span></label>
                 <select className={sel} value={souscriptionId} onChange={e => { setSouscriptionId(e.target.value); }}>
                   <option value="">Sélectionner</option>
-                  {souscriptions.filter(s => s.statut !== "terminee" && s.statut !== "rejetee").map(s => (
+                  {souscriptions.filter(s => s.statut !== "cloture" && s.statut !== "refuse").map(s => (
                     <option key={s.id} value={s.id}>
                       {s.reference} — {s.souscripteurPrenom} {s.souscripteurNom}
                     </option>

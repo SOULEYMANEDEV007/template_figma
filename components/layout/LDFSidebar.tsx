@@ -79,12 +79,12 @@ function getNav(role: LDFUserRole, unreadCount: number): { main: NavItem[]; bott
   return {
     main: [
       ...common,
-      { name: "Souscriptions",    href: "/dashboard/souscriptions",        icon: FileText },
-      { name: "Devis",            href: "/dashboard/devis",                 icon: BookOpen },
-      { name: "Feedbacks banque", href: "/dashboard/fournisseur/feedbacks", icon: ShieldCheck },
-      { name: "Paiements",        href: "/dashboard/paiements",             icon: CreditCard },
-      { name: "Articles servis",  href: "/dashboard/articles",              icon: Package },
-      { name: "Notifications",    href: "/dashboard/notifications",         icon: Bell, badge: unreadCount },
+      { name: "Mes Commandes",    href: "/dashboard/fournisseur/commandes",  icon: Package },
+      { name: "Souscriptions",    href: "/dashboard/souscriptions",          icon: FileText },
+      { name: "Devis",            href: "/dashboard/devis",                  icon: BookOpen },
+      { name: "Feedbacks banque", href: "/dashboard/fournisseur/feedbacks",  icon: ShieldCheck },
+      { name: "Paiements",        href: "/dashboard/paiements",              icon: CreditCard },
+      { name: "Notifications",    href: "/dashboard/notifications",          icon: Bell, badge: unreadCount },
     ],
     bottom: [
       { name: "Paramètres", href: "/dashboard/parametres", icon: Settings },
@@ -151,33 +151,34 @@ export default function LDFSidebar() {
   const SidebarContent = ({ mobile = false }: { mobile?: boolean }) => (
     <div className="flex flex-col h-full">
 
-      {/* ── Logo ViFlo ── */}
+      {/* ── Logo Vitalis FADES ── */}
       <div className={cn(
-        "flex items-center border-b border-white/10 flex-shrink-0",
+        "flex items-center border-b border-white/8 flex-shrink-0",
         isSidebarCollapsed && !mobile ? "justify-center px-3 py-4" : "px-4 py-4 gap-3",
       )}>
-        <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center bg-white/5 p-0.5">
           <Image
-            src="/images/viflo_logo.png"
-            alt="ViFlo"
+            src="/logos/new_logo-viflo.JPG"
+            alt="Vitalis FADES"
             width={40}
             height={40}
-            className="object-contain"
+            className="object-contain w-full h-full rounded-md"
             onError={() => {}}
           />
         </div>
         {(!isSidebarCollapsed || mobile) && (
           <div className="min-w-0">
-            <p className="text-white font-bold text-base leading-none truncate">
-              Vi<span className="text-gradient-vf">Flo</span>
+            <p className="text-white font-bold text-base leading-none tracking-tight truncate">
+              Vitalis <span style={{ color: "#FF9E44" }}>FADES</span>
             </p>
-            <p className="text-xs text-cyan-300/80 mt-0.5 truncate">Financements Vitalis</p>
+            <p className="text-[10px] mt-0.5 truncate" style={{ color: "rgba(190,215,255,0.55)" }}>Donnons vie à vos projets</p>
           </div>
         )}
         {mobile && (
           <button
             onClick={() => setMobileSidebarOpen(false)}
-            className="ml-auto w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:bg-white/10"
+            className="ml-auto w-7 h-7 rounded-lg flex items-center justify-center transition-colors"
+            style={{ color: "rgba(190,215,255,0.6)" }}
           >
             <X className="w-4 h-4" />
           </button>
@@ -192,7 +193,7 @@ export default function LDFSidebar() {
 
         {/* Séparateur */}
         {bottom.length > 0 && (
-          <div className="border-t border-white/10 my-2" />
+          <div className="border-t my-2" style={{ borderColor: "rgba(255,255,255,0.07)" }} />
         )}
         {bottom.map((item) => (
           <NavLink key={item.href} item={item} collapsed={isSidebarCollapsed && !mobile} pathname={pathname} />
@@ -201,23 +202,26 @@ export default function LDFSidebar() {
 
       {/* ── Profil utilisateur ── */}
       <div className={cn(
-        "border-t border-white/10 p-3 flex-shrink-0",
+        "p-3 flex-shrink-0",
         isSidebarCollapsed && !mobile ? "flex flex-col items-center gap-2" : "",
-      )}>
+      )} style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
         {!isSidebarCollapsed || mobile ? (
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm text-white"
-              style={{ background: "linear-gradient(135deg, #ff6b35, #ff8c42)" }}>
+              style={{ background: "linear-gradient(135deg, #FF7B2E, #FFB300)" }}>
               {user.prenom?.[0] || user.nom?.[0] || 'U'}{user.nom?.[0] || ''}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-white text-sm font-semibold truncate">{user.prenom} {user.nom}</p>
-              <p className="text-orange-200/80 text-xs truncate">{getRoleLabel(user.role)}</p>
+              <p className="text-xs truncate" style={{ color: "rgba(190,215,255,0.55)" }}>{getRoleLabel(user.role)}</p>
             </div>
             <button
               onClick={logout}
               title="Déconnexion"
-              className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:bg-white/10 hover:text-red-400 transition-colors flex-shrink-0"
+              className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors flex-shrink-0"
+              style={{ color: "rgba(190,215,255,0.4)" }}
+              onMouseEnter={e => (e.currentTarget.style.color = "#f87171")}
+              onMouseLeave={e => (e.currentTarget.style.color = "rgba(190,215,255,0.4)")}
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -225,13 +229,16 @@ export default function LDFSidebar() {
         ) : (
           <>
             <div className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm text-white"
-              style={{ background: "linear-gradient(135deg, #ff6b35, #ff8c42)" }}>
+              style={{ background: "linear-gradient(135deg, #FF7B2E, #FFB300)" }}>
               {user.prenom?.[0] || user.nom?.[0] || 'U'}{user.nom?.[0] || ''}
             </div>
             <button
               onClick={logout}
               title="Déconnexion"
-              className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:bg-white/10 hover:text-red-400 transition-colors"
+              className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors"
+              style={{ color: "rgba(190,215,255,0.4)" }}
+              onMouseEnter={e => (e.currentTarget.style.color = "#f87171")}
+              onMouseLeave={e => (e.currentTarget.style.color = "rgba(190,215,255,0.4)")}
             >
               <LogOut className="w-4 h-4" />
             </button>

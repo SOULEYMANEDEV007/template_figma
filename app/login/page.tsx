@@ -67,28 +67,28 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex">
       {/* ── Colonne gauche — branding ViFlo ── */}
-      <div className="hidden lg:flex lg:w-[50%] relative overflow-hidden flex-col justify-between p-12 bg-[#FF5E00]">
+      <div className="hidden lg:flex lg:w-[50%] relative overflow-hidden flex-col justify-between p-12 bg-[#0B2447]">
 
         {/* Pattern Topographique Décoratif */}
         <div className="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='%23FF7B2E' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E")`,
           backgroundSize: '120px 120px'
         }} />
         
         {/* Cercles de lumière (pour le relief) */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-yellow-400/20 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#FF5E00]/20 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3 pointer-events-none" />
 
         {/* Logo ViFlo */}
         <div className="relative z-10 flex items-center gap-3">
-          <div className="w-24 h-24 rounded-xl overflow-hidden flex items-center justify-center bg-white/10 p-2 backdrop-blur-sm border border-white/20">
-            <Image src="/logos/viflo_logo.png" alt='ViFlo' width={200} height={200} className="object-contain" onError={() => { }} />
+          <div className="w-24 h-24 rounded-xl overflow-hidden flex items-center justify-center bg-white/5 p-2 backdrop-blur-sm border border-white/10">
+            <Image src="/logos/new_logo-viflo.JPG" alt='Vitalis FADES' width={200} height={200} className="object-contain w-full h-full rounded-lg" onError={() => { }} />
           </div>
           <div>
             <p className="text-white font-bold text-xl leading-none">
               Plateforme de gestion
             </p>
-            <p className="text-white/80 text-sm mt-1">Financements Vitalis</p>
+            <p className="text-white/80 text-sm mt-1">Vitalis FADES</p>
           </div>
         </div>
 
@@ -97,26 +97,26 @@ export default function LoginPage() {
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 mb-4 backdrop-blur-sm">
               <Sparkles className="w-3.5 h-3.5 text-white" />
-              <span className="text-white text-xs font-medium">Simplifier le financement, fluidifier les achats.</span>
+              <span className="text-white text-xs font-medium">Digitalisation des financements structurés.</span>
             </div>
             <h2 className="text-4xl font-extrabold text-white leading-tight tracking-tight">
-              Un seul espace pour gérer<br />tous vos financements.
+              Gérez le cycle complet<br />de vos financements.
             </h2>
             <p className="text-white/80 text-sm mt-4 leading-relaxed max-w-md">
-              Suivez chaque étape : souscription, devis, validation bancaire, paiement et service de vos articles.
+              Une plateforme centralisée pour les souscripteurs, fournisseurs agréés et la banque partenaire AFG Bank.
             </p>
           </div>
 
           {/* Steps */}
           <div className="space-y-3">
             {[
-              { step: "01", label: "Validation du prêt par la banque" },
-              { step: "02", label: "Paiement et Achat des articles" },
-              { step: "03", label: "Dévis généré et envoyé" },
-              { step: "04", label: "Articles servis par le fournisseur" },
+              { step: "01", label: "Souscription et constitution du dossier" },
+              { step: "02", label: "Génération et validation des devis" },
+              { step: "03", label: "Analyse et décision bancaire" },
+              { step: "04", label: "Paiement et mise à disposition des articles" },
             ].map((s) => (
-              <div key={s.step} className="flex items-center gap-3 bg-white/5 border border-white/10 p-2 rounded-xl backdrop-blur-sm w-max pr-6">
-                <div className={`w-8 h-8 rounded-lg bg-white text-[#FF5E00] flex items-center justify-center flex-shrink-0 shadow-sm`}>
+              <div key={s.step} className="flex items-center gap-3 bg-white/5 border border-white/10 p-2 rounded-full backdrop-blur-sm w-max pr-6">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#FF7B2E] to-[#FF5E00] text-white flex items-center justify-center flex-shrink-0 shadow-md">
                   <span className="text-xs font-bold">{s.step}</span>
                 </div>
                 <span className="text-white font-medium text-sm">{s.label}</span>
@@ -130,10 +130,18 @@ export default function LoginPage() {
           {[
             { label: "Souscriptions", value: "30+" },
             { label: "Fournisseurs agréés", value: "5" },
-            { label: "Banque partenaire", value: "AFG Bank" },
+            { label: "Banque partenaire", isLogo: true },
           ].map((s) => (
             <div key={s.label}>
-              <p className="text-3xl font-black text-white tracking-tight">{s.value}</p>
+              {s.isLogo ? (
+                <div className="h-10 flex items-center mb-0.5">
+                  <div className="bg-white/5 p-1 rounded-lg border border-white/10 backdrop-blur-sm inline-flex items-center justify-center h-full overflow-hidden">
+                    <Image src="/logos/logo-afg-bank_atlantic.png" alt="AFG Bank" width={80} height={32} className="object-contain w-full h-full rounded bg-white" />
+                  </div>
+                </div>
+              ) : (
+                <p className="text-3xl font-black text-white tracking-tight h-10 flex items-end">{s.value}</p>
+              )}
               <p className="text-white/70 text-xs mt-1 uppercase tracking-wider font-semibold">{s.label}</p>
             </div>
           ))}
@@ -146,19 +154,19 @@ export default function LoginPage() {
 
           {/* Mobile logo ViFlo */}
           <div className="lg:hidden flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center">
-              <Image src="/images/viflo_logo.png" alt="ViFlo" width={48} height={48} className="object-contain" onError={() => { }} />
+            <div className="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center bg-white border border-gray-200">
+              <Image src="/logos/new_logo-viflo.JPG" alt="Vitalis FADES" width={48} height={48} className="object-contain w-full h-full" onError={() => { }} />
             </div>
             <div>
-              <p className="font-bold text-gray-900 text-lg">ViFlo</p>
-              <p className="text-xs text-gray-500">Financements Vitalis</p>
+              <p className="font-bold text-gray-900 text-lg">Vitalis <span className="text-orange-500">FADES</span></p>
+              <p className="text-xs text-gray-500">Donnons vie à vos projets</p>
             </div>
           </div>
 
           {/* Titre */}
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-gray-900">Bienvenue sur ViFlo</h1>
-            <p className="text-gray-500 text-sm mt-1.5">Simplifier le financement, fluidifier les achats.</p>
+            <h1 className="text-2xl font-bold text-gray-900">Bienvenue sur Vitalis FADES</h1>
+            <p className="text-gray-500 text-sm mt-1.5">Connectez-vous pour accéder à votre espace de gestion.</p>
           </div>
 
           {/* Formulaire */}

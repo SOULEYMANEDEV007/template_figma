@@ -35,6 +35,32 @@ const STATUT_CONFIG: Record<string, { label: string; className: string; dot: str
   inactive:                { label: "Inactive",            className: "bg-gray-100 text-gray-500",     dot: "bg-gray-400"    },
   actif:                   { label: "Actif",               className: "bg-emerald-50 text-emerald-700",dot: "bg-emerald-500" },
   inactif:                 { label: "Inactif",             className: "bg-gray-100 text-gray-500",     dot: "bg-gray-400"    },
+  suspendu:                { label: "Suspendu",            className: "bg-yellow-50 text-yellow-700",  dot: "bg-yellow-500"  },
+
+  // ── Statuts VITALIS (11 étapes du workflow cahier des charges) ──
+  en_preparation:           { label: "En préparation",        className: "bg-gray-100 text-gray-600",      dot: "bg-gray-400"    },
+  pret_pour_depot:          { label: "Prêt pour dépôt",       className: "bg-blue-50 text-blue-700",       dot: "bg-blue-500"    },
+  depose_banque:            { label: "Déposé à la banque",    className: "bg-indigo-50 text-indigo-700",   dot: "bg-indigo-500"  },
+  en_analyse_bancaire:      { label: "En analyse bancaire",   className: "bg-amber-50 text-amber-700",     dot: "bg-amber-500"   },
+  accepte:                  { label: "Accepté",               className: "bg-emerald-50 text-emerald-700", dot: "bg-emerald-500" },
+  finance:                  { label: "Financé",               className: "bg-green-50 text-green-700",     dot: "bg-green-600"   },
+  fournisseur_paye:         { label: "Fournisseur payé",      className: "bg-teal-50 text-teal-700",       dot: "bg-teal-500"    },
+  commande_en_preparation:  { label: "Commande en prép.",     className: "bg-cyan-50 text-cyan-700",       dot: "bg-cyan-500"    },
+  livre:                    { label: "Livré",                 className: "bg-sky-50 text-sky-700",         dot: "bg-sky-500"     },
+  cloture:                  { label: "Clôturé",               className: "bg-gray-50 text-gray-500",       dot: "bg-gray-300"    },
+
+  // ── Statuts Fournisseur ──
+  prospect:                 { label: "Prospect",              className: "bg-gray-100 text-gray-600",      dot: "bg-gray-400"    },
+  en_cours_agrement:        { label: "Agrément en cours",     className: "bg-amber-50 text-amber-700",     dot: "bg-amber-500"   },
+  agree:                    { label: "Agréé",                 className: "bg-blue-50 text-blue-700",       dot: "bg-blue-500"    },
+
+  // ── Statuts Commande (côté fournisseur) ──
+  commande_reçue:           { label: "Commande reçue",        className: "bg-sky-50 text-sky-700",         dot: "bg-sky-500"     },
+  disponible:               { label: "Disponible",            className: "bg-cyan-50 text-cyan-700",       dot: "bg-cyan-500"    },
+  expediee:                 { label: "Expédiée",              className: "bg-indigo-50 text-indigo-700",   dot: "bg-indigo-500"  },
+  livraison_programmee:     { label: "Livraison programmée",  className: "bg-violet-50 text-violet-700",   dot: "bg-violet-500"  },
+  livree:                   { label: "Livrée",                className: "bg-emerald-50 text-emerald-700", dot: "bg-emerald-500" },
+  anomalie:                 { label: "Anomalie",              className: "bg-red-50 text-red-700",         dot: "bg-red-500"     },
 };
 
 interface StatusBadgeProps {

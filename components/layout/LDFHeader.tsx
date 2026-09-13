@@ -308,7 +308,7 @@ function ProfileDropdown() {
         className="flex items-center gap-2.5 pl-1 pr-2 py-1 rounded-lg hover:bg-gray-100 transition-colors"
       >
         <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white"
-          style={{ background: "linear-gradient(135deg, #ff6b35, #ff8c42)" }}>
+          style={{ background: "linear-gradient(135deg, #FF7B2E, #FFB300)" }}>
           {user.prenom?.[0] || user.nom?.[0] || 'U'}{user.nom?.[0] || ''}
         </div>
         <div className="hidden sm:block text-left">

@@ -14,9 +14,18 @@ import { useMemo, useState } from "react";
 const fmtCFA = (v: number) => new Intl.NumberFormat("fr-FR").format(v) + " FCFA";
 
 const STATUTS_LABELS: Record<string, string> = {
-  brouillon: "Brouillon", soumise: "Soumise", en_traitement: "En traitement",
-  en_attente: "En attente", validee: "Validée", rejetee: "Rejetée",
-  financee: "Financée", payee: "Payée", livree: "Livrée", terminee: "Terminée",
+  // Workflow VITALIS — 11 étapes
+  en_preparation:          "En préparation",
+  pret_pour_depot:         "Prêt pour dépôt",
+  depose_banque:           "Déposé à la banque",
+  en_analyse_bancaire:     "En analyse bancaire",
+  accepte:                 "Accepté",
+  refuse:                  "Refusé",
+  finance:                 "Financé",
+  fournisseur_paye:        "Fournisseur payé",
+  commande_en_preparation: "Commande en préparation",
+  livre:                   "Livré",
+  cloture:                 "Clôturé",
 };
 
 const PAGE_SIZE = 10;
