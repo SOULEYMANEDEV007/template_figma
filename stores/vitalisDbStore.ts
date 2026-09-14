@@ -722,31 +722,8 @@ export const useVitalisDb = create<VitalisDbState>()(
           ...data,
           id: `SOUS-${Date.now()}`,
         };
-        const newDossier: VDossier = {
-          id: `DOS-${Date.now()}`,
-          reference: get().generateRef('DOS'),
-          souscriptionId: newItem.id,
-          souscriptionRef: newItem.reference,
-          souscripteurId: newItem.souscripteurId,
-          souscripteurNom: newItem.souscripteurNom,
-          souscripteurPrenom: newItem.souscripteurPrenom,
-          typeSouscripteur: newItem.typeSouscripteur,
-          fournisseursNoms: (newItem.fournisseurs || []).map(f => f.fournisseurNom).join(', ') || 'Librairie de France Groupe',
-          fournisseurNom: (newItem.fournisseurs || []).map(f => f.fournisseurNom).join(', ') || 'Librairie de France Groupe',
-          devisIds: [],
-          banqueId: 'AFG-001',
-          banqueNom: 'AFG Bank',
-          agenceId: newItem.agenceId || 'AGE-AFG-001',
-          montantTotal: newItem.montantTotal || 0,
-          montant: newItem.montantTotal || 0,
-          statut: 'depose_banque',
-          dateCreation: newItem.dateCreation,
-          dateReception: newItem.dateCreation,
-          dateMiseAJour: newItem.dateMiseAJour,
-        };
         set(s => ({
           souscriptions: [newItem, ...s.souscriptions],
-          dossiers: [newDossier, ...s.dossiers],
         }));
         // Créer l'évènement historique
         get().addHistorique({
@@ -784,42 +761,9 @@ export const useVitalisDb = create<VitalisDbState>()(
           get().updateSouscription(sous.id, {
             fournisseurs,
             montantTotal,
-            statut: 'depose_banque',
+            statut: 'pret_pour_depot',
           });
-          // Synchroniser le dossier bancaire lié pour AFG Bank
-          const existingDossier = get().dossiers.find(d => d.souscriptionId === sous.id);
-          if (existingDossier) {
-            const devisIds = Array.from(new Set([...(existingDossier.devisIds || []), newItem.id]));
-            get().updateDossier(existingDossier.id, {
-              devisIds,
-              montantTotal,
-              montant: montantTotal,
-              fournisseurNom: existingDossier.fournisseurNom || (sous.fournisseurs || []).map(f => f.fournisseurNom).join(', ') || data.fournisseurNom,
-              statut: 'depose_banque',
-            });
-          } else {
-            get().addDossier({
-              reference: get().generateRef('DOS'),
-              souscriptionId: sous.id,
-              souscriptionRef: sous.reference,
-              souscripteurId: sous.souscripteurId,
-              souscripteurNom: sous.souscripteurNom,
-              souscripteurPrenom: sous.souscripteurPrenom,
-              typeSouscripteur: sous.typeSouscripteur,
-              fournisseursNoms: (sous.fournisseurs || []).map(f => f.fournisseurNom).join(', ') || data.fournisseurNom,
-              fournisseurNom: (sous.fournisseurs || []).map(f => f.fournisseurNom).join(', ') || data.fournisseurNom,
-              devisIds: [newItem.id],
-              banqueId: 'AFG-001',
-              banqueNom: 'AFG Bank',
-              agenceId: sous.agenceId || 'AGE-AFG-001',
-              montantTotal,
-              montant: montantTotal,
-              statut: 'depose_banque',
-              dateCreation: new Date().toISOString().split('T')[0],
-              dateReception: new Date().toISOString().split('T')[0],
-              dateMiseAJour: new Date().toISOString().split('T')[0],
-            });
-          }
+
         }
         get().addHistorique({
           souscriptionId: data.souscriptionId,

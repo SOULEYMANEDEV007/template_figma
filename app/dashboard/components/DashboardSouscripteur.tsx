@@ -43,8 +43,7 @@ export default function DashboardSouscripteur() {
 
   return (
     <div className="space-y-5 fade-in">
-      {/* Note importante + PDF conditions (Mise en commentaire à la demande) */}
-      {/* 
+      {/* Note importante + PDF conditions */}
       <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-500 rounded-xl p-4 shadow-sm">
         <div className="flex items-start gap-3">
           <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -145,7 +144,6 @@ export default function DashboardSouscripteur() {
           </button>
         </div>
       </div>
-      */}
 
       {/* Bouton action rapide : Nouvelle Demande (Flux direct Souscripteur) */}
       <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl p-5 text-white flex flex-col md:flex-row items-center justify-between shadow-lg gap-4">

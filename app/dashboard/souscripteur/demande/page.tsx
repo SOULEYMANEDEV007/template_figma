@@ -41,7 +41,6 @@ export default function NouvelleDemandeSouscripteur() {
   // --- Étape 2 : Configuration & Fournisseurs ---
   const [selectedFournisseurs, setSelectedFournisseurs] = useState<string[]>([]);
   const [duree, setDuree] = useState(36);
-  const [agenceId, setAgenceId] = useState("");
   const [observations, setObservations] = useState("");
 
   // Fournisseurs filtrés selon l'étape 1
@@ -77,7 +76,6 @@ export default function NouvelleDemandeSouscripteur() {
       const seq = String(Date.now()).slice(-4);
       const ref = `VF-${year}-${seq}`;
 
-      const agenceChoisie = agencesAFG.find(a => a.id === agenceId);
       const fournisseursChoisis = fournisseurs
         .filter(f => selectedFournisseurs.includes(f.id))
         .map(f => ({ fournisseurId: f.id, fournisseurNom: f.nom, statut: "en_attente" as const }));
@@ -97,8 +95,6 @@ export default function NouvelleDemandeSouscripteur() {
         typeSouscripteur: "physique",
         banqueId: "AFG-001",
         banqueNom: "AFG Bank",
-        agenceId: agenceId || undefined,
-        agenceNom: agenceChoisie?.nom,
         fournisseurs: fournisseursChoisis,
         fournisseurNom: fournisseursChoisis.map(f => f.fournisseurNom).join(", "),
         montantTotal: 0,
@@ -163,7 +159,7 @@ export default function NouvelleDemandeSouscripteur() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        
+
         {step === 1 && (
           <div className="space-y-6 slide-in">
             <SectionCard title="Détails du besoin" icon={Package}>
@@ -190,11 +186,10 @@ export default function NouvelleDemandeSouscripteur() {
                   </select>
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-xs font-semibold text-gray-600 mb-2">Produit recherché (Description courte) *</label>
-                  <input
-                    type="text"
-                    className={inp}
-                    placeholder="Ex: Ordinateur portable HP, Réfrigérateur, etc."
+                  <label className="block text-xs font-semibold text-gray-600 mb-2">Description détaillée du besoin *</label>
+                  <textarea
+                    className={`${inp} min-h-[120px] resize-y`}
+                    placeholder="Décrivez précisément votre besoin (ex: Ordinateur portable HP Core i7 avec sacoche, Réfrigérateur double battant de marque X, etc.)..."
                     value={produitRecherche}
                     onChange={e => setProduitRecherche(e.target.value)}
                     required
@@ -279,21 +274,11 @@ export default function NouvelleDemandeSouscripteur() {
               <SectionCard title="Durée du financement" icon={FileText}>
                 <label className="block text-xs font-semibold text-gray-600 mb-2">Durée (mois)</label>
                 <select className={sel} value={duree} onChange={e => setDuree(Number(e.target.value))}>
-                  {[12, 18, 24, 36, 48, 60, 72, 84, 96].map(d => (
+                  {[36, 60, 96].map(d => (
                     <option key={d} value={d}>{d} mois {d === 36 ? "(Par défaut)" : d > 60 ? "(Salariés uniquement)" : ""}</option>
                   ))}
                 </select>
                 <p className="text-[10px] text-gray-400 mt-2">Maximum 60 mois (Entreprises) ou 96 mois (Salariés).</p>
-              </SectionCard>
-
-              <SectionCard title="Votre Agence AFG Bank" icon={Building2}>
-                <label className="block text-xs font-semibold text-gray-600 mb-2">Agence de rattachement</label>
-                <select className={sel} value={agenceId} onChange={e => setAgenceId(e.target.value)} required>
-                  <option value="">Sélectionner une agence</option>
-                  {agencesAFG.map(a => (
-                    <option key={a.id} value={a.id}>{a.nom} — {a.ville}</option>
-                  ))}
-                </select>
               </SectionCard>
             </div>
 
