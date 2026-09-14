@@ -96,17 +96,39 @@ export default function SouscriptionDetailPage() {
 
   // Statuts "positifs" successifs du workflow VITALIS
   const isApres = (statut: string, ref: string) => {
-    const ordre = ["en_preparation", "pret_pour_depot", "depose_banque", "en_analyse_bancaire", "accepte", "finance", "fournisseur_paye", "commande_en_preparation", "livre", "servie", "cloture"];
-    return ordre.indexOf(statut) >= ordre.indexOf(ref);
+    const ordre = [
+      "en_preparation",
+      "pret_pour_depot",
+      "depose_banque",
+      "recu",
+      "en_analyse_bancaire",
+      "en_cours_traitement",
+      "accepte",
+      "valide",
+      "finance",
+      "fournisseur_paye",
+      "commande_en_preparation",
+      "livre",
+      "servie",
+      "cloture",
+    ];
+    const idxCandidat = ordre.indexOf(statut);
+    const idxRef = ordre.indexOf(ref);
+    return idxCandidat !== -1 && idxCandidat >= idxRef;
   };
+
+  // Statut le plus avancé entre la souscription et son dossier
+  const currentEffectifStatut = [sub.statut, dossier?.statut || ""].reduce((max, curr) => {
+    return isApres(curr, max) ? curr : max;
+  }, sub.statut);
 
   const processSteps = [
     { id: "sub", label: "Souscription créée", statut: "complete" as const, date: sub.dateCreation },
-    { id: "devis", label: "Devis fournisseur(s)", statut: devis ? "complete" as const : "pending" as const },
-    { id: "depot", label: "Dépôt AFG Bank", statut: isApres(sub.statut, "depose_banque") ? "complete" as const : sub.statut === "pret_pour_depot" ? "current" as const : "pending" as const },
-    { id: "banque", label: "Analyse bancaire", statut: isApres(sub.statut, "accepte") ? "complete" as const : sub.statut === "refuse" ? "rejected" as const : sub.statut === "en_analyse_bancaire" ? "current" as const : "pending" as const },
-    { id: "paiement", label: "Financement & Paiement", statut: isApres(sub.statut, "fournisseur_paye") ? "complete" as const : (sub.statut === "accepte" || sub.statut === "finance") ? "current" as const : "pending" as const },
-    { id: "livraison", label: "Commande & Livraison", statut: (sub.statut === "cloture" || sub.statut === "livre" || sub.statut === "servie") ? "complete" as const : (sub.statut === "fournisseur_paye" || sub.statut === "commande_en_preparation") ? "current" as const : "pending" as const },
+    { id: "devis", label: "Devis fournisseur(s)", statut: devis ? ("complete" as const) : ("pending" as const) },
+    { id: "depot", label: "Dépôt AFG Bank", statut: isApres(currentEffectifStatut, "depose_banque") ? ("complete" as const) : currentEffectifStatut === "pret_pour_depot" ? ("current" as const) : ("pending" as const) },
+    { id: "banque", label: "Analyse bancaire", statut: isApres(currentEffectifStatut, "accepte") ? ("complete" as const) : (currentEffectifStatut === "refuse" || currentEffectifStatut === "rejete") ? ("rejected" as const) : currentEffectifStatut === "en_analyse_bancaire" ? ("current" as const) : ("pending" as const) },
+    { id: "paiement", label: "Financement & Paiement", statut: isApres(currentEffectifStatut, "fournisseur_paye") ? ("complete" as const) : (currentEffectifStatut === "accepte" || currentEffectifStatut === "valide" || currentEffectifStatut === "finance") ? ("current" as const) : ("pending" as const) },
+    { id: "livraison", label: "Commande & Livraison", statut: (currentEffectifStatut === "cloture" || currentEffectifStatut === "livre" || currentEffectifStatut === "servie") ? ("complete" as const) : (currentEffectifStatut === "fournisseur_paye" || currentEffectifStatut === "commande_en_preparation") ? ("current" as const) : ("pending" as const) },
   ];
 
   const handleConfirmerPaiement = () => {

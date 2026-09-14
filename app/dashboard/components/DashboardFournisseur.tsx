@@ -44,11 +44,11 @@ export default function DashboardFournisseur() {
   ].filter(d => d.valeur > 0);
 
   const montantPaiementsRecus = mesPaiements
-    .filter(p => p.statut === 'termine')
+    .filter(p => ['termine', 'encaisse', 'servi', 'fournisseur_paye', 'confirme'].includes(p.statut))
     .reduce((acc, p) => {
       const maPart = p.repartitionFournisseurs
         .filter(r => r.fournisseurId === fournisseurId)
-        .reduce((s, r) => s + r.montant, 0);
+        .reduce((s, r) => s + (r.montant || 0), 0);
       return acc + maPart;
     }, 0);
 

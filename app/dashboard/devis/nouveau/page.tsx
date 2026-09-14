@@ -57,24 +57,57 @@ function newArticle(): ArticleRow {
   };
 }
 
+const getFournisseurLogo = (fournisseurNom?: string) => {
+  const nom = (fournisseurNom || "").toLowerCase();
+  if (nom.includes("ldf") || nom.includes("librairie")) return "/images/ldfgroupe-icon-app.webp";
+  if (nom.includes("dro") || nom.includes("drocolor")) return "/images/drocolor-logo.jfif";
+  if (nom.includes("smt") || nom.includes("smart")) return "/logos/logo-smart-techno.png";
+  if (nom.includes("nas") || nom.includes("nasko")) return "/logos/logo-nasko.png";
+  if (nom.includes("car") || nom.includes("carrefour")) return "/images/logo-carrefour.png";
+  return "/images/ldfgroupe-icon-app.webp";
+};
+
 // ── Aperçu devis (rendu HTML pour impression) ────────────────────
 function DevisPreview({
   devisRef, fournisseurNom, agenceNom, souscripteurNom, souscripteurPrenom,
   articles, dateCreation, dateExpiration, conditions, totalHT, totalTTC, relaisNom,
 }: any) {
+  const fournisseurLogo = getFournisseurLogo(fournisseurNom);
+
   return (
     <div id="devis-preview" className="bg-white text-gray-900 text-sm font-sans p-8 rounded-xl border border-gray-200 shadow-sm">
-      {/* En-tête Logos (Impression PDF) */}
-      <div className="pdf-only items-center justify-between pb-6 mb-6 border-b-2 border-[#0B2447]/10 bg-white">
-        <div className="flex-1">
-          <img src="/logos/logo-fades.PNG" alt="FADES" className="h-16 object-contain" crossOrigin="anonymous" />
+      {/* En-tête Logos Officiels (Fournisseur, Programme VITALIS, FADES, AFG Bank) */}
+      <div className="flex items-center justify-between pb-6 mb-6 border-b-2 border-[#0B2447]/10 bg-white gap-4 flex-wrap">
+        {/* 1. Fournisseur Émetteur */}
+        <div className="flex items-center gap-3">
+          <div className="h-14 w-14 rounded-xl border border-gray-200 p-1.5 flex items-center justify-center bg-white shadow-sm overflow-hidden flex-shrink-0">
+            <img
+              src={fournisseurLogo}
+              alt={fournisseurNom}
+              className="h-full w-full object-contain"
+              crossOrigin="anonymous"
+            />
+          </div>
+          <div>
+            <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.15em] uppercase">Fournisseur Émetteur</p>
+            <p className="text-xs font-bold text-gray-900">{fournisseurNom}</p>
+          </div>
         </div>
-        <div className="flex-1 flex flex-col items-center border-l border-r border-gray-200 px-4">
-          <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-2">Programme</p>
-          <img src="/logos/new_logo-viflo.JPG" alt="Vitalis" className="h-12 object-contain mix-blend-multiply rounded-xl" crossOrigin="anonymous" />
+
+        {/* 2. Programme VITALIS */}
+        <div className="flex flex-col items-center border-l border-r border-gray-200 px-4">
+          <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-1">Programme</p>
+          <img src="/logos/new_logo-viflo.JPG" alt="Vitalis" className="h-11 object-contain mix-blend-multiply rounded-xl" crossOrigin="anonymous" />
         </div>
-        <div className="flex-1 flex flex-col items-end pl-4">
-          <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-2 mr-2">Financement</p>
+
+        {/* 3. FADES */}
+        <div className="flex items-center">
+          <img src="/logos/logo-fades.PNG" alt="FADES" className="h-14 object-contain" crossOrigin="anonymous" />
+        </div>
+
+        {/* 4. Banque Financeuse */}
+        <div className="flex flex-col items-end pl-2">
+          <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-1 mr-1">Financement</p>
           <div className="h-12 px-3 flex items-center justify-center rounded-lg bg-white border border-gray-200 shadow-sm">
             <img src="/logos/logo-afg-bank_atlantic.png" alt="AFG Bank" className="h-8 object-contain" crossOrigin="anonymous" />
           </div>

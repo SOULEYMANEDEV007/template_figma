@@ -66,27 +66,75 @@ export default function DossierDetailPage() {
       : "") ||
     "Librairie de France Groupe";
 
+  // Ordre chronologique des étapes du workflow VITALIS
+  const isPasse = (statutCandidat: string, statutSeuil: string) => {
+    const ordre = [
+      "en_preparation",
+      "pret_pour_depot",
+      "depose_banque",
+      "recu",
+      "en_analyse_bancaire",
+      "en_cours_traitement",
+      "accepte",
+      "valide",
+      "finance",
+      "fournisseur_paye",
+      "commande_en_preparation",
+      "livre",
+      "servie",
+      "cloture",
+    ];
+    const idxCandidat = ordre.indexOf(statutCandidat);
+    const idxSeuil = ordre.indexOf(statutSeuil);
+    return idxCandidat !== -1 && idxCandidat >= idxSeuil;
+  };
+
+  // Le statut le plus avancé entre le dossier et sa souscription liée
+  const effectifStatut = [currentStatut, sub?.statut || ""].reduce((max, curr) => {
+    return isPasse(curr, max) ? curr : max;
+  }, currentStatut);
+
+  const isDossierRejete = currentStatut === "rejete" || currentStatut === "refuse" || sub?.statut === "refuse";
+
   // Process steps (VITALIS Workflow: Souscription -> Devis validé -> En traitement -> Décision -> Paiement -> Servi)
   const processSteps = [
     { id: "s1", label: "Souscription", statut: "complete" as const },
     { id: "s2", label: "Devis validé", statut: "complete" as const },
     {
-      id: "s3", label: "En traitement",
-      statut: currentStatut === "en_cours_traitement" ? "current" as const :
-        currentStatut === "valide" || currentStatut === "accepte" || currentStatut === "rejete" || currentStatut === "refuse" ? "complete" as const : "pending" as const,
+      id: "s3",
+      label: "En traitement",
+      statut: isPasse(effectifStatut, "accepte") || isDossierRejete
+        ? ("complete" as const)
+        : ["en_cours_traitement", "en_analyse_bancaire", "depose_banque", "recu"].includes(currentStatut)
+        ? ("current" as const)
+        : ("pending" as const),
     },
     {
-      id: "s4", label: "Décision",
-      statut: currentStatut === "valide" || currentStatut === "accepte" ? "complete" as const :
-        currentStatut === "rejete" || currentStatut === "refuse" ? "rejected" as const : "pending" as const,
+      id: "s4",
+      label: "Décision",
+      statut: isDossierRejete
+        ? ("rejected" as const)
+        : isPasse(effectifStatut, "accepte")
+        ? ("complete" as const)
+        : ("pending" as const),
     },
     {
-      id: "s5", label: "Paiement",
-      statut: (currentStatut === "valide" || currentStatut === "accepte") && (sub?.statut === "payee" || sub?.statut === "fournisseur_paye" || sub?.statut === "commande_en_preparation" || sub?.statut === "livre") ? "complete" as const : "pending" as const,
+      id: "s5",
+      label: "Paiement",
+      statut: isPasse(effectifStatut, "fournisseur_paye")
+        ? ("complete" as const)
+        : (effectifStatut === "accepte" || effectifStatut === "valide" || effectifStatut === "finance")
+        ? ("current" as const)
+        : ("pending" as const),
     },
     {
-      id: "s6", label: "Servi",
-      statut: sub?.statut === "servie" || sub?.statut === "livre" ? "complete" as const : "pending" as const,
+      id: "s6",
+      label: "Servi",
+      statut: (isPasse(effectifStatut, "livre") || effectifStatut === "servie" || effectifStatut === "cloture")
+        ? ("complete" as const)
+        : (effectifStatut === "fournisseur_paye" || effectifStatut === "commande_en_preparation")
+        ? ("current" as const)
+        : ("pending" as const),
     },
   ];
 
@@ -250,30 +298,30 @@ export default function DossierDetailPage() {
       </div>
 
       {/* Décision affichée si déjà traitée */}
-      {(currentStatut === "valide" || currentStatut === "accepte" || currentStatut === "rejete" || currentStatut === "refuse") && (
+      {(isDossierRejete || isPasse(effectifStatut, "accepte")) && (
         <div className={`p-4 rounded-xl border flex items-start gap-3 ${
-          (currentStatut === "valide" || currentStatut === "accepte")
-            ? "bg-emerald-50 border-emerald-200"
-            : "bg-red-50 border-red-200"
+          isDossierRejete
+            ? "bg-red-50 border-red-200"
+            : "bg-emerald-50 border-emerald-200"
         }`}>
-          {(currentStatut === "valide" || currentStatut === "accepte") ? (
-            <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
-          ) : (
+          {isDossierRejete ? (
             <XCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+          ) : (
+            <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
           )}
           <div>
             <p className="text-sm font-semibold text-gray-900">
-              {(currentStatut === "valide" || currentStatut === "accepte") ? "Dossier validé — financement accordé" : "Dossier rejeté"}
+              {isDossierRejete ? "Dossier rejeté" : "Dossier validé — financement accordé"}
             </p>
             <p className="text-sm text-gray-600 mt-0.5">
-              {commentaire || dossier.motifRejet || dossier.commentaireBanque || dossier.commentaireAFG || ((currentStatut === "valide" || currentStatut === "accepte") ? "Financement accordé par AFG Bank." : "")}
+              {commentaire || dossier.motifRejet || dossier.commentaireBanque || dossier.commentaireAFG || (!isDossierRejete ? "Financement accordé par AFG Bank." : "")}
             </p>
           </div>
         </div>
       )}
 
       {/* ── Action Virement Bancaire AFG Bank (Étape 5) ── */}
-      {(currentStatut === "valide" || currentStatut === "accepte") && (sub?.statut === "accepte" || sub?.statut === "finance") && (
+      {!isDossierRejete && !isPasse(effectifStatut, "fournisseur_paye") && isPasse(effectifStatut, "accepte") && (
         <div className="p-4 rounded-xl border bg-amber-50/80 border-amber-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm">
           <div className="flex items-start gap-3">
             <div className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
@@ -297,13 +345,13 @@ export default function DossierDetailPage() {
         </div>
       )}
 
-      {(currentStatut === "fournisseur_paye" || sub?.statut === "fournisseur_paye" || sub?.statut === "commande_en_preparation" || sub?.statut === "livre" || sub?.statut === "servie") && (
+      {isPasse(effectifStatut, "fournisseur_paye") && (
         <div className="p-4 rounded-xl border bg-sky-50 border-sky-200 flex items-center gap-3 shadow-sm">
           <CheckCircle2 className="w-5 h-5 text-sky-600 flex-shrink-0" />
           <div>
             <p className="text-sm font-bold text-sky-900">Virement bancaire AFG Bank exécuté ✓</p>
             <p className="text-xs text-sky-700 mt-0.5">
-              Fonds transférés au fournisseur {fournisseurAffiche} ({fmtCFA(dossierMontant)}). {sub?.statut === "livre" || sub?.statut === "servie" ? "Articles retirés contre fiche d'émargement signée — Dossier clôturé ✓" : "Commande en cours de préparation / retrait chez le fournisseur."}
+              Fonds transférés au fournisseur {fournisseurAffiche} ({fmtCFA(dossierMontant)}). {isPasse(effectifStatut, "livre") ? "Articles retirés contre fiche d'émargement signée — Dossier clôturé ✓" : "Commande en cours de préparation / retrait chez le fournisseur."}
             </p>
           </div>
         </div>
