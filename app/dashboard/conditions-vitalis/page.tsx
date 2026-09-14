@@ -362,10 +362,10 @@ export default function ConditionsVitalisPage() {
         </div>
         <div className="flex-1 flex flex-col items-end pl-4">
           <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-2 mr-2">Financement</p>
-          <img src="/logos/LOGO-AFG-Bank.jpg" alt="AFG Bank" className="h-10 object-contain" />
+          <img src="/logos/logo-afg-bank_atlantic.png" alt="AFG Bank" className="h-10 object-contain" />
         </div>
       </div>
-      
+
       {/* Titre document imprimé */}
       <div className="hidden print:block text-center mb-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-1">

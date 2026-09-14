@@ -3,7 +3,7 @@
 import { StatusBadge } from "@/components/ui/ldf-badge";
 import { ConfirmModal } from "@/components/ui/ldf-modal";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
-import { useLDFAuthStore } from "@/stores/ldfAuth";
+import { useLDFAuthStore, emitInAppNotification } from "@/stores/ldfAuth";
 import { ArrowLeft, Building2, CheckCircle2, Download, Eye, FileText, Send } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -13,13 +13,16 @@ import { toast } from "sonner";
 
 import { downloadPDFFromHTML } from "@/lib/pdf/generator";
 
-const fmtCFA = (v: number) => new Intl.NumberFormat("fr-FR").format(v) + " FCFA";
+const fmtCFA = (v: any) => {
+  const num = typeof v === "number" ? v : Number(v);
+  return new Intl.NumberFormat("fr-FR").format(isNaN(num) ? 0 : num) + " FCFA";
+};
 
 export default function DevisDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const { user } = useLDFAuthStore();
-  const { getDevisById } = useVitalisDb();
+  const { getDevisById, updateDevis } = useVitalisDb();
   
   const [showSend, setShowSend] = useState(false);
   const [statut, setStatut] = useState<string | null>(null);
@@ -37,6 +40,15 @@ export default function DevisDetailPage() {
 
   const handleSend = () => {
     setStatut("envoye");
+    updateDevis(devis.id, { statut: "envoye" });
+    emitInAppNotification({
+      titre: `Nouveau devis soumis : ${devis.reference}`,
+      message: `Le fournisseur ${devis.fournisseurNom} a transmis le devis de ${fmtCFA(devis.totalTTC)} pour validation bancaire (${devis.souscripteurNom}).`,
+      categorie: "devis",
+      reference: devis.reference,
+      lien: `/dashboard/devis/${devis.id}`,
+      roles: ["banque", "souscripteur", "admin"],
+    });
     setShowSend(false);
     toast.success(`Devis ${devis.reference} envoyé à ${devis.banqueNom}`);
   };
@@ -70,10 +82,20 @@ export default function DevisDetailPage() {
           </div>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          {(currentStatut === "brouillon" || currentStatut === "envoye") && (user?.role !== "banque") && (
+          {currentStatut === "brouillon" && (user?.role !== "banque") && (
             <button onClick={() => setShowSend(true)} className="btn-ldf-secondary text-sm py-2 px-4">
               <Send className="w-3.5 h-3.5" /> Envoyer à la banque
             </button>
+          )}
+          {currentStatut === "envoye" && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+              <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" /> Transmis à AFG Bank
+            </span>
+          )}
+          {(currentStatut === "valide" || currentStatut === "accepte") && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Devis validé
+            </span>
           )}
           <Link href={`/dashboard/souscriptions/${devis.souscriptionId}`} className="btn-ldf-outline text-sm py-2 px-4">
             <Eye className="w-3.5 h-3.5" /> Souscription

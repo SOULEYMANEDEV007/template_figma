@@ -11,34 +11,36 @@
  *  3 — Confirmation & Soumission (sauvegarde réelle dans le store)
  */
 
+import { LDFModal } from "@/components/ui/ldf-modal";
 import { saveFile } from "@/lib/fileStorage";
-import { useLDFAuthStore } from "@/stores/ldfAuth";
+import { mockSouscripteursUsers } from "@/lib/ldfData";
+import { emitInAppNotification, useLDFAuthStore } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
 import {
   ArrowLeft, ArrowRight, Building2, Check, CheckCircle2,
-  FileText, Loader2, MapPin, Plus, Search, Trash2,
+  Copy, FileText, Key, Loader2, Mail, MapPin, Plus, Search, Trash2,
   Upload, User, Users, X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 // ── Constantes ──────────────────────────────────────────────────
 const STEPS = [
-  { label: "Vérification",   icon: Search },
-  { label: "Souscripteur",  icon: User },
-  { label: "Souscription",  icon: FileText },
-  { label: "Confirmation",  icon: Check },
+  { label: "Vérification", icon: Search },
+  { label: "Souscripteur", icon: User },
+  { label: "Souscription", icon: FileText },
+  { label: "Confirmation", icon: Check },
 ];
 
 const SITUATIONS_PRO = ["Salarié", "Fonctionnaire"] as const;
 const SITUATIONS_MAT = ["Célibataire", "Marié(e)", "Divorcé(e)", "Veuf/Veuve"] as const;
 const REGIONS_CI = [
-  "Abidjan","Agnéby-Tiassa","Bafing","Bagoué","Béré","Bounkani",
-  "Cavally","Folon","Gbêkê","Gontougo","Grands Ponts","Guémon",
-  "Hambol","Haut-Sassandra","Iffou","Indénié-Djuablin","Kabadougou",
-  "La Mé","Lôh-Djiboua","Marahoué","Moronou","N'Zi","Nawa",
-  "Poro","San-Pédro","Sud-Comoé","Tonkpi","Worodougou","Yamoussoukro",
+  "Abidjan", "Agnéby-Tiassa", "Bafing", "Bagoué", "Béré", "Bounkani",
+  "Cavally", "Folon", "Gbêkê", "Gontougo", "Grands Ponts", "Guémon",
+  "Hambol", "Haut-Sassandra", "Iffou", "Indénié-Djuablin", "Kabadougou",
+  "La Mé", "Lôh-Djiboua", "Marahoué", "Moronou", "N'Zi", "Nawa",
+  "Poro", "San-Pédro", "Sud-Comoé", "Tonkpi", "Worodougou", "Yamoussoukro",
 ];
 const FORMES_JURIDIQUES = ["SARL", "SA", "SAS", "EURL", "GIE", "Association", "Autre"];
 
@@ -203,10 +205,19 @@ export default function CreerSouscriptionPage() {
 
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const [showAccessModal, setShowAccessModal] = useState(false);
+  const [createdClientInfo, setCreatedClientInfo] = useState<{
+    id: string;
+    reference: string;
+    nom: string;
+    prenom?: string;
+    email: string;
+    password: string;
+  } | null>(null);
 
   // ── Étape 0 : Recherche du souscripteur ─────────────────────
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchType, setSearchType] = useState<"cni" | "rccm" | "telephone">("cni");
+  const [searchType, setSearchType] = useState<"code" | "telephone" | "rccm">("code");
   const [foundExisting, setFoundExisting] = useState<any>(null);
   const [typeSouscripteur, setTypeSouscripteur] = useState<TypeSouscripteur>("physique");
 
@@ -216,13 +227,20 @@ export default function CreerSouscriptionPage() {
 
   // ── Étape 2 : Souscription ───────────────────────────────────
   const [selectedFournisseurs, setSelectedFournisseurs] = useState<string[]>(
-    user?.role === "fournisseur" && user.organisationId ? [user.organisationId] : []
+    user?.role === "fournisseur" ? [user.organisationId || user.fournisseurId || "FOUR-LDF-001"] : []
   );
   const [selectedPointRelais, setSelectedPointRelais] = useState("");
   const [agenceId, setAgenceId] = useState("");
   const [duree, setDuree] = useState(36);
-  const [dateDebut, setDateDebut] = useState(new Date().toISOString().split("T")[0]);
   const [observations, setObservations] = useState("");
+
+  // Verrouillage du fournisseur émetteur pour le rôle fournisseur
+  useEffect(() => {
+    if (user?.role === "fournisseur") {
+      const monId = user.organisationId || user.fournisseurId || "FOUR-LDF-001";
+      setSelectedFournisseurs([monId]);
+    }
+  }, [user]);
 
   // ── Handlers formulaires ─────────────────────────────────────
   const setP = (k: keyof FormPhysique, v: any) => setFormPhysique(f => ({ ...f, [k]: v }));
@@ -231,18 +249,67 @@ export default function CreerSouscriptionPage() {
   // ── Recherche souscripteur ───────────────────────────────────
   const handleSearch = () => {
     if (!searchQuery.trim()) return;
-    // Chercher dans les souscriptions existantes (données du store)
+    const q = searchQuery.trim().toLowerCase();
+
+    // 1. Chercher dans les souscripteurs connus (base démo)
+    const userFound = (mockSouscripteursUsers || []).find((u: any) =>
+      u.souscripteurId?.toLowerCase().includes(q) ||
+      u.email?.toLowerCase().includes(q) ||
+      u.telephone?.includes(searchQuery.trim()) ||
+      `${u.prenom} ${u.nom}`.toLowerCase().includes(q) ||
+      `${u.nom} ${u.prenom}`.toLowerCase().includes(q)
+    );
+
+    if (userFound) {
+      const data = {
+        souscripteurId: userFound.souscripteurId || userFound.id,
+        souscripteurNom: userFound.nom,
+        souscripteurPrenom: userFound.prenom,
+        souscripteurEmail: userFound.email,
+        souscripteurTelephone: userFound.telephone,
+        typeSouscripteur: "physique" as TypeSouscripteur,
+        numeroCNI: "CI002938491",
+        situationPro: "Salarié",
+        employeur: "Ministère de l'Éducation Nationale",
+        poste: "Enseignant",
+        ville: "Abidjan",
+      };
+      setFoundExisting(data);
+      setTypeSouscripteur("physique");
+      setFormPhysique(p => ({
+        ...p,
+        nom: data.souscripteurNom,
+        prenom: data.souscripteurPrenom,
+        telephone: data.souscripteurTelephone,
+        email: data.souscripteurEmail,
+        numeroCNI: data.numeroCNI,
+        situationPro: data.situationPro,
+        employeur: data.employeur,
+        poste: data.poste,
+        ville: data.ville,
+      }));
+      toast.success(`Souscripteur reconnu : ${data.souscripteurPrenom} ${data.souscripteurNom}`);
+      return;
+    }
+
+    // 2. Chercher dans l'historique des souscriptions du store
     const found = souscriptions.find(s => {
-      const q = searchQuery.toLowerCase();
-      if (searchType === "cni") return s.souscripteurId?.toLowerCase().includes(q);
-      if (searchType === "telephone") return s.souscripteurTelephone?.includes(searchQuery);
-      if (searchType === "rccm") return s.souscripteurEntreprise?.toLowerCase().includes(q);
+      if (searchType === "code") {
+        return (
+          s.souscripteurId?.toLowerCase().includes(q) ||
+          s.numeroCNI?.toLowerCase().includes(q) ||
+          s.reference?.toLowerCase().includes(q) ||
+          `${s.souscripteurPrenom} ${s.souscripteurNom}`.toLowerCase().includes(q)
+        );
+      }
+      if (searchType === "telephone") return s.souscripteurTelephone?.includes(searchQuery.trim());
+      if (searchType === "rccm") return s.souscripteurEntreprise?.toLowerCase().includes(q) || s.rccm?.toLowerCase().includes(q);
       return false;
     });
+
     if (found) {
       setFoundExisting(found);
       toast.success(`Souscripteur trouvé : ${found.souscripteurPrenom || ''} ${found.souscripteurNom}`);
-      // Pré-remplir le formulaire
       if (found.typeSouscripteur === "physique") {
         setTypeSouscripteur("physique");
         setFormPhysique(p => ({
@@ -251,6 +318,9 @@ export default function CreerSouscriptionPage() {
           prenom: found.souscripteurPrenom || "",
           telephone: found.souscripteurTelephone || "",
           email: found.souscripteurEmail || "",
+          numeroCNI: found.numeroCNI || p.numeroCNI,
+          situationPro: found.situationPro || p.situationPro,
+          employeur: found.employeur || p.employeur,
         }));
       } else {
         setTypeSouscripteur("morale");
@@ -259,15 +329,16 @@ export default function CreerSouscriptionPage() {
           nomEntreprise: found.souscripteurEntreprise || "",
           telephone: found.souscripteurTelephone || "",
           email: found.souscripteurEmail || "",
+          rccm: found.rccm || m.rccm,
         }));
       }
     } else {
       setFoundExisting(null);
-      toast.info("Aucun souscripteur trouvé — Nouveau souscripteur");
+      toast.info("Aucun souscripteur trouvé avec ce critère — Vous pouvez renseigner sa fiche.");
     }
   };
 
-  // ── Gestion fournisseurs sélectionnés ────────────────────────
+  // ── Gestion fournisseurs sélectionnés (Admin uniquement) ─────
   const toggleFournisseur = (id: string) => {
     setSelectedFournisseurs(prev =>
       prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]
@@ -285,7 +356,7 @@ export default function CreerSouscriptionPage() {
       return formMorale.nomEntreprise && formMorale.rccm && formMorale.telephone &&
         formMorale.nomDG && formMorale.formeJuridique;
     }
-    if (step === 2) return selectedFournisseurs.length > 0 && dateDebut;
+    if (step === 2) return selectedFournisseurs.length > 0;
     return true;
   };
 
@@ -302,10 +373,10 @@ export default function CreerSouscriptionPage() {
         .filter(f => selectedFournisseurs.includes(f.id))
         .map(f => ({ fournisseurId: f.id, fournisseurNom: f.nom, statut: "en_attente" as const }));
 
-      // Données souscripteur communes
-      const souscripteurId = typeSouscripteur === "physique"
+      // Données souscripteur communes (conserver l'identifiant s'il s'agit d'un souscripteur existant)
+      const souscripteurId = foundExisting?.souscripteurId || (typeSouscripteur === "physique"
         ? `SCP-${Date.now()}`
-        : `SCE-${Date.now()}`;
+        : `SCE-${Date.now()}`);
 
       const souscripteurNom = typeSouscripteur === "physique" ? formPhysique.nom : formMorale.nomDG;
       const souscripteurPrenom = typeSouscripteur === "physique" ? formPhysique.prenom : formMorale.prenomDG;
@@ -344,21 +415,43 @@ export default function CreerSouscriptionPage() {
         observations,
       });
 
-      toast.success(`Souscription ${ref} créée — En attente des devis fournisseurs`, { duration: 4000 });
-      if (!asBrouillon) {
-        setTimeout(() => {
-          toast("📧 Accès Viflo envoyés", {
-            description: "Les accès à l'application cliente Viflo ont été envoyés au client par email.",
-            icon: "✅"
-          });
-        }, 1500);
+      emitInAppNotification({
+        titre: `Nouvelle souscription ${ref}`,
+        message: `Dossier constitué pour ${souscripteurPrenom} ${souscripteurNom} — Prêt pour analyse AFG Bank.`,
+        categorie: "souscription",
+        reference: ref,
+        lien: `/dashboard/souscriptions/${nouvelle.id}`,
+        roles: ["admin", "fournisseur", "banque"],
+      });
+
+      if (asBrouillon) {
+        toast.success(`Souscription ${ref} enregistrée en brouillon`, { duration: 4000 });
+        router.push(`/dashboard/souscriptions/${nouvelle.id}`);
+      } else {
+        const clientEmail = souscripteurEmail || "client@viflo.ci";
+        const tempPassword = clientEmail === "client@viflo.ci" ? "client123" : "Viflo2026!";
+        setCreatedClientInfo({
+          id: nouvelle.id,
+          reference: ref,
+          nom: souscripteurNom,
+          prenom: souscripteurPrenom,
+          email: clientEmail,
+          password: tempPassword,
+        });
+        setShowAccessModal(true);
       }
-      router.push(`/dashboard/souscriptions/${nouvelle.id}`);
     } catch (err) {
       toast.error("Une erreur est survenue. Veuillez réessayer.");
       console.error(err);
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleCloseAccessModal = () => {
+    setShowAccessModal(false);
+    if (createdClientInfo) {
+      router.push(`/dashboard/souscriptions/${createdClientInfo.id}`);
     }
   };
 
@@ -403,14 +496,14 @@ export default function CreerSouscriptionPage() {
 
             {/* Type de recherche */}
             <div className="flex gap-2">
-              {(["cni", "telephone", "rccm"] as const).map(t => (
+              {(["code", "telephone", "rccm"] as const).map(t => (
                 <button
                   key={t}
                   onClick={() => setSearchType(t)}
                   className={`flex-1 py-2 px-3 text-xs font-semibold rounded-xl border transition-all
                     ${searchType === t ? "bg-orange-500 text-white border-orange-500" : "bg-white text-gray-500 border-gray-200 hover:border-orange-300"}`}
                 >
-                  {t === "cni" ? "N° CNI" : t === "telephone" ? "Téléphone" : "RCCM"}
+                  {t === "code" ? "Code ViFlo / CNI / Nom" : t === "telephone" ? "Téléphone" : "Entreprise / RCCM"}
                 </button>
               ))}
             </div>
@@ -423,8 +516,8 @@ export default function CreerSouscriptionPage() {
                 onChange={e => setSearchQuery(e.target.value)}
                 onKeyDown={e => e.key === "Enter" && handleSearch()}
                 placeholder={
-                  searchType === "cni" ? "Ex: CI8503150987654" :
-                  searchType === "telephone" ? "Ex: +225 07 00 00 00 00" : "Ex: CI-ABJ-2020-B-11223"
+                  searchType === "code" ? "Ex: SCP-001, CI8503150987654 ou Coulibaly" :
+                    searchType === "telephone" ? "Ex: +225 07 01 11 22 33" : "Ex: CI-ABJ-2020-B-11223"
                 }
                 className={inp}
               />
@@ -436,15 +529,39 @@ export default function CreerSouscriptionPage() {
               </button>
             </div>
 
-            {/* Résultat de recherche */}
+            {/* Résultat de recherche avec fast-track */}
             {foundExisting && (
-              <div className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
-                <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                <div>
-                  <p className="text-sm font-semibold text-emerald-800">
-                    Souscripteur existant : {foundExisting.souscripteurPrenom} {foundExisting.souscripteurNom}
+              <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-bold text-emerald-900">
+                        {foundExisting.souscripteurPrenom} {foundExisting.souscripteurNom || foundExisting.souscripteurEntreprise}
+                      </p>
+                      <p className="text-xs text-emerald-700">
+                        {foundExisting.souscripteurTelephone} · {foundExisting.souscripteurEmail || "Email non renseigné"}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="px-2.5 py-0.5 text-[11px] font-bold bg-emerald-200 text-emerald-800 rounded-full">
+                    Souscripteur Existant
+                  </span>
+                </div>
+                <div className="pt-2 border-t border-emerald-200/60 flex items-center justify-between">
+                  <p className="text-xs text-emerald-700">
+                    Réf. : <strong>{foundExisting.souscripteurId || "SCP-001"}</strong>
                   </p>
-                  <p className="text-xs text-emerald-600">Les informations seront pré-remplies à l'étape suivante.</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStep(2);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 rounded-lg transition-colors shadow-sm"
+                  >
+                    Utiliser ce souscripteur et continuer <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
             )}
@@ -704,11 +821,18 @@ export default function CreerSouscriptionPage() {
             </Field>
           </SectionCard>
 
-          {/* Fournisseurs */}
-          <SectionCard title="Fournisseurs agréés Vitalis" icon={Building2}>
-            <p className="text-xs text-gray-500 mb-3">Sélectionnez un ou plusieurs fournisseurs pour cette souscription :</p>
+          {/* Fournisseur émetteur */}
+          <SectionCard title="Fournisseur émetteur de la souscription" icon={Building2}>
+            <p className="text-xs text-gray-500 mb-3">
+              {user?.role === "fournisseur"
+                ? "Votre établissement est l'émetteur exclusif de cette souscription et du devis associé :"
+                : "Sélectionnez le fournisseur partenaire pour cette souscription :"}
+            </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {fournisseurs.filter(f => f.agreVitalis && f.statut === "actif").map(f => {
+              {fournisseurs
+                .filter(f => f.agreVitalis && f.statut === "actif")
+                .filter(f => user?.role === "fournisseur" ? (f.id === user.organisationId || f.id === user.fournisseurId) : true)
+                .map(f => {
                 const isSelected = selectedFournisseurs.includes(f.id);
                 const isDisabled = user?.role === "fournisseur" && user.organisationId === f.id;
                 return (
@@ -730,7 +854,7 @@ export default function CreerSouscriptionPage() {
                         <p className={`text-xs font-semibold ${isSelected ? "text-orange-700" : "text-gray-700"}`}>{f.nom}</p>
                         <p className="text-[10px] text-gray-400 truncate">{f.raisonSociale}</p>
                       </div>
-                      {isDisabled && <span className="text-[10px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded font-medium">Vous</span>}
+                      {isDisabled && <span className="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-semibold">Votre établissement (Émetteur)</span>}
                     </div>
                   </button>
                 );
@@ -738,18 +862,15 @@ export default function CreerSouscriptionPage() {
             </div>
           </SectionCard>
 
-          {/* Durée & Dates */}
-          <SectionCard title="Durée et dates" icon={FileText}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Durée du programme */}
+          <SectionCard title="Durée du financement" icon={FileText}>
+            <div className="max-w-xs">
               <Field label="Durée du programme (mois)">
                 <select className={sel} value={duree} onChange={e => setDuree(Number(e.target.value))}>
-                  {[12, 18, 24, 36, 48, 60].map(d => (
+                  {[36, 48, 60].map(d => (
                     <option key={d} value={d}>{d} mois{d === 36 ? " (défaut)" : ""}</option>
                   ))}
                 </select>
-              </Field>
-              <Field label="Date de début souhaitée" required>
-                <input type="date" className={inp} value={dateDebut} onChange={e => setDateDebut(e.target.value)} />
               </Field>
             </div>
           </SectionCard>
@@ -859,7 +980,6 @@ export default function CreerSouscriptionPage() {
               <div><p className="text-xs text-gray-400">Banque financeuse</p><p className="font-bold text-orange-600">AFG Bank</p></div>
               <div><p className="text-xs text-gray-400">Agence</p><p className="font-medium">{agenceChoisie?.nom || "Non spécifiée"}</p></div>
               <div><p className="text-xs text-gray-400">Durée programme</p><p className="font-medium">{duree} mois</p></div>
-              <div><p className="text-xs text-gray-400">Date de début</p><p className="font-medium">{dateDebut ? new Date(dateDebut).toLocaleDateString("fr-FR") : "—"}</p></div>
               <div className="col-span-2">
                 <p className="text-xs text-gray-400">Fournisseur(s)</p>
                 <div className="flex flex-wrap gap-1.5 mt-1">
@@ -944,6 +1064,76 @@ export default function CreerSouscriptionPage() {
           )}
         </div>
       </div>
+      {/* ── Modal de simulation d'envoi d'accès client ── */}
+      <LDFModal
+        open={showAccessModal}
+        onClose={handleCloseAccessModal}
+        title="Fiche de souscription enregistrée"
+        size="md"
+      >
+        <div className="space-y-4">
+          <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-start gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+              <Mail className="w-5 h-5" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-bold text-emerald-900">
+                📧 Identifiants envoyés par email au souscripteur
+              </p>
+              <p className="text-xs text-emerald-700 mt-1 leading-relaxed">
+                Un email de bienvenue contenant les identifiants d'accès à la plateforme <strong>ViFLO</strong> a été simulé et transmis au client afin qu'il puisse se connecter et suivre en direct l'avancement de son dossier de financement.
+              </p>
+            </div>
+          </div>
+
+          {/* Encart récapitulatif des identifiants */}
+          <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider flex items-center gap-1.5">
+                <Key className="w-3.5 h-3.5 text-orange-500" /> Coordonnées d'accès client
+              </p>
+              <span className="text-[10px] font-bold bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-mono">
+                {createdClientInfo?.reference}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+                <span className="text-gray-400 block text-[10px] mb-1">Identifiant / Login</span>
+                <span className="font-mono font-bold text-gray-900 break-all text-xs">
+                  {createdClientInfo?.email}
+                </span>
+              </div>
+              <div className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+                <span className="text-gray-400 block text-[10px] mb-1">Mot de passe temporaire</span>
+                <span className="font-mono font-bold text-orange-600 text-xs">
+                  {createdClientInfo?.password}
+                </span>
+              </div>
+              <div className="bg-white p-2.5 rounded-lg border border-gray-100 col-span-2 flex items-center justify-between text-[11px] text-gray-500">
+                <span>Espace assigné : <strong>Souscripteur VITALIS</strong></span>
+                <span className="text-emerald-600 font-semibold flex items-center gap-1">
+                  <Check className="w-3 h-3" /> Compte actif
+                </span>
+              </div>
+            </div>
+
+            <p className="text-[11px] text-gray-500 italic bg-amber-50/70 p-2.5 rounded-lg border border-amber-100 text-amber-800">
+              💡 Le souscripteur peut dès à présent se rendre sur la page de connexion pour suivre les devis, la décision d'AFG Bank et la livraison.
+            </p>
+          </div>
+
+          <div className="pt-2">
+            <button
+              onClick={handleCloseAccessModal}
+              className="w-full btn-ldf-primary py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all"
+            >
+              Continuer vers la fiche souscription
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </LDFModal>
     </div>
   );
 }

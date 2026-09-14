@@ -171,6 +171,7 @@ export interface VDossier {
   typeSouscripteur: 'physique' | 'morale';
   // Fournisseurs (résumé)
   fournisseursNoms: string;
+  fournisseurNom?: string;
   devisIds: string[];
   // AFG Bank
   banqueId: 'AFG-001';
@@ -178,6 +179,7 @@ export interface VDossier {
   agenceId?: string;
   // Montant total (somme de tous les devis)
   montantTotal: number;
+  montant?: number;
   // Statut
   statut: 'en_preparation' | 'pret_pour_depot' | 'depose_banque' | 'en_analyse_bancaire' | 'accepte' | 'refuse' | 'finance' | 'fournisseur_paye' | 'commande_en_preparation' | 'livre' | 'cloture';
   commentaireAFG?: string;
@@ -253,7 +255,7 @@ const SEED_FOURNISSEURS: VFournisseur[] = [
     telephone: '+225 27 23 45 67 89', telephoneCommercial: '+225 05 06 07 08 09',
     adresse: 'Zone Industrielle de Yopougon', ville: 'Abidjan', quartier: 'Yopougon',
     rccm: 'CI-ABJ-2018-B-45678', secteurActivite: 'Matériel informatique et électronique',
-    logo: '/images/logo-drocolor.jfif', agreVitalis: true, dateAgrementVitalis: '2023-03-20', statut: 'actif',
+    logo: '/images/drocolor-logo.jfif', agreVitalis: true, dateAgrementVitalis: '2023-03-20', statut: 'actif',
   },
   {
     id: 'FOUR-SMT-003', code: 'SMART', nom: 'SMART TECHNOLOGIE', raisonSociale: 'Smart Technologie CI SA',
@@ -549,6 +551,7 @@ interface VitalisDbState {
   generateRef: (prefix: string) => string;
   seedIfNeeded: () => void;
   resetAllData: () => void;
+  syncMissingDossiers: () => void;
 }
 
 export const useVitalisDb = create<VitalisDbState>()(
@@ -616,13 +619,74 @@ export const useVitalisDb = create<VitalisDbState>()(
         historique: [],
       }),
 
+      syncMissingDossiers: () => {
+        const { souscriptions = [], dossiers = [], devis = [] } = get();
+        let changed = false;
+        const currentDossiers = [...dossiers];
+        souscriptions.forEach(s => {
+          const exists = currentDossiers.some(d => d.souscriptionId === s.id);
+          if (!exists) {
+            const devisLies = devis.filter(dev => dev.souscriptionId === s.id);
+            currentDossiers.unshift({
+              id: `DOS-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+              reference: s.reference.replace('VF-', 'DOS-').replace('SOUS-', 'DOS-'),
+              souscriptionId: s.id,
+              souscriptionRef: s.reference,
+              souscripteurId: s.souscripteurId,
+              souscripteurNom: s.souscripteurNom,
+              souscripteurPrenom: s.souscripteurPrenom,
+              typeSouscripteur: s.typeSouscripteur || 'physique',
+              fournisseursNoms: (s.fournisseurs || []).map(f => f.fournisseurNom).join(', ') || 'Librairie de France Groupe',
+              devisIds: devisLies.map(d => d.id),
+              banqueId: 'AFG-001',
+              banqueNom: 'AFG Bank',
+              agenceId: s.agenceId || 'AGE-AFG-001',
+              montantTotal: s.montantTotal || devisLies.reduce((acc, d) => acc + (d.totalTTC || 0), 0),
+              statut: 'depose_banque',
+              dateCreation: s.dateCreation || new Date().toISOString().split('T')[0],
+              dateReception: s.dateCreation || new Date().toISOString().split('T')[0],
+              dateMiseAJour: new Date().toISOString().split('T')[0],
+            });
+            changed = true;
+          }
+        });
+        if (changed) {
+          set({ dossiers: currentDossiers });
+        }
+      },
+
       // ── SOUSCRIPTIONS ───────────────────────────────────────
       addSouscription: (data) => {
         const newItem: VSouscription = {
           ...data,
           id: `SOUS-${Date.now()}`,
         };
-        set(s => ({ souscriptions: [newItem, ...s.souscriptions] }));
+        const newDossier: VDossier = {
+          id: `DOS-${Date.now()}`,
+          reference: get().generateRef('DOS'),
+          souscriptionId: newItem.id,
+          souscriptionRef: newItem.reference,
+          souscripteurId: newItem.souscripteurId,
+          souscripteurNom: newItem.souscripteurNom,
+          souscripteurPrenom: newItem.souscripteurPrenom,
+          typeSouscripteur: newItem.typeSouscripteur,
+          fournisseursNoms: (newItem.fournisseurs || []).map(f => f.fournisseurNom).join(', ') || 'Librairie de France Groupe',
+          fournisseurNom: (newItem.fournisseurs || []).map(f => f.fournisseurNom).join(', ') || 'Librairie de France Groupe',
+          devisIds: [],
+          banqueId: 'AFG-001',
+          banqueNom: 'AFG Bank',
+          agenceId: newItem.agenceId || 'AGE-AFG-001',
+          montantTotal: newItem.montantTotal || 0,
+          montant: newItem.montantTotal || 0,
+          statut: 'depose_banque',
+          dateCreation: newItem.dateCreation,
+          dateReception: newItem.dateCreation,
+          dateMiseAJour: newItem.dateMiseAJour,
+        };
+        set(s => ({
+          souscriptions: [newItem, ...s.souscriptions],
+          dossiers: [newDossier, ...s.dossiers],
+        }));
         // Créer l'évènement historique
         get().addHistorique({
           souscriptionId: newItem.id,
@@ -652,10 +716,49 @@ export const useVitalisDb = create<VitalisDbState>()(
         // Mettre à jour la souscription liée
         const sous = get().souscriptions.find(s => s.id === data.souscriptionId);
         if (sous) {
-          const fournisseurs = sous.fournisseurs.map(f =>
+          const fournisseurs = (sous.fournisseurs || []).map(f =>
             f.fournisseurId === data.fournisseurId ? { ...f, devisId: newItem.id, statut: 'devis_cree' as const } : f
           );
-          get().updateSouscription(sous.id, { fournisseurs });
+          const montantTotal = (sous.montantTotal || 0) + (data.totalTTC || 0);
+          get().updateSouscription(sous.id, {
+            fournisseurs,
+            montantTotal,
+            statut: 'depose_banque',
+          });
+          // Synchroniser le dossier bancaire lié pour AFG Bank
+          const existingDossier = get().dossiers.find(d => d.souscriptionId === sous.id);
+          if (existingDossier) {
+            const devisIds = Array.from(new Set([...(existingDossier.devisIds || []), newItem.id]));
+            get().updateDossier(existingDossier.id, {
+              devisIds,
+              montantTotal,
+              montant: montantTotal,
+              fournisseurNom: existingDossier.fournisseurNom || (sous.fournisseurs || []).map(f => f.fournisseurNom).join(', ') || data.fournisseurNom,
+              statut: 'depose_banque',
+            });
+          } else {
+            get().addDossier({
+              reference: get().generateRef('DOS'),
+              souscriptionId: sous.id,
+              souscriptionRef: sous.reference,
+              souscripteurId: sous.souscripteurId,
+              souscripteurNom: sous.souscripteurNom,
+              souscripteurPrenom: sous.souscripteurPrenom,
+              typeSouscripteur: sous.typeSouscripteur,
+              fournisseursNoms: (sous.fournisseurs || []).map(f => f.fournisseurNom).join(', ') || data.fournisseurNom,
+              fournisseurNom: (sous.fournisseurs || []).map(f => f.fournisseurNom).join(', ') || data.fournisseurNom,
+              devisIds: [newItem.id],
+              banqueId: 'AFG-001',
+              banqueNom: 'AFG Bank',
+              agenceId: sous.agenceId || 'AGE-AFG-001',
+              montantTotal,
+              montant: montantTotal,
+              statut: 'depose_banque',
+              dateCreation: new Date().toISOString().split('T')[0],
+              dateReception: new Date().toISOString().split('T')[0],
+              dateMiseAJour: new Date().toISOString().split('T')[0],
+            });
+          }
         }
         get().addHistorique({
           souscriptionId: data.souscriptionId,
@@ -684,7 +787,14 @@ export const useVitalisDb = create<VitalisDbState>()(
 
       // ── DOSSIERS ─────────────────────────────────────────────
       addDossier: (data) => {
-        const newItem: VDossier = { ...data, id: `DOS-${Date.now()}` };
+        const newItem: VDossier = {
+          ...data,
+          id: `DOS-${Date.now()}`,
+          montant: data.montant || data.montantTotal || 0,
+          montantTotal: data.montantTotal || data.montant || 0,
+          fournisseurNom: data.fournisseurNom || data.fournisseursNoms,
+          fournisseursNoms: data.fournisseursNoms || data.fournisseurNom || 'Librairie de France Groupe',
+        };
         set(s => ({ dossiers: [newItem, ...s.dossiers] }));
         get().addHistorique({
           souscriptionId: data.souscriptionId,
@@ -742,49 +852,56 @@ export const useVitalisDb = create<VitalisDbState>()(
 
       // ── STATS CALCULÉES ──────────────────────────────────────
       getStatsAdmin: () => {
-        const { souscriptions, devis, dossiers, paiements, fournisseurs, agencesAFG, pointsRelais } = get();
+        get().syncMissingDossiers();
+        const { souscriptions = [], devis = [], dossiers = [], paiements = [], fournisseurs = [], agencesAFG = [], pointsRelais = [] } = get();
         const statuts_en_cours = ['en_preparation', 'pret_pour_depot', 'depose_banque', 'en_analyse_bancaire'];
         return {
-          totalSouscriptions: souscriptions.length,
-          souscriptionsEnCours: souscriptions.filter(s => statuts_en_cours.includes(s.statut)).length,
-          souscriptionsValidees: souscriptions.filter(s => s.statut === 'accepte' || s.statut === 'finance' || s.statut === 'fournisseur_paye' || s.statut === 'cloture').length,
-          totalDevis: devis.length,
-          devisValides: devis.filter(d => d.statut === 'valide').length,
-          totalDossiers: dossiers.length,
-          dossiersEnAnalyse: dossiers.filter(d => d.statut === 'en_analyse_bancaire' || d.statut === 'depose_banque').length,
-          dossiersValides: dossiers.filter(d => d.statut === 'accepte').length,
-          montantTotalSouscriptions: souscriptions.reduce((acc, s) => acc + s.montantTotal, 0),
-          montantTotalPaiements: paiements.filter(p => p.statut === 'termine').reduce((acc, p) => acc + p.montantTotal, 0),
-          totalFournisseurs: fournisseurs.length,
-          totalAgences: agencesAFG.length,
-          totalRelais: pointsRelais.length,
+          totalSouscriptions: (souscriptions || []).length,
+          souscriptionsEnCours: (souscriptions || []).filter(s => statuts_en_cours.includes(s.statut)).length,
+          souscriptionsValidees: (souscriptions || []).filter(s => s.statut === 'accepte' || s.statut === 'finance' || s.statut === 'fournisseur_paye' || s.statut === 'cloture').length,
+          totalDevis: (devis || []).length,
+          devisValides: (devis || []).filter(d => d.statut === 'valide').length,
+          totalDossiers: (dossiers || []).length,
+          dossiersEnAnalyse: (dossiers || []).filter(d => d.statut === 'en_analyse_bancaire' || d.statut === 'depose_banque').length,
+          dossiersValides: (dossiers || []).filter(d => d.statut === 'accepte').length,
+          montantTotalSouscriptions: (souscriptions || []).reduce((acc, s) => acc + (s.montantTotal || 0), 0),
+          montantTotalPaiements: (paiements || []).filter(p => p.statut === 'termine').reduce((acc, p) => acc + (p.montantTotal || 0), 0),
+          totalFournisseurs: (fournisseurs || []).length,
+          totalAgences: (agencesAFG || []).length,
+          totalRelais: (pointsRelais || []).length,
         };
       },
 
       getStatsFournisseur: (fournisseurId) => {
-        const { souscriptions, devis, dossiers } = get();
-        const mesSouscriptions = souscriptions.filter(s => s.fournisseurs.some(f => f.fournisseurId === fournisseurId));
-        const mesDevis = devis.filter(d => d.fournisseurId === fournisseurId);
-        const mesDossiers = dossiers.filter(d => mesDevis.some(dev => d.devisIds.includes(dev.id)));
+        const { souscriptions = [], devis = [], dossiers = [] } = get();
+        const mesSouscriptions = (souscriptions || []).filter(s =>
+          Array.isArray(s.fournisseurs) && s.fournisseurs.some(f => f.fournisseurId === fournisseurId)
+        );
+        const mesDevis = (devis || []).filter(d => d.fournisseurId === fournisseurId);
+        const mesDossiers = (dossiers || []).filter(d => {
+          const ids = Array.isArray(d.devisIds) ? d.devisIds : (d.devisId ? [d.devisId] : []);
+          return ids.length > 0 && mesDevis.some(dev => ids.includes(dev.id));
+        });
         return {
           mesSouscriptions: mesSouscriptions.length,
           mesDevis: mesDevis.length,
           mesDossiersValides: mesDossiers.filter(d => d.statut === 'accepte').length,
-          montantTotal: mesDevis.filter(d => d.statut === 'valide').reduce((acc, d) => acc + d.totalTTC, 0),
+          montantTotal: mesDevis.filter(d => d.statut === 'valide').reduce((acc, d) => acc + (d.totalTTC || 0), 0),
         };
       },
 
       getStatsBanque: () => {
-        const { dossiers } = get();
-        const total = dossiers.length;
-        const valides = dossiers.filter(d => d.statut === 'accepte').length;
-        const rejetes = dossiers.filter(d => d.statut === 'refuse').length;
+        get().syncMissingDossiers();
+        const { dossiers = [] } = get();
+        const total = (dossiers || []).length;
+        const valides = (dossiers || []).filter(d => d.statut === 'accepte').length;
+        const rejetes = (dossiers || []).filter(d => d.statut === 'refuse').length;
         return {
           dossiersRecus: total,
-          dossiersEnTraitement: dossiers.filter(d => d.statut === 'en_analyse_bancaire').length,
+          dossiersEnTraitement: (dossiers || []).filter(d => d.statut === 'en_analyse_bancaire' || d.statut === 'depose_banque').length,
           dossiersValides: valides,
           dossiersRejetes: rejetes,
-          montantTotal: dossiers.filter(d => d.statut === 'accepte').reduce((acc, d) => acc + d.montantTotal, 0),
+          montantTotal: (dossiers || []).filter(d => d.statut === 'accepte').reduce((acc, d) => acc + (d.montantTotal || 0), 0),
           tauxApprobation: total > 0 ? Math.round((valides / total) * 100) : 0,
         };
       },

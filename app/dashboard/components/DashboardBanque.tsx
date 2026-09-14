@@ -26,8 +26,17 @@ export default function DashboardBanque() {
   const { dossiers, getStatsBanque } = useVitalisDb();
   const stats = getStatsBanque();
 
-  const dossiersATraiter = dossiers
-    .filter(d => d.statut === "recu" || d.statut === "en_analyse" || d.statut === "informations_demandees")
+  const dossiersATraiter = (dossiers || [])
+    .filter(d =>
+      [
+        "depose_banque",
+        "en_analyse_bancaire",
+        "recu",
+        "en_analyse",
+        "informations_demandees",
+        "pret_pour_depot",
+      ].includes(d.statut)
+    )
     .slice(0, 6);
 
   // PieChart par statut

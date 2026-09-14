@@ -2,7 +2,7 @@
 "use client";
 import { StatusBadge } from "@/components/ui/ldf-badge";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
-import { useLDFAuthStore } from "@/stores/ldfAuth";
+import { emitInAppNotification, useLDFAuthStore } from "@/stores/ldfAuth";
 import { AlertCircle, CheckCircle2, ChevronRight, Eye, XCircle } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -11,7 +11,14 @@ import { toast } from "sonner";
 const fmtCFA = (v: number) => new Intl.NumberFormat("fr-FR").format(v) + " FCFA";
 
 // Statuts pour lesquels la banque doit agir
-const STATUTS_EN_ATTENTE = ["depose_banque", "en_analyse_bancaire"];
+const STATUTS_EN_ATTENTE = [
+  "depose_banque",
+  "en_analyse_bancaire",
+  "recu",
+  "en_analyse",
+  "informations_demandees",
+  "pret_pour_depot",
+];
 
 export default function BanqueDossiersPage() {
   const { user } = useLDFAuthStore();
@@ -19,11 +26,15 @@ export default function BanqueDossiersPage() {
   const [activeTab, setActiveTab] = useState<"en_attente" | "tous">("en_attente");
 
   const mesDossiers = useMemo(() =>
-    dossiers.filter(d =>
-      user?.role === "banque" && user.organisationId
-        ? d.agenceId === user.organisationId
-        : true
-    ), [dossiers, user]);
+    dossiers.filter(d => {
+      if (user?.role === "banque") {
+        if (!user.organisationId || user.organisationId === "AFG-001" || user.banqueId === "AFG-001") {
+          return true;
+        }
+        return d.agenceId === user.organisationId || d.banqueId === user.organisationId;
+      }
+      return true;
+    }), [dossiers, user]);
 
   const enAttente = mesDossiers.filter(d => STATUTS_EN_ATTENTE.includes(d.statut));
   const tous = mesDossiers;
@@ -43,6 +54,14 @@ export default function BanqueDossiersPage() {
       description: `Dossier ${dossier.reference} — Décision bancaire : ACCEPTÉ`,
       date: new Date().toISOString(),
     });
+    emitInAppNotification({
+      titre: `Accord de financement : ${dossier.reference}`,
+      message: `AFG Bank a validé le financement pour ${dossier.souscripteurPrenom} ${dossier.souscripteurNom}. Commande prête pour préparation.`,
+      categorie: "dossier",
+      reference: dossier.reference,
+      lien: `/dashboard/dossiers/${dossier.id}`,
+      roles: ["admin", "fournisseur", "souscripteur", "banque"],
+    });
     toast.success(`Dossier ${dossier.reference} accepté`);
   };
 
@@ -59,6 +78,14 @@ export default function BanqueDossiersPage() {
       description: `Dossier ${dossier.reference} — Décision bancaire : REFUSÉ`,
       date: new Date().toISOString(),
     });
+    emitInAppNotification({
+      titre: `Financement refusé : ${dossier.reference}`,
+      message: `Le comité AFG Bank n'a pas accordé le crédit pour ${dossier.souscripteurPrenom} ${dossier.souscripteurNom}. Motif : ${dossier.motifRejet || "Non conforme aux critères"}.`,
+      categorie: "dossier",
+      reference: dossier.reference,
+      lien: `/dashboard/dossiers/${dossier.id}`,
+      roles: ["admin", "fournisseur", "souscripteur", "banque"],
+    });
     toast.error(`Dossier ${dossier.reference} refusé`);
   };
 
@@ -66,6 +93,14 @@ export default function BanqueDossiersPage() {
     updateDossier(dossier.id, { statut: "en_analyse_bancaire" });
     const sous = getSouscriptionById(dossier.souscriptionId);
     if (sous) updateSouscription(sous.id, { statut: "en_analyse_bancaire" });
+    emitInAppNotification({
+      titre: `Instruction en cours : ${dossier.reference}`,
+      message: `L'analyse du dossier de ${dossier.souscripteurPrenom} ${dossier.souscripteurNom} a démarré à l'agence AFG Bank.`,
+      categorie: "dossier",
+      reference: dossier.reference,
+      lien: `/dashboard/dossiers/${dossier.id}`,
+      roles: ["admin", "fournisseur", "banque"],
+    });
     toast.info(`Dossier ${dossier.reference} — Analyse démarrée`);
   };
 
@@ -162,7 +197,7 @@ export default function BanqueDossiersPage() {
                 )}
 
                 {/* Actions selon statut */}
-                {d.statut === "depose_banque" ? (
+                {d.statut === "depose_banque" || d.statut === "recu" || d.statut === "pret_pour_depot" ? (
                   <div className="flex items-center gap-2">
                     <button onClick={() => handleAnalyser(d)}
                       className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors">
@@ -173,7 +208,7 @@ export default function BanqueDossiersPage() {
                       <Eye className="w-4 h-4" /> Voir
                     </Link>
                   </div>
-                ) : d.statut === "en_analyse_bancaire" ? (
+                ) : d.statut === "en_analyse_bancaire" || d.statut === "en_analyse" || d.statut === "informations_demandees" ? (
                   <div className="flex items-center gap-2">
                     <button onClick={() => handleAccepter(d)}
                       className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">

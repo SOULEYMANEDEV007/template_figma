@@ -22,25 +22,25 @@ export default function DashboardFournisseur() {
 
   // Mes souscriptions (les souscriptions où ce fournisseur est impliqué)
   const mesSouscriptions = useMemo(() => {
-    return souscriptions
-      .filter(s => s.fournisseurs.some(f => f.fournisseurId === fournisseurId))
+    return (souscriptions || [])
+      .filter(s => Array.isArray(s.fournisseurs) && s.fournisseurs.some(f => f.fournisseurId === fournisseurId))
       .sort((a, b) => b.dateCreation.localeCompare(a.dateCreation))
       .slice(0, 8);
   }, [souscriptions, fournisseurId]);
 
   // Mes devis
   const mesDevis = useMemo(() =>
-    devis.filter(d => d.fournisseurId === fournisseurId), [devis, fournisseurId]);
+    (devis || []).filter(d => d.fournisseurId === fournisseurId), [devis, fournisseurId]);
 
   // Paiements reçus
   const mesPaiements = useMemo(() =>
-    paiements.filter(p => p.repartitionFournisseurs.some(r => r.fournisseurId === fournisseurId)), [paiements, fournisseurId]);
+    (paiements || []).filter(p => Array.isArray(p.repartitionFournisseurs) && p.repartitionFournisseurs.some(r => r.fournisseurId === fournisseurId)), [paiements, fournisseurId]);
 
   // Graphique statut de mes devis
   const devisParStatut = [
-    { statut: "Validés",        valeur: mesDevis.filter(d => d.statut === 'valide').length, couleur: "#22c55e" },
-    { statut: "En attente",     valeur: mesDevis.filter(d => d.statut === 'en_attente_validation' || d.statut === 'envoye').length, couleur: "#ff8c42" },
-    { statut: "Brouillons",     valeur: mesDevis.filter(d => d.statut === 'brouillon').length, couleur: "#94a3b8" },
+    { statut: "Validés", valeur: mesDevis.filter(d => d.statut === 'valide').length, couleur: "#22c55e" },
+    { statut: "En attente", valeur: mesDevis.filter(d => d.statut === 'en_attente_validation' || d.statut === 'envoye').length, couleur: "#ff8c42" },
+    { statut: "Brouillons", valeur: mesDevis.filter(d => d.statut === 'brouillon').length, couleur: "#94a3b8" },
   ].filter(d => d.valeur > 0);
 
   const montantPaiementsRecus = mesPaiements
@@ -97,7 +97,7 @@ export default function DashboardFournisseur() {
                 <div class="header-logos">
                   <img src="${window.location.origin}/logos/logo-fades.PNG" alt="FADES" />
                   <img src="${window.location.origin}/logos/new_logo-viflo.JPG" alt="VIFLO" style="height: 50px;" />
-                  <img src="${window.location.origin}/logos/LOGO-AFG-Bank.jpg" alt="AFG Bank" />
+                  <img src="${window.location.origin}/logos/logo-afg-bank_atlantic.png" alt="AFG Bank" />
                 </div>
 
                 <h1>📋 Conditions de Souscription — Programme VITALIS</h1>
@@ -165,10 +165,10 @@ export default function DashboardFournisseur() {
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPICard title="Mes souscriptions"  value={stats.mesSouscriptions}   icon={FileText}     variant="yellow" subtitle={fmtCFA(stats.montantTotal)} />
-        <KPICard title="Mes devis"          value={stats.mesDevis}           icon={BookOpen}     variant="blue"   subtitle={`${mesDevis.filter(d => d.statut === 'valide').length} validés`} />
-        <KPICard title="Dossiers validés"   value={stats.mesDossiersValides} icon={CheckCircle2} variant="green"  subtitle="Financements AFG accordés" />
-        <KPICard title="Paiements reçus"    value={mesPaiements.filter(p => p.statut === 'termine').length} icon={CreditCard} variant="gray" subtitle={fmtCFA(montantPaiementsRecus)} />
+        <KPICard title="Mes souscriptions" value={stats.mesSouscriptions} icon={FileText} variant="yellow" subtitle={fmtCFA(stats.montantTotal)} />
+        <KPICard title="Mes devis" value={stats.mesDevis} icon={BookOpen} variant="blue" subtitle={`${mesDevis.filter(d => d.statut === 'valide').length} validés`} />
+        <KPICard title="Dossiers validés" value={stats.mesDossiersValides} icon={CheckCircle2} variant="green" subtitle="Financements AFG accordés" />
+        <KPICard title="Paiements reçus" value={mesPaiements.filter(p => p.statut === 'termine').length} icon={CreditCard} variant="gray" subtitle={fmtCFA(montantPaiementsRecus)} />
       </div>
 
       {/* Bouton action rapide */}

@@ -174,7 +174,7 @@ export function PDFDevis({ devis }: PDFDevisProps) {
               <p className="font-bold text-amber-900 mb-2">{souscription.reference}</p>
               <p className="text-sm text-amber-800">Durée: {souscription.dureeRemboursement} mois</p>
               <p className="text-sm text-amber-800 mt-2">
-                Date début: {new Date(souscription.dateDebut).toLocaleDateString("fr-FR")}
+                Date: {new Date(souscription.dateDebut || souscription.dateCreation || Date.now()).toLocaleDateString("fr-FR")}
               </p>
               {agence && (
                 <p className="text-xs text-amber-700 mt-2">Agence: {agence.nom}</p>

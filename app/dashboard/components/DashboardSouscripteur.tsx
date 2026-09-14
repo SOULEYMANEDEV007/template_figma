@@ -3,6 +3,7 @@
 import { StatusBadge } from "@/components/ui/ldf-badge";
 import { mockSouscriptions } from "@/lib/ldfData";
 import { useLDFAuthStore } from "@/stores/ldfAuth";
+import { useVitalisDb } from "@/stores/vitalisDbStore";
 import { Info, Printer, ChevronRight, Package } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
@@ -11,26 +12,33 @@ const fmtCFA = (v: number) => new Intl.NumberFormat("fr-FR").format(v) + " FCFA"
 
 // Explication du processus de financement
 const ETAPES = [
-  { num: "01", label: "Souscription créée",      color: "bg-cyan-400",    desc: "Vous initiez votre demande en choisissant vos fournisseurs" },
-  { num: "02", label: "Devis envoyé",            color: "bg-blue-400",    desc: "Le fournisseur prépare un devis avec les articles" },
-  { num: "03", label: "Banque valide",           color: "bg-emerald-400", desc: "La banque examine et valide votre dossier" },
-  { num: "04", label: "Paiement effectué",       color: "bg-green-400",   desc: "La banque procède au paiement du fournisseur" },
-  { num: "05", label: "Articles livrés ✓",      color: "bg-teal-400",    desc: "Vous récupérez vos articles en magasin" },
+  { num: "01", label: "Souscription créée", color: "bg-cyan-400", desc: "Vous initiez votre demande en choisissant vos fournisseurs" },
+  { num: "02", label: "Devis envoyé", color: "bg-blue-400", desc: "Le fournisseur prépare un devis avec les articles" },
+  { num: "03", label: "Banque valide", color: "bg-emerald-400", desc: "La banque examine et valide votre dossier" },
+  { num: "04", label: "Paiement effectué", color: "bg-green-400", desc: "La banque procède au paiement du fournisseur" },
+  { num: "05", label: "Articles livrés ✓", color: "bg-teal-400", desc: "Vous récupérez vos articles en magasin" },
 ];
 
 export default function DashboardSouscripteur() {
   const { user } = useLDFAuthStore();
+  const { souscriptions } = useVitalisDb();
 
   const mesSouscriptions = useMemo(() => {
     if (!user || user.role !== "souscripteur") return [];
+    const fromStore = (souscriptions || []).filter(s =>
+      (s.souscripteurEmail && s.souscripteurEmail.toLowerCase() === user.email?.toLowerCase()) ||
+      (s.souscripteurId && s.souscripteurId === user.id) ||
+      (user.email === "client@viflo.ci")
+    );
+    if (fromStore.length > 0) return fromStore;
     return mockSouscriptions.filter(s => s.souscripteurEmail === user.email);
-  }, [user]);
+  }, [user, souscriptions]);
 
   const stats = useMemo(() => ({
-    total:     mesSouscriptions.length,
+    total: mesSouscriptions.length,
     enAttente: mesSouscriptions.filter(s => s.statut === "soumise" || s.statut === "en_attente").length,
-    validees:  mesSouscriptions.filter(s => s.statut === "validee" || s.statut === "payee").length,
-    servies:   mesSouscriptions.filter(s => s.statut === "servie").length,
+    validees: mesSouscriptions.filter(s => s.statut === "validee" || s.statut === "payee").length,
+    servies: mesSouscriptions.filter(s => s.statut === "servie").length,
   }), [mesSouscriptions]);
 
   return (
@@ -75,7 +83,7 @@ export default function DashboardSouscripteur() {
                 <div class="header-logos">
                   <img src="${window.location.origin}/logos/logo-fades.PNG" alt="FADES" />
                   <img src="${window.location.origin}/logos/new_logo-viflo.JPG" alt="VIFLO" style="height: 50px;" />
-                  <img src="${window.location.origin}/logos/LOGO-AFG-Bank.jpg" alt="AFG Bank" />
+                  <img src="${window.location.origin}/logos/logo-afg-bank_atlantic.png" alt="AFG Bank" />
                 </div>
 
                 <h1>📋 Conditions de Souscription — Programme VITALIS</h1>
@@ -156,10 +164,10 @@ export default function DashboardSouscripteur() {
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Total",      value: stats.total,     border: "border-l-amber-400",   text: "text-amber-700" },
-          { label: "En attente", value: stats.enAttente, border: "border-l-orange-400",  text: "text-orange-700" },
-          { label: "Validées",   value: stats.validees,  border: "border-l-emerald-400", text: "text-emerald-700" },
-          { label: "Servies",    value: stats.servies,   border: "border-l-teal-400",    text: "text-teal-700" },
+          { label: "Total", value: stats.total, border: "border-l-amber-400", text: "text-amber-700" },
+          { label: "En attente", value: stats.enAttente, border: "border-l-orange-400", text: "text-orange-700" },
+          { label: "Validées", value: stats.validees, border: "border-l-emerald-400", text: "text-emerald-700" },
+          { label: "Servies", value: stats.servies, border: "border-l-teal-400", text: "text-teal-700" },
         ].map(k => (
           <div key={k.label} className={`bg-white rounded-xl border border-gray-100 border-l-4 p-4 shadow-sm ${k.border}`}>
             <p className={`text-2xl font-bold ${k.text}`}>{k.value}</p>

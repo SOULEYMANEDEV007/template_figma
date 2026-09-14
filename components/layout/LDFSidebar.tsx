@@ -79,7 +79,7 @@ function getNav(role: LDFUserRole, unreadCount: number): { main: NavItem[]; bott
   return {
     main: [
       ...common,
-      { name: "Mes Commandes",    href: "/dashboard/fournisseur/commandes",  icon: Package },
+      // { name: "Mes Commandes",    href: "/dashboard/fournisseur/commandes",  icon: Package },
       { name: "Souscriptions",    href: "/dashboard/souscriptions",          icon: FileText },
       { name: "Devis",            href: "/dashboard/devis",                  icon: BookOpen },
       { name: "Feedbacks banque", href: "/dashboard/fournisseur/feedbacks",  icon: ShieldCheck },

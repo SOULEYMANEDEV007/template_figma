@@ -336,9 +336,9 @@ export function PDFSouscription({ souscription }: PDFSouscriptionProps) {
           </div>
           <div className="grid grid-cols-3 gap-4 border border-gray-200 rounded-lg p-4">
             <div>
-              <p className="text-xs text-gray-500">Date de début</p>
+              <p className="text-xs text-gray-500">Date d'émission</p>
               <p className="font-semibold text-gray-900">
-                {new Date(souscription.dateDebut).toLocaleDateString("fr-FR")}
+                {new Date(souscription.dateDebut || souscription.dateCreation || Date.now()).toLocaleDateString("fr-FR")}
               </p>
             </div>
             <div>

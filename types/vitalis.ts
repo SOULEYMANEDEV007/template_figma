@@ -294,6 +294,11 @@ export interface Dossier {
 
   // Montant total (somme de tous les devis)
   montantTotal: number;
+  montant?: number;
+
+  // Fournisseurs
+  fournisseurNom?: string;
+  fournisseursNoms?: string;
 
   // Gestion AFG Bank
   agenceAFGId?: string;

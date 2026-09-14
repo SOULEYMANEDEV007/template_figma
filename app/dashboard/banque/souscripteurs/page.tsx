@@ -1,7 +1,7 @@
 // @ts-nocheck
 "use client";
 import { StatusBadge } from "@/components/ui/ldf-badge";
-import { mockDossiers, mockSouscriptions } from "@/lib/ldfData";
+import { useVitalisDb } from "@/stores/vitalisDbStore";
 import { useLDFAuthStore } from "@/stores/ldfAuth";
 import { ChevronLeft, ChevronRight, Eye, Filter, Search, Users, X } from "lucide-react";
 import Link from "next/link";
@@ -11,6 +11,7 @@ const fmtCFA = (v: number) => new Intl.NumberFormat("fr-FR").format(v) + " FCFA"
 
 export default function BanqueSouscripteursPage() {
   const { user } = useLDFAuthStore();
+  const { souscriptions } = useVitalisDb();
   const [search, setSearch] = useState("");
   const [filterStatut, setFilterStatut] = useState("");
   const [showFilters, setShowFilters] = useState(false);
@@ -19,17 +20,26 @@ export default function BanqueSouscripteursPage() {
 
   // On prend les souscriptions liées à cette banque
   const allSubs = useMemo(() =>
-    mockSouscriptions.filter(s =>
-      user?.role === "banque" ? s.banqueId === user.organisationId : true
-    ), [user]);
+    (souscriptions || []).filter(s => {
+      if (user?.role === "banque") {
+        if (!user.organisationId || user.organisationId === "AFG-001" || user.banqueId === "AFG-001") {
+          return true;
+        }
+        return s.banqueId === user.organisationId || s.agenceId === user.organisationId;
+      }
+      return true;
+    }), [souscriptions, user]);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
     return allSubs.filter(s => {
+      const fournisseursStr = Array.isArray(s.fournisseurs)
+        ? s.fournisseurs.map(f => f.fournisseurNom).join(" ")
+        : (s.fournisseurNom || "");
       const matchSearch = !q ||
         `${s.souscripteurNom} ${s.souscripteurPrenom}`.toLowerCase().includes(q) ||
-        s.reference.toLowerCase().includes(q) ||
-        s.fournisseurNom.toLowerCase().includes(q);
+        (s.reference || "").toLowerCase().includes(q) ||
+        fournisseursStr.toLowerCase().includes(q);
       const matchStatut = !filterStatut || s.statut === filterStatut;
       return matchSearch && matchStatut;
     });
@@ -51,10 +61,22 @@ export default function BanqueSouscripteursPage() {
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "Total",      value: allSubs.length,                                      color: "border-l-amber-400 text-amber-700" },
-          { label: "En attente", value: allSubs.filter(s => s.statut === "en_attente").length, color: "border-l-orange-400 text-orange-700" },
-          { label: "Validés",    value: allSubs.filter(s => s.statut === "validee" || s.statut === "payee" || s.statut === "servie").length, color: "border-l-emerald-400 text-emerald-700" },
-          { label: "Rejetés",    value: allSubs.filter(s => s.statut === "rejetee").length, color: "border-l-red-400 text-red-700" },
+          { label: "Total", value: allSubs.length, color: "border-l-amber-400 text-amber-700" },
+          {
+            label: "En attente",
+            value: allSubs.filter(s => ["en_attente", "soumise", "depose_banque", "en_analyse_bancaire", "en_preparation", "pret_pour_depot"].includes(s.statut)).length,
+            color: "border-l-orange-400 text-orange-700"
+          },
+          {
+            label: "Validés",
+            value: allSubs.filter(s => ["validee", "accepte", "finance", "payee", "servie", "fournisseur_paye", "cloture"].includes(s.statut)).length,
+            color: "border-l-emerald-400 text-emerald-700"
+          },
+          {
+            label: "Rejetés",
+            value: allSubs.filter(s => ["rejetee", "refuse"].includes(s.statut)).length,
+            color: "border-l-red-400 text-red-700"
+          },
         ].map(k => (
           <div key={k.label} className={`bg-white rounded-xl border border-gray-100 border-l-4 p-4 shadow-sm ${k.color.split(" ")[0]}`}>
             <p className={`text-2xl font-bold ${k.color.split(" ")[1]}`}>{k.value}</p>
@@ -123,7 +145,11 @@ export default function BanqueSouscripteursPage() {
                     <div className="font-medium text-gray-800">{s.souscripteurPrenom} {s.souscripteurNom}</div>
                     <div className="text-xs text-gray-400">{s.souscripteurTelephone}</div>
                   </td>
-                  <td className="text-sm text-gray-600">{s.fournisseurNom}</td>
+                  <td className="text-sm text-gray-600">
+                    {Array.isArray(s.fournisseurs) && s.fournisseurs.length > 0
+                      ? s.fournisseurs.map(f => f.fournisseurNom).join(", ")
+                      : (s.fournisseurNom || "Librairie de France Groupe")}
+                  </td>
                   <td>
                     <Link href={`/dashboard/souscriptions/${s.id}`}
                       className="font-mono text-xs font-bold text-amber-700 hover:underline">{s.reference}</Link>
