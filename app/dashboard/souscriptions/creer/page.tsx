@@ -18,7 +18,7 @@ import { emitInAppNotification, useLDFAuthStore } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
 import {
   ArrowLeft, ArrowRight, Building2, Check, CheckCircle2,
-  Copy, FileText, Key, Loader2, Mail, MapPin, Plus, Search, Trash2,
+  Copy, FileText, Info, Key, Loader2, Mail, MapPin, Plus, Search, Trash2,
   Upload, User, Users, X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -476,6 +476,17 @@ export default function CreerSouscriptionPage() {
         <div>
           <h1 className="page-title">Nouvelle souscription Vitalis</h1>
           <p className="page-subtitle">Programme AFG Bank · Durée {duree} mois</p>
+        </div>
+      </div>
+
+      {/* Note d'information sur le parcours standard */}
+      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3 text-xs text-amber-900 shadow-sm">
+        <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+        <div className="flex-1">
+          <p className="font-semibold text-amber-950">Mode de saisie assistée (Conseiller / Dépannage en agence)</p>
+          <p className="mt-0.5 text-amber-800 leading-relaxed">
+            Dans le parcours nominal VITALIS (Cahier des charges), les demandes de financement sont directement initiées par les souscripteurs depuis leur espace personnel. Ce formulaire reste actif pour l'assistance en agence bancaire ou en boutique partenaire.
+          </p>
         </div>
       </div>
 

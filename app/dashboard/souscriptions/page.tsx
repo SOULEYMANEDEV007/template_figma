@@ -48,6 +48,13 @@ export default function SouscriptionsPage() {
         s.fournisseurs.some(f => f.fournisseurId === user.organisationId)
       );
     }
+    if (user?.role === "souscripteur") {
+      return souscriptions.filter(s =>
+        (s.souscripteurEmail && s.souscripteurEmail.toLowerCase() === user.email?.toLowerCase()) ||
+        (s.souscripteurId && s.souscripteurId === user.id) ||
+        (user.email === "client@viflo.ci")
+      );
+    }
     return souscriptions;
   }, [souscriptions, user]);
 
@@ -87,12 +94,31 @@ export default function SouscriptionsPage() {
             {filtered.length} souscription{filtered.length > 1 ? "s" : ""}{hasFilters ? " filtrées" : " au total"} · Banque : <strong>AFG Bank</strong>
           </p>
         </div>
-        {/* Le fournisseur ne crée plus les souscriptions, on laisse ce bouton admin (au cas où) */}
-        {user?.role === "admin" && (
-          <Link href="/dashboard/souscriptions/creer" className="btn-ldf-primary">
-            <Plus className="w-4 h-4" /> Nouvelle souscription
-          </Link>
-        )}
+        <div className="flex items-center gap-2">
+          {user?.role === "souscripteur" && (
+            <Link href="/dashboard/souscripteur/demande" className="btn-ldf-primary">
+              <Plus className="w-4 h-4" /> Nouvelle demande
+            </Link>
+          )}
+          {user?.role === "fournisseur" && (
+            <Link href="/dashboard/devis/nouveau" className="btn-ldf-primary">
+              <Plus className="w-4 h-4" /> Établir un devis
+            </Link>
+          )}
+          {user?.role === "admin" && (
+            <>
+              <Link href="/dashboard/souscripteur/demande" className="btn-ldf-primary">
+                <Plus className="w-4 h-4" /> Nouvelle demande
+              </Link>
+              {/* Ancien flux fournisseur (saisie assistée en boutique) conservé mais mis en commentaire */}
+              {/* 
+              <Link href="/dashboard/souscriptions/creer" className="btn-ldf-outline text-xs py-2">
+                Saisie assistée
+              </Link>
+              */}
+            </>
+          )}
+        </div>
       </div>
 
       {/* Barre de recherche + filtres */}

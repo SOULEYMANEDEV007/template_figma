@@ -36,14 +36,15 @@ export default function DashboardSouscripteur() {
 
   const stats = useMemo(() => ({
     total: mesSouscriptions.length,
-    enAttente: mesSouscriptions.filter(s => s.statut === "soumise" || s.statut === "en_attente").length,
-    validees: mesSouscriptions.filter(s => s.statut === "validee" || s.statut === "payee").length,
-    servies: mesSouscriptions.filter(s => s.statut === "servie").length,
+    enAttente: mesSouscriptions.filter(s => ["en_attente", "soumise", "en_preparation", "pret_pour_depot", "depose", "depose_banque"].includes(s.statut)).length,
+    validees: mesSouscriptions.filter(s => ["accepte", "validee", "valide", "finance", "fournisseur_paye", "payee"].includes(s.statut)).length,
+    servies: mesSouscriptions.filter(s => ["livre", "servie", "cloture"].includes(s.statut)).length,
   }), [mesSouscriptions]);
 
   return (
     <div className="space-y-5 fade-in">
-      {/* Note importante + PDF conditions */}
+      {/* Note importante + PDF conditions (Mise en commentaire à la demande) */}
+      {/* 
       <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-500 rounded-xl p-4 shadow-sm">
         <div className="flex items-start gap-3">
           <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -144,13 +145,17 @@ export default function DashboardSouscripteur() {
           </button>
         </div>
       </div>
+      */}
 
-      {/* Bouton action rapide : Nouvelle Demande (Désactivé temporairement) */}
-      {/* 
+      {/* Bouton action rapide : Nouvelle Demande (Flux direct Souscripteur) */}
       <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl p-5 text-white flex flex-col md:flex-row items-center justify-between shadow-lg gap-4">
         <div>
-          <p className="font-semibold text-base">Initier une demande de financement</p>
-          <p className="text-orange-100 text-xs mt-1">Sélectionnez vos fournisseurs et soumettez votre dossier directement à AFG Bank.</p>
+          <p className="font-semibold text-base flex items-center gap-2">
+            <span>✨</span> Initier une demande de financement
+          </p>
+          <p className="text-orange-100 text-xs mt-1">
+            Sélectionnez vos articles chez nos fournisseurs partenaires agréés et soumettez votre demande directement à AFG Bank.
+          </p>
         </div>
         <Link
           href="/dashboard/souscripteur/demande"
@@ -159,7 +164,6 @@ export default function DashboardSouscripteur() {
           <Package className="w-4 h-4" /> Nouvelle Demande
         </Link>
       </div>
-      */}
 
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -194,10 +198,16 @@ export default function DashboardSouscripteur() {
 
       {/* Mes souscriptions */}
       {mesSouscriptions.length === 0 ? (
-        <div className="section-card p-16 text-center text-gray-400">
+        <div className="section-card p-12 text-center text-gray-400">
           <Package className="w-12 h-12 text-gray-200 mx-auto mb-3" />
-          <p className="text-sm font-medium">Aucune souscription en cours</p>
-          <p className="text-xs mt-1">Vous serez notifié dès qu&apos;une souscription sera créée pour vous.</p>
+          <p className="text-sm font-medium text-gray-700">Aucune demande de financement en cours</p>
+          <p className="text-xs text-gray-400 mt-1">Exprimez votre besoin pour recevoir des devis chiffrés des fournisseurs agréés.</p>
+          <Link
+            href="/dashboard/souscripteur/demande"
+            className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-xs font-semibold transition-colors shadow"
+          >
+            <Package className="w-4 h-4" /> Initier ma première demande
+          </Link>
         </div>
       ) : (
         <div className="section-card p-5">

@@ -14,7 +14,7 @@
  */
 
 import { saveFile } from "@/lib/fileStorage";
-import { useLDFAuthStore } from "@/stores/ldfAuth";
+import { emitInAppNotification, useLDFAuthStore } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
 import type { VArticleDevis } from "@/stores/vitalisDbStore";
 import {
@@ -359,14 +359,23 @@ function NouveauDevisContent() {
 
       // Mettre à jour le montant total + faire avancer la souscription vers 'pret_pour_depot'
       if (souscription) {
-        const nouveauMontant = souscription.montantTotal + totalTTC;
-        const tousDeviscrees = souscription.fournisseurs.every(
-          f => f.statut === 'devis_cree' || f.statut === 'valide'
+        const updatedFournisseurs = (souscription.fournisseurs || []).map(f =>
+          f.fournisseurId === fournisseurId ? { ...f, devisId: nouveauDevis.id, statut: "devis_cree" as const } : f
         );
+        const montantFinal = totalTTC > 0 ? totalTTC : souscription.montantTotal;
         updateSouscription(souscriptionId, {
-          montantTotal: nouveauMontant,
-          // Si tous les fournisseurs ont leur devis : passage à 'pret_pour_depot'
-          ...(tousDeviscrees && { statut: "pret_pour_depot" as const }),
+          montantTotal: montantFinal,
+          fournisseurs: updatedFournisseurs,
+          statut: "pret_pour_depot",
+        });
+
+        emitInAppNotification({
+          titre: `Devis chiffré prêt : ${ref}`,
+          message: `Le devis pour la souscription ${souscription.reference} (${fmtCFA(totalTTC)}) est prêt. Le souscripteur peut imprimer son dossier et se déplacer à son agence AFG Bank pour le dépôt.`,
+          categorie: "devis",
+          reference: ref,
+          lien: `/dashboard/souscriptions/${souscriptionId}`,
+          roles: ["souscripteur", "banque", "admin"],
         });
       }
 
