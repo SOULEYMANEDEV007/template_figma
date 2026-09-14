@@ -57,19 +57,13 @@ export default function RootPage() {
       {/* ─── Système Orbital ─── */}
       <div className="relative w-full max-w-2xl aspect-square flex items-center justify-center">
 
-        {/* Centre : Vitalis & FADES */}
+        {/* Centre : Viflo */}
         <div className="absolute z-20 w-44 h-44 bg-white/95 backdrop-blur-xl rounded-full shadow-[0_0_40px_rgba(255,107,53,0.3)] flex flex-col items-center justify-center p-6 border border-white/20">
-          {/*<Image
-            src="/logos/logo-fades.PNG"
-            alt="FADES"
-            width={80} height={40}
-            className="object-contain mb-3 drop-shadow-md"
-          />*/}
           <Image
-            src="/logos/new_logo-viflo.JPG"
-            alt="Vitalis"
-            width={90} height={40}
-            className="object-contain drop-shadow-lg mix-blend-multiply"
+            src="/logos/viflo-logo.png"
+            alt="Viflo"
+            width={100} height={100}
+            className="object-contain drop-shadow-lg"
           />
         </div>
 
@@ -126,12 +120,12 @@ export default function RootPage() {
           />
           <Image
             src="/logos/new_logo-viflo.JPG"
-            alt="Vitalis"
+            alt="Vitalis Viflo"
             width={80} height={30}
             className="object-contain opacity-90 mix-blend-multiply"
           />
           <Image
-            src="/logos/logo-fades.png"
+            src="/logos/logo-fades.PNG"
             alt="Fades"
             width={80} height={30}
             className="object-contain opacity-90 mix-blend-multiply"
