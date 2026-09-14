@@ -1,7 +1,7 @@
 // @ts-nocheck
 "use client";
 
-import { useLDFAuthStore } from "@/stores/ldfAuth";
+import { emitInAppNotification, useLDFAuthStore } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
 import { ArrowLeft, ArrowRight, Building2, Check, FileText, MapPin, Package, Send, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -47,9 +47,8 @@ export default function NouvelleDemandeSouscripteur() {
 
   // Fournisseurs filtrés selon l'étape 1
   const filteredFournisseurs = useMemo(() => {
-    return fournisseurs.filter(f => f.agreVitalis && f.statut === "actif");
-    // Dans une vraie app, on filtrerait ici en fonction de la catégorie, région, ville, etc.
-  }, [fournisseurs, categorie, ville]);
+    return (fournisseurs || []).filter(f => f.statut === "actif");
+  }, [fournisseurs]);
 
   const toggleFournisseur = (id: string) => {
     setSelectedFournisseurs(prev =>
@@ -84,33 +83,60 @@ export default function NouvelleDemandeSouscripteur() {
         .filter(f => selectedFournisseurs.includes(f.id))
         .map(f => ({ fournisseurId: f.id, fournisseurNom: f.nom, statut: "en_attente" as const }));
 
+      const nomClient = (user?.lastName || user?.nom || "Konan").trim();
+      const prenomClient = (user?.firstName || user?.prenom || "Awa").trim();
+      const emailClient = user?.email || "client@viflo.ci";
+      const telClient = user?.phone || user?.telephone || "+225 07 00 11 22 33";
+
       const nouvelle = addSouscription({
         reference: ref,
         souscripteurId: user?.id || `SCP-${Date.now()}`,
-        souscripteurNom: user?.nom || "Souscripteur",
-        souscripteurPrenom: user?.prenom || "Test",
-        souscripteurEmail: user?.email || "",
-        souscripteurTelephone: user?.telephone || "",
+        souscripteurNom: nomClient,
+        souscripteurPrenom: prenomClient,
+        souscripteurEmail: emailClient,
+        souscripteurTelephone: telClient,
         typeSouscripteur: "physique",
         banqueId: "AFG-001",
         banqueNom: "AFG Bank",
         agenceId: agenceId || undefined,
         agenceNom: agenceChoisie?.nom,
         fournisseurs: fournisseursChoisis,
-        montantTotal: Number(montantEstimatif),
+        fournisseurNom: fournisseursChoisis.map(f => f.fournisseurNom).join(", "),
+        montantTotal: Number(montantEstimatif) || 0,
         duree,
         statut: "en_attente",
         dateCreation: new Date().toISOString().split("T")[0],
         dateMiseAJour: new Date().toISOString().split("T")[0],
-        observations: `Besoin: ${natureBesoin} | Catégorie: ${categorie} | Produit: ${produitRecherche} | Zone: ${ville}, ${region}\nNotes: ${observations}`,
+        observations: `Besoin: ${natureBesoin} | Catégorie: ${categorie} | Produit: ${produitRecherche} | Montant estimé: ${Number(montantEstimatif).toLocaleString("fr-FR")} FCFA | Zone: ${ville}, ${region}${observations ? `\nNotes: ${observations}` : ""}`,
+      });
+
+      // Notification pour les fournisseurs et admins
+      emitInAppNotification({
+        titre: `Nouvelle demande client — ${ref}`,
+        message: `${prenomClient} ${nomClient} a exprimé un besoin pour "${produitRecherche}" (${Number(montantEstimatif).toLocaleString("fr-FR")} FCFA). Établissez votre devis chiffré.`,
+        categorie: "devis",
+        reference: ref,
+        lien: `/dashboard/souscriptions/${nouvelle.id}`,
+        roles: ["admin", "fournisseur"],
+      });
+
+      // Notification pour le souscripteur lui-même
+      emitInAppNotification({
+        titre: `Demande de financement ${ref} transmise`,
+        message: `Votre demande pour "${produitRecherche}" a été envoyée aux fournisseurs agréés. Vous recevrez une alerte dès qu'un devis sera établi.`,
+        categorie: "souscription",
+        reference: ref,
+        lien: `/dashboard/souscriptions/${nouvelle.id}`,
+        roles: ["souscripteur"],
       });
 
       toast.success(`Demande ${ref} transmise avec succès !`, {
-        description: "Les fournisseurs sélectionnés vont préparer vos devis."
+        description: "Les fournisseurs sélectionnés ont été notifiés pour établir votre devis."
       });
       router.push(`/dashboard/souscriptions/${nouvelle.id}`);
     } catch (err) {
-      toast.error("Une erreur est survenue.");
+      console.error(err);
+      toast.error("Une erreur est survenue lors de l'enregistrement.");
     } finally {
       setSubmitting(false);
     }

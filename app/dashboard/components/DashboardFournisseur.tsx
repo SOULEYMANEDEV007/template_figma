@@ -54,7 +54,8 @@ export default function DashboardFournisseur() {
 
   return (
     <div className="space-y-6 fade-in">
-      {/* Note importante + PDF conditions */}
+      {/* Note importante + PDF conditions (Mise en commentaire à la demande) */}
+      {/* 
       <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-500 rounded-xl p-4 shadow-sm">
         <div className="flex items-start gap-3">
           <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -63,15 +64,14 @@ export default function DashboardFournisseur() {
           <div className="flex-1">
             <h3 className="text-sm font-bold text-orange-900 mb-1">📢 Note importante — Programme Vitalis</h3>
             <p className="text-sm text-orange-800 leading-relaxed">
-              En tant que fournisseur agréé Vitalis, vous créez les souscriptions pour vos clients et soumettez les devis.
-              Une fois les dossiers validés par <strong>AFG Bank</strong>, vous recevrez les bons de commande et pourrez procéder à la livraison.
+              En tant que fournisseur agréé Vitalis, vous recevez les demandes de financement initiées par les bénéficiaires et établissez vos devis chiffrés.
+              Une fois les dossiers validés par <strong>AFG Bank</strong>, vous recevrez les règlements bancaires et pourrez procéder à la livraison des articles.
             </p>
             <p className="text-xs text-orange-700 mt-2">
               📄 <strong>Document à remettre au client :</strong> imprimez et transmettez le document ci-dessous
               contenant toutes les conditions d'éligibilité à la souscription Vitalis avant toute inscription.
             </p>
           </div>
-          {/* Bouton impression conditions Vitalis */}
           <button
             onClick={() => {
               const w = window.open('', '_blank');
@@ -108,31 +108,33 @@ export default function DashboardFournisseur() {
                 <table>
                   <tr><th>Critère</th><th>Détail</th></tr>
                   <tr><td>Situation professionnelle</td><td>Salarié ou Fonctionnaire (en activité)</td></tr>
-                  <tr><td>Pièce d'identité</td><td>CNI valide (Carte Nationale d'Identité ivoirienne)</td></tr>
-                  <tr><td>Situation matrimoniale</td><td>Attestation de mariage requise si marié(e)</td></tr>
-                  <tr><td>Compte bancaire</td><td>Compte ouvert à AFG Bank ou domiciliation de salaire</td></tr>
-                  <tr><td>Localisation</td><td>Résider en Côte d'Ivoire (Abidjan ou intérieur)</td></tr>
+                  <tr><td>Ancienneté requise</td><td>Minimum 12 mois dans l'emploi actuel</td></tr>
+                  <tr><td>Domiciliation bancaire</td><td>Compte AFG Bank ou engagement de domiciliation</td></tr>
+                  <tr><td>Taux d'endettement max.</td><td>33% du revenu mensuel net</td></tr>
+                  <tr><td>Âge maximum</td><td>60 ans au terme du crédit (36 mois)</td></tr>
                 </table>
 
-                <h2>2. Conditions pour les Personnes Morales</h2>
+                <h2>2. Conditions pour les Personnes Morales (PME/TPE)</h2>
                 <table>
                   <tr><th>Critère</th><th>Détail</th></tr>
-                  <tr><td>Forme juridique</td><td>SARL, SA, SAS, EURL, GIE, Association légalement constituée</td></tr>
-                  <tr><td>RCCM</td><td>Registre du Commerce et du Crédit Mobilier valide</td></tr>
-                  <tr><td>Compte Contribuable</td><td>Numéro de compte contribuable actif</td></tr>
-                  <tr><td>Siège social</td><td>Domicilié en Côte d'Ivoire</td></tr>
-                  <tr><td>Dirigeant</td><td>Identité du Directeur Général requise</td></tr>
+                  <tr><td>Forme juridique</td><td>SARL, SA, SAS, SUARL, GIE légalement constitué</td></tr>
+                  <tr><td>Ancienneté d'activité</td><td>Minimum 2 années d'exercice consécutives</td></tr>
+                  <tr><td>États financiers</td><td>Bilans & comptes de résultat certifiés (2 derniers exercices)</td></tr>
+                  <tr><td>Comptes bancaires</td><td>Relevés bancaires des 6 derniers mois</td></tr>
+                  <tr><td>Capacité de remboursement</td><td>Flux de trésorerie positifs et réguliers</td></tr>
                 </table>
 
-                <h2>3. Conditions de livraison</h2>
+                <h2>3. Pièces Justificatives Obligatoires</h2>
                 <table>
-                  <tr><th>Zone</th><th>Délai</th></tr>
-                  <tr><td>Grand Abidjan</td><td>7 jours ouvrés</td></tr>
-                  <tr><td>Hors Abidjan (Intérieur)</td><td>15 jours ouvrés</td></tr>
-                  <tr><td>Validité du devis</td><td>30 jours ouvrés</td></tr>
+                  <tr><th>Personne Physique</th><th>Personne Morale</th></tr>
+                  <tr><td>• CNI ou Passeport en cours de validité</td><td>• Registre du Commerce (RCCM)</td></tr>
+                  <tr><td>• 3 derniers bulletins de salaire</td><td>• Statuts notariés de l'entreprise</td></tr>
+                  <tr><td>• Attestation de travail ou arrêté de nomination</td><td>• CNI du/des dirigeant(s) légal(aux)</td></tr>
+                  <tr><td>• Justificatif de domicile (facture CIE/SODECI)</td><td>• Déclaration fiscale d'existence (DFE)</td></tr>
+                  <tr><td>• Relevé d'Identité Bancaire (RIB)</td><td>• 3 derniers bilans certifiés + RIB société</td></tr>
                 </table>
 
-                <h2>4. Fournisseurs agréés Vitalis</h2>
+                <h2>4. Fournisseurs partenaires (Agréés)</h2>
                 <table>
                   <tr><th>Fournisseur</th><th>Domaine</th></tr>
                   <tr><td>Librairie de France Groupe</td><td>Fournitures scolaires & bureautiques</td></tr>
@@ -162,6 +164,7 @@ export default function DashboardFournisseur() {
           </button>
         </div>
       </div>
+      */}
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -171,18 +174,28 @@ export default function DashboardFournisseur() {
         <KPICard title="Paiements reçus" value={mesPaiements.filter(p => ['termine', 'encaisse', 'servi', 'fournisseur_paye', 'confirme'].includes(p.statut)).length} icon={CreditCard} variant="gray" subtitle={fmtCFA(montantPaiementsRecus)} />
       </div>
 
-      {/* Bouton action rapide */}
-      <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl p-5 text-white flex items-center justify-between shadow-lg">
+      {/* Action rapide : Demandes de financement & Devis */}
+      <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl p-5 text-white flex flex-col md:flex-row items-center justify-between shadow-lg gap-4">
         <div>
-          <p className="font-semibold text-base">Créer une nouvelle souscription</p>
-          <p className="text-orange-100 text-xs mt-0.5">Remplissez les informations client et soumettez le dossier à AFG Bank</p>
+          <p className="font-semibold text-base flex items-center gap-2">
+            <span>📋</span> Demandes de financement reçues
+          </p>
+          <p className="text-orange-100 text-xs mt-0.5">Consultez les besoins exprimés par les souscripteurs et établissez vos devis chiffrés pour AFG Bank.</p>
         </div>
-        <Link
-          href="/dashboard/souscriptions/creer"
-          className="flex items-center gap-2 bg-white text-orange-700 hover:bg-orange-50 px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex-shrink-0 shadow"
-        >
-          <Plus className="w-4 h-4" /> Nouvelle souscription
-        </Link>
+        <div className="flex items-center gap-2 flex-wrap">
+          <Link
+            href="/dashboard/souscriptions"
+            className="flex items-center gap-2 bg-white text-orange-700 hover:bg-orange-50 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors flex-shrink-0 shadow"
+          >
+            <FileText className="w-4 h-4" /> Voir les demandes
+          </Link>
+          <Link
+            href="/dashboard/devis/nouveau"
+            className="flex items-center gap-2 bg-orange-700 hover:bg-orange-800 text-white border border-orange-400/40 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors flex-shrink-0 shadow"
+          >
+            <BookOpen className="w-4 h-4" /> Établir un devis
+          </Link>
+        </div>
       </div>
 
       {/* Graphique + Liste */}

@@ -8,6 +8,7 @@ import { useLDFAuthStore } from "@/stores/ldfAuth";
 import {
   ArrowLeft, Building2, CheckCircle2, CreditCard, Download,
   FileText, MapPin, Package, Phone, Plus, User, Printer, Send, Truck, Clock,
+  BookOpen, ShieldCheck, Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -38,10 +39,10 @@ export default function SouscriptionDetailPage() {
   const dossier = sub ? getDossierBySouscription(sub.id) : null;
   const historique = sub ? getHistoriqueBySouscription(sub.id) : [];
 
-  const handleTransmettreBanque = async () => {
+  const handleEnregistrerDepotBanque = async () => {
     if (!sub) return;
     if (!devis) {
-      toast.error("Veuillez d'abord créer au moins un devis fournisseur pour cette souscription.");
+      toast.error("Le devis chiffré doit être établi avant le dépôt en agence.");
       return;
     }
     setSubmittingDossier(true);
@@ -61,6 +62,7 @@ export default function SouscriptionDetailPage() {
         banqueId: "AFG-001",
         banqueNom: "AFG Bank",
         agenceId: sub.agenceId || "AGE-AFG-001",
+        agenceNom: sub.agenceNom || "Agence Plateau",
         montantTotal: montantFinal,
         statut: "depose_banque",
         dateCreation: new Date().toISOString().split("T")[0],
@@ -74,16 +76,145 @@ export default function SouscriptionDetailPage() {
       addHistorique({
         souscriptionId: sub.id,
         action: "depot_banque",
-        description: `Dossier ${refDos} déposé et transmis à AFG Bank pour analyse`,
-        auteur: `${user?.firstName || "Fournisseur"} ${user?.lastName || ""}`,
+        description: `Dossier physique (Fiche d'adhésion + Devis) réceptionné au guichet de l'agence AFG Bank (${sub.agenceNom || "Plateau"}) — Réf ${refDos}`,
+        auteur: `${user?.firstName || "Agent AFG"} ${user?.lastName || ""}`,
         date: new Date().toISOString(),
       });
-      toast.success(`Dossier ${refDos} transmis à AFG Bank avec succès !`);
+      emitInAppNotification({
+        titre: `Dossier déposé en agence : ${refDos}`,
+        message: `Le dossier physique complet de ${sub.souscripteurPrenom || ""} ${sub.souscripteurNom} a été réceptionné par l'agence AFG Bank (${sub.agenceNom || "Plateau"}). L'instruction bancaire commence.`,
+        categorie: "dossier",
+        reference: refDos,
+        lien: `/dashboard/souscriptions/${sub.id}`,
+        roles: ["banque", "souscripteur", "fournisseur", "admin"],
+      });
+      toast.success(`Dossier physique ${refDos} réceptionné et enregistré par AFG Bank !`);
     } catch (e) {
-      toast.error("Erreur lors de la transmission du dossier");
+      console.error(e);
+      toast.error("Erreur lors de l'enregistrement du dépôt");
     } finally {
       setSubmittingDossier(false);
     }
+  };
+
+  const handlePrintDossier = () => {
+    if (!sub) return;
+    const w = window.open('', '_blank');
+    if (!w) return;
+    w.document.write(`
+      <html><head><title>Dossier de Souscription VITALIS - ${sub.reference}</title>
+      <style>
+        body { font-family: Arial, sans-serif; max-width: 850px; margin: 25px auto; color: #1f2937; line-height: 1.5; font-size: 13px; }
+        .header-logos { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f3f4f6; padding-bottom: 12px; }
+        .header-logos img { height: 42px; object-fit: contain; mix-blend-mode: multiply; }
+        h1 { color: #ea580c; border-bottom: 3px solid #ea580c; padding-bottom: 8px; text-align: center; font-size: 20px; margin-bottom: 15px; }
+        h2 { color: #c2410c; margin-top: 18px; font-size: 13px; border-bottom: 1px solid #fed7aa; padding: 5px 10px; background: #fff7ed; border-radius: 6px; }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12px; }
+        th, td { padding: 6px 10px; text-align: left; border-bottom: 1px solid #e5e7eb; }
+        th { background: #f9fafb; color: #4b5563; font-weight: 600; }
+        .signature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 25px; }
+        .sig-box { border: 2px dashed #cbd5e1; border-radius: 8px; padding: 12px; min-height: 100px; text-align: center; }
+        .footer { margin-top: 25px; font-size: 10px; color: #9ca3af; border-top: 1px solid #e5e7eb; padding-top: 10px; text-align: center; }
+        @media print { body { margin: 15px; } .page-break { page-break-before: always; } }
+      </style>
+      </head><body>
+      <div class="header-logos">
+        <img src="${window.location.origin}/logos/logo-fades.PNG" alt="FADES" />
+        <img src="${window.location.origin}/logos/new_logo-viflo.JPG" alt="VIFLO" style="height: 48px;" />
+        <img src="${window.location.origin}/logos/logo-afg-bank_atlantic.png" alt="AFG Bank" />
+      </div>
+
+      <h1>DOSSIER DE SOUSCRIPTION VITALIS — DÉPÔT PHYSIQUE AFG BANK</h1>
+      <p style="text-align: center; margin-top: -10px; color: #64748b; font-size: 12px;">
+        Programme de Financement Vitalis · Banque Financeuse Unique : <strong>AFG Bank</strong>
+      </p>
+
+      <h2>1. Fiche d'Adhésion — Informations Générales</h2>
+      <table>
+        <tr><th style="width: 35%;">Référence Souscription</th><td><strong style="font-family: monospace; font-size: 14px; color: #ea580c;">${sub.reference}</strong></td></tr>
+        <tr><th>Date d'initiation</th><td>${new Date(sub.dateCreation).toLocaleDateString('fr-FR')}</td></tr>
+        <tr><th>Banque Financeuse</th><td><strong>${sub.banqueNom}</strong></td></tr>
+        <tr><th>Agence AFG Bank de Dépôt</th><td><strong>${sub.agenceNom || "Agence Centrale Plateau"}</strong></td></tr>
+        <tr><th>Durée de remboursement demandée</th><td><strong>${sub.duree} mois</strong> (Taux bonifié Vitalis)</td></tr>
+      </table>
+
+      <h2>2. Identité du Souscripteur (Bénéficiaire)</h2>
+      <table>
+        <tr><th style="width: 35%;">Nom & Prénom</th><td><strong>${sub.souscripteurNom} ${sub.souscripteurPrenom || ''}</strong></td></tr>
+        <tr><th>Type de personne</th><td>${sub.typeSouscripteur === 'physique' ? 'Personne Physique (Salarié / Fonctionnaire)' : 'Personne Morale (Entreprise / PME)'}</td></tr>
+        ${sub.souscripteurEntreprise ? `<tr><th>Raison sociale entreprise</th><td>${sub.souscripteurEntreprise}</td></tr>` : ''}
+        <tr><th>Téléphone</th><td>${sub.souscripteurTelephone || 'Non renseigné'}</td></tr>
+        <tr><th>Email</th><td>${sub.souscripteurEmail || 'Non renseigné'}</td></tr>
+      </table>
+
+      ${sub.observations ? `
+      <h2>3. Expression du Besoin Client</h2>
+      <p style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; font-size: 12px; margin: 8px 0;">
+        ${sub.observations}
+      </p>` : ''}
+
+      ${devis ? `
+      <h2>4. Devis Chiffré Joint — ${devis.fournisseurNom} (Réf : ${devis.reference})</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Désignation</th>
+            <th>Réf.</th>
+            <th style="text-align: center;">Qté</th>
+            <th style="text-align: right;">Prix Unitaire</th>
+            <th style="text-align: right;">Total HT</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${(devis.articles || []).map(a => `
+            <tr>
+              <td><strong>${a.designation}</strong></td>
+              <td style="font-family: monospace; font-size: 11px; color: #64748b;">${a.reference || '—'}</td>
+              <td style="text-align: center;">${a.quantite}</td>
+              <td style="text-align: right;">${fmtCFA(a.prixUnitaire)}</td>
+              <td style="text-align: right; font-weight: bold;">${fmtCFA(a.montantHT)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4" style="text-align: right; font-weight: bold;">Montant Total HT</td>
+            <td style="text-align: right; font-weight: bold;">${fmtCFA(devis.totalHT || devis.totalTTC)}</td>
+          </tr>
+          <tr style="background: #fff7ed; color: #ea580c; font-size: 13px;">
+            <td colspan="4" style="text-align: right; font-weight: bold;">MONTANT TOTAL DU FINANCEMENT (TTC)</td>
+            <td style="text-align: right; font-weight: bold;">${fmtCFA(devis.totalTTC)}</td>
+          </tr>
+        </tfoot>
+      </table>
+      ` : ''}
+
+      <h2>5. Engagements & Signatures</h2>
+      <p style="font-size: 11px; text-align: justify; color: #475569;">
+        Le souscripteur certifie l'exactitude des informations fournies, s'engage à respecter les échéances du prêt consenti par AFG Bank et autorise le versement direct au(x) fournisseur(s) agréé(s).
+      </p>
+
+      <div class="signature-grid">
+        <div class="sig-box">
+          <p style="font-weight: bold; margin: 0; color: #1e293b; font-size: 12px;">Cadre 1 : Signature du Souscripteur</p>
+          <p style="font-size: 10px; color: #94a3b8; margin: 4px 0 35px 0;">(Mention manuscrite "Lu et approuvé")</p>
+          <p style="font-size: 11px; color: #64748b;">Fait le : ___/___/2026</p>
+        </div>
+        <div class="sig-box" style="border-color: #f97316; background: #fffaf5;">
+          <p style="font-weight: bold; margin: 0; color: #c2410c; font-size: 12px;">Cadre 2 : Réservé à l'Agence AFG Bank</p>
+          <p style="font-size: 10px; color: #94a3b8; margin: 4px 0 35px 0;">(Réception physique du dossier complet au guichet)</p>
+          <p style="font-size: 11px; color: #64748b;">Date réception : ___/___/2026 · Cachet & Visa</p>
+        </div>
+      </div>
+
+      <div class="footer">
+        <p>Programme VITALIS — Convention de partenariat AFG Bank, FADES & Plateforme Viflo · Document officiel pour dépôt en agence bancaire</p>
+      </div>
+      </body></html>
+    `);
+    w.document.close();
+    w.focus();
+    setTimeout(() => w.print(), 500);
   };
 
   if (!sub) return (
@@ -123,12 +254,12 @@ export default function SouscriptionDetailPage() {
   }, sub.statut);
 
   const processSteps = [
-    { id: "sub", label: "Souscription créée", statut: "complete" as const, date: sub.dateCreation },
-    { id: "devis", label: "Devis fournisseur(s)", statut: devis ? ("complete" as const) : ("pending" as const) },
-    { id: "depot", label: "Dépôt AFG Bank", statut: isApres(currentEffectifStatut, "depose_banque") ? ("complete" as const) : currentEffectifStatut === "pret_pour_depot" ? ("current" as const) : ("pending" as const) },
-    { id: "banque", label: "Analyse bancaire", statut: isApres(currentEffectifStatut, "accepte") ? ("complete" as const) : (currentEffectifStatut === "refuse" || currentEffectifStatut === "rejete") ? ("rejected" as const) : currentEffectifStatut === "en_analyse_bancaire" ? ("current" as const) : ("pending" as const) },
-    { id: "paiement", label: "Financement & Paiement", statut: isApres(currentEffectifStatut, "fournisseur_paye") ? ("complete" as const) : (currentEffectifStatut === "accepte" || currentEffectifStatut === "valide" || currentEffectifStatut === "finance") ? ("current" as const) : ("pending" as const) },
-    { id: "livraison", label: "Commande & Livraison", statut: (currentEffectifStatut === "cloture" || currentEffectifStatut === "livre" || currentEffectifStatut === "servie") ? ("complete" as const) : (currentEffectifStatut === "fournisseur_paye" || currentEffectifStatut === "commande_en_preparation") ? ("current" as const) : ("pending" as const) },
+    { id: "sub", label: "1. Demande & Besoin", statut: "complete" as const, date: sub.dateCreation },
+    { id: "devis", label: "2. Devis fournisseur", statut: devis ? ("complete" as const) : ("pending" as const) },
+    { id: "depot", label: "3. Dépôt dossier en agence", statut: isApres(currentEffectifStatut, "depose_banque") ? ("complete" as const) : currentEffectifStatut === "pret_pour_depot" ? ("current" as const) : ("pending" as const) },
+    { id: "banque", label: "4. Instruction AFG Bank", statut: isApres(currentEffectifStatut, "accepte") ? ("complete" as const) : (currentEffectifStatut === "refuse" || currentEffectifStatut === "rejete") ? ("rejected" as const) : currentEffectifStatut === "en_analyse_bancaire" ? ("current" as const) : ("pending" as const) },
+    { id: "paiement", label: "5. Virement fournisseur", statut: isApres(currentEffectifStatut, "fournisseur_paye") ? ("complete" as const) : (currentEffectifStatut === "accepte" || currentEffectifStatut === "valide" || currentEffectifStatut === "finance") ? ("current" as const) : ("pending" as const) },
+    { id: "livraison", label: "6. Retrait des articles", statut: (currentEffectifStatut === "cloture" || currentEffectifStatut === "livre" || currentEffectifStatut === "servie") ? ("complete" as const) : (currentEffectifStatut === "fournisseur_paye" || currentEffectifStatut === "commande_en_preparation") ? ("current" as const) : ("pending" as const) },
   ];
 
   const handleConfirmerPaiement = () => {
@@ -250,13 +381,13 @@ export default function SouscriptionDetailPage() {
               <FileText className="w-3.5 h-3.5" /> Voir le devis
             </Link>
           )}
-          {devis && !dossier && (user?.role === "fournisseur" || user?.role === "admin") && (
+          {devis && !dossier && (user?.role === "banque" || user?.role === "admin") && (
             <button
-              onClick={handleTransmettreBanque}
+              onClick={handleEnregistrerDepotBanque}
               disabled={submittingDossier}
               className="btn-ldf-primary text-sm py-2 px-4 shadow-sm flex items-center gap-1.5"
             >
-              <Send className="w-3.5 h-3.5" /> {submittingDossier ? "Envoi..." : "Transmettre à AFG Bank"}
+              <CheckCircle2 className="w-3.5 h-3.5" /> {submittingDossier ? "Enregistrement..." : "Enregistrer le dépôt physique (AFG Bank)"}
             </button>
           )}
           {dossier && (
@@ -265,75 +396,11 @@ export default function SouscriptionDetailPage() {
             </Link>
           )}
           <button
-            onClick={() => {
-              const w = window.open('', '_blank');
-              if (!w) return;
-              w.document.write(`
-                <html><head><title>Fiche de Souscription Vitalis - ${sub.reference}</title>
-                <style>
-                  body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; color: #1f2937; line-height: 1.6; }
-                  .header-logos { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f3f4f6; padding-bottom: 15px; }
-                  .header-logos img { height: 40px; object-fit: contain; mix-blend-mode: multiply; }
-                  h1 { color: #ea580c; border-bottom: 3px solid #ea580c; padding-bottom: 10px; text-align: center; }
-                  h2 { color: #ea580c; margin-top: 24px; font-size: 16px; border-bottom: 1px solid #fed7aa; padding-bottom: 4px;}
-                  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; }
-                  th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #f3f4f6; }
-                  th { background: #fff7ed; color: #c2410c; width: 40%; }
-                  .signature-box { margin-top: 50px; border: 2px dashed #d1d5db; padding: 20px; height: 120px; text-align: center; }
-                  .footer { margin-top: 40px; font-size: 11px; color: #9ca3af; border-top: 1px solid #e5e7eb; padding-top: 12px; text-align: center; }
-                  @media print { body { margin: 20px; } }
-                </style>
-                </head><body>
-                <div class="header-logos">
-                  <img src="${window.location.origin}/logos/logo-fades.PNG" alt="FADES" />
-                  <img src="${window.location.origin}/logos/new_logo-viflo.JPG" alt="VIFLO" style="height: 50px;" />
-                  <img src="${window.location.origin}/logos/logo-afg-bank_atlantic.png" alt="AFG Bank" />
-                </div>
-                <h1>Fiche de Souscription VITALIS</h1>
-                
-                <h2>1. Informations Générales</h2>
-                <table>
-                  <tr><th>Référence Dossier</th><td><strong>${sub.reference}</strong></td></tr>
-                  <tr><th>Date de Souscription</th><td>${new Date(sub.dateCreation).toLocaleDateString('fr-FR')}</td></tr>
-                  <tr><th>Banque Financeuse</th><td><strong>${sub.banqueNom}</strong></td></tr>
-                </table>
-
-                <h2>2. Identité du Souscripteur</h2>
-                <table>
-                  <tr><th>Nom / Prénom</th><td>${sub.souscripteurNom} ${sub.souscripteurPrenom || ''}</td></tr>
-                  <tr><th>Type de Souscripteur</th><td>${sub.typeSouscripteur === 'physique' ? 'Personne Physique' : 'Personne Morale'}</td></tr>
-                  ${sub.souscripteurEntreprise ? `<tr><th>Entreprise</th><td>${sub.souscripteurEntreprise}</td></tr>` : ''}
-                  <tr><th>Téléphone</th><td>${sub.souscripteurTelephone || 'Non renseigné'}</td></tr>
-                  <tr><th>Email</th><td>${sub.souscripteurEmail || 'Non renseigné'}</td></tr>
-                </table>
-
-                <h2>3. Fournisseurs Agréés</h2>
-                <ul>
-                  ${sub.fournisseurs.map(f => `<li><strong>${f.fournisseurNom}</strong></li>`).join('')}
-                </ul>
-
-                <h2>4. Engagement du Souscripteur</h2>
-                <p style="font-size: 13px; text-align: justify;">
-                  Je soussigné(e), <strong>${sub.souscripteurNom} ${sub.souscripteurPrenom || ''}</strong>, reconnais avoir pris connaissance des conditions générales du programme de financement VITALIS géré en partenariat avec AFG Bank. Je certifie l'exactitude des informations fournies et m'engage à fournir toutes les pièces justificatives complémentaires qui pourraient m'être demandées pour l'étude de ce dossier.
-                </p>
-
-                <div class="signature-box">
-                  <p style="font-weight: bold; color: #4b5563; margin-top: 0;">Signature du Client</p>
-                  <p style="font-size: 12px; color: #9ca3af;">(Précédée de la mention "Lu et approuvé")</p>
-                </div>
-
-                <div class="footer">
-                  <p>Programme Vitalis — AFG Bank · Imprimé le ${new Date().toLocaleDateString('fr-FR')} à ${new Date().toLocaleTimeString('fr-FR')}</p>
-                </div>
-                </body></html>
-              `);
-              w.document.close();
-              w.focus();
-              setTimeout(() => w.print(), 500);
-            }}
-            className="btn-ldf-outline text-sm py-2 px-4"
+            onClick={handlePrintDossier}
+            className="btn-ldf-primary text-sm py-2 px-4 flex items-center gap-1.5 shadow-sm"
+            title="Imprimer le dossier complet (Fiche d'adhésion VITALIS + Devis joint) pour dépôt physique en agence AFG Bank"
           >
-            <Printer className="w-3.5 h-3.5" /> Imprimer pour émargement
+            <Printer className="w-3.5 h-3.5" /> Imprimer le dossier complet (Fiche + Devis)
           </button>
         </div>
       </div>
@@ -343,6 +410,96 @@ export default function SouscriptionDetailPage() {
         <h3 className="text-sm font-semibold text-gray-800 mb-4">Progression du dossier</h3>
         <ProcessTimeline steps={processSteps} />
       </div>
+
+      {/* ── Déclencheurs d'étapes dynamiques ── */}
+      {!devis && (
+        <div className="p-4 rounded-xl border bg-orange-50/90 border-orange-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-xl bg-orange-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+              <BookOpen className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-gray-900">Étape 2 active : En attente d'établissement du devis chiffré</p>
+              <p className="text-xs text-gray-600 mt-0.5">
+                {user?.role === "fournisseur" || user?.role === "admin"
+                  ? "Le bénéficiaire a exprimé son besoin. En tant que fournisseur agréé, établissez le devis chiffré avec les articles correspondants."
+                  : "Votre demande de financement a été transmise aux fournisseurs sélectionnés. Ils préparent actuellement votre devis chiffré."}
+              </p>
+            </div>
+          </div>
+          {(user?.role === "fournisseur" || user?.role === "admin") && (
+            <Link
+              href={`/dashboard/devis/nouveau?souscriptionId=${sub.id}`}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-orange-600 text-white text-xs font-bold hover:bg-orange-700 transition-colors shadow-sm self-start sm:self-auto whitespace-nowrap"
+            >
+              <Plus className="w-3.5 h-3.5" /> Établir le devis chiffré →
+            </Link>
+          )}
+        </div>
+      )}
+
+      {devis && !dossier && (
+        <div className="p-4 rounded-xl border bg-amber-50/90 border-amber-300 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+              <Printer className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-gray-900">Étape 3 active : Devis établi — Constitution du dossier & Dépôt physique en agence AFG Bank</p>
+              <p className="text-xs text-gray-700 mt-0.5 leading-relaxed">
+                {user?.role === "souscripteur"
+                  ? `Votre devis chiffré est prêt (${fmtCFA(devis.totalTTC)}). Imprimez votre dossier complet (Fiche d'adhésion VITALIS + Devis joint) et présentez-vous à votre agence AFG Bank (${sub.agenceNom || "de rattachement"}) pour effectuer le dépôt physique de votre dossier.`
+                  : (user?.role === "banque" || user?.role === "admin")
+                  ? `Le client se présente à l'agence (${sub.agenceNom || "Plateau"}) avec sa fiche d'adhésion signée et le devis joint. Après contrôle des pièces physiques, confirmez la réception en agence.`
+                  : `Le devis chiffré a été remis au souscripteur. En attente du déplacement physique du client pour le dépôt de son dossier auprès de son agence AFG Bank (${sub.agenceNom || "Plateau"}).`}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap self-start sm:self-auto">
+            <button
+              onClick={handlePrintDossier}
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-orange-600 text-white text-xs font-bold hover:bg-orange-700 transition-colors shadow-sm whitespace-nowrap"
+            >
+              <Printer className="w-3.5 h-3.5" /> Imprimer le dossier complet (Fiche + Devis)
+            </button>
+            {(user?.role === "banque" || user?.role === "admin") && (
+              <button
+                onClick={handleEnregistrerDepotBanque}
+                disabled={submittingDossier}
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-colors shadow-sm whitespace-nowrap"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5" /> {submittingDossier ? "Enregistrement..." : "Enregistrer la réception guichet →"}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {dossier && (dossier.statut === "depose_banque" || dossier.statut === "recu" || dossier.statut === "en_analyse_bancaire" || dossier.statut === "en_cours_traitement") && (
+        <div className="p-4 rounded-xl border bg-purple-50/90 border-purple-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-xl bg-purple-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-gray-900">Étape 4 active : Instruction du dossier par AFG Bank</p>
+              <p className="text-xs text-gray-600 mt-0.5">
+                {user?.role === "banque" || user?.role === "admin"
+                  ? "Le dossier complet est soumis à l'agence bancaire. Procédez à l'analyse de solvabilité et au comité de crédit."
+                  : "Le dossier complet est en cours d'instruction par les analystes d'AFG Bank."}
+              </p>
+            </div>
+          </div>
+          {(user?.role === "banque" || user?.role === "admin") && (
+            <Link
+              href={`/dashboard/dossiers/${dossier.id}`}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-purple-600 text-white text-xs font-bold hover:bg-purple-700 transition-colors shadow-sm self-start sm:self-auto whitespace-nowrap"
+            >
+              <ShieldCheck className="w-3.5 h-3.5" /> Instruire le dossier →
+            </Link>
+          )}
+        </div>
+      )}
 
       {/* ── Déclencheurs d'étapes post-validation bancaire ── */}
       {(sub.statut === "accepte" || sub.statut === "finance") && (
@@ -473,21 +630,36 @@ export default function SouscriptionDetailPage() {
             </div>
           </div>
 
+          {/* Expression du besoin initiée par le souscripteur (Cahier des charges) */}
+          {sub.observations && (
+            <div className="section-card border-l-4 border-l-orange-500">
+              <div className="section-card-header bg-orange-50/40">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-orange-600" />
+                  <h3 className="text-sm font-semibold text-gray-900">Expression du besoin (Initié par le bénéficiaire)</h3>
+                </div>
+              </div>
+              <div className="section-card-body">
+                <p className="text-xs text-gray-700 whitespace-pre-line leading-relaxed font-medium bg-gray-50/80 p-3.5 rounded-xl border border-gray-100">
+                  {sub.observations}
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Fournisseur */}
           <div className="section-card">
             <div className="section-card-header">
               <div className="flex items-center gap-2">
                 <Building2 className="w-4 h-4 text-amber-500" />
-                <h3 className="text-sm font-semibold text-gray-800">Fournisseur</h3>
+                <h3 className="text-sm font-semibold text-gray-800">Fournisseur & Banque</h3>
               </div>
             </div>
             <div className="section-card-body grid grid-cols-2 gap-4">
-              <div><p className="text-xs text-gray-400 mb-0.5">Nom</p><p className="text-sm font-medium text-gray-800">{sub.fournisseurNom}</p></div>
-              <div><p className="text-xs text-gray-400 mb-0.5">Banque partenaire</p><p className="text-sm font-medium text-gray-800">{sub.banqueNom}</p></div>
+              <div><p className="text-xs text-gray-400 mb-0.5">Fournisseur(s)</p><p className="text-sm font-medium text-gray-800">{sub.fournisseurNom}</p></div>
+              <div><p className="text-xs text-gray-400 mb-0.5">Banque financeuse</p><p className="text-sm font-medium text-gray-800">{sub.banqueNom}</p></div>
+              <div><p className="text-xs text-gray-400 mb-0.5">Agence de rattachement</p><p className="text-sm font-medium text-gray-800">{sub.agenceNom || "Agence Plateau"}</p></div>
               <div><p className="text-xs text-gray-400 mb-0.5">Durée souscription</p><p className="text-sm font-medium text-gray-800">{sub.duree} mois</p></div>
-              {sub.observations && (
-                <div className="col-span-2"><p className="text-xs text-gray-400 mb-0.5">Observations</p><p className="text-sm text-gray-600">{sub.observations}</p></div>
-              )}
             </div>
           </div>
 

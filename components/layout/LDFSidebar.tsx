@@ -68,6 +68,7 @@ function getNav(role: LDFUserRole, unreadCount: number): { main: NavItem[]; bott
     return {
       main: [
         { name: "Mes souscriptions", href: "/dashboard/souscripteur", icon: Home, exact: true },
+        { name: "Nouvelle demande",  href: "/dashboard/souscripteur/demande", icon: Package },
         { name: "Notifications",     href: "/dashboard/notifications", icon: Bell, badge: unreadCount },
         { name: "Paramètres",         href: "/dashboard/parametres",    icon: Settings },
       ],
