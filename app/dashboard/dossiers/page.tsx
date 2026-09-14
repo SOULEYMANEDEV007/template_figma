@@ -2,7 +2,7 @@
 "use client";
 
 import { StatusBadge } from "@/components/ui/ldf-badge";
-import { useLDFAuthStore } from "@/stores/ldfAuth";
+import { useLDFAuthStore, emitInAppNotification } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
 import {
   CheckCircle2, ChevronLeft, ChevronRight, Eye,
@@ -12,7 +12,10 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
-const fmtCFA = (v: number) => new Intl.NumberFormat("fr-FR").format(v) + " FCFA";
+const fmtCFA = (v: any) => {
+  const num = typeof v === "number" ? v : Number(v);
+  return new Intl.NumberFormat("fr-FR").format(isNaN(num) ? 0 : num) + " FCFA";
+};
 
 const STATUTS_LABELS: Record<string, string> = {
   en_preparation: "En préparation",
@@ -65,6 +68,14 @@ export default function DossiersPage() {
         commentaireAFG: "Dossier conforme aux conditions du programme Vitalis. Financement accordé.",
       });
       updateSouscription(dossier.souscriptionId, { statut: "accepte" });
+      emitInAppNotification({
+        titre: `Accord de financement AFG Bank : ${dossier.reference}`,
+        message: `Bonne nouvelle ! Le financement pour ${dossier.souscripteurPrenom} ${dossier.souscripteurNom} (${fmtCFA(dossier.montantTotal || dossier.montant)}) a été accordé par AFG Bank. La commande peut être préparée et servie.`,
+        categorie: "dossier",
+        reference: dossier.reference,
+        lien: `/dashboard/dossiers/${dossier.id}`,
+        roles: ["fournisseur", "souscripteur", "admin", "banque"],
+      });
       toast.success(`Dossier ${dossier.reference} validé — Financement AFG accordé ✓`);
       setActionTarget(null);
     }, 800);
@@ -72,12 +83,21 @@ export default function DossiersPage() {
 
   const handleRejeter = (dossier: typeof dossiers[0]) => {
     setActionTarget(dossier.id);
+    const motif = "Dossier non conforme aux critères du programme VITALIS.";
     setTimeout(() => {
       updateDossier(dossier.id, {
-        statut: "rejete",
-        motifRejet: "Dossier incomplet — pièces justificatives manquantes.",
+        statut: "refuse",
+        motifRejet: motif,
       });
-      updateSouscription(dossier.souscriptionId, { statut: "rejetee" });
+      updateSouscription(dossier.souscriptionId, { statut: "refuse" });
+      emitInAppNotification({
+        titre: `Décision AFG Bank : Dossier ${dossier.reference} refusé`,
+        message: `Le dossier de ${dossier.souscripteurPrenom} ${dossier.souscripteurNom} a été refusé par AFG Bank. Motif : ${motif}`,
+        categorie: "dossier",
+        reference: dossier.reference,
+        lien: `/dashboard/dossiers/${dossier.id}`,
+        roles: ["fournisseur", "souscripteur", "admin", "banque"],
+      });
       toast.error(`Dossier ${dossier.reference} rejeté`);
       setActionTarget(null);
     }, 800);
@@ -180,7 +200,7 @@ export default function DossiersPage() {
               <tbody className="divide-y divide-gray-50">
                 {paginated.map(d => {
                   const isActing = actionTarget === d.id;
-                  const canValidate = canAct && (d.statut === "recu" || d.statut === "en_analyse" || d.statut === "informations_demandees");
+                  const canValidate = canAct && ["depose_banque", "en_analyse_bancaire", "recu", "en_analyse", "en_cours_traitement"].includes(d.statut);
                   return (
                     <tr key={d.id} className="hover:bg-orange-50/30 transition-colors group">
                       <td className="px-4 py-3">
@@ -194,10 +214,10 @@ export default function DossiersPage() {
                         <p className="text-[10px] text-gray-400 capitalize">{d.typeSouscripteur}</p>
                       </td>
                       <td className="px-4 py-3 hidden md:table-cell">
-                        <p className="text-xs text-gray-600 truncate max-w-[150px]">{d.fournisseursNoms}</p>
+                        <p className="text-xs text-gray-600 truncate max-w-[150px]">{d.fournisseursNoms || d.fournisseurNom || "Librairie de France Groupe"}</p>
                       </td>
                       <td className="px-4 py-3 hidden lg:table-cell text-right">
-                        <span className="text-xs font-bold text-gray-800">{fmtCFA(d.montantTotal)}</span>
+                        <span className="text-xs font-bold text-gray-800">{fmtCFA(d.montantTotal || d.montant)}</span>
                       </td>
                       <td className="px-4 py-3">
                         <StatusBadge statut={d.statut} size="sm" />

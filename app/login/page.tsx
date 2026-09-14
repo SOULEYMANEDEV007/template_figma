@@ -81,14 +81,14 @@ export default function LoginPage() {
 
         {/* Logo ViFlo */}
         <div className="relative z-10 flex items-center gap-3">
-          <div className="w-24 h-24 rounded-xl overflow-hidden flex items-center justify-center bg-white/5 p-2 backdrop-blur-sm border border-white/10">
-            <Image src="/logos/new_logo-viflo.JPG" alt='Vitalis FADES' width={200} height={200} className="object-contain w-full h-full rounded-lg" onError={() => { }} />
+          <div className="w-20 h-20 rounded-2xl overflow-hidden flex items-center justify-center bg-white p-2 shadow-lg border border-white/20">
+            <Image src="/logos/viflo-logo.png" alt="ViFlo" width={160} height={160} className="object-contain w-full h-full" onError={() => { }} />
           </div>
           <div>
-            <p className="text-white font-bold text-xl leading-none">
-              Plateforme de gestion
+            <p className="text-white font-bold text-2xl leading-none">
+              ViFlo
             </p>
-            <p className="text-white/80 text-sm mt-1">Vitalis FADES</p>
+            <p className="text-white/80 text-sm mt-1">Plateforme de gestion Vitalis FADES</p>
           </div>
         </div>
 
@@ -154,12 +154,12 @@ export default function LoginPage() {
 
           {/* Mobile logo ViFlo */}
           <div className="lg:hidden flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center bg-white border border-gray-200">
-              <Image src="/logos/new_logo-viflo.JPG" alt="Vitalis FADES" width={48} height={48} className="object-contain w-full h-full" onError={() => { }} />
+            <div className="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center bg-white border border-gray-200 p-1">
+              <Image src="/logos/viflo-logo.png" alt="ViFlo" width={48} height={48} className="object-contain w-full h-full" onError={() => { }} />
             </div>
             <div>
-              <p className="font-bold text-gray-900 text-lg">Vitalis <span className="text-orange-500">FADES</span></p>
-              <p className="text-xs text-gray-500">Donnons vie à vos projets</p>
+              <p className="font-bold text-gray-900 text-lg">ViFlo <span className="text-orange-500">FADES</span></p>
+              <p className="text-xs text-gray-500">Plateforme Vitalis FADES</p>
             </div>
           </div>
 

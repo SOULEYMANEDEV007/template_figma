@@ -2,12 +2,12 @@
 "use client";
 import { StatusBadge } from "@/components/ui/ldf-badge";
 import { LDFTimeline, ProcessTimeline } from "@/components/ui/ldf-timeline";
-import { ConfirmModal, LDFModal, MotifsRejetModal } from "@/components/ui/ldf-modal";
+import { ConfirmModal, MotifsRejetModal } from "@/components/ui/ldf-modal";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
-import { useLDFAuthStore } from "@/stores/ldfAuth";
+import { useLDFAuthStore, emitInAppNotification } from "@/stores/ldfAuth";
 import {
   ArrowLeft, BookOpen, Building2, CheckCircle2, CreditCard,
-  FileText, MessageSquare, Package, User, XCircle,
+  FileText, Package, User, XCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -15,24 +15,31 @@ import { useState } from "react";
 import { toast } from "sonner";
 import type { DossierStatut } from "@/types/ldf";
 
-const fmtCFA = (v: number) => new Intl.NumberFormat("fr-FR").format(v) + " FCFA";
+const fmtCFA = (v: any) => {
+  const num = typeof v === "number" ? v : Number(v);
+  return new Intl.NumberFormat("fr-FR").format(isNaN(num) ? 0 : num) + " FCFA";
+};
 
 export default function DossierDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const { user } = useLDFAuthStore();
-  const { getDossierById, getDevisById, getSouscriptionById, getHistoriqueBySouscription } = useVitalisDb();
+  const {
+    getDossierById, getDevisById, getSouscriptionById, getHistoriqueBySouscription,
+    getDevisBySouscription, updateDossier, updateSouscription, addHistorique,
+    addPaiement, generateRef,
+  } = useVitalisDb();
 
   const [statut, setStatut] = useState<DossierStatut | null>(null);
   const [commentaire, setCommentaire] = useState("");
   const [showValider, setShowValider] = useState(false);
   const [showRejeter, setShowRejeter] = useState(false);
-  const [showInfos, setShowInfos] = useState(false);
-  const [infoMessage, setInfoMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const dossier = getDossierById(id);
-  const devis = dossier ? getDevisById(dossier.devisIds[0]) : null;
+  const devis = (dossier && Array.isArray(dossier.devisIds) && dossier.devisIds.length > 0
+    ? getDevisById(dossier.devisIds[0])
+    : null) || (dossier ? getDevisBySouscription(dossier.souscriptionId)[0] : null);
   const sub = dossier ? getSouscriptionById(dossier.souscriptionId) : null;
   const historique = dossier ? getHistoriqueBySouscription(dossier.souscriptionId) : [];
 
@@ -46,38 +53,119 @@ export default function DossierDetailPage() {
 
   const currentStatut = statut ?? dossier.statut;
   const canAct = (user?.role === "banque" || user?.role === "admin") &&
-    (currentStatut === "recu" || currentStatut === "en_cours_traitement");
+    ["depose_banque", "en_analyse_bancaire", "recu", "en_cours_traitement"].includes(currentStatut);
 
-  // Process steps
+  const dossierMontant = dossier?.montantTotal || dossier?.montant || devis?.totalTTC || sub?.montantTotal || 0;
+  const fournisseurAffiche =
+    dossier?.fournisseurNom ||
+    dossier?.fournisseursNoms ||
+    devis?.fournisseurNom ||
+    sub?.fournisseurNom ||
+    (sub?.fournisseurs && sub.fournisseurs.length > 0
+      ? sub.fournisseurs.map((f: any) => f.fournisseurNom).join(", ")
+      : "") ||
+    "Librairie de France Groupe";
+
+  // Ordre chronologique des étapes du workflow VITALIS
+  const isPasse = (statutCandidat: string, statutSeuil: string) => {
+    const ordre = [
+      "en_preparation",
+      "pret_pour_depot",
+      "depose_banque",
+      "recu",
+      "en_analyse_bancaire",
+      "en_cours_traitement",
+      "accepte",
+      "valide",
+      "finance",
+      "fournisseur_paye",
+      "commande_en_preparation",
+      "livre",
+      "servie",
+      "cloture",
+    ];
+    const idxCandidat = ordre.indexOf(statutCandidat);
+    const idxSeuil = ordre.indexOf(statutSeuil);
+    return idxCandidat !== -1 && idxCandidat >= idxSeuil;
+  };
+
+  // Le statut le plus avancé entre le dossier et sa souscription liée
+  const effectifStatut = [currentStatut, sub?.statut || ""].reduce((max, curr) => {
+    return isPasse(curr, max) ? curr : max;
+  }, currentStatut);
+
+  const isDossierRejete = currentStatut === "rejete" || currentStatut === "refuse" || sub?.statut === "refuse";
+
+  // Process steps (VITALIS Workflow: Souscription -> Devis validé -> En traitement -> Décision -> Paiement -> Servi)
   const processSteps = [
     { id: "s1", label: "Souscription", statut: "complete" as const },
     { id: "s2", label: "Devis validé", statut: "complete" as const },
     {
-      id: "s3", label: "En traitement",
-      statut: currentStatut === "en_cours_traitement" ? "current" as const :
-        currentStatut === "valide" || currentStatut === "rejete" ? "complete" as const : "pending" as const,
+      id: "s3",
+      label: "En traitement",
+      statut: isPasse(effectifStatut, "accepte") || isDossierRejete
+        ? ("complete" as const)
+        : ["en_cours_traitement", "en_analyse_bancaire", "depose_banque", "recu"].includes(currentStatut)
+        ? ("current" as const)
+        : ("pending" as const),
     },
     {
-      id: "s4", label: "Décision",
-      statut: currentStatut === "valide" ? "complete" as const :
-        currentStatut === "rejete" ? "rejected" as const :
-          currentStatut === "informations_demandees" ? "current" as const : "pending" as const,
+      id: "s4",
+      label: "Décision",
+      statut: isDossierRejete
+        ? ("rejected" as const)
+        : isPasse(effectifStatut, "accepte")
+        ? ("complete" as const)
+        : ("pending" as const),
     },
     {
-      id: "s5", label: "Paiement",
-      statut: currentStatut === "valide" && sub?.statut === "payee" ? "complete" as const :
-        currentStatut === "valide" && sub?.statut === "servie" ? "complete" as const : "pending" as const,
+      id: "s5",
+      label: "Paiement",
+      statut: isPasse(effectifStatut, "fournisseur_paye")
+        ? ("complete" as const)
+        : (effectifStatut === "accepte" || effectifStatut === "valide" || effectifStatut === "finance")
+        ? ("current" as const)
+        : ("pending" as const),
     },
     {
-      id: "s6", label: "Servi",
-      statut: sub?.statut === "servie" ? "complete" as const : "pending" as const,
+      id: "s6",
+      label: "Servi",
+      statut: (isPasse(effectifStatut, "livre") || effectifStatut === "servie" || effectifStatut === "cloture")
+        ? ("complete" as const)
+        : (effectifStatut === "fournisseur_paye" || effectifStatut === "commande_en_preparation")
+        ? ("current" as const)
+        : ("pending" as const),
     },
   ];
 
   const handleValider = async () => {
     setLoading(true);
-    await new Promise(r => setTimeout(r, 800));
-    setStatut("valide");
+    await new Promise(r => setTimeout(r, 600));
+    updateDossier(dossier.id, {
+      statut: "accepte",
+      dateValidation: new Date().toISOString().split("T")[0],
+      commentaireAFG: "Dossier conforme aux conditions du programme Vitalis. Financement accordé.",
+    });
+    updateSouscription(dossier.souscriptionId, { statut: "accepte" });
+    addHistorique({
+      souscriptionId: dossier.souscriptionId,
+      action: "dossier_accepte",
+      description: `Dossier ${dossier.reference} validé — Financement accordé par AFG Bank`,
+      auteur: `${user?.firstName || "AFG Bank"} ${user?.lastName || ""}`,
+      date: new Date().toISOString(),
+    });
+
+    // ── NOTIFIER LE FOURNISSEUR ET LE CLIENT (SOUSCRIPTEUR) ──
+    emitInAppNotification({
+      titre: `Accord de financement AFG Bank : ${dossier.reference}`,
+      message: `Bonne nouvelle ! Le financement pour ${dossier.souscripteurPrenom} ${dossier.souscripteurNom} (${fmtCFA(dossierMontant)}) a été accordé par AFG Bank. La commande peut être préparée et servie.`,
+      categorie: "dossier",
+      reference: dossier.reference,
+      lien: `/dashboard/dossiers/${dossier.id}`,
+      roles: ["fournisseur", "souscripteur", "admin", "banque"],
+    });
+
+    setStatut("accepte");
     setShowValider(false);
     setLoading(false);
     toast.success(`Dossier ${dossier.reference} validé avec succès !`);
@@ -85,23 +173,87 @@ export default function DossierDetailPage() {
 
   const handleRejeter = async (motif: string) => {
     setLoading(true);
-    await new Promise(r => setTimeout(r, 800));
-    setStatut("rejete");
+    await new Promise(r => setTimeout(r, 600));
+    updateDossier(dossier.id, {
+      statut: "refuse",
+      motifRejet: motif,
+    });
+    updateSouscription(dossier.souscriptionId, { statut: "refuse" });
+    addHistorique({
+      souscriptionId: dossier.souscriptionId,
+      action: "dossier_refuse",
+      description: `Dossier ${dossier.reference} rejeté par AFG Bank : ${motif}`,
+      auteur: `${user?.firstName || "AFG Bank"} ${user?.lastName || ""}`,
+      date: new Date().toISOString(),
+    });
+
+    // ── NOTIFIER LE FOURNISSEUR ET LE CLIENT (SOUSCRIPTEUR) ──
+    emitInAppNotification({
+      titre: `Décision AFG Bank : Dossier ${dossier.reference} refusé`,
+      message: `Le dossier de ${dossier.souscripteurPrenom} ${dossier.souscripteurNom} a été refusé par AFG Bank. Motif : ${motif}`,
+      categorie: "dossier",
+      reference: dossier.reference,
+      lien: `/dashboard/dossiers/${dossier.id}`,
+      roles: ["fournisseur", "souscripteur", "admin", "banque"],
+    });
+
+    setStatut("refuse");
     setCommentaire(motif);
     setShowRejeter(false);
     setLoading(false);
     toast.error(`Dossier ${dossier.reference} rejeté.`);
   };
 
-  const handleDemanderInfos = async () => {
-    if (!infoMessage.trim()) { toast.error("Veuillez saisir votre message"); return; }
-    setLoading(true);
-    await new Promise(r => setTimeout(r, 800));
-    setStatut("informations_demandees");
-    setCommentaire(infoMessage);
-    setShowInfos(false);
-    setLoading(false);
-    toast.info("Demande d'informations envoyée au fournisseur.");
+  const handleConfirmerPaiement = () => {
+    if (!dossier || !sub) return;
+    const refPay = generateRef("PAY");
+    const montantTotal = dossierMontant;
+    const newPay = addPaiement({
+      reference: refPay,
+      souscriptionId: sub.id,
+      souscriptionRef: sub.reference,
+      dossierId: dossier.id,
+      dossierRef: dossier.reference,
+      souscripteurNom: `${dossier.souscripteurPrenom || ""} ${dossier.souscripteurNom || ""}`.trim(),
+      montantTotal,
+      repartitionFournisseurs: [
+        {
+          fournisseurId: devis?.fournisseurId || "FOUR-LDF-001",
+          fournisseurNom: fournisseurAffiche,
+          devisId: devis?.id || "",
+          montant: montantTotal,
+          statut: "confirme",
+        },
+      ],
+      statut: "termine",
+      dateCreation: new Date().toISOString().split("T")[0],
+      dateValidationAFG: new Date().toISOString().split("T")[0],
+      dateTransfert: new Date().toISOString().split("T")[0],
+      dateMiseAJour: new Date().toISOString().split("T")[0],
+    });
+
+    updateSouscription(sub.id, { statut: "fournisseur_paye", paiementId: newPay.id });
+    updateDossier(dossier.id, { statut: "fournisseur_paye" });
+    setStatut("fournisseur_paye");
+
+    addHistorique({
+      souscriptionId: sub.id,
+      action: "paiement_effectue",
+      description: `Virement AFG Bank de ${fmtCFA(montantTotal)} effectué au fournisseur ${fournisseurAffiche} — Réf ${refPay}`,
+      auteur: `${user?.firstName || "AFG Bank"} ${user?.lastName || ""}`,
+      date: new Date().toISOString(),
+    });
+
+    emitInAppNotification({
+      titre: `Virement AFG Bank émis : ${refPay}`,
+      message: `AFG Bank a validé le virement de ${fmtCFA(montantTotal)} pour le dossier ${dossier.reference}. Le fournisseur peut préparer la commande.`,
+      categorie: "paiement",
+      reference: refPay,
+      lien: `/dashboard/dossiers/${dossier.id}`,
+      roles: ["fournisseur", "souscripteur", "banque", "admin"],
+    });
+
+    toast.success("Virement fournisseur validé avec succès par AFG Bank !");
   };
 
   return (
@@ -119,21 +271,17 @@ export default function DossierDetailPage() {
               <StatusBadge statut={currentStatut} />
             </div>
             <p className="text-sm text-gray-500 mt-0.5">
-              Reçu le {new Date(dossier.dateReception).toLocaleDateString("fr-FR")} · {dossier.banqueNom}
+              Reçu le {new Date(dossier.dateReception).toLocaleDateString("fr-FR")} · {dossier.banqueNom || "AFG Bank"}
             </p>
           </div>
         </div>
 
-        {/* Boutons d'action banque */}
+        {/* Boutons d'action banque — Strictement conforme au Cahier des Charges VITALIS : Validation ou Rejet */}
         {canAct && (
           <div className="flex items-center gap-2 flex-wrap">
             <button onClick={() => setShowValider(true)}
               className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-all shadow-sm">
               <CheckCircle2 className="w-4 h-4" /> Valider le dossier
-            </button>
-            <button onClick={() => setShowInfos(true)}
-              className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg border border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100 transition-all">
-              <MessageSquare className="w-4 h-4" /> Demander des infos
             </button>
             <button onClick={() => setShowRejeter(true)}
               className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg bg-red-600 text-white hover:bg-red-700 transition-all shadow-sm">
@@ -150,21 +298,60 @@ export default function DossierDetailPage() {
       </div>
 
       {/* Décision affichée si déjà traitée */}
-      {(currentStatut === "valide" || currentStatut === "rejete" || currentStatut === "informations_demandees") && (
-        <div className={`p-4 rounded-xl border flex items-start gap-3 ${currentStatut === "valide" ? "bg-emerald-50 border-emerald-200" :
-          currentStatut === "rejete" ? "bg-red-50 border-red-200" :
-            "bg-amber-50 border-amber-200"}`}>
-          {currentStatut === "valide" && <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />}
-          {currentStatut === "rejete" && <XCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />}
-          {currentStatut === "informations_demandees" && <MessageSquare className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />}
+      {(isDossierRejete || isPasse(effectifStatut, "accepte")) && (
+        <div className={`p-4 rounded-xl border flex items-start gap-3 ${
+          isDossierRejete
+            ? "bg-red-50 border-red-200"
+            : "bg-emerald-50 border-emerald-200"
+        }`}>
+          {isDossierRejete ? (
+            <XCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+          ) : (
+            <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+          )}
           <div>
             <p className="text-sm font-semibold text-gray-900">
-              {currentStatut === "valide" && "Dossier validé — financement accordé"}
-              {currentStatut === "rejete" && "Dossier rejeté"}
-              {currentStatut === "informations_demandees" && "Informations complémentaires demandées"}
+              {isDossierRejete ? "Dossier rejeté" : "Dossier validé — financement accordé"}
             </p>
             <p className="text-sm text-gray-600 mt-0.5">
-              {commentaire || dossier.commentaireBanque || (currentStatut === "valide" ? "Financement accordé par la banque." : "")}
+              {commentaire || dossier.motifRejet || dossier.commentaireBanque || dossier.commentaireAFG || (!isDossierRejete ? "Financement accordé par AFG Bank." : "")}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* ── Action Virement Bancaire AFG Bank (Étape 5) ── */}
+      {!isDossierRejete && !isPasse(effectifStatut, "fournisseur_paye") && isPasse(effectifStatut, "accepte") && (
+        <div className="p-4 rounded-xl border bg-amber-50/80 border-amber-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+              <CreditCard className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-gray-900">Étape 5 active : Accord de crédit accordé — Virement au fournisseur requis</p>
+              <p className="text-xs text-gray-600 mt-0.5">
+                En tant qu'AFG Bank, émettez le virement direct de {fmtCFA(dossierMontant)} sur le compte du fournisseur pour déclencher la préparation des articles commandés.
+              </p>
+            </div>
+          </div>
+          {(user?.role === "banque" || user?.role === "admin") && (
+            <button
+              onClick={handleConfirmerPaiement}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-colors shadow-sm self-start sm:self-auto whitespace-nowrap"
+            >
+              <CreditCard className="w-3.5 h-3.5" /> Émettre le virement au fournisseur (AFG Bank) →
+            </button>
+          )}
+        </div>
+      )}
+
+      {isPasse(effectifStatut, "fournisseur_paye") && (
+        <div className="p-4 rounded-xl border bg-sky-50 border-sky-200 flex items-center gap-3 shadow-sm">
+          <CheckCircle2 className="w-5 h-5 text-sky-600 flex-shrink-0" />
+          <div>
+            <p className="text-sm font-bold text-sky-900">Virement bancaire AFG Bank exécuté ✓</p>
+            <p className="text-xs text-sky-700 mt-0.5">
+              Fonds transférés au fournisseur {fournisseurAffiche} ({fmtCFA(dossierMontant)}). {isPasse(effectifStatut, "livre") ? "Articles retirés contre fiche d'émargement signée — Dossier clôturé ✓" : "Commande en cours de préparation / retrait chez le fournisseur."}
             </p>
           </div>
         </div>
@@ -187,12 +374,17 @@ export default function DossierDetailPage() {
               )}
             </div>
             <div className="section-card-body grid grid-cols-2 gap-4">
-              <div><p className="text-xs text-gray-400 mb-0.5">Nom complet</p><p className="text-sm font-medium text-gray-800">{dossier.souscripteurPrenom} {dossier.souscripteurNom}</p></div>
+              <div>
+                <p className="text-xs text-gray-400 mb-0.5">Nom complet</p>
+                <p className="text-sm font-medium text-gray-800">
+                  {dossier.souscripteurPrenom || sub?.souscripteurPrenom || ""} {dossier.souscripteurNom || sub?.souscripteurNom || ""}
+                </p>
+              </div>
               {sub && <>
                 <div><p className="text-xs text-gray-400 mb-0.5">Téléphone</p><p className="text-sm font-medium text-gray-800">{sub.souscripteurTelephone}</p></div>
                 <div><p className="text-xs text-gray-400 mb-0.5">Email</p><p className="text-sm font-medium text-gray-800">{sub.souscripteurEmail}</p></div>
               </>}
-              <div><p className="text-xs text-gray-400 mb-0.5">Banque</p><p className="text-sm font-medium text-gray-800">{dossier.banqueNom}</p></div>
+              <div><p className="text-xs text-gray-400 mb-0.5">Banque</p><p className="text-sm font-medium text-gray-800">{dossier.banqueNom || "AFG Bank"}</p></div>
             </div>
           </div>
 
@@ -207,10 +399,10 @@ export default function DossierDetailPage() {
                 <span className="font-mono text-xs text-amber-700 font-semibold">{sub.reference}</span>
               </div>
               <div className="section-card-body grid grid-cols-2 gap-4">
-                <div><p className="text-xs text-gray-400 mb-0.5">Fournisseur</p><p className="text-sm font-medium text-gray-800">{sub.fournisseurNom}</p></div>
+                <div><p className="text-xs text-gray-400 mb-0.5">Fournisseur</p><p className="text-sm font-medium text-gray-800">{fournisseurAffiche}</p></div>
                 <div><p className="text-xs text-gray-400 mb-0.5">Durée</p><p className="text-sm font-medium text-gray-800">{sub.duree} mois</p></div>
                 <div><p className="text-xs text-gray-400 mb-0.5">Articles</p><p className="text-sm font-medium text-gray-800">{devis?.articles?.length || 0} article{(devis?.articles?.length || 0) > 1 ? "s" : ""}</p></div>
-                <div><p className="text-xs text-gray-400 mb-0.5">Montant total</p><p className="text-sm font-bold text-amber-700">{fmtCFA(sub.montantTotal)}</p></div>
+                <div><p className="text-xs text-gray-400 mb-0.5">Montant total</p><p className="text-sm font-bold text-amber-700">{fmtCFA(sub.montantTotal || dossierMontant)}</p></div>
               </div>
             </div>
           )}
@@ -241,7 +433,7 @@ export default function DossierDetailPage() {
                   <table className="ldf-table">
                     <thead><tr><th>Désignation</th><th>Qté</th><th>Prix U.</th><th>Montant HT</th></tr></thead>
                     <tbody>
-                      {devis.articles.slice(0, 3).map((a, i) => (
+                      {devis.articles.slice(0, 3).map((a: any, i: number) => (
                         <tr key={i}>
                           <td className="text-sm text-gray-800">{a.designation}</td>
                           <td>{a.quantite}</td>
@@ -270,20 +462,22 @@ export default function DossierDetailPage() {
             </div>
             <div className="section-card-body space-y-3">
               <div className="grid grid-cols-2 gap-4">
-                <div><p className="text-xs text-gray-400 mb-0.5">Banque</p><p className="text-sm font-medium text-gray-800">{dossier.banqueNom}</p></div>
+                <div><p className="text-xs text-gray-400 mb-0.5">Banque</p><p className="text-sm font-medium text-gray-800">{dossier.banqueNom || "AFG Bank"}</p></div>
                 <div><p className="text-xs text-gray-400 mb-0.5">Date réception</p><p className="text-sm font-medium text-gray-800">{new Date(dossier.dateReception).toLocaleDateString("fr-FR")}</p></div>
                 {dossier.dateTraitement && (
                   <div><p className="text-xs text-gray-400 mb-0.5">Date traitement</p><p className="text-sm font-medium text-gray-800">{new Date(dossier.dateTraitement).toLocaleDateString("fr-FR")}</p></div>
                 )}
               </div>
-              {(commentaire || dossier.commentaireBanque) && (
-                <div className={`p-3 rounded-lg text-sm leading-relaxed ${currentStatut === "valide" ? "bg-emerald-50 text-emerald-800 border border-emerald-100" :
-                  currentStatut === "rejete" ? "bg-red-50 text-red-800 border border-red-100" :
-                    "bg-amber-50 text-amber-800 border border-amber-100"}`}>
-                  {commentaire || dossier.commentaireBanque}
+              {(commentaire || dossier.commentaireBanque || dossier.commentaireAFG) && (
+                <div className={`p-3 rounded-lg text-sm leading-relaxed ${
+                  (currentStatut === "valide" || currentStatut === "accepte")
+                    ? "bg-emerald-50 text-emerald-800 border border-emerald-100"
+                    : "bg-red-50 text-red-800 border border-red-100"
+                }`}>
+                  {commentaire || dossier.commentaireBanque || dossier.commentaireAFG}
                 </div>
               )}
-              {(dossier.motifRejet) && currentStatut === "rejete" && (
+              {dossier.motifRejet && (currentStatut === "rejete" || currentStatut === "refuse") && (
                 <div className="p-3 rounded-lg bg-red-50 border border-red-100 text-sm text-red-800">
                   <strong>Motif du rejet : </strong>{dossier.motifRejet}
                 </div>
@@ -309,7 +503,7 @@ export default function DossierDetailPage() {
           )}
 
           {/* Section 6 — Articles servis */}
-          {sub?.statut === "servie" && (
+          {(sub?.statut === "servie" || sub?.statut === "livre") && (
             <div className="section-card">
               <div className="section-card-header">
                 <div className="flex items-center gap-2">
@@ -334,9 +528,9 @@ export default function DossierDetailPage() {
             </div>
             <div className="section-card-body space-y-3">
               {[
-                { label: "Montant", value: fmtCFA(dossier.montant), highlight: true },
-                { label: "Fournisseur", value: dossier.fournisseurNom },
-                { label: "Banque", value: dossier.banqueNom },
+                { label: "Montant", value: fmtCFA(dossierMontant), highlight: true },
+                { label: "Fournisseur", value: fournisseurAffiche },
+                { label: "Banque", value: dossier.banqueNom || "AFG Bank" },
                 { label: "Statut", value: null, badge: currentStatut },
               ].map(r => (
                 <div key={r.label} className="flex justify-between items-center border-b border-gray-50 pb-2 last:border-0 last:pb-0">
@@ -365,13 +559,13 @@ export default function DossierDetailPage() {
         </div>
       </div>
 
-      {/* ── Modales ── */}
+      {/* ── Modales banque (Valider / Rejeter uniquement) ── */}
       <ConfirmModal
         open={showValider}
         onClose={() => setShowValider(false)}
         onConfirm={handleValider}
         title="Valider le dossier"
-        message={`Vous allez valider le dossier ${dossier.reference} et accorder le financement de ${fmtCFA(dossier.montant)}.`}
+        message={`Vous allez valider le dossier ${dossier.reference} et accorder le financement de ${fmtCFA(dossierMontant)}.`}
         confirmLabel="Valider"
         variant="success"
         loading={loading}
@@ -383,34 +577,6 @@ export default function DossierDetailPage() {
         onSubmit={handleRejeter}
         loading={loading}
       />
-
-      <LDFModal
-        open={showInfos}
-        onClose={() => setShowInfos(false)}
-        title="Demander des informations complémentaires"
-        size="sm"
-      >
-        <div className="space-y-4">
-          <p className="text-sm text-gray-500">Précisez les informations manquantes au fournisseur.</p>
-          <textarea
-            rows={4}
-            placeholder="Ex : Merci de fournir les 3 derniers relevés bancaires..."
-            value={infoMessage}
-            onChange={e => setInfoMessage(e.target.value)}
-            className="ldf-input resize-none"
-          />
-          <div className="flex gap-3">
-            <button onClick={() => setShowInfos(false)} className="flex-1 btn-ldf-outline text-sm py-2.5">Annuler</button>
-            <button
-              onClick={handleDemanderInfos}
-              disabled={!infoMessage.trim() || loading}
-              className="flex-1 btn-ldf-primary text-sm py-2.5 disabled:opacity-50"
-            >
-              {loading ? "Envoi..." : "Envoyer"}
-            </button>
-          </div>
-        </div>
-      </LDFModal>
     </div>
   );
 }

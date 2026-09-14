@@ -3,7 +3,8 @@
 // components/ui/ldf-modal.tsx — Modales et confirmations LDF
 import { cn } from "@/lib/utils";
 import { AlertTriangle, CheckCircle2, Info, X, XCircle } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 // ─── Modal de base ────────────────────────────────────────
 interface ModalProps {
@@ -19,6 +20,12 @@ interface ModalProps {
 const SIZE_CLASSES = { sm: "max-w-md", md: "max-w-lg", lg: "max-w-2xl", xl: "max-w-4xl" };
 
 export function LDFModal({ open, onClose, title, description, children, size = "md", className }: ModalProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
@@ -28,21 +35,25 @@ export function LDFModal({ open, onClose, title, description, children, size = "
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
-  if (!open) return null;
+  if (!open || !mounted) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-start justify-center p-4 pt-16 sm:pt-24 overflow-y-auto">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
         onClick={onClose}
+        aria-hidden="true"
       />
-      {/* Panel */}
-      <div className={cn(
-        "relative w-full bg-white rounded-2xl shadow-2xl fade-in overflow-hidden flex flex-col max-h-[95vh] lg:max-h-[90vh]",
-        SIZE_CLASSES[size],
-        className,
-      )}>
+      {/* Panel positionné en haut et entièrement visible */}
+      <div
+        className={cn(
+          "relative w-full bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] z-10 my-0 border border-gray-100",
+          SIZE_CLASSES[size],
+          className,
+        )}
+        onClick={(e) => e.stopPropagation()}
+      >
         {(title || description) && (
           <div className="flex items-start justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0 bg-white z-10">
             <div>
@@ -59,7 +70,8 @@ export function LDFModal({ open, onClose, title, description, children, size = "
         )}
         <div className="px-6 py-5 overflow-y-auto no-scrollbar">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

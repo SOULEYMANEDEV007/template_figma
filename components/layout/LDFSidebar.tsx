@@ -79,7 +79,7 @@ function getNav(role: LDFUserRole, unreadCount: number): { main: NavItem[]; bott
   return {
     main: [
       ...common,
-      { name: "Mes Commandes",    href: "/dashboard/fournisseur/commandes",  icon: Package },
+      // { name: "Mes Commandes",    href: "/dashboard/fournisseur/commandes",  icon: Package },
       { name: "Souscriptions",    href: "/dashboard/souscriptions",          icon: FileText },
       { name: "Devis",            href: "/dashboard/devis",                  icon: BookOpen },
       { name: "Feedbacks banque", href: "/dashboard/fournisseur/feedbacks",  icon: ShieldCheck },
@@ -151,25 +151,25 @@ export default function LDFSidebar() {
   const SidebarContent = ({ mobile = false }: { mobile?: boolean }) => (
     <div className="flex flex-col h-full">
 
-      {/* ── Logo Vitalis FADES ── */}
+      {/* ── Logo ViFlo ── */}
       <div className={cn(
         "flex items-center border-b border-white/8 flex-shrink-0",
         isSidebarCollapsed && !mobile ? "justify-center px-3 py-4" : "px-4 py-4 gap-3",
       )}>
-        <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center bg-white/5 p-0.5">
+        <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center bg-white p-1 shadow-sm">
           <Image
-            src="/logos/new_logo-viflo.JPG"
-            alt="Vitalis FADES"
+            src="/logos/viflo-logo.png"
+            alt="ViFlo"
             width={40}
             height={40}
-            className="object-contain w-full h-full rounded-md"
+            className="object-contain w-full h-full"
             onError={() => {}}
           />
         </div>
         {(!isSidebarCollapsed || mobile) && (
           <div className="min-w-0">
             <p className="text-white font-bold text-base leading-none tracking-tight truncate">
-              Vitalis <span style={{ color: "#FF9E44" }}>FADES</span>
+              ViFlo <span style={{ color: "#FF9E44" }}>FADES</span>
             </p>
             <p className="text-[10px] mt-0.5 truncate" style={{ color: "rgba(190,215,255,0.55)" }}>Donnons vie à vos projets</p>
           </div>

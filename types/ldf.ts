@@ -209,6 +209,8 @@ export interface Dossier {
   banqueId: string;
   banqueNom: string;
   montant: number;
+  montantTotal?: number;
+  fournisseursNoms?: string;
   statut: DossierStatut;
   commentaireBanque?: string;
   motifRejet?: string;

@@ -22,33 +22,33 @@ export default function DashboardFournisseur() {
 
   // Mes souscriptions (les souscriptions où ce fournisseur est impliqué)
   const mesSouscriptions = useMemo(() => {
-    return souscriptions
-      .filter(s => s.fournisseurs.some(f => f.fournisseurId === fournisseurId))
+    return (souscriptions || [])
+      .filter(s => Array.isArray(s.fournisseurs) && s.fournisseurs.some(f => f.fournisseurId === fournisseurId))
       .sort((a, b) => b.dateCreation.localeCompare(a.dateCreation))
       .slice(0, 8);
   }, [souscriptions, fournisseurId]);
 
   // Mes devis
   const mesDevis = useMemo(() =>
-    devis.filter(d => d.fournisseurId === fournisseurId), [devis, fournisseurId]);
+    (devis || []).filter(d => d.fournisseurId === fournisseurId), [devis, fournisseurId]);
 
   // Paiements reçus
   const mesPaiements = useMemo(() =>
-    paiements.filter(p => p.repartitionFournisseurs.some(r => r.fournisseurId === fournisseurId)), [paiements, fournisseurId]);
+    (paiements || []).filter(p => Array.isArray(p.repartitionFournisseurs) && p.repartitionFournisseurs.some(r => r.fournisseurId === fournisseurId)), [paiements, fournisseurId]);
 
   // Graphique statut de mes devis
   const devisParStatut = [
-    { statut: "Validés",        valeur: mesDevis.filter(d => d.statut === 'valide').length, couleur: "#22c55e" },
-    { statut: "En attente",     valeur: mesDevis.filter(d => d.statut === 'en_attente_validation' || d.statut === 'envoye').length, couleur: "#ff8c42" },
-    { statut: "Brouillons",     valeur: mesDevis.filter(d => d.statut === 'brouillon').length, couleur: "#94a3b8" },
+    { statut: "Validés", valeur: mesDevis.filter(d => d.statut === 'valide').length, couleur: "#22c55e" },
+    { statut: "En attente", valeur: mesDevis.filter(d => d.statut === 'en_attente_validation' || d.statut === 'envoye').length, couleur: "#ff8c42" },
+    { statut: "Brouillons", valeur: mesDevis.filter(d => d.statut === 'brouillon').length, couleur: "#94a3b8" },
   ].filter(d => d.valeur > 0);
 
   const montantPaiementsRecus = mesPaiements
-    .filter(p => p.statut === 'termine')
+    .filter(p => ['termine', 'encaisse', 'servi', 'fournisseur_paye', 'confirme'].includes(p.statut))
     .reduce((acc, p) => {
       const maPart = p.repartitionFournisseurs
         .filter(r => r.fournisseurId === fournisseurId)
-        .reduce((s, r) => s + r.montant, 0);
+        .reduce((s, r) => s + (r.montant || 0), 0);
       return acc + maPart;
     }, 0);
 
@@ -80,7 +80,9 @@ export default function DashboardFournisseur() {
                 <html><head><title>Conditions Vitalis — AFG Bank</title>
                 <style>
                   body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; color: #1f2937; line-height: 1.6; }
-                  h1 { color: #ff6b35; border-bottom: 3px solid #ff6b35; padding-bottom: 10px; }
+                  .header-logos { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f3f4f6; padding-bottom: 15px; }
+                  .header-logos img { height: 40px; object-fit: contain; mix-blend-mode: multiply; }
+                  h1 { color: #ff6b35; padding-bottom: 10px; font-size: 24px; }
                   h2 { color: #ea580c; margin-top: 24px; font-size: 15px; }
                   .badge { display: inline-block; background: #fff7ed; border: 1px solid #fed7aa; color: #c2410c; padding: 2px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
                   table { width: 100%; border-collapse: collapse; margin: 12px 0; }
@@ -91,6 +93,13 @@ export default function DashboardFournisseur() {
                   @media print { body { margin: 20px; } }
                 </style>
                 </head><body>
+                
+                <div class="header-logos">
+                  <img src="${window.location.origin}/logos/logo-fades.PNG" alt="FADES" />
+                  <img src="${window.location.origin}/logos/new_logo-viflo.JPG" alt="VIFLO" style="height: 50px;" />
+                  <img src="${window.location.origin}/logos/logo-afg-bank_atlantic.png" alt="AFG Bank" />
+                </div>
+
                 <h1>📋 Conditions de Souscription — Programme VITALIS</h1>
                 <p><span class="badge">AFG Bank · Banque Financeuse Unique</span> &nbsp; <span class="badge">Durée : 36 mois</span></p>
                 <p>Ce document résume les conditions à remplir pour bénéficier du programme Vitalis financé par <strong>AFG Bank</strong>. Il doit être remis au client avant son inscription.</p>
@@ -156,10 +165,10 @@ export default function DashboardFournisseur() {
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPICard title="Mes souscriptions"  value={stats.mesSouscriptions}   icon={FileText}     variant="yellow" subtitle={fmtCFA(stats.montantTotal)} />
-        <KPICard title="Mes devis"          value={stats.mesDevis}           icon={BookOpen}     variant="blue"   subtitle={`${mesDevis.filter(d => d.statut === 'valide').length} validés`} />
-        <KPICard title="Dossiers validés"   value={stats.mesDossiersValides} icon={CheckCircle2} variant="green"  subtitle="Financements AFG accordés" />
-        <KPICard title="Paiements reçus"    value={mesPaiements.filter(p => p.statut === 'termine').length} icon={CreditCard} variant="gray" subtitle={fmtCFA(montantPaiementsRecus)} />
+        <KPICard title="Mes souscriptions" value={stats.mesSouscriptions} icon={FileText} variant="yellow" subtitle={fmtCFA(stats.montantTotal)} />
+        <KPICard title="Mes devis" value={stats.mesDevis} icon={BookOpen} variant="blue" subtitle={`${mesDevis.filter(d => d.statut === 'valide').length} validés`} />
+        <KPICard title="Dossiers validés" value={stats.mesDossiersValides} icon={CheckCircle2} variant="green" subtitle="Financements AFG accordés" />
+        <KPICard title="Paiements reçus" value={mesPaiements.filter(p => p.statut === 'termine').length} icon={CreditCard} variant="gray" subtitle={fmtCFA(montantPaiementsRecus)} />
       </div>
 
       {/* Bouton action rapide */}
@@ -212,7 +221,6 @@ export default function DashboardFournisseur() {
             <div className="text-center py-8 text-gray-400">
               <FileText className="w-8 h-8 mx-auto mb-2" />
               <p className="text-sm">Aucune souscription pour le moment</p>
-              <Link href="/dashboard/souscriptions/creer" className="text-xs text-orange-500 hover:underline mt-1 inline-block">Créer la première →</Link>
             </div>
           ) : (
             <div className="space-y-2">

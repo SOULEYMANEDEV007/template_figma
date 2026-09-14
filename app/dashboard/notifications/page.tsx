@@ -1,7 +1,7 @@
 // @ts-nocheck
 "use client";
 import { useLDFAuthStore } from "@/stores/ldfAuth";
-import { Bell, BookOpen, CheckCheck, CreditCard, FileText, Package, Settings } from "lucide-react";
+import { Bell, BookOpen, CheckCheck, CreditCard, FileText, Package, Settings, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -18,8 +18,18 @@ const CAT_CONFIG: Record<NotificationCategorie, { label: string; icon: typeof Be
 type TabKey = "toutes" | "non_lues" | NotificationCategorie;
 
 export default function NotificationsPage() {
-  const { notifications, unreadCount, markNotificationRead, markAllNotificationsRead } = useLDFAuthStore();
+  const { user, notifications, unreadCount, markNotificationRead, markAllNotificationsRead, addNotification } = useLDFAuthStore();
   const [activeTab, setActiveTab] = useState<TabKey>("toutes");
+
+  const handleSimulerTest = () => {
+    addNotification({
+      titre: `Notification Test — VITALIS (${new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })})`,
+      message: `Exemple de notification in-app pour le compte ${user?.nom || "Utilisateur"} (${user?.role || "profil"}). La cloche et la liste sont synchronisées.`,
+      categorie: "systeme",
+      lien: "/dashboard/notifications",
+      roles: user?.role ? [user.role] : ["admin", "fournisseur", "banque", "souscripteur"],
+    });
+  };
 
   const tabs: { key: TabKey; label: string; count?: number }[] = [
     { key: "toutes",       label: "Toutes",       count: notifications.length },
@@ -48,13 +58,22 @@ export default function NotificationsPage() {
               : "Toutes les notifications sont lues"}
           </p>
         </div>
-        {unreadCount > 0 && (
-          <button onClick={markAllNotificationsRead}
-            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-colors">
-            <CheckCheck className="w-4 h-4 text-emerald-500" />
-            Tout marquer comme lu
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleSimulerTest}
+            className="flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-lg bg-amber-50 border border-amber-300 text-amber-800 hover:bg-amber-100 transition-colors shadow-sm"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+            Tester une notification
           </button>
-        )}
+          {unreadCount > 0 && (
+            <button onClick={markAllNotificationsRead}
+              className="flex items-center gap-2 px-4 py-2 text-xs font-medium rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-colors">
+              <CheckCheck className="w-3.5 h-3.5 text-emerald-500" />
+              Tout marquer comme lu
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Tabs */}
@@ -88,7 +107,7 @@ export default function NotificationsPage() {
       ) : (
         <div className="section-card divide-y divide-gray-50">
           {displayed.map(n => {
-            const cfg = CAT_CONFIG[n.categorie];
+            const cfg = CAT_CONFIG[n.categorie] || CAT_CONFIG.systeme;
             const Icon = cfg.icon;
             return (
               <div key={n.id}
@@ -115,16 +134,12 @@ export default function NotificationsPage() {
                       {!n.estLue && <span className="w-2 h-2 rounded-full bg-amber-400" />}
                     </div>
                   </div>
+
                   <div className="flex items-center gap-3 mt-2">
-                    {n.reference && (
-                      <span className={cn("px-2 py-0.5 rounded text-[10px] font-semibold font-mono", cfg.bg, cfg.text, `border ${cfg.border}`)}>
-                        {n.reference}
-                      </span>
-                    )}
                     {n.lien && (
                       <Link href={n.lien} onClick={() => markNotificationRead(n.id)}
-                        className="text-xs text-amber-600 hover:text-amber-700 font-medium">
-                        Voir le détail →
+                        className="text-xs font-semibold text-amber-700 hover:underline">
+                        Consulter →
                       </Link>
                     )}
                     {!n.estLue && (

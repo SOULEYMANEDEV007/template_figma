@@ -3,7 +3,7 @@
 import { StatusBadge } from "@/components/ui/ldf-badge";
 import { ConfirmModal } from "@/components/ui/ldf-modal";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
-import { useLDFAuthStore } from "@/stores/ldfAuth";
+import { useLDFAuthStore, emitInAppNotification } from "@/stores/ldfAuth";
 import { ArrowLeft, Building2, CheckCircle2, Download, Eye, FileText, Send } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -13,13 +13,38 @@ import { toast } from "sonner";
 
 import { downloadPDFFromHTML } from "@/lib/pdf/generator";
 
-const fmtCFA = (v: number) => new Intl.NumberFormat("fr-FR").format(v) + " FCFA";
+const fmtCFA = (v: any) => {
+  const num = typeof v === "number" ? v : Number(v);
+  return new Intl.NumberFormat("fr-FR").format(isNaN(num) ? 0 : num) + " FCFA";
+};
+
+const getFournisseurLogo = (fournisseurId?: string, fournisseurNom?: string) => {
+  const nom = (fournisseurNom || "").toLowerCase();
+  const id = (fournisseurId || "").toLowerCase();
+
+  if (id.includes("ldf") || nom.includes("librairie")) {
+    return "/images/ldfgroupe-icon-app.webp";
+  }
+  if (id.includes("dro") || nom.includes("drocolor")) {
+    return "/images/drocolor-logo.jfif";
+  }
+  if (id.includes("smt") || nom.includes("smart")) {
+    return "/logos/logo-smart-techno.png";
+  }
+  if (id.includes("nas") || nom.includes("nasko")) {
+    return "/logos/logo-nasko.png";
+  }
+  if (id.includes("car") || nom.includes("carrefour")) {
+    return "/images/logo-carrefour.png";
+  }
+  return "/images/ldfgroupe-icon-app.webp";
+};
 
 export default function DevisDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const { user } = useLDFAuthStore();
-  const { getDevisById } = useVitalisDb();
+  const { getDevisById, updateDevis } = useVitalisDb();
   
   const [showSend, setShowSend] = useState(false);
   const [statut, setStatut] = useState<string | null>(null);
@@ -34,9 +59,19 @@ export default function DevisDetailPage() {
   );
 
   const currentStatut = statut ?? devis.statut;
+  const fournisseurLogo = getFournisseurLogo(devis.fournisseurId, devis.fournisseurNom);
 
   const handleSend = () => {
     setStatut("envoye");
+    updateDevis(devis.id, { statut: "envoye" });
+    emitInAppNotification({
+      titre: `Nouveau devis soumis : ${devis.reference}`,
+      message: `Le devis de ${devis.fournisseurNom} (${devis.reference}) a été transmis à la banque pour validation.`,
+      categorie: "devis",
+      reference: devis.reference,
+      lien: `/dashboard/devis/${devis.id}`,
+      roles: ["banque", "souscripteur", "admin"],
+    });
     setShowSend(false);
     toast.success(`Devis ${devis.reference} envoyé à ${devis.banqueNom}`);
   };
@@ -70,10 +105,20 @@ export default function DevisDetailPage() {
           </div>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          {(currentStatut === "brouillon" || currentStatut === "envoye") && (user?.role !== "banque") && (
+          {currentStatut === "brouillon" && (user?.role !== "banque") && (
             <button onClick={() => setShowSend(true)} className="btn-ldf-secondary text-sm py-2 px-4">
               <Send className="w-3.5 h-3.5" /> Envoyer à la banque
             </button>
+          )}
+          {currentStatut === "envoye" && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+              <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" /> Transmis à AFG Bank
+            </span>
+          )}
+          {(currentStatut === "valide" || currentStatut === "accepte") && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Devis validé
+            </span>
           )}
           <Link href={`/dashboard/souscriptions/${devis.souscriptionId}`} className="btn-ldf-outline text-sm py-2 px-4">
             <Eye className="w-3.5 h-3.5" /> Souscription
@@ -87,19 +132,39 @@ export default function DevisDetailPage() {
       {/* Preview devis */}
       <div id="devis-pdf-content" className="section-card bg-white flex flex-col">
         
-        {/* Branding PDF (En-tête horizontal type papier à en-tête) - CACHÉ dans l'app, VISIBLE sur le PDF */}
-        <div className="pdf-only items-center justify-between p-8 border-b-2 border-[#0B2447]/10 bg-white">
-          <div className="flex-1">
-            <img src="/logos/logo-fades.PNG" alt="FADES" className="h-16 object-contain" crossOrigin="anonymous" />
+        {/* En-tête Logos Officiels (Fournisseur, Programme VITALIS, FADES, AFG Bank) */}
+        <div className="flex items-center justify-between p-6 sm:p-8 border-b-2 border-[#0B2447]/10 bg-white gap-4 flex-wrap">
+          {/* 1. Fournisseur Émetteur qui a établi le devis */}
+          <div className="flex items-center gap-3">
+            <div className="h-14 w-14 rounded-xl border border-gray-200 p-1.5 flex items-center justify-center bg-white shadow-sm overflow-hidden flex-shrink-0">
+              <img
+                src={fournisseurLogo}
+                alt={devis.fournisseurNom}
+                className="h-full w-full object-contain"
+                crossOrigin="anonymous"
+              />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.15em] uppercase">Fournisseur Émetteur</p>
+              <p className="text-xs font-bold text-gray-900">{devis.fournisseurNom}</p>
+              <p className="text-[10px] text-gray-400 font-mono">Réf: {devis.fournisseurId}</p>
+            </div>
           </div>
           
-          <div className="flex-1 flex flex-col items-center border-l border-r border-gray-200 px-4">
-            <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-2">Programme</p>
-            <img src="/logos/new_logo-viflo.JPG" alt="Vitalis" className="h-12 object-contain mix-blend-multiply rounded-xl" crossOrigin="anonymous" />
+          {/* 2. Programme VITALIS */}
+          <div className="flex flex-col items-center border-l border-r border-gray-200 px-4">
+            <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-1">Programme</p>
+            <img src="/logos/new_logo-viflo.JPG" alt="Vitalis" className="h-11 object-contain mix-blend-multiply rounded-xl" crossOrigin="anonymous" />
+          </div>
+
+          {/* 3. FADES */}
+          <div className="flex items-center">
+            <img src="/logos/logo-fades.PNG" alt="FADES" className="h-14 object-contain" crossOrigin="anonymous" />
           </div>
           
-          <div className="flex-1 flex flex-col items-end pl-4">
-            <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-2 mr-2">Financement</p>
+          {/* 4. Banque Financement */}
+          <div className="flex flex-col items-end pl-2">
+            <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-1 mr-1">Financement</p>
             <div className="h-12 px-3 flex items-center justify-center rounded-lg bg-white border border-gray-200 shadow-sm">
               <img src="/logos/logo-afg-bank_atlantic.png" alt="AFG Bank" className="h-8 object-contain" crossOrigin="anonymous" />
             </div>
