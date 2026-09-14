@@ -168,7 +168,7 @@ export default function DashboardFournisseur() {
         <KPICard title="Mes souscriptions" value={stats.mesSouscriptions} icon={FileText} variant="yellow" subtitle={fmtCFA(stats.montantTotal)} />
         <KPICard title="Mes devis" value={stats.mesDevis} icon={BookOpen} variant="blue" subtitle={`${mesDevis.filter(d => d.statut === 'valide').length} validés`} />
         <KPICard title="Dossiers validés" value={stats.mesDossiersValides} icon={CheckCircle2} variant="green" subtitle="Financements AFG accordés" />
-        <KPICard title="Paiements reçus" value={mesPaiements.filter(p => p.statut === 'termine').length} icon={CreditCard} variant="gray" subtitle={fmtCFA(montantPaiementsRecus)} />
+        <KPICard title="Paiements reçus" value={mesPaiements.filter(p => ['termine', 'encaisse', 'servi', 'fournisseur_paye', 'confirme'].includes(p.statut)).length} icon={CreditCard} variant="gray" subtitle={fmtCFA(montantPaiementsRecus)} />
       </div>
 
       {/* Bouton action rapide */}
