@@ -35,7 +35,6 @@ export default function NouvelleDemandeSouscripteur() {
   const [natureBesoin, setNatureBesoin] = useState("");
   const [categorie, setCategorie] = useState("");
   const [produitRecherche, setProduitRecherche] = useState("");
-  const [montantEstimatif, setMontantEstimatif] = useState("");
   const [region, setRegion] = useState("");
   const [ville, setVille] = useState("");
 
@@ -57,7 +56,7 @@ export default function NouvelleDemandeSouscripteur() {
   };
 
   const handleNextStep = () => {
-    if (!natureBesoin || !categorie || !produitRecherche || !montantEstimatif || !region || !ville) {
+    if (!natureBesoin || !categorie || !produitRecherche || !region || !ville) {
       toast.error("Veuillez remplir tous les champs obligatoires de l'étape 1.");
       return;
     }
@@ -102,18 +101,18 @@ export default function NouvelleDemandeSouscripteur() {
         agenceNom: agenceChoisie?.nom,
         fournisseurs: fournisseursChoisis,
         fournisseurNom: fournisseursChoisis.map(f => f.fournisseurNom).join(", "),
-        montantTotal: Number(montantEstimatif) || 0,
+        montantTotal: 0,
         duree,
         statut: "en_attente",
         dateCreation: new Date().toISOString().split("T")[0],
         dateMiseAJour: new Date().toISOString().split("T")[0],
-        observations: `Besoin: ${natureBesoin} | Catégorie: ${categorie} | Produit: ${produitRecherche} | Montant estimé: ${Number(montantEstimatif).toLocaleString("fr-FR")} FCFA | Zone: ${ville}, ${region}${observations ? `\nNotes: ${observations}` : ""}`,
+        observations: `Besoin: ${natureBesoin} | Catégorie: ${categorie} | Produit: ${produitRecherche} | Zone: ${ville}, ${region}${observations ? `\nNotes: ${observations}` : ""}`,
       });
 
       // Notification pour les fournisseurs et admins
       emitInAppNotification({
         titre: `Nouvelle demande client — ${ref}`,
-        message: `${prenomClient} ${nomClient} a exprimé un besoin pour "${produitRecherche}" (${Number(montantEstimatif).toLocaleString("fr-FR")} FCFA). Établissez votre devis chiffré.`,
+        message: `${prenomClient} ${nomClient} a exprimé un besoin pour "${produitRecherche}". Établissez votre devis chiffré.`,
         categorie: "devis",
         reference: ref,
         lien: `/dashboard/souscriptions/${nouvelle.id}`,
@@ -198,18 +197,6 @@ export default function NouvelleDemandeSouscripteur() {
                     placeholder="Ex: Ordinateur portable HP, Réfrigérateur, etc."
                     value={produitRecherche}
                     onChange={e => setProduitRecherche(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-semibold text-gray-600 mb-2">Montant estimatif (FCFA) *</label>
-                  <input
-                    type="number"
-                    className={inp}
-                    placeholder="Ex: 500000"
-                    value={montantEstimatif}
-                    onChange={e => setMontantEstimatif(e.target.value)}
-                    min={0}
                     required
                   />
                 </div>
