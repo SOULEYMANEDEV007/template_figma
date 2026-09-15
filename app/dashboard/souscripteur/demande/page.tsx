@@ -225,7 +225,7 @@ export default function NouvelleDemandeSouscripteur() {
               </div>
             </SectionCard>
 
-            <SectionCard title="Préférence Logistique" icon={Package}>
+            <SectionCard title="Point de vente fournisseur" icon={Package}>
               <div className="space-y-1.5">
                 <label className="block text-xs font-semibold text-gray-600 mb-2">Point Relais (Lieu de récupération souhaité) *</label>
                 <select className={sel} value={pointRelaisId} onChange={e => setPointRelaisId(e.target.value)} required>

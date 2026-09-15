@@ -60,7 +60,7 @@ export default function RootPage() {
         {/* Centre : Viflo */}
         <div className="absolute z-20 w-44 h-44 bg-white/95 backdrop-blur-xl rounded-full shadow-[0_0_40px_rgba(255,107,53,0.3)] flex flex-col items-center justify-center p-6 border border-white/20">
           <Image
-            src="/logos/viflo-logo.png"
+            src="/logos/viflo_logo_text.jpeg"
             alt="Viflo"
             width={100} height={100}
             className="object-contain drop-shadow-lg"

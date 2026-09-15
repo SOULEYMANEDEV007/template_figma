@@ -296,7 +296,7 @@ export default function RapportsPage() {
         {/* En-tête imprimable / PDF officiel */}
         <div className="pb-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-3">
-            <img src="/logos/viflo-logo.png" alt="ViFlo" className="h-9 object-contain" />
+            <img src="/logos/viflo_logo.jpeg" alt="ViFlo" className="h-9 object-contain" />
             <div className="h-6 w-px bg-gray-200" />
             <img src="/logos/logo-fades.PNG" alt="FADES" className="h-8 object-contain" />
             <div className="h-6 w-px bg-gray-200" />

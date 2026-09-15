@@ -31,19 +31,19 @@ function getNav(role: LDFUserRole, unreadCount: number): { main: NavItem[]; bott
     return {
       main: [
         ...common,
-        { name: "Souscriptions",   href: "/dashboard/souscriptions", icon: FileText },
-        { name: "Devis",           href: "/dashboard/devis",          icon: BookOpen },
-        { name: "Dossiers",        href: "/dashboard/dossiers",       icon: ShieldCheck },
-        { name: "Paiements",       href: "/dashboard/paiements",      icon: CreditCard },
-        { name: "Articles servis", href: "/dashboard/articles",       icon: Package },
-        { name: "Notifications",   href: "/dashboard/notifications",  icon: Bell, badge: unreadCount },
-        { name: "Rapports",        href: "/dashboard/rapports",       icon: BarChart3 },
+        { name: "Souscriptions", href: "/dashboard/souscriptions", icon: FileText },
+        { name: "Devis", href: "/dashboard/devis", icon: BookOpen },
+        { name: "Dossiers", href: "/dashboard/dossiers", icon: ShieldCheck },
+        { name: "Paiements", href: "/dashboard/paiements", icon: CreditCard },
+        { name: "Articles servis", href: "/dashboard/articles", icon: Package },
+        { name: "Notifications", href: "/dashboard/notifications", icon: Bell, badge: unreadCount },
+        { name: "Rapports", href: "/dashboard/rapports", icon: BarChart3 },
       ],
       bottom: [
-        { name: "Fournisseurs",    href: "/dashboard/admin/fournisseurs", icon: Building2 },
-        { name: "Agences AFG",     href: "/dashboard/admin/banques",      icon: Building2 },
-        { name: "Utilisateurs",    href: "/dashboard/admin/utilisateurs", icon: Users },
-        { name: "Paramètres",      href: "/dashboard/parametres",         icon: Settings },
+        { name: "Fournisseurs", href: "/dashboard/admin/fournisseurs", icon: Building2 },
+        { name: "Agences AFG", href: "/dashboard/admin/banques", icon: Building2 },
+        { name: "Utilisateurs", href: "/dashboard/admin/utilisateurs", icon: Users },
+        { name: "Paramètres", href: "/dashboard/parametres", icon: Settings },
       ],
     };
   }
@@ -52,11 +52,11 @@ function getNav(role: LDFUserRole, unreadCount: number): { main: NavItem[]; bott
     return {
       main: [
         ...common,
-        { name: "Souscripteurs",   href: "/dashboard/banque/souscripteurs", icon: Users },
-        { name: "Dossiers",        href: "/dashboard/banque/dossiers",       icon: ShieldCheck },
-        { name: "Paiements",       href: "/dashboard/paiements",             icon: CreditCard },
-        { name: "Notifications",   href: "/dashboard/notifications",         icon: Bell, badge: unreadCount },
-        { name: "Rapports",        href: "/dashboard/rapports",              icon: BarChart3 },
+        { name: "Souscripteurs", href: "/dashboard/banque/souscripteurs", icon: Users },
+        { name: "Dossiers", href: "/dashboard/banque/dossiers", icon: ShieldCheck },
+        { name: "Paiements", href: "/dashboard/paiements", icon: CreditCard },
+        { name: "Notifications", href: "/dashboard/notifications", icon: Bell, badge: unreadCount },
+        { name: "Rapports", href: "/dashboard/rapports", icon: BarChart3 },
       ],
       bottom: [
         { name: "Paramètres", href: "/dashboard/parametres", icon: Settings },
@@ -68,9 +68,9 @@ function getNav(role: LDFUserRole, unreadCount: number): { main: NavItem[]; bott
     return {
       main: [
         { name: "Mes souscriptions", href: "/dashboard/souscripteur", icon: Home, exact: true },
-        { name: "Nouvelle demande",  href: "/dashboard/souscripteur/demande", icon: Package },
-        { name: "Notifications",     href: "/dashboard/notifications", icon: Bell, badge: unreadCount },
-        { name: "Paramètres",         href: "/dashboard/parametres",    icon: Settings },
+        { name: "Nouvelle demande", href: "/dashboard/souscripteur/demande", icon: Package },
+        { name: "Notifications", href: "/dashboard/notifications", icon: Bell, badge: unreadCount },
+        { name: "Paramètres", href: "/dashboard/parametres", icon: Settings },
       ],
       bottom: [],
     };
@@ -81,11 +81,11 @@ function getNav(role: LDFUserRole, unreadCount: number): { main: NavItem[]; bott
     main: [
       ...common,
       // { name: "Mes Commandes",    href: "/dashboard/fournisseur/commandes",  icon: Package },
-      { name: "Souscriptions",    href: "/dashboard/souscriptions",          icon: FileText },
-      { name: "Devis",            href: "/dashboard/devis",                  icon: BookOpen },
-      { name: "Feedbacks banque", href: "/dashboard/fournisseur/feedbacks",  icon: ShieldCheck },
-      { name: "Paiements",        href: "/dashboard/paiements",              icon: CreditCard },
-      { name: "Notifications",    href: "/dashboard/notifications",          icon: Bell, badge: unreadCount },
+      { name: "Souscriptions", href: "/dashboard/souscriptions", icon: FileText },
+      { name: "Devis", href: "/dashboard/devis", icon: BookOpen },
+      { name: "Feedbacks banque", href: "/dashboard/fournisseur/feedbacks", icon: ShieldCheck },
+      { name: "Paiements", href: "/dashboard/paiements", icon: CreditCard },
+      { name: "Notifications", href: "/dashboard/notifications", icon: Bell, badge: unreadCount },
     ],
     bottom: [
       { name: "Paramètres", href: "/dashboard/parametres", icon: Settings },
@@ -159,18 +159,18 @@ export default function LDFSidebar() {
       )}>
         <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center bg-white p-1 shadow-sm">
           <Image
-            src="/logos/viflo-logo.png"
+            src="/logos/viflo_logo.jpeg"
             alt="ViFlo"
             width={40}
             height={40}
             className="object-contain w-full h-full"
-            onError={() => {}}
+            onError={() => { }}
           />
         </div>
         {(!isSidebarCollapsed || mobile) && (
           <div className="min-w-0">
             <p className="text-white font-bold text-base leading-none tracking-tight truncate">
-              ViFlo <span style={{ color: "#FF9E44" }}>FADES</span>
+              ViFlo by <span style={{ color: "#FF9E44" }}>FADES</span>
             </p>
             <p className="text-[10px] mt-0.5 truncate" style={{ color: "rgba(190,215,255,0.55)" }}>Donnons vie à vos projets</p>
           </div>
