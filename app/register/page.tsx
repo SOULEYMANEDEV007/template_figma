@@ -15,7 +15,7 @@ import { toast } from "sonner";
 export default function RegisterPage() {
   const router = useRouter();
   const { pointsRelais } = useVitalisDb();
-  
+
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -101,7 +101,7 @@ export default function RegisterPage() {
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='%23FF7B2E' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E")`,
           backgroundSize: '120px 120px'
         }} />
-        
+
         {/* Cercles de lumière (pour le relief) */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#FF5E00]/20 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3 pointer-events-none" />
@@ -109,7 +109,7 @@ export default function RegisterPage() {
         {/* Logo ViFlo */}
         <div className="relative z-10 flex items-center gap-3">
           <div className="w-20 h-20 rounded-2xl overflow-hidden flex items-center justify-center bg-white p-2 shadow-lg border border-white/20">
-            <Image src="/logos/viflo-logo.png" alt="ViFlo" width={160} height={160} className="object-contain w-full h-full" onError={() => { }} />
+            <Image src="/logos/viflo_logo.jpeg" alt="ViFlo" width={160} height={160} className="object-contain w-full h-full" onError={() => { }} />
           </div>
           <div>
             <p className="text-white font-bold text-2xl leading-none">
@@ -160,7 +160,7 @@ export default function RegisterPage() {
           {/* Mobile logo ViFlo */}
           <div className="lg:hidden flex items-center gap-3 mb-8">
             <div className="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center bg-white border border-gray-200 p-1">
-              <Image src="/logos/viflo-logo.png" alt="ViFlo" width={48} height={48} className="object-contain w-full h-full" />
+              <Image src="/logos/viflo_logo.jpeg" alt="ViFlo" width={48} height={48} className="object-contain w-full h-full" />
             </div>
             <div>
               <p className="font-bold text-gray-900 text-lg">ViFlo <span className="text-orange-500">FADES</span></p>
@@ -176,7 +176,7 @@ export default function RegisterPage() {
 
           {/* Formulaire */}
           <form onSubmit={handleSubmit} className="space-y-6">
-            
+
             {/* 1. Type de profil */}
             <div className="space-y-3">
               <label className="text-sm font-semibold text-gray-700">Je suis un(e) *</label>
@@ -184,18 +184,16 @@ export default function RegisterPage() {
                 <button
                   type="button"
                   onClick={() => setTypeProfil("physique")}
-                  className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-sm font-medium transition-all ${
-                    typeProfil === "physique" ? "border-orange-500 bg-orange-50 text-orange-700" : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
-                  }`}
+                  className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-sm font-medium transition-all ${typeProfil === "physique" ? "border-orange-500 bg-orange-50 text-orange-700" : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                    }`}
                 >
                   <User className="w-4 h-4" /> Particulier
                 </button>
                 <button
                   type="button"
                   onClick={() => setTypeProfil("morale")}
-                  className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-sm font-medium transition-all ${
-                    typeProfil === "morale" ? "border-orange-500 bg-orange-50 text-orange-700" : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
-                  }`}
+                  className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-sm font-medium transition-all ${typeProfil === "morale" ? "border-orange-500 bg-orange-50 text-orange-700" : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                    }`}
                 >
                   <Building2 className="w-4 h-4" /> Entreprise
                 </button>
