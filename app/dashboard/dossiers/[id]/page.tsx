@@ -144,7 +144,7 @@ export default function DossierDetailPage() {
     updateDossier(dossier.id, {
       statut: "accepte",
       dateValidation: new Date().toISOString().split("T")[0],
-      commentaireAFG: "Dossier conforme aux conditions du programme Vitalis. Financement accordé.",
+      commentaireAFG: "Dossier conforme aux conditions du programme Vitalis.",
     });
     updateSouscription(dossier.souscriptionId, { statut: "accepte" });
     addHistorique({
@@ -563,7 +563,7 @@ export default function DossierDetailPage() {
         onClose={() => setShowValider(false)}
         onConfirm={handleValider}
         title="Valider le dossier"
-        message={`Vous allez valider le dossier ${dossier.reference} et accorder le financement de ${fmtCFA(dossierMontant)}.`}
+        message={`Êtes-vous sûr de vouloir valider le dossier ${dossier.reference} et accorder le financement de ${fmtCFA(dossierMontant)} ?`}
         confirmLabel="Valider"
         variant="success"
         loading={loading}

@@ -437,7 +437,7 @@ const DEMO_DOSSIERS: VDossier[] = [
     fournisseursNoms: 'Librairie de France Groupe', devisIds: ['DEV-001'],
     banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-001',
     montantTotal: 850000, statut: 'accepte',
-    commentaireAFG: 'Dossier conforme aux conditions du programme Vitalis. Financement accordé.',
+    commentaireAFG: 'Dossier conforme aux conditions du programme Vitalis.',
     dateCreation: twoDaysAgo, dateReception: twoDaysAgo, dateDebutAnalyse: yesterday, dateValidation: today, dateMiseAJour: today,
   },
   {

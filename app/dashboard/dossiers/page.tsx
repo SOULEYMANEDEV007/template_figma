@@ -65,7 +65,7 @@ export default function DossiersPage() {
       updateDossier(dossier.id, {
         statut: "accepte",
         dateValidation: new Date().toISOString().split("T")[0],
-        commentaireAFG: "Dossier conforme aux conditions du programme Vitalis. Financement accordé.",
+        commentaireAFG: "Dossier conforme aux conditions du programme Vitalis.",
       });
       updateSouscription(dossier.souscriptionId, { statut: "accepte" });
       emitInAppNotification({
