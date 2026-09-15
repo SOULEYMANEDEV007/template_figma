@@ -23,7 +23,7 @@ const getFournisseurLogo = (fournisseurId?: string, fournisseurNom?: string) => 
   const id = (fournisseurId || "").toLowerCase();
 
   if (id.includes("ldf") || nom.includes("librairie")) {
-    return "/images/ldfgroupe-icon-app.webp";
+    return "/images/ldf.png";
   }
   if (id.includes("dro") || nom.includes("drocolor")) {
     return "/images/drocolor-logo.jfif";
@@ -37,7 +37,7 @@ const getFournisseurLogo = (fournisseurId?: string, fournisseurNom?: string) => 
   if (id.includes("car") || nom.includes("carrefour")) {
     return "/images/logo-carrefour.png";
   }
-  return "/images/ldfgroupe-icon-app.webp";
+  return "/images/ldf.png";
 };
 
 export default function DevisDetailPage() {
@@ -45,7 +45,7 @@ export default function DevisDetailPage() {
   const router = useRouter();
   const { user } = useLDFAuthStore();
   const { getDevisById, updateDevis } = useVitalisDb();
-  
+
   const [showSend, setShowSend] = useState(false);
   const [statut, setStatut] = useState<string | null>(null);
 
@@ -131,7 +131,7 @@ export default function DevisDetailPage() {
 
       {/* Preview devis */}
       <div id="devis-pdf-content" className="section-card bg-white flex flex-col">
-        
+
         {/* En-tête Logos Officiels (Fournisseur, Programme VITALIS, FADES, AFG Bank) */}
         <div className="flex items-center justify-between p-6 sm:p-8 border-b-2 border-[#0B2447]/10 bg-white gap-4 flex-wrap">
           {/* 1. Fournisseur Émetteur qui a établi le devis */}
@@ -150,7 +150,7 @@ export default function DevisDetailPage() {
               <p className="text-[10px] text-gray-400 font-mono">Réf: {devis.fournisseurId}</p>
             </div>
           </div>
-          
+
           {/* 2. Programme VITALIS */}
           <div className="flex flex-col items-center border-l border-r border-gray-200 px-4">
             <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-1">Programme</p>
@@ -161,7 +161,7 @@ export default function DevisDetailPage() {
           <div className="flex items-center">
             <img src="/logos/logo-fades.PNG" alt="FADES" className="h-14 object-contain" crossOrigin="anonymous" />
           </div>
-          
+
           {/* 4. Banque Financement */}
           <div className="flex flex-col items-end pl-2">
             <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-1 mr-1">Financement</p>

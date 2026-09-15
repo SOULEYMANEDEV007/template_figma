@@ -252,7 +252,7 @@ const SEED_FOURNISSEURS: VFournisseur[] = [
     telephone: '+225 27 21 35 75 00', telephoneCommercial: '+225 07 08 09 10 11',
     adresse: 'Boulevard Valéry Giscard d\'Estaing, Marcory Zone 4', ville: 'Abidjan', quartier: 'Marcory',
     rccm: 'CI-ABJ-2015-B-12345', secteurActivite: 'Fournitures scolaires et bureautiques',
-    logo: '/images/ldfgroupe-icon-app.webp', agreVitalis: true, dateAgrementVitalis: '2023-01-15', statut: 'actif',
+    logo: '/images/ldf.png', agreVitalis: true, dateAgrementVitalis: '2023-01-15', statut: 'actif',
   },
   {
     id: 'FOUR-DRO-002', code: 'DRO', nom: 'Drocolor', raisonSociale: "Drocolor Côte d'Ivoire SARL",

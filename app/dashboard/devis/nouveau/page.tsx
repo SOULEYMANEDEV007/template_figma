@@ -59,12 +59,12 @@ function newArticle(): ArticleRow {
 
 const getFournisseurLogo = (fournisseurNom?: string) => {
   const nom = (fournisseurNom || "").toLowerCase();
-  if (nom.includes("ldf") || nom.includes("librairie")) return "/images/ldfgroupe-icon-app.webp";
+  if (nom.includes("ldf") || nom.includes("librairie")) return "/images/ldf.png";
   if (nom.includes("dro") || nom.includes("drocolor")) return "/images/drocolor-logo.jfif";
   if (nom.includes("smt") || nom.includes("smart")) return "/logos/logo-smart-techno.png";
   if (nom.includes("nas") || nom.includes("nasko")) return "/logos/logo-nasko.png";
   if (nom.includes("car") || nom.includes("carrefour")) return "/images/logo-carrefour.png";
-  return "/images/ldfgroupe-icon-app.webp";
+  return "/images/ldf.png";
 };
 
 // ── Aperçu devis (rendu HTML pour impression) ────────────────────
