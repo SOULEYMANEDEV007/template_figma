@@ -33,6 +33,8 @@ export default function SouscriptionDetailPage() {
 
   const [showConfirm, setShowConfirm] = useState(false);
   const [submittingDossier, setSubmittingDossier] = useState(false);
+  const [dateDisponibilite, setDateDisponibilite] = useState(new Date().toISOString().split("T")[0]);
+  const [heureDisponibilite, setHeureDisponibilite] = useState("08:00");
 
   const sub = getSouscriptionById(id);
   const devis = sub ? getDevisBySouscription(sub.id)[0] : null;
@@ -252,24 +254,30 @@ export default function SouscriptionDetailPage() {
   };
 
   const handleDemarrerPreparation = () => {
+    const pointRelaisMatch = sub?.observations?.match(/Relais:\s*([^|\n]+)/);
+    const pointRelaisName = pointRelaisMatch ? pointRelaisMatch[1].trim() : "votre point relais";
+
     updateSouscription(sub.id, { statut: "commande_en_preparation" });
     if (dossier) updateDossier(dossier.id, { statut: "commande_en_preparation" });
+    
     addHistorique({
       souscriptionId: sub.id,
       action: "commande_preparation",
-      description: "Commande en cours de préparation par le fournisseur",
+      description: `Commande prête. Disponible au point relais : ${pointRelaisName} le ${new Date(dateDisponibilite).toLocaleDateString("fr-FR")} à partir de ${heureDisponibilite}.`,
       auteur: `${user?.firstName || "Fournisseur"} ${user?.lastName || ""}`,
       date: new Date().toISOString(),
     });
+
     emitInAppNotification({
-      titre: `Commande en préparation : ${sub.reference}`,
-      message: `Le fournisseur ${sub.fournisseurNom} prépare actuellement votre commande.`,
+      titre: `Votre commande est prête !`,
+      message: `La commande sera disponible au point relais : ${pointRelaisName} le ${new Date(dateDisponibilite).toLocaleDateString("fr-FR")} à partir de ${heureDisponibilite}.`,
       categorie: "dossier",
       reference: sub.reference,
       lien: `/dashboard/souscriptions/${sub.id}`,
       roles: ["souscripteur", "banque", "admin", "fournisseur"],
     });
-    toast.success("Commande en cours de préparation 📦");
+
+    toast.success("Client alerté de la disponibilité 📦");
   };
 
   const handleConfirmerLivraison = () => {
@@ -472,12 +480,32 @@ export default function SouscriptionDetailPage() {
             </div>
           </div>
           {(user?.role === "fournisseur" || user?.role === "admin") ? (
-            <button
-              onClick={handleDemarrerPreparation}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-sky-600 text-white text-xs font-bold hover:bg-sky-700 transition-colors shadow-sm self-start sm:self-auto whitespace-nowrap"
-            >
-              <Package className="w-3.5 h-3.5" /> Démarrer la préparation de commande →
-            </button>
+            <div className="flex flex-col sm:flex-row items-end gap-3 w-full sm:w-auto mt-3 sm:mt-0">
+              <div className="flex flex-col gap-1.5 w-full sm:w-auto text-left">
+                <label className="text-xs font-bold text-sky-900">Date disponibilité *</label>
+                <input 
+                  type="date" 
+                  value={dateDisponibilite}
+                  onChange={e => setDateDisponibilite(e.target.value)}
+                  className="px-3 py-2 text-sm rounded-lg border border-sky-300 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 text-sky-900 font-medium"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5 w-full sm:w-auto text-left">
+                <label className="text-xs font-bold text-sky-900">Heure *</label>
+                <input 
+                  type="time" 
+                  value={heureDisponibilite}
+                  onChange={e => setHeureDisponibilite(e.target.value)}
+                  className="px-3 py-2 text-sm rounded-lg border border-sky-300 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 text-sky-900 font-medium"
+                />
+              </div>
+              <button
+                onClick={handleDemarrerPreparation}
+                className="flex items-center gap-2 px-5 py-2 rounded-lg bg-sky-600 text-white text-sm font-bold hover:bg-sky-700 transition-colors shadow-sm self-stretch sm:self-auto justify-center whitespace-nowrap"
+              >
+                <Package className="w-4 h-4" /> Alerter le client (Prêt) →
+              </button>
+            </div>
           ) : (
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-100 text-sky-800 border border-sky-300 self-start sm:self-auto whitespace-nowrap">
               <Clock className="w-3.5 h-3.5 text-sky-600" /> En attente de préparation (Fournisseur)
