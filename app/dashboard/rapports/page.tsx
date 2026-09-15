@@ -20,7 +20,7 @@ const COULEURS_FOURNISSEURS: Record<string, string> = {
   'FOUR-LDF-001': '#ea580c', // Orange ViFlo officiel / Librairie de France
   'FOUR-DRO-002': '#0284c7', // Bleu ciel corporate (Drocolor)
   'FOUR-SMT-003': '#10b981', // Vert émeraude (SMART TECHNOLOGIE)
-  'FOUR-NSK-004': '#8b5cf6', // Violet royal (NASKO)
+  'FOUR-NSK-004': '#8b5cf6', // Violet royal (NASCO)
   'FOUR-CRF-005': '#f43f5e', // Rose framboise vif (Carrefour)
 };
 

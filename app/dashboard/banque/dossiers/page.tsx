@@ -27,6 +27,11 @@ export default function BanqueDossiersPage() {
 
   const mesDossiers = useMemo(() =>
     dossiers.filter(d => {
+      // Ignorer les dossiers invalides (vestiges d'anciens bugs dans le localStorage)
+      if (!d.devisIds || d.devisIds.length === 0 || !d.montantTotal || d.montantTotal === 0) {
+        return false;
+      }
+
       if (user?.role === "banque") {
         if (!user.organisationId || user.organisationId === "AFG-001" || user.banqueId === "AFG-001") {
           return true;
@@ -94,7 +99,7 @@ export default function BanqueDossiersPage() {
     const sous = getSouscriptionById(dossier.souscriptionId);
     if (sous) updateSouscription(sous.id, { statut: "en_analyse_bancaire" });
     emitInAppNotification({
-      titre: `Instruction en cours : ${dossier.reference}`,
+      titre: `Décision de banque en cours : ${dossier.reference}`,
       message: `L'analyse du dossier de ${dossier.souscripteurPrenom} ${dossier.souscripteurNom} a démarré à l'agence AFG Bank.`,
       categorie: "dossier",
       reference: dossier.reference,
@@ -134,11 +139,10 @@ export default function BanqueDossiersPage() {
       <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-xl w-fit">
         {[
           { key: "en_attente", label: `En attente (${enAttente.length})` },
-          { key: "tous",       label: `Tous (${tous.length})` },
+          { key: "tous", label: `Tous (${tous.length})` },
         ].map(t => (
           <button key={t.key} onClick={() => setActiveTab(t.key as any)}
-            className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
-              activeTab === t.key
+            className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === t.key
                 ? "bg-white text-gray-900 shadow-sm"
                 : "text-gray-500 hover:text-gray-700"}`}>
             {t.label}
@@ -188,10 +192,9 @@ export default function BanqueDossiersPage() {
 
                 {/* Commentaire / Motif rejet */}
                 {(d.commentaireAFG || d.motifRejet) && (
-                  <div className={`p-2.5 rounded-lg text-xs mb-4 ${
-                    d.statut === "accepte" ? "bg-emerald-50 text-emerald-700" :
-                    d.statut === "refuse"  ? "bg-red-50 text-red-700" :
-                    "bg-gray-50 text-gray-600"}`}>
+                  <div className={`p-2.5 rounded-lg text-xs mb-4 ${d.statut === "accepte" ? "bg-emerald-50 text-emerald-700" :
+                      d.statut === "refuse" ? "bg-red-50 text-red-700" :
+                        "bg-gray-50 text-gray-600"}`}>
                     {d.commentaireAFG || d.motifRejet}
                   </div>
                 )}

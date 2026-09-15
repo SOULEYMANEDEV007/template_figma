@@ -46,7 +46,7 @@ export default function DashboardAdmin() {
     'FOUR-LDF-001': '#ea580c', // Orange ViFlo officiel / Librairie de France
     'FOUR-DRO-002': '#0284c7', // Bleu ciel corporate (Drocolor)
     'FOUR-SMT-003': '#10b981', // Vert émeraude (SMART TECHNOLOGIE)
-    'FOUR-NSK-004': '#8b5cf6', // Violet royal (NASKO)
+    'FOUR-NSK-004': '#8b5cf6', // Violet royal (NASCO)
     'FOUR-CRF-005': '#f43f5e', // Rose framboise vif (Carrefour)
   };
 
@@ -111,18 +111,18 @@ export default function DashboardAdmin() {
     <div className="space-y-6 fade-in">
       {/* KPIs ligne 1 */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPICard title="Total souscriptions"  value={stats.totalSouscriptions}  icon={FileText}     variant="yellow" trend={{ value: 12 }} subtitle={fmtCFA(stats.montantTotalSouscriptions)} />
-        <KPICard title="Dossiers validés"     value={stats.dossiersValides}     icon={CheckCircle2} variant="green"  trend={{ value: 8 }}  subtitle={`Sur ${stats.totalDossiers} dossiers`} />
-        <KPICard title="Paiements effectués"  value={stats.totalPaiementsEffectues} icon={CreditCard} variant="blue" trend={{ value: 5 }} subtitle={fmtCFA(stats.montantTotalPaiements)} />
-        <KPICard title="Fournisseurs agréés"  value={stats.totalFournisseurs}   icon={Package}      variant="gray"   subtitle={`${stats.totalRelais} points relais`} />
+        <KPICard title="Total souscriptions" value={stats.totalSouscriptions} icon={FileText} variant="yellow" trend={{ value: 12 }} subtitle={fmtCFA(stats.montantTotalSouscriptions)} />
+        <KPICard title="Dossiers validés" value={stats.dossiersValides} icon={CheckCircle2} variant="green" trend={{ value: 8 }} subtitle={`Sur ${stats.totalDossiers} dossiers`} />
+        <KPICard title="Paiements effectués" value={stats.totalPaiementsEffectues} icon={CreditCard} variant="blue" trend={{ value: 5 }} subtitle={fmtCFA(stats.montantTotalPaiements)} />
+        <KPICard title="Fournisseurs agréés" value={stats.totalFournisseurs} icon={Package} variant="gray" subtitle={`${stats.totalRelais} points relais`} />
       </div>
 
       {/* KPIs ligne 2 */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPICard title="En cours de traitement" value={stats.souscriptionsEnCours}   icon={Clock}      variant="yellow" subtitle="Souscriptions actives" />
-        <KPICard title="Dossiers en analyse"     value={stats.dossiersEnAnalyse}      icon={BookOpen}   variant="yellow" subtitle="En attente validation AFG" />
-        <KPICard title="Dossiers rejetés"        value={stats.dossiersRejetes}        icon={XCircle}    variant="red"    subtitle={stats.dossiersRejetes > 0 ? "Dossiers refusés" : "Ce trimestre"} />
-        <KPICard title="Agences AFG Bank"        value={stats.totalAgences}            icon={Users}      variant="blue"   subtitle="Agences actives" />
+        <KPICard title="En cours de traitement" value={stats.souscriptionsEnCours} icon={Clock} variant="yellow" subtitle="Souscriptions actives" />
+        <KPICard title="Dossiers en analyse" value={stats.dossiersEnAnalyse} icon={BookOpen} variant="yellow" subtitle="En attente validation AFG" />
+        <KPICard title="Dossiers rejetés" value={stats.dossiersRejetes} icon={XCircle} variant="red" subtitle={stats.dossiersRejetes > 0 ? "Dossiers refusés" : "Ce trimestre"} />
+        <KPICard title="Agences AFG Bank" value={stats.totalAgences} icon={Users} variant="blue" subtitle="Agences actives" />
       </div>
 
       {/* Graphiques */}

@@ -39,64 +39,6 @@ export default function SouscriptionDetailPage() {
   const dossier = sub ? getDossierBySouscription(sub.id) : null;
   const historique = sub ? getHistoriqueBySouscription(sub.id) : [];
 
-  const handleEnregistrerDepotBanque = async () => {
-    if (!sub) return;
-    if (!devis) {
-      toast.error("Le devis chiffré doit être établi avant le dépôt en agence.");
-      return;
-    }
-    setSubmittingDossier(true);
-    try {
-      const refDos = generateRef("DOS");
-      const montantFinal = sub.montantTotal > 0 ? sub.montantTotal : devis.totalTTC;
-      addDossier({
-        reference: refDos,
-        souscriptionId: sub.id,
-        souscriptionRef: sub.reference,
-        souscripteurId: sub.souscripteurId,
-        souscripteurNom: sub.souscripteurNom,
-        souscripteurPrenom: sub.souscripteurPrenom,
-        typeSouscripteur: sub.typeSouscripteur,
-        fournisseursNoms: sub.fournisseurs.map(f => f.fournisseurNom).join(", "),
-        devisIds: [devis.id],
-        banqueId: "AFG-001",
-        banqueNom: "AFG Bank",
-        agenceId: sub.agenceId || "AGE-AFG-001",
-        agenceNom: sub.agenceNom || "Agence Plateau",
-        montantTotal: montantFinal,
-        statut: "depose_banque",
-        dateCreation: new Date().toISOString().split("T")[0],
-        dateReception: new Date().toISOString().split("T")[0],
-        dateMiseAJour: new Date().toISOString().split("T")[0],
-      });
-      updateSouscription(sub.id, {
-        statut: "depose_banque",
-        montantTotal: montantFinal,
-      });
-      addHistorique({
-        souscriptionId: sub.id,
-        action: "depot_banque",
-        description: `Dossier physique (Fiche d'adhésion + Devis) réceptionné au guichet de l'agence AFG Bank (${sub.agenceNom || "Plateau"}) — Réf ${refDos}`,
-        auteur: `${user?.firstName || "Agent AFG"} ${user?.lastName || ""}`,
-        date: new Date().toISOString(),
-      });
-      emitInAppNotification({
-        titre: `Dossier déposé en agence : ${refDos}`,
-        message: `Le dossier physique complet de ${sub.souscripteurPrenom || ""} ${sub.souscripteurNom} a été réceptionné par l'agence AFG Bank (${sub.agenceNom || "Plateau"}). L'instruction bancaire commence.`,
-        categorie: "dossier",
-        reference: refDos,
-        lien: `/dashboard/souscriptions/${sub.id}`,
-        roles: ["banque", "souscripteur", "fournisseur", "admin"],
-      });
-      toast.success(`Dossier physique ${refDos} réceptionné et enregistré par AFG Bank !`);
-    } catch (e) {
-      console.error(e);
-      toast.error("Erreur lors de l'enregistrement du dépôt");
-    } finally {
-      setSubmittingDossier(false);
-    }
-  };
-
   const handlePrintDossier = () => {
     if (!sub) return;
     const w = window.open('', '_blank');
@@ -256,10 +198,10 @@ export default function SouscriptionDetailPage() {
   const processSteps = [
     { id: "sub", label: "1. Demande & Besoin", statut: "complete" as const, date: sub.dateCreation },
     { id: "devis", label: "2. Devis fournisseur", statut: devis ? ("complete" as const) : ("pending" as const) },
-    { id: "depot", label: "3. Dépôt dossier en agence", statut: isApres(currentEffectifStatut, "depose_banque") ? ("complete" as const) : currentEffectifStatut === "pret_pour_depot" ? ("current" as const) : ("pending" as const) },
-    { id: "banque", label: "4. Instruction AFG Bank", statut: isApres(currentEffectifStatut, "accepte") ? ("complete" as const) : (currentEffectifStatut === "refuse" || currentEffectifStatut === "rejete") ? ("rejected" as const) : currentEffectifStatut === "en_analyse_bancaire" ? ("current" as const) : ("pending" as const) },
-    { id: "paiement", label: "5. Virement fournisseur", statut: isApres(currentEffectifStatut, "fournisseur_paye") ? ("complete" as const) : (currentEffectifStatut === "accepte" || currentEffectifStatut === "valide" || currentEffectifStatut === "finance") ? ("current" as const) : ("pending" as const) },
-    { id: "livraison", label: "6. Retrait des articles", statut: (currentEffectifStatut === "cloture" || currentEffectifStatut === "livre" || currentEffectifStatut === "servie") ? ("complete" as const) : (currentEffectifStatut === "fournisseur_paye" || currentEffectifStatut === "commande_en_preparation") ? ("current" as const) : ("pending" as const) },
+    /*{ id: "depot", label: "3. Dépôt dossier en agence", statut: isApres(currentEffectifStatut, "depose_banque") ? ("complete" as const) : currentEffectifStatut === "pret_pour_depot" ? ("current" as const) : ("pending" as const) },*/
+    { id: "banque", label: "3. Décision AFG Bank", statut: isApres(currentEffectifStatut, "accepte") ? ("complete" as const) : (currentEffectifStatut === "refuse" || currentEffectifStatut === "rejete") ? ("rejected" as const) : currentEffectifStatut === "en_analyse_bancaire" ? ("current" as const) : ("pending" as const) },
+    { id: "paiement", label: "4. Virement fournisseur", statut: isApres(currentEffectifStatut, "fournisseur_paye") ? ("complete" as const) : (currentEffectifStatut === "accepte" || currentEffectifStatut === "valide" || currentEffectifStatut === "finance") ? ("current" as const) : ("pending" as const) },
+    { id: "livraison", label: "5. Retrait des articles", statut: (currentEffectifStatut === "cloture" || currentEffectifStatut === "livre" || currentEffectifStatut === "servie") ? ("complete" as const) : (currentEffectifStatut === "fournisseur_paye" || currentEffectifStatut === "commande_en_preparation") ? ("current" as const) : ("pending" as const) },
   ];
 
   const handleConfirmerPaiement = () => {
@@ -381,27 +323,21 @@ export default function SouscriptionDetailPage() {
               <FileText className="w-3.5 h-3.5" /> Voir le devis
             </Link>
           )}
-          {devis && !dossier && (user?.role === "banque" || user?.role === "admin") && (
-            <button
-              onClick={handleEnregistrerDepotBanque}
-              disabled={submittingDossier}
-              className="btn-ldf-primary text-sm py-2 px-4 shadow-sm flex items-center gap-1.5"
-            >
-              <CheckCircle2 className="w-3.5 h-3.5" /> {submittingDossier ? "Enregistrement..." : "Enregistrer le dépôt physique (AFG Bank)"}
-            </button>
-          )}
+
           {dossier && (
             <Link href={`/dashboard/dossiers/${dossier.id}`} className="btn-ldf-outline text-sm py-2 px-4">
               <CheckCircle2 className="w-3.5 h-3.5" /> Voir le dossier
             </Link>
           )}
-          <button
-            onClick={handlePrintDossier}
-            className="btn-ldf-primary text-sm py-2 px-4 flex items-center gap-1.5 shadow-sm"
-            title="Imprimer le dossier complet (Fiche d'adhésion VITALIS + Devis joint) pour dépôt physique en agence AFG Bank"
-          >
-            <Printer className="w-3.5 h-3.5" /> Imprimer le dossier complet (Fiche + Devis)
-          </button>
+          {devis && (
+            <button
+              onClick={handlePrintDossier}
+              className="btn-ldf-primary text-sm py-2 px-4 flex items-center gap-1.5 shadow-sm"
+              title="Imprimer le dossier complet (Fiche d'adhésion VITALIS + Devis joint) pour dépôt physique en agence AFG Bank"
+            >
+              <Printer className="w-3.5 h-3.5" /> Imprimer le dossier complet (Fiche + Devis)
+            </button>
+          )}
         </div>
       </div>
 
@@ -445,13 +381,10 @@ export default function SouscriptionDetailPage() {
               <Printer className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-sm font-bold text-gray-900">Étape 3 active : Devis établi — Constitution du dossier & Dépôt physique en agence AFG Bank</p>
+              <p className="text-sm font-bold text-gray-900">En attente de devis complémentaires ou traitement</p>
               <p className="text-xs text-gray-700 mt-0.5 leading-relaxed">
-                {user?.role === "souscripteur"
-                  ? `Votre devis chiffré est prêt (${fmtCFA(devis.totalTTC)}). Imprimez votre dossier complet (Fiche d'adhésion VITALIS + Devis joint) et présentez-vous à votre agence AFG Bank (${sub.agenceNom || "de rattachement"}) pour effectuer le dépôt physique de votre dossier.`
-                  : (user?.role === "banque" || user?.role === "admin")
-                  ? `Le client se présente à l'agence (${sub.agenceNom || "Plateau"}) avec sa fiche d'adhésion signée et le devis joint. Après contrôle des pièces physiques, confirmez la réception en agence.`
-                  : `Le devis chiffré a été remis au souscripteur. En attente du déplacement physique du client pour le dépôt de son dossier auprès de son agence AFG Bank (${sub.agenceNom || "Plateau"}).`}
+                Le dossier numérique sera automatiquement transmis à la banque dès que tous les fournisseurs sollicités auront émis leur devis. 
+                N'oubliez pas d'imprimer l'ensemble et de vous présenter physiquement en agence AFG Bank.
               </p>
             </div>
           </div>
@@ -460,17 +393,8 @@ export default function SouscriptionDetailPage() {
               onClick={handlePrintDossier}
               className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-orange-600 text-white text-xs font-bold hover:bg-orange-700 transition-colors shadow-sm whitespace-nowrap"
             >
-              <Printer className="w-3.5 h-3.5" /> Imprimer le dossier complet (Fiche + Devis)
+              <Printer className="w-3.5 h-3.5" /> Imprimer le dossier
             </button>
-            {(user?.role === "banque" || user?.role === "admin") && (
-              <button
-                onClick={handleEnregistrerDepotBanque}
-                disabled={submittingDossier}
-                className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-colors shadow-sm whitespace-nowrap"
-              >
-                <CheckCircle2 className="w-3.5 h-3.5" /> {submittingDossier ? "Enregistrement..." : "Enregistrer la réception guichet →"}
-              </button>
-            )}
           </div>
         </div>
       )}
@@ -482,11 +406,11 @@ export default function SouscriptionDetailPage() {
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-sm font-bold text-gray-900">Étape 4 active : Instruction du dossier par AFG Bank</p>
+              <p className="text-sm font-bold text-gray-900">Étape 4 active : Décision du dossier par AFG Bank</p>
               <p className="text-xs text-gray-600 mt-0.5">
                 {user?.role === "banque" || user?.role === "admin"
                   ? "Le dossier complet est soumis à l'agence bancaire. Procédez à l'analyse de solvabilité et au comité de crédit."
-                  : "Le dossier complet est en cours d'instruction par les analystes d'AFG Bank."}
+                  : "Le dossier complet est en cours de décision par les analystes d'AFG Bank."}
               </p>
             </div>
           </div>
@@ -648,7 +572,7 @@ export default function SouscriptionDetailPage() {
           )}
 
           {/* Fournisseur */}
-          <div className="section-card">
+          {/*div className="section-card">
             <div className="section-card-header">
               <div className="flex items-center gap-2">
                 <Building2 className="w-4 h-4 text-amber-500" />
@@ -662,6 +586,7 @@ export default function SouscriptionDetailPage() {
               <div><p className="text-xs text-gray-400 mb-0.5">Durée souscription</p><p className="text-sm font-medium text-gray-800">{sub.duree} mois</p></div>
             </div>
           </div>
+          */}
 
           {/* Articles */}
           <div className="section-card">

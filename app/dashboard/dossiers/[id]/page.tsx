@@ -106,8 +106,8 @@ export default function DossierDetailPage() {
       statut: isPasse(effectifStatut, "accepte") || isDossierRejete
         ? ("complete" as const)
         : ["en_cours_traitement", "en_analyse_bancaire", "depose_banque", "recu"].includes(currentStatut)
-        ? ("current" as const)
-        : ("pending" as const),
+          ? ("current" as const)
+          : ("pending" as const),
     },
     {
       id: "s4",
@@ -115,8 +115,8 @@ export default function DossierDetailPage() {
       statut: isDossierRejete
         ? ("rejected" as const)
         : isPasse(effectifStatut, "accepte")
-        ? ("complete" as const)
-        : ("pending" as const),
+          ? ("complete" as const)
+          : ("pending" as const),
     },
     {
       id: "s5",
@@ -124,8 +124,8 @@ export default function DossierDetailPage() {
       statut: isPasse(effectifStatut, "fournisseur_paye")
         ? ("complete" as const)
         : (effectifStatut === "accepte" || effectifStatut === "valide" || effectifStatut === "finance")
-        ? ("current" as const)
-        : ("pending" as const),
+          ? ("current" as const)
+          : ("pending" as const),
     },
     {
       id: "s6",
@@ -133,8 +133,8 @@ export default function DossierDetailPage() {
       statut: (isPasse(effectifStatut, "livre") || effectifStatut === "servie" || effectifStatut === "cloture")
         ? ("complete" as const)
         : (effectifStatut === "fournisseur_paye" || effectifStatut === "commande_en_preparation")
-        ? ("current" as const)
-        : ("pending" as const),
+          ? ("current" as const)
+          : ("pending" as const),
     },
   ];
 
@@ -144,7 +144,7 @@ export default function DossierDetailPage() {
     updateDossier(dossier.id, {
       statut: "accepte",
       dateValidation: new Date().toISOString().split("T")[0],
-      commentaireAFG: "Dossier conforme aux conditions du programme Vitalis. Financement accordé.",
+      commentaireAFG: "Dossier conforme aux conditions du programme Vitalis.",
     });
     updateSouscription(dossier.souscriptionId, { statut: "accepte" });
     addHistorique({
@@ -299,11 +299,10 @@ export default function DossierDetailPage() {
 
       {/* Décision affichée si déjà traitée */}
       {(isDossierRejete || isPasse(effectifStatut, "accepte")) && (
-        <div className={`p-4 rounded-xl border flex items-start gap-3 ${
-          isDossierRejete
-            ? "bg-red-50 border-red-200"
-            : "bg-emerald-50 border-emerald-200"
-        }`}>
+        <div className={`p-4 rounded-xl border flex items-start gap-3 ${isDossierRejete
+          ? "bg-red-50 border-red-200"
+          : "bg-emerald-50 border-emerald-200"
+          }`}>
           {isDossierRejete ? (
             <XCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
           ) : (
@@ -328,9 +327,9 @@ export default function DossierDetailPage() {
               <CreditCard className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-sm font-bold text-gray-900">Étape 5 active : Accord de crédit accordé — Virement au fournisseur requis</p>
+              <p className="text-sm font-bold text-gray-900">Étape 5 : Virement au fournisseur requis</p>
               <p className="text-xs text-gray-600 mt-0.5">
-                En tant qu'AFG Bank, émettez le virement direct de {fmtCFA(dossierMontant)} sur le compte du fournisseur pour déclencher la préparation des articles commandés.
+                AFG Bank se prépare à émettre le virement direct de {fmtCFA(dossierMontant)} sur le compte du fournisseur.
               </p>
             </div>
           </div>
@@ -469,11 +468,10 @@ export default function DossierDetailPage() {
                 )}
               </div>
               {(commentaire || dossier.commentaireBanque || dossier.commentaireAFG) && (
-                <div className={`p-3 rounded-lg text-sm leading-relaxed ${
-                  (currentStatut === "valide" || currentStatut === "accepte")
-                    ? "bg-emerald-50 text-emerald-800 border border-emerald-100"
-                    : "bg-red-50 text-red-800 border border-red-100"
-                }`}>
+                <div className={`p-3 rounded-lg text-sm leading-relaxed ${(currentStatut === "valide" || currentStatut === "accepte")
+                  ? "bg-emerald-50 text-emerald-800 border border-emerald-100"
+                  : "bg-red-50 text-red-800 border border-red-100"
+                  }`}>
                   {commentaire || dossier.commentaireBanque || dossier.commentaireAFG}
                 </div>
               )}
@@ -565,7 +563,7 @@ export default function DossierDetailPage() {
         onClose={() => setShowValider(false)}
         onConfirm={handleValider}
         title="Valider le dossier"
-        message={`Vous allez valider le dossier ${dossier.reference} et accorder le financement de ${fmtCFA(dossierMontant)}.`}
+        message={`Êtes-vous sûr de vouloir valider le dossier ${dossier.reference} et accorder le financement de ${fmtCFA(dossierMontant)} ?`}
         confirmLabel="Valider"
         variant="success"
         loading={loading}

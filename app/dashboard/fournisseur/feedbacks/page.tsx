@@ -46,8 +46,8 @@ export default function FeedbacksPage() {
         const commentaire = isValide
           ? (d.commentaireAFG || d.commentaireBanque || "Dossier conforme aux critères du programme Vitalis. Financement accordé par AFG Bank.")
           : isRejete
-          ? (d.motifRejet || d.commentaireBanque || "Dossier non retenu par le comité de crédit AFG Bank.")
-          : (d.commentaireAFG || "Dossier réceptionné à l'agence AFG Bank. Analyse financière en cours.");
+            ? (d.motifRejet || d.commentaireBanque || "Dossier non retenu par le comité de crédit AFG Bank.")
+            : (d.commentaireAFG || "Dossier réceptionné à l'agence AFG Bank. Analyse financière en cours.");
 
         const dateAffichage = d.dateValidation || d.dateRejet || d.dateTraitement || d.dateMiseAJour || d.dateReception || d.dateCreation;
 
@@ -91,7 +91,7 @@ export default function FeedbacksPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
           { id: "accepte", label: "Financements accordés", value: stats.valides, color: "border-l-emerald-500 text-emerald-700 bg-emerald-50/40" },
-          { id: "refuse",  label: "Dossiers rejetés",       value: stats.rejetes, color: "border-l-red-500 text-red-700 bg-red-50/40" },
+          { id: "refuse", label: "Dossiers rejetés", value: stats.rejetes, color: "border-l-red-500 text-red-700 bg-red-50/40" },
           { id: "en_analyse_bancaire", label: "En cours d'analyse", value: stats.enAnalyse, color: "border-l-amber-500 text-amber-700 bg-amber-50/40" },
         ].map(k => (
           <button
@@ -123,8 +123,8 @@ export default function FeedbacksPage() {
             const borderBox = isValide
               ? "bg-emerald-50/80 text-emerald-900 border-emerald-200"
               : isRejete
-              ? "bg-red-50/80 text-red-900 border-red-200"
-              : "bg-amber-50/80 text-amber-900 border-amber-200";
+                ? "bg-red-50/80 text-red-900 border-red-200"
+                : "bg-amber-50/80 text-amber-900 border-amber-200";
 
             return (
               <div key={f.id} className="section-card hover:shadow-md transition-shadow">
@@ -156,7 +156,7 @@ export default function FeedbacksPage() {
 
                     <div className={`p-3.5 rounded-xl border text-sm leading-relaxed ${borderBox}`}>
                       <strong className="block text-xs uppercase tracking-wide opacity-80 mb-0.5">
-                        {isValide ? "Avis bancaire favorable :" : isRejete ? "Motif de rejet bancaire :" : "Instruction en cours :"}
+                        {isValide ? "Avis bancaire favorable :" : isRejete ? "Motif de rejet bancaire :" : "Décision de banque en cours :"}
                       </strong>
                       {f.commentaire}
                     </div>
