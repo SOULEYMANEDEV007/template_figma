@@ -35,6 +35,8 @@ export default function DossierDetailPage() {
   const [showValider, setShowValider] = useState(false);
   const [showRejeter, setShowRejeter] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [dateValidationDossier, setDateValidationDossier] = useState(new Date().toISOString().split("T")[0]);
+  const [dateValidationPaiement, setDateValidationPaiement] = useState(new Date().toISOString().split("T")[0]);
 
   const dossier = getDossierById(id);
   const devis = (dossier && Array.isArray(dossier.devisIds) && dossier.devisIds.length > 0
@@ -143,7 +145,7 @@ export default function DossierDetailPage() {
     await new Promise(r => setTimeout(r, 600));
     updateDossier(dossier.id, {
       statut: "accepte",
-      dateValidation: new Date().toISOString().split("T")[0],
+      dateValidation: dateValidationDossier,
       commentaireAFG: "Dossier conforme aux conditions du programme Vitalis.",
     });
     updateSouscription(dossier.souscriptionId, { statut: "accepte" });
@@ -227,8 +229,8 @@ export default function DossierDetailPage() {
       ],
       statut: "termine",
       dateCreation: new Date().toISOString().split("T")[0],
-      dateValidationAFG: new Date().toISOString().split("T")[0],
-      dateTransfert: new Date().toISOString().split("T")[0],
+      dateValidationAFG: dateValidationPaiement,
+      dateTransfert: dateValidationPaiement,
       dateMiseAJour: new Date().toISOString().split("T")[0],
     });
 
@@ -334,12 +336,23 @@ export default function DossierDetailPage() {
             </div>
           </div>
           {(user?.role === "banque" || user?.role === "admin") && (
-            <button
-              onClick={handleConfirmerPaiement}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-colors shadow-sm self-start sm:self-auto whitespace-nowrap"
-            >
-              <CreditCard className="w-3.5 h-3.5" /> Émettre le virement au fournisseur (AFG Bank) →
-            </button>
+            <div className="flex flex-col sm:flex-row items-end gap-3 w-full sm:w-auto mt-3 sm:mt-0">
+              <div className="flex flex-col gap-1.5 w-full sm:w-auto text-left">
+                <label className="text-xs font-bold text-amber-900">Date du virement *</label>
+                <input 
+                  type="date" 
+                  value={dateValidationPaiement}
+                  onChange={e => setDateValidationPaiement(e.target.value)}
+                  className="px-3 py-2 text-sm rounded-lg border border-amber-300 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 text-amber-900 font-medium"
+                />
+              </div>
+              <button
+                onClick={handleConfirmerPaiement}
+                className="flex items-center gap-2 px-5 py-2 rounded-lg bg-emerald-600 text-white text-sm font-bold hover:bg-emerald-700 transition-colors shadow-sm self-stretch sm:self-auto justify-center whitespace-nowrap"
+              >
+                <CreditCard className="w-4 h-4" /> Émettre le virement →
+              </button>
+            </div>
           )}
         </div>
       )}
@@ -567,7 +580,17 @@ export default function DossierDetailPage() {
         confirmLabel="Valider"
         variant="success"
         loading={loading}
-      />
+      >
+        <div className="flex flex-col gap-1.5 mt-2">
+          <label className="text-xs font-bold text-gray-700">Date de validation du financement *</label>
+          <input 
+            type="date" 
+            value={dateValidationDossier}
+            onChange={e => setDateValidationDossier(e.target.value)}
+            className="px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 w-full"
+          />
+        </div>
+      </ConfirmModal>
 
       <MotifsRejetModal
         open={showRejeter}

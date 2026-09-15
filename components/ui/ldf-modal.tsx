@@ -88,6 +88,7 @@ interface ConfirmModalProps {
   cancelLabel?: string;
   variant?: ConfirmVariant;
   loading?: boolean;
+  children?: React.ReactNode;
 }
 
 const CONFIRM_ICONS = {
@@ -107,7 +108,7 @@ const CONFIRM_BTN = {
 export function ConfirmModal({
   open, onClose, onConfirm, title, message,
   confirmLabel = "Confirmer", cancelLabel = "Annuler",
-  variant = "warning", loading,
+  variant = "warning", loading, children,
 }: ConfirmModalProps) {
   const { Icon, color, bg } = CONFIRM_ICONS[variant];
   return (
@@ -120,6 +121,11 @@ export function ConfirmModal({
           <h3 className="font-semibold text-gray-900">{title}</h3>
           <p className="text-sm text-gray-500 mt-1 leading-relaxed">{message}</p>
         </div>
+        {children && (
+          <div className="w-full text-left mt-2">
+            {children}
+          </div>
+        )}
         <div className="flex gap-3 w-full">
           <button
             onClick={onClose}
