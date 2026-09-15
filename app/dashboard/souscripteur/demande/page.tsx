@@ -26,7 +26,7 @@ const inp = "w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl bg-whi
 export default function NouvelleDemandeSouscripteur() {
   const router = useRouter();
   const { user } = useLDFAuthStore();
-  const { fournisseurs, agencesAFG, addSouscription } = useVitalisDb();
+  const { fournisseurs, agencesAFG, pointsRelais, addSouscription } = useVitalisDb();
 
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
@@ -37,6 +37,7 @@ export default function NouvelleDemandeSouscripteur() {
   const [produitRecherche, setProduitRecherche] = useState("");
   const [region, setRegion] = useState("");
   const [ville, setVille] = useState("");
+  const [pointRelaisId, setPointRelaisId] = useState("");
 
   // --- Étape 2 : Configuration & Fournisseurs ---
   const [selectedFournisseurs, setSelectedFournisseurs] = useState<string[]>([]);
@@ -55,7 +56,7 @@ export default function NouvelleDemandeSouscripteur() {
   };
 
   const handleNextStep = () => {
-    if (!natureBesoin || !categorie || !produitRecherche || !region || !ville) {
+    if (!natureBesoin || !categorie || !produitRecherche || !region || !ville || !pointRelaisId) {
       toast.error("Veuillez remplir tous les champs obligatoires de l'étape 1.");
       return;
     }
@@ -102,7 +103,7 @@ export default function NouvelleDemandeSouscripteur() {
         statut: "en_attente",
         dateCreation: new Date().toISOString().split("T")[0],
         dateMiseAJour: new Date().toISOString().split("T")[0],
-        observations: `Besoin: ${natureBesoin} | Catégorie: ${categorie} | Produit: ${produitRecherche} | Zone: ${ville}, ${region}${observations ? `\nNotes: ${observations}` : ""}`,
+        observations: `Besoin: ${natureBesoin} | Catégorie: ${categorie} | Produit: ${produitRecherche} | Zone: ${ville}, ${region} | Relais: ${pointsRelais?.find(p => p.id === pointRelaisId)?.nom || pointRelaisId}${observations ? `\nNotes: ${observations}` : ""}`,
       });
 
       // Notification pour les fournisseurs et admins
@@ -221,6 +222,21 @@ export default function NouvelleDemandeSouscripteur() {
                     required
                   />
                 </div>
+              </div>
+            </SectionCard>
+
+            <SectionCard title="Préférence Logistique" icon={Package}>
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-gray-600 mb-2">Point Relais (Lieu de récupération souhaité) *</label>
+                <select className={sel} value={pointRelaisId} onChange={e => setPointRelaisId(e.target.value)} required>
+                  <option value="">Sélectionnez un point relais de livraison</option>
+                  {(pointsRelais || []).map(p => (
+                    <option key={p.id} value={p.id}>
+                      {p.ville} - {p.nom} ({p.quartier})
+                    </option>
+                  ))}
+                </select>
+                <p className="text-[10px] text-gray-500 mt-1">Vous pourrez récupérer vos articles commandés dans ce point relais si le financement est accordé.</p>
               </div>
             </SectionCard>
 

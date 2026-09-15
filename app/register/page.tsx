@@ -26,13 +26,14 @@ export default function RegisterPage() {
   const [telephone, setTelephone] = useState("");
   const [ville, setVille] = useState("");
   const [quartier, setQuartier] = useState("");
-  const [pointRelaisId, setPointRelaisId] = useState("");
+  const [situationPro, setSituationPro] = useState("");
+  const [situationMatri, setSituationMatri] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!nom || !email || !telephone || !ville || !pointRelaisId || !password || !confirmPassword) {
+    if (!nom || !email || !telephone || !ville || !situationPro || !password || !confirmPassword) {
       toast.error("Veuillez remplir tous les champs obligatoires.");
       return;
     }
@@ -60,7 +61,8 @@ export default function RegisterPage() {
         telephone,
         ville,
         quartier,
-        pointRelaisId,
+        situationPro,
+        situationMatri,
         typeProfil,
         banqueId: "AFG-001",
         banqueNom: "AFG Bank",
@@ -268,22 +270,52 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* 5. Préférence Logistique */}
-            <div className="space-y-1.5">
-              <label className="text-sm font-semibold text-gray-700">Point Relais (Lieu de récupération préféré) *</label>
-              <select
-                value={pointRelaisId}
-                onChange={(e) => setPointRelaisId(e.target.value)}
-                className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400 transition-all appearance-none"
-              >
-                <option value="">Sélectionnez un point relais de livraison</option>
-                {pointsRelais.map(p => (
-                  <option key={p.id} value={p.id}>
-                    {p.ville} - {p.nom} ({p.quartier})
-                  </option>
-                ))}
-              </select>
-              <p className="text-[10px] text-gray-500 mt-1">Vous pourrez récupérer vos articles commandés dans ce point relais.</p>
+            {/* 5. Informations Complémentaires */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-sm font-semibold text-gray-700">Situation Professionnelle *</label>
+                <select
+                  value={situationPro}
+                  onChange={(e) => setSituationPro(e.target.value)}
+                  className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400 transition-all appearance-none"
+                >
+                  <option value="">Sélectionnez</option>
+                  {typeProfil === "physique" ? (
+                    <>
+                      <option value="Salarie (CDI / CDD)">Salarié (CDI / CDD)</option>
+                      <option value="Fonctionnaire">Fonctionnaire Public</option>
+                      <option value="Independant / Entrepreneur">Indépendant / Entrepreneur</option>
+                      <option value="Commercant / Artisan">Commerçant / Artisan</option>
+                      <option value="Autre">Autre</option>
+                    </>
+                  ) : (
+                    <>
+                      <option value="TPE / PME">TPE / PME</option>
+                      <option value="Association / Mutuelle">Association / Mutuelle / Syndicat</option>
+                      <option value="Ordre Professionnel">Ordre Professionnel</option>
+                      <option value="Chambre Consulaire">Chambre de Commerce / Consulaire</option>
+                      <option value="Autre">Autre</option>
+                    </>
+                  )}
+                </select>
+              </div>
+
+              {typeProfil === "physique" && (
+                <div className="space-y-1.5">
+                  <label className="text-sm font-semibold text-gray-700">Situation Matrimoniale</label>
+                  <select
+                    value={situationMatri}
+                    onChange={(e) => setSituationMatri(e.target.value)}
+                    className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400 transition-all appearance-none"
+                  >
+                    <option value="">Sélectionnez</option>
+                    <option value="Celibataire">Célibataire</option>
+                    <option value="Marie(e)">Marié(e)</option>
+                    <option value="Divorce(e)">Divorcé(e)</option>
+                    <option value="Veuf / Veuve">Veuf / Veuve</option>
+                  </select>
+                </div>
+              )}
             </div>
 
             {/* 6. Mot de passe */}
