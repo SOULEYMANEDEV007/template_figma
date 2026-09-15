@@ -198,7 +198,7 @@ export default function NouvelleDemandeSouscripteur() {
               </div>
             </SectionCard>
 
-            <SectionCard title="Zone géographique de livraison / achat" icon={MapPin}>
+            <SectionCard title="Zone géographique" icon={MapPin}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-600 mb-2">Région *</label>
@@ -273,23 +273,23 @@ export default function NouvelleDemandeSouscripteur() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <SectionCard title="Durée du financement" icon={FileText}>
                 <label className="block text-xs font-semibold text-gray-600 mb-2">Durée (mois)</label>
-                <select className={sel} value={duree} onChange={e => setDuree(Number(e.target.value))}>
-                  {[36, 60, 96].map(d => (
+                <select className={sel} value={duree} disabled={true}>
+                  {[36].map(d => (
                     <option key={d} value={d}>{d} mois {d === 36 ? "(Par défaut)" : d > 60 ? "(Salariés uniquement)" : ""}</option>
                   ))}
                 </select>
-                <p className="text-[10px] text-gray-400 mt-2">Maximum 60 mois (Entreprises) ou 96 mois (Salariés).</p>
+                {/*<p className="text-[10px] text-gray-400 mt-2">Maximum 60 mois (Entreprises) ou 96 mois (Salariés).</p>*/}
               </SectionCard>
             </div>
 
-            <SectionCard title="Observations supplémentaires" icon={FileText}>
+            {/*<SectionCard title="Observations supplémentaires" icon={FileText}>
               <textarea
                 className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl bg-white text-[#0B2447] focus:outline-none focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400 transition-all min-h-[100px]"
                 placeholder="Précisions éventuelles sur votre besoin..."
                 value={observations}
                 onChange={e => setObservations(e.target.value)}
               />
-            </SectionCard>
+            </SectionCard>*/}
 
             <div className="flex justify-end pt-4">
               <button

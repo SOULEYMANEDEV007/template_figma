@@ -136,9 +136,9 @@ const fournisseurs: Fournisseur[] = [
   },
   {
     id: "FOUR-NAS-004",
-    code: "NASKO",
-    nom: "NASKO",
-    raisonSociale: "NASKO Distribution SARL",
+    code: "NASCO",
+    nom: "NASCO",
+    raisonSociale: "NASCO Distribution SARL",
     adresse: "Boulevard de Marseille, Treichville",
     ville: "Abidjan",
     quartier: "Treichville",

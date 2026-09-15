@@ -140,7 +140,7 @@ export default function DashboardFournisseur() {
                   <tr><td>Librairie de France Groupe</td><td>Fournitures scolaires & bureautiques</td></tr>
                   <tr><td>Drocolor</td><td>Matériel informatique & électronique</td></tr>
                   <tr><td>SMART TECHNOLOGIE</td><td>Informatique & solutions digitales</td></tr>
-                  <tr><td>NASKO</td><td>Meubles & équipements de bureau</td></tr>
+                  <tr><td>NASCO</td><td>Meubles & équipements de bureau</td></tr>
                   <tr><td>CARREFOUR</td><td>Grande distribution multi-produits</td></tr>
                 </table>
 

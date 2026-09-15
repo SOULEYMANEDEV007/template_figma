@@ -167,7 +167,7 @@ Au premier démarrage, la base est remplie avec :
    - Contrat : CONT-AFG-SMT-2023-003
    - Partenariat : 12 mois
 
-4. **NASKO** (NASKO)
+4. **NASCO** (NASCO)
    - Secteur : Meubles/Équipements bureau
    - Contrat : CONT-AFG-NAS-2023-004
    - Partenariat : 15 mois

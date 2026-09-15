@@ -37,17 +37,18 @@ const STATUT_CONFIG: Record<string, { label: string; className: string; dot: str
   inactif:                 { label: "Inactif",             className: "bg-gray-100 text-gray-500",     dot: "bg-gray-400"    },
   suspendu:                { label: "Suspendu",            className: "bg-yellow-50 text-yellow-700",  dot: "bg-yellow-500"  },
 
-  // ── Statuts VITALIS (11 étapes du workflow cahier des charges) ──
-  en_preparation:           { label: "En préparation",        className: "bg-gray-100 text-gray-600",      dot: "bg-gray-400"    },
-  pret_pour_depot:          { label: "Prêt pour dépôt",       className: "bg-blue-50 text-blue-700",       dot: "bg-blue-500"    },
-  depose_banque:            { label: "Déposé à la banque",    className: "bg-indigo-50 text-indigo-700",   dot: "bg-indigo-500"  },
-  en_analyse_bancaire:      { label: "En analyse bancaire",   className: "bg-amber-50 text-amber-700",     dot: "bg-amber-500"   },
-  accepte:                  { label: "Accepté",               className: "bg-emerald-50 text-emerald-700", dot: "bg-emerald-500" },
-  finance:                  { label: "Financé",               className: "bg-green-50 text-green-700",     dot: "bg-green-600"   },
-  fournisseur_paye:         { label: "Fournisseur payé",      className: "bg-teal-50 text-teal-700",       dot: "bg-teal-500"    },
-  commande_en_preparation:  { label: "Commande en prép.",     className: "bg-cyan-50 text-cyan-700",       dot: "bg-cyan-500"    },
-  livre:                    { label: "Livré",                 className: "bg-sky-50 text-sky-700",         dot: "bg-sky-500"     },
-  cloture:                  { label: "Clôturé",               className: "bg-gray-50 text-gray-500",       dot: "bg-gray-300"    },
+  // ── Statuts VITALIS (Workflow cahier des charges) ──
+  en_preparation:           { label: "Créé",                  className: "bg-gray-100 text-gray-600",      dot: "bg-gray-400"    },
+  pret_pour_depot:          { label: "Envoyé",                className: "bg-blue-50 text-blue-700",       dot: "bg-blue-500"    },
+  depose_banque:            { label: "Soumis",                className: "bg-indigo-50 text-indigo-700",   dot: "bg-indigo-500"  },
+  en_analyse_bancaire:      { label: "En cours d'analyse",    className: "bg-amber-50 text-amber-700",     dot: "bg-amber-500"   },
+  accepte:                  { label: "Validé",                className: "bg-emerald-50 text-emerald-700", dot: "bg-emerald-500" },
+  finance:                  { label: "Payé",                  className: "bg-sky-50 text-sky-700",         dot: "bg-sky-500"     },
+  fournisseur_paye:         { label: "Payé",                  className: "bg-teal-50 text-teal-700",       dot: "bg-teal-500"    },
+  commande_en_preparation:  { label: "En préparation",        className: "bg-cyan-50 text-cyan-700",       dot: "bg-cyan-500"    },
+  livre:                    { label: "En cours de livraison", className: "bg-blue-50 text-blue-700",       dot: "bg-blue-500"    },
+  servie:                   { label: "Servi",                 className: "bg-emerald-50 text-emerald-800", dot: "bg-emerald-600" },
+  cloture:                  { label: "Clôturé",               className: "bg-gray-100 text-gray-500",      dot: "bg-gray-400"    },
 
   // ── Statuts Fournisseur ──
   prospect:                 { label: "Prospect",              className: "bg-gray-100 text-gray-600",      dot: "bg-gray-400"    },

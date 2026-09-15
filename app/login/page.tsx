@@ -6,6 +6,7 @@ import { demoAccounts } from "@/lib/ldfData";
 import { getDashboardPath, useLDFAuthStore } from "@/stores/ldfAuth";
 import { Building2, Eye, EyeOff, Lock, Mail, ShieldCheck, Sparkles, TrendingUp, User, CheckCircle2, Folder, Activity, Wallet } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -228,6 +229,15 @@ export default function LoginPage() {
                 </>
               ) : "Se connecter"}
             </Button>
+
+            <div className="text-center mt-6">
+              <p className="text-sm text-gray-600">
+                Vous n'avez pas encore de compte ?{" "}
+                <Link href="/register" className="text-primary hover:text-orange-600 font-semibold transition-colors">
+                  Créer un compte
+                </Link>
+              </p>
+            </div>
           </form>
 
           {/* Comptes de démo */}
