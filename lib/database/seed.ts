@@ -79,7 +79,7 @@ const fournisseurs: Fournisseur[] = [
     rccm: "CI-ABJ-2015-B-12345",
     numeroContribuable: "1234567890",
     secteurActivite: "Fournitures scolaires et bureautiques",
-    logo: "/logos/ldf-logo.png",
+    logo: "/images/ldf.png",
     agreVitalis: true,
     dateAgrementVitalis: "2023-01-15",
     numeroContratAFG: "CONT-AFG-LDF-2023-001",
@@ -103,6 +103,7 @@ const fournisseurs: Fournisseur[] = [
     rccm: "CI-ABJ-2018-B-45678",
     numeroContribuable: "0987654321",
     secteurActivite: "Matériel informatique et électronique",
+    logo: "/images/drocolor-logo.jfif",
     agreVitalis: true,
     dateAgrementVitalis: "2023-03-20",
     numeroContratAFG: "CONT-AFG-DRO-2023-002",
@@ -125,6 +126,7 @@ const fournisseurs: Fournisseur[] = [
     rccm: "CI-ABJ-2020-B-78901",
     numeroContribuable: "1122334455",
     secteurActivite: "Informatique et solutions digitales",
+    logo: "/images/logo-smart-techno.png",
     agreVitalis: true,
     dateAgrementVitalis: "2023-06-10",
     numeroContratAFG: "CONT-AFG-SMT-2023-003",
@@ -146,7 +148,8 @@ const fournisseurs: Fournisseur[] = [
     email: "info@nasko.ci",
     rccm: "CI-ABJ-2019-B-23456",
     numeroContribuable: "5566778899",
-    secteurActivite: "Meubles et équipements de bureau",
+    secteurActivite: "Électroménager, meubles et équipements",
+    logo: "/images/logo-nasko.png",
     agreVitalis: true,
     dateAgrementVitalis: "2023-04-15",
     numeroContratAFG: "CONT-AFG-NAS-2023-004",
@@ -157,26 +160,96 @@ const fournisseurs: Fournisseur[] = [
     telephoneCommercial: "+225 07 77 88 99 00",
   },
   {
-    id: "FOUR-CAR-005",
-    code: "CARRF",
-    nom: "CARREFOUR",
-    raisonSociale: "Carrefour Côte d'Ivoire",
-    adresse: "Centre Commercial Cap Sud, Marcory",
+    id: "FOUR-RYM-005",
+    code: "RYMCO",
+    nom: "RYMCO",
+    raisonSociale: "RYMCO Côte d'Ivoire",
+    adresse: "Zone Industrielle de Vridi",
     ville: "Abidjan",
-    quartier: "Marcory",
+    quartier: "Treichville",
     telephone: "+225 27 21 25 00 00",
-    email: "b2b@carrefour.ci",
+    email: "b2b@rymco.ci",
     rccm: "CI-ABJ-2017-B-90123",
     numeroContribuable: "9988776655",
-    secteurActivite: "Grande distribution multi-produits",
+    secteurActivite: "Équipements, matériel & quincaillerie",
+    logo: "/images/logo_rymco.jpg",
     agreVitalis: true,
     dateAgrementVitalis: "2023-02-28",
-    numeroContratAFG: "CONT-AFG-CAR-2023-005",
+    numeroContratAFG: "CONT-AFG-RYM-2023-005",
     dureePartenariatVitalis: 20,
     statut: "actif",
     responsableCommercial: "Mme Marie KOUAMÉ",
-    emailCommercial: "corporate@carrefour.ci",
+    emailCommercial: "corporate@rymco.ci",
     telephoneCommercial: "+225 05 44 55 66 77",
+  },
+  {
+    id: "FOUR-LG-006",
+    code: "LG",
+    nom: "LG",
+    raisonSociale: "LG Electronics Côte d'Ivoire",
+    adresse: "Boulevard Valéry Giscard d'Estaing",
+    ville: "Abidjan",
+    quartier: "Marcory",
+    telephone: "+225 27 21 75 00 00",
+    email: "contact@lg-ci.com",
+    rccm: "CI-ABJ-2016-B-55443",
+    numeroContribuable: "6655443322",
+    secteurActivite: "Électroménager et électronique grand public",
+    logo: "/images/logo_lg.webp",
+    agreVitalis: true,
+    dateAgrementVitalis: "2023-05-12",
+    numeroContratAFG: "CONT-AFG-LG-2023-006",
+    dureePartenariatVitalis: 24,
+    statut: "actif",
+    responsableCommercial: "M. Charles N'DOUBA",
+    emailCommercial: "b2b@lg-ci.com",
+    telephoneCommercial: "+225 07 10 20 30 40",
+  },
+  {
+    id: "FOUR-SOD-007",
+    code: "SODIMAC",
+    nom: "SODIMAC",
+    raisonSociale: "SODIMAC CI",
+    adresse: "Boulevard de Marseille, Zone 3",
+    ville: "Abidjan",
+    quartier: "Treichville",
+    telephone: "+225 27 21 24 50 00",
+    email: "contact@sodimac.ci",
+    rccm: "CI-ABJ-2014-B-88776",
+    numeroContribuable: "8877665544",
+    secteurActivite: "Matériaux, outillage et aménagement maison",
+    logo: "/images/logo_sodimac_ci.jpg",
+    agreVitalis: true,
+    dateAgrementVitalis: "2023-04-18",
+    numeroContratAFG: "CONT-AFG-SOD-2023-007",
+    dureePartenariatVitalis: 18,
+    statut: "actif",
+    responsableCommercial: "M. Fabrice GUEI",
+    emailCommercial: "ventes@sodimac.ci",
+    telephoneCommercial: "+225 05 11 22 33 44",
+  },
+  {
+    id: "FOUR-SOC-008",
+    code: "SOCIAM",
+    nom: "SOCIAM",
+    raisonSociale: "Société Ivoirienne d'Appareillage Ménager (SOCIAM)",
+    adresse: "Zone Industrielle de Koumassi",
+    ville: "Abidjan",
+    quartier: "Koumassi",
+    telephone: "+225 27 21 28 88 88",
+    email: "contact@sociam.ci",
+    rccm: "CI-ABJ-2011-B-33221",
+    numeroContribuable: "3322110099",
+    secteurActivite: "Électroménager, image & son, froid",
+    logo: "/images/sociam_logo.webp",
+    agreVitalis: true,
+    dateAgrementVitalis: "2023-01-22",
+    numeroContratAFG: "CONT-AFG-SOC-2023-008",
+    dureePartenariatVitalis: 24,
+    statut: "actif",
+    responsableCommercial: "M. Alain KOFFI",
+    emailCommercial: "corporate@sociam.ci",
+    telephoneCommercial: "+225 07 99 88 77 66",
   },
 ];
 
@@ -400,6 +473,12 @@ export async function seedDatabase() {
 
     // Vérifier si déjà initialisée
     const count = await db.fournisseurs.count();
+    if (count !== fournisseurs.length) {
+      console.log("ℹ️ Rafraîchissement des fournisseurs officiels Vitalis...");
+      await db.fournisseurs.clear();
+      await db.fournisseurs.bulkAdd(fournisseurs);
+    }
+
     if (count > 0) {
       console.log("ℹ️ Base de données déjà initialisée");
       return;
@@ -409,9 +488,12 @@ export async function seedDatabase() {
     await db.agencesAFG.bulkAdd(agencesAFG);
     console.log(`✅ ${agencesAFG.length} agences AFG Bank ajoutées`);
 
-    // Insérer les fournisseurs
-    await db.fournisseurs.bulkAdd(fournisseurs);
-    console.log(`✅ ${fournisseurs.length} fournisseurs ajoutés`);
+    // Insérer les fournisseurs si pas fait
+    const fCount = await db.fournisseurs.count();
+    if (fCount === 0) {
+      await db.fournisseurs.bulkAdd(fournisseurs);
+      console.log(`✅ ${fournisseurs.length} fournisseurs ajoutés`);
+    }
 
     // Insérer les points relais
     await db.pointsRelais.bulkAdd(pointsRelais);

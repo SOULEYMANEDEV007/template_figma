@@ -5,7 +5,12 @@ import { Input } from "@/components/ui/input";
 import { demoAccounts } from "@/lib/ldfData";
 import { getDashboardPath, useLDFAuthStore } from "@/stores/ldfAuth";
 import { IMAGES } from "@/lib/constants";
-import { Eye, EyeOff, Lock, Mail, Sparkles } from "lucide-react";
+import {
+  Eye, EyeOff, Lock, Mail, Sparkles, ShieldCheck,
+  Building2,
+  TrendingUp,
+  User,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

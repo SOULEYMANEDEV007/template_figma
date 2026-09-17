@@ -3,7 +3,9 @@
 
 import { emitInAppNotification, useLDFAuthStore } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
+import { OFFICIAL_FOURNISSEURS, getPartnerLogo } from "@/lib/constants";
 import { ArrowLeft, ArrowRight, Building2, Check, FileText, MapPin, Package, Send, Loader2 } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
@@ -44,9 +46,10 @@ export default function NouvelleDemandeSouscripteur() {
   const [duree, setDuree] = useState(36);
   const [observations, setObservations] = useState("");
 
-  // Fournisseurs filtrés selon l'étape 1
+  // Fournisseurs agréés officiels Vitalis
   const filteredFournisseurs = useMemo(() => {
-    return (fournisseurs || []).filter(f => f.statut === "actif");
+    const list = (fournisseurs && fournisseurs.length >= 8) ? fournisseurs : OFFICIAL_FOURNISSEURS;
+    return list.filter(f => f.statut === "actif");
   }, [fournisseurs]);
 
   const toggleFournisseur = (id: string) => {
@@ -77,7 +80,8 @@ export default function NouvelleDemandeSouscripteur() {
       const seq = String(Date.now()).slice(-4);
       const ref = `VF-${year}-${seq}`;
 
-      const fournisseursChoisis = fournisseurs
+      const allFournisseursList = (fournisseurs && fournisseurs.length >= 8) ? fournisseurs : OFFICIAL_FOURNISSEURS;
+      const fournisseursChoisis = allFournisseursList
         .filter(f => selectedFournisseurs.includes(f.id))
         .map(f => ({ fournisseurId: f.id, fournisseurNom: f.nom, statut: "en_attente" as const }));
 
@@ -255,30 +259,53 @@ export default function NouvelleDemandeSouscripteur() {
 
         {step === 2 && (
           <div className="space-y-6 slide-in">
-            <SectionCard title="Sélection du fournisseur" icon={Building2}>
-              <p className="text-sm text-gray-500 mb-4">
-                Voici les fournisseurs agréés correspondant à votre besoin en <strong>{categorie || "produits"}</strong> dans la zone <strong>{ville || "choisie"}</strong> :
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <SectionCard title="Sélection des fournisseurs agréés" icon={Building2}>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+                <p className="text-sm text-gray-600">
+                  Sélectionnez le ou les fournisseurs agréés partenaires pour l'établissement de vos devis (plusieurs choix possibles) :
+                </p>
+                <span className="text-xs bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-semibold w-fit">
+                  {selectedFournisseurs.length} sélectionné{selectedFournisseurs.length > 1 ? "s" : ""}
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 {filteredFournisseurs.map(f => {
                   const isSelected = selectedFournisseurs.includes(f.id);
+                  const logoSrc = f.logo || getPartnerLogo(f.nom, f.id);
                   return (
                     <button
                       key={f.id}
                       type="button"
                       onClick={() => toggleFournisseur(f.id)}
-                      className={`p-4 rounded-xl border-2 text-left transition-all group relative overflow-hidden
-                        ${isSelected ? "border-[#ff6b35] bg-orange-50/50" : "border-gray-200 hover:border-orange-300 bg-white"}`}
+                      className={`p-3.5 rounded-xl border-2 text-left transition-all group relative overflow-hidden flex items-center gap-3.5
+                        ${isSelected ? "border-[#ff6b35] bg-orange-50/60 shadow-sm ring-1 ring-[#ff6b35]/30" : "border-gray-200 hover:border-orange-300 bg-white"}`}
                     >
-                      <div className="flex items-center gap-3 relative z-10">
-                        <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors
-                          ${isSelected ? "bg-[#ff6b35] border-[#ff6b35]" : "border-gray-300 group-hover:border-orange-400"}`}>
-                          {isSelected && <Check className="w-3.5 h-3.5 text-white" />}
+                      <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors
+                        ${isSelected ? "bg-[#ff6b35] border-[#ff6b35]" : "border-gray-300 group-hover:border-orange-400"}`}>
+                        {isSelected && <Check className="w-3.5 h-3.5 text-white" />}
+                      </div>
+
+                      {/* Logo du fournisseur */}
+                      <div className="w-12 h-12 rounded-xl bg-white border border-gray-100 p-1 flex items-center justify-center flex-shrink-0 shadow-xs">
+                        {logoSrc ? (
+                          <Image
+                            src={logoSrc}
+                            alt={f.nom}
+                            width={42}
+                            height={42}
+                            className="object-contain max-w-full max-h-full rounded"
+                          />
+                        ) : (
+                          <Building2 className="w-6 h-6 text-gray-400" />
+                        )}
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className={`text-sm font-bold truncate ${isSelected ? "text-[#ff6b35]" : "text-[#0B2447]"}`}>{f.nom}</p>
+                          <span className="text-[9px] bg-emerald-50 text-emerald-700 px-1.5 py-0.5 border border-emerald-200 rounded-md font-medium">Agréé</span>
                         </div>
-                        <div>
-                          <p className={`text-sm font-bold ${isSelected ? "text-[#ff6b35]" : "text-[#0B2447]"}`}>{f.nom}</p>
-                          <p className="text-[10px] text-gray-400 truncate">{f.raisonSociale}</p>
-                        </div>
+                        <p className="text-[11px] text-gray-500 truncate mt-0.5">{f.secteurActivite || f.raisonSociale}</p>
                       </div>
                     </button>
                   );

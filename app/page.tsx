@@ -2,10 +2,10 @@
 "use client";
 import { useLDFAuthStore } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
-import { IMAGES, ICONS } from "@/lib/constants";
+import { IMAGES, ICONS, OFFICIAL_FOURNISSEURS, getPartnerLogo } from "@/lib/constants";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function RootPage() {
   const { isAuthenticated, isLoading } = useLDFAuthStore();
@@ -14,6 +14,14 @@ export default function RootPage() {
 
   const [skip, setSkip] = useState(false);
   const [animating, setAnimating] = useState(true);
+
+  // Fournisseurs officiels de l'orbite (8 partenaires agréés Vitalis)
+  const orbitFournisseurs = useMemo(() => {
+    if (fournisseurs && fournisseurs.length >= 8) {
+      return fournisseurs.filter(f => f.statut === "actif");
+    }
+    return OFFICIAL_FOURNISSEURS;
+  }, [fournisseurs]);
 
   // Splash screen timeout: 25 seconds
   useEffect(() => {
@@ -41,9 +49,9 @@ export default function RootPage() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#ff6b35] opacity-20 blur-[120px] rounded-full mix-blend-screen animate-pulse"></div>
         <div className="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] bg-[#1e4a8a] opacity-40 blur-[100px] rounded-full mix-blend-screen"></div>
 
-        {/* Cercles orbitaux de fond */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[360px] h-[360px] rounded-full border border-white/5"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] h-[480px] rounded-full border border-white/5 border-dashed"></div>
+        {/* Cercles orbitaux de fond alignés avec le rayon des satellites (r=210 -> d=420) */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full border border-white/10"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full border border-dashed border-orange-500/25 animate-[spin_60s_linear_infinite]"></div>
       </div>
 
       {/* ─── Bouton Skip ─── */}
@@ -69,26 +77,27 @@ export default function RootPage() {
 
         {/* Fournisseurs en orbite */}
         <div className="absolute inset-0 animate-[spin_25s_linear_infinite]">
-          {fournisseurs.map((f, i) => {
-            const angle = (i * 360) / fournisseurs.length;
-            const radius = 200; // Distance depuis le centre
+          {orbitFournisseurs.map((f, i) => {
+            const angle = (i * 360) / orbitFournisseurs.length;
+            const radius = 210; // Distance depuis le centre
             const rad = angle * (Math.PI / 180);
             const x = Math.cos(rad) * radius;
             const y = Math.sin(rad) * radius;
+            const logoSrc = f.logo || getPartnerLogo(f.nom, f.id);
 
             return (
               <div
-                key={f.id}
-                className="absolute top-1/2 left-1/2 w-20 h-20 -mt-10 -ml-10 bg-white/95 backdrop-blur-md rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] border-2 border-white/50 p-3 flex items-center justify-center animate-[spin_25s_linear_infinite_reverse] transition-transform hover:scale-110 cursor-default"
+                key={f.id || i}
+                className="absolute top-1/2 left-1/2 w-20 h-20 -mt-10 -ml-10 bg-white/95 backdrop-blur-md rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.18)] border-2 border-white/60 p-2.5 flex items-center justify-center animate-[spin_25s_linear_infinite_reverse] transition-transform hover:scale-115 cursor-default"
                 style={{ transform: `translate(${x}px, ${y}px)` }}
-                title={f.nom}
+                title={`${f.nom} — Partenaire Agréé Vitalis`}
               >
-                {f.logo ? (
+                {logoSrc ? (
                   <Image
-                    src={f.logo}
+                    src={logoSrc}
                     alt={f.nom}
-                    width={48} height={48}
-                    className="object-contain max-w-full max-h-full"
+                    width={56} height={56}
+                    className="object-contain max-w-full max-h-full rounded-md"
                   />
                 ) : (
                   <span className="text-[9px] font-bold text-center text-[#0B2447] leading-tight uppercase tracking-tighter">{f.nom.substring(0, 10)}</span>

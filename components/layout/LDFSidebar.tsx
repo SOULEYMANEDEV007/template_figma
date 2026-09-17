@@ -165,7 +165,7 @@ export default function LDFSidebar() {
         {(!isSidebarCollapsed || mobile) && (
           <div className="min-w-0">
             <p className="text-white font-bold text-base leading-none tracking-tight truncate">
-              ViFlo by <span style={{ color: "#FF9E44" }}>FADES</span>
+              ViFlo by <span style={{ color: "#FF9E44", font: 12 }}>FADES</span>
             </p>
             <p className="text-[10px] mt-0.5 truncate" style={{ color: "rgba(190,215,255,0.55)" }}>Donnons vie à vos projets</p>
           </div>

@@ -14,6 +14,7 @@
 import { LDFModal } from "@/components/ui/ldf-modal";
 import { saveFile } from "@/lib/fileStorage";
 import { mockSouscripteursUsers } from "@/lib/ldfData";
+import { OFFICIAL_FOURNISSEURS, getPartnerLogo } from "@/lib/constants";
 import { emitInAppNotification, useLDFAuthStore } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
 import {
@@ -21,8 +22,9 @@ import {
   Copy, FileText, Info, Key, Loader2, Mail, MapPin, Plus, Search, Trash2,
   Upload, User, Users, X,
 } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 // ── Constantes ──────────────────────────────────────────────────
@@ -369,7 +371,8 @@ export default function CreerSouscriptionPage() {
       const ref = `VF-${year}-${seq}`;
 
       const agenceChoisie = agencesAFG.find(a => a.id === agenceId);
-      const fournisseursChoisis = fournisseurs
+      const allFournisseursList = (fournisseurs && fournisseurs.length >= 8) ? fournisseurs : OFFICIAL_FOURNISSEURS;
+      const fournisseursChoisis = allFournisseursList
         .filter(f => selectedFournisseurs.includes(f.id))
         .map(f => ({ fournisseurId: f.id, fournisseurNom: f.nom, statut: "en_attente" as const }));
 
@@ -833,40 +836,57 @@ export default function CreerSouscriptionPage() {
           </SectionCard>
 
           {/* Fournisseur émetteur */}
-          <SectionCard title="Fournisseur émetteur de la souscription" icon={Building2}>
+          <SectionCard title="Fournisseurs agréés partenaires" icon={Building2}>
             <p className="text-xs text-gray-500 mb-3">
               {user?.role === "fournisseur"
                 ? "Votre établissement est l'émetteur exclusif de cette souscription et du devis associé :"
-                : "Sélectionnez le fournisseur partenaire pour cette souscription :"}
+                : "Sélectionnez le ou les fournisseurs agréés partenaires pour cette souscription :"}
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {fournisseurs
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              {((fournisseurs && fournisseurs.length >= 8) ? fournisseurs : OFFICIAL_FOURNISSEURS)
                 .filter(f => f.agreVitalis && f.statut === "actif")
                 .filter(f => user?.role === "fournisseur" ? (f.id === user.organisationId || f.id === user.fournisseurId) : true)
                 .map(f => {
                 const isSelected = selectedFournisseurs.includes(f.id);
-                const isDisabled = user?.role === "fournisseur" && user.organisationId === f.id;
+                const isDisabled = user?.role === "fournisseur" && (user.organisationId === f.id || user.fournisseurId === f.id);
+                const logoSrc = f.logo || getPartnerLogo(f.nom, f.id);
                 return (
                   <button
                     key={f.id}
                     type="button"
                     disabled={isDisabled}
                     onClick={() => !isDisabled && toggleFournisseur(f.id)}
-                    className={`p-3 rounded-xl border-2 text-left transition-all
-                      ${isSelected ? "border-orange-500 bg-orange-50" : "border-gray-200 hover:border-orange-200 bg-white"}
-                      ${isDisabled ? "opacity-80 cursor-default" : "cursor-pointer"}`}
+                    className={`p-3.5 rounded-xl border-2 text-left transition-all flex items-center gap-3.5
+                      ${isSelected ? "border-orange-500 bg-orange-50/70 shadow-sm ring-1 ring-orange-400/30" : "border-gray-200 hover:border-orange-300 bg-white"}
+                      ${isDisabled ? "opacity-90 cursor-default" : "cursor-pointer"}`}
                   >
-                    <div className="flex items-center gap-2">
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0
-                        ${isSelected ? "bg-orange-500 border-orange-500" : "border-gray-300"}`}>
-                        {isSelected && <Check className="w-3 h-3 text-white" />}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className={`text-xs font-semibold ${isSelected ? "text-orange-700" : "text-gray-700"}`}>{f.nom}</p>
-                        <p className="text-[10px] text-gray-400 truncate">{f.raisonSociale}</p>
-                      </div>
-                      {isDisabled && <span className="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-semibold">Votre établissement (Émetteur)</span>}
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0
+                      ${isSelected ? "bg-orange-500 border-orange-500" : "border-gray-300"}`}>
+                      {isSelected && <Check className="w-3 h-3 text-white" />}
                     </div>
+
+                    <div className="w-11 h-11 rounded-xl bg-white border border-gray-100 p-1 flex items-center justify-center flex-shrink-0 shadow-xs">
+                      {logoSrc ? (
+                        <Image
+                          src={logoSrc}
+                          alt={f.nom}
+                          width={38}
+                          height={38}
+                          className="object-contain max-w-full max-h-full rounded"
+                        />
+                      ) : (
+                        <Building2 className="w-5 h-5 text-gray-400" />
+                      )}
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <p className={`text-xs font-semibold truncate ${isSelected ? "text-orange-900" : "text-gray-800"}`}>{f.nom}</p>
+                        <span className="text-[9px] bg-emerald-50 text-emerald-700 px-1 py-0.2 border border-emerald-200 rounded font-medium">Agréé</span>
+                      </div>
+                      <p className="text-[10px] text-gray-400 truncate mt-0.5">{f.secteurActivite || f.raisonSociale}</p>
+                    </div>
+                    {isDisabled && <span className="text-[9px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-semibold">Émetteur</span>}
                   </button>
                 );
               })}
