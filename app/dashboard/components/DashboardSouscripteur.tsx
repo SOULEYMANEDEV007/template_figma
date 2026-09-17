@@ -4,6 +4,7 @@ import { StatusBadge } from "@/components/ui/ldf-badge";
 import { mockSouscriptions } from "@/lib/ldfData";
 import { useLDFAuthStore } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
+import { IMAGES } from "@/lib/constants";
 import { Info, Printer, ChevronRight, Package } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
@@ -81,9 +82,9 @@ export default function DashboardSouscripteur() {
                 </head><body>
                 
                 <div class="header-logos">
-                  <img src="${window.location.origin}/logos/logo-fades.PNG" alt="FADES" />
-                  <img src="${window.location.origin}/logos/new_logo-viflo.JPG" alt="VIFLO" style="height: 50px;" />
-                  <img src="${window.location.origin}/logos/logo-afg-bank_atlantic.png" alt="AFG Bank" />
+                  <img src="${window.location.origin}${IMAGES.logos.fades}" alt="FADES" />
+                  <img src="${window.location.origin}${IMAGES.logos.vifloNew}" alt="VIFLO" style="height: 50px;" />
+                  <img src="${window.location.origin}${IMAGES.logos.afgBank}" alt="AFG Bank" />
                 </div>
 
                 <h1>📋 Conditions de Souscription — Programme VITALIS</h1>

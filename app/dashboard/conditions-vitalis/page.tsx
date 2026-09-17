@@ -2,6 +2,7 @@
 "use client";
 import { AFG_BANK } from "@/lib/vitalisData";
 import { VITALIS_CONFIG } from "@/types/vitalis";
+import { IMAGES } from "@/lib/constants";
 import { AlertCircle, ArrowLeft, CheckCircle, FileText, Info, Printer } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -354,15 +355,15 @@ export default function ConditionsVitalisPage() {
       {/* En-tête document imprimé */}
       <div className="hidden print:flex items-center justify-between p-8 border-b-2 border-gray-100 bg-white mb-6">
         <div className="flex-1">
-          <img src="/logos/logo-fades.PNG" alt="FADES" className="h-16 object-contain" />
+          <img src={IMAGES.logos.fades} alt="FADES" className="h-16 object-contain" />
         </div>
         <div className="flex-1 flex flex-col items-center border-l border-r border-gray-200 px-4">
           <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-2">Programme</p>
-          <img src="/logos/new_logo-viflo.JPG" alt="Vitalis" className="h-12 object-contain mix-blend-multiply rounded-xl" />
+          <img src={IMAGES.logos.vifloNew} alt="Vitalis" className="h-12 object-contain mix-blend-multiply rounded-xl" />
         </div>
         <div className="flex-1 flex flex-col items-end pl-4">
           <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-2 mr-2">Financement</p>
-          <img src="/logos/logo-afg-bank_atlantic.png" alt="AFG Bank" className="h-10 object-contain" />
+          <img src={IMAGES.logos.afgBank} alt="AFG Bank" className="h-10 object-contain" />
         </div>
       </div>
 

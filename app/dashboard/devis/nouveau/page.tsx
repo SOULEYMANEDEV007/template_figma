@@ -21,6 +21,7 @@ import {
   ArrowLeft, Check, Download, FileText, Loader2,
   MapPin, Plus, Printer, Trash2,
 } from "lucide-react";
+import { IMAGES, getPartnerLogo } from "@/lib/constants";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -57,22 +58,12 @@ function newArticle(): ArticleRow {
   };
 }
 
-const getFournisseurLogo = (fournisseurNom?: string) => {
-  const nom = (fournisseurNom || "").toLowerCase();
-  if (nom.includes("ldf") || nom.includes("librairie")) return "/images/ldf.png";
-  if (nom.includes("dro") || nom.includes("drocolor")) return "/images/drocolor-logo.jfif";
-  if (nom.includes("smt") || nom.includes("smart")) return "/logos/logo-smart-techno.png";
-  if (nom.includes("nas") || nom.includes("nasko")) return "/logos/logo-nasko.png";
-  if (nom.includes("car") || nom.includes("carrefour")) return "/images/logo-carrefour.png";
-  return "/images/ldf.png";
-};
-
 // ── Aperçu devis (rendu HTML pour impression) ────────────────────
 function DevisPreview({
   devisRef, fournisseurNom, agenceNom, souscripteurNom, souscripteurPrenom,
   articles, dateCreation, dateExpiration, conditions, totalHT, totalTTC, relaisNom,
 }: any) {
-  const fournisseurLogo = getFournisseurLogo(fournisseurNom);
+  const fournisseurLogo = getPartnerLogo(fournisseurNom);
 
   return (
     <div id="devis-preview" className="bg-white text-gray-900 text-sm font-sans p-8 rounded-xl border border-gray-200 shadow-sm">
@@ -97,19 +88,19 @@ function DevisPreview({
         {/* 2. Programme VITALIS */}
         <div className="flex flex-col items-center border-l border-r border-gray-200 px-4">
           <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-1">Programme</p>
-          <img src="/logos/new_logo-viflo.JPG" alt="Vitalis" className="h-11 object-contain mix-blend-multiply rounded-xl" crossOrigin="anonymous" />
+          <img src={IMAGES.logos.vifloNew} alt="Vitalis" className="h-11 object-contain mix-blend-multiply rounded-xl" crossOrigin="anonymous" />
         </div>
 
         {/* 3. FADES */}
         <div className="flex items-center">
-          <img src="/logos/logo-fades.PNG" alt="FADES" className="h-14 object-contain" crossOrigin="anonymous" />
+          <img src={IMAGES.logos.fades} alt="FADES" className="h-14 object-contain" crossOrigin="anonymous" />
         </div>
 
         {/* 4. Banque Financeuse */}
         <div className="flex flex-col items-end pl-2">
           <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-1 mr-1">Financement</p>
           <div className="h-12 px-3 flex items-center justify-center rounded-lg bg-white border border-gray-200 shadow-sm">
-            <img src="/logos/logo-afg-bank_atlantic.png" alt="AFG Bank" className="h-8 object-contain" crossOrigin="anonymous" />
+            <img src={IMAGES.logos.afgBank} alt="AFG Bank" className="h-8 object-contain" crossOrigin="anonymous" />
           </div>
         </div>
       </div>

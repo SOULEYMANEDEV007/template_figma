@@ -10,6 +10,7 @@ import {
   FileText, MapPin, Package, Phone, Plus, User, Printer, Send, Truck, Clock,
   BookOpen, ShieldCheck, Sparkles,
 } from "lucide-react";
+import { IMAGES } from "@/lib/constants";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -63,9 +64,9 @@ export default function SouscriptionDetailPage() {
       </style>
       </head><body>
       <div class="header-logos">
-        <img src="${window.location.origin}/logos/logo-fades.PNG" alt="FADES" />
-        <img src="${window.location.origin}/logos/new_logo-viflo.JPG" alt="VIFLO" style="height: 48px;" />
-        <img src="${window.location.origin}/logos/logo-afg-bank_atlantic.png" alt="AFG Bank" />
+        <img src="${window.location.origin}${IMAGES.logos.fades}" alt="FADES" />
+        <img src="${window.location.origin}${IMAGES.logos.vifloNew}" alt="VIFLO" style="height: 48px;" />
+        <img src="${window.location.origin}${IMAGES.logos.afgBank}" alt="AFG Bank" />
       </div>
 
       <h1>DOSSIER DE SOUSCRIPTION VITALIS — DÉPÔT PHYSIQUE AFG BANK</h1>
@@ -259,7 +260,7 @@ export default function SouscriptionDetailPage() {
 
     updateSouscription(sub.id, { statut: "commande_en_preparation" });
     if (dossier) updateDossier(dossier.id, { statut: "commande_en_preparation" });
-    
+
     addHistorique({
       souscriptionId: sub.id,
       action: "commande_preparation",
@@ -391,7 +392,7 @@ export default function SouscriptionDetailPage() {
             <div>
               <p className="text-sm font-bold text-gray-900">En attente de devis complémentaires ou traitement</p>
               <p className="text-xs text-gray-700 mt-0.5 leading-relaxed">
-                Le dossier numérique sera automatiquement transmis à la banque dès que tous les fournisseurs sollicités auront émis leur devis. 
+                Le dossier numérique sera automatiquement transmis à la banque dès que tous les fournisseurs sollicités auront émis leur devis.
                 N'oubliez pas d'imprimer l'ensemble et de vous présenter physiquement en agence AFG Bank.
               </p>
             </div>
@@ -454,7 +455,7 @@ export default function SouscriptionDetailPage() {
               onClick={handleConfirmerPaiement}
               className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-colors shadow-sm self-start sm:self-auto whitespace-nowrap"
             >
-              <CreditCard className="w-3.5 h-3.5" /> Émettre le virement au fournisseur (AFG Bank) →
+              <CreditCard className="w-3.5 h-3.5" /> Valider le virement au fournisseur (AFG Bank) →
             </button>
           ) : (
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-300 self-start sm:self-auto whitespace-nowrap">
@@ -483,8 +484,8 @@ export default function SouscriptionDetailPage() {
             <div className="flex flex-col sm:flex-row items-end gap-3 w-full sm:w-auto mt-3 sm:mt-0">
               <div className="flex flex-col gap-1.5 w-full sm:w-auto text-left">
                 <label className="text-xs font-bold text-sky-900">Date disponibilité *</label>
-                <input 
-                  type="date" 
+                <input
+                  type="date"
                   value={dateDisponibilite}
                   onChange={e => setDateDisponibilite(e.target.value)}
                   className="px-3 py-2 text-sm rounded-lg border border-sky-300 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 text-sky-900 font-medium"
@@ -492,8 +493,8 @@ export default function SouscriptionDetailPage() {
               </div>
               <div className="flex flex-col gap-1.5 w-full sm:w-auto text-left">
                 <label className="text-xs font-bold text-sky-900">Heure *</label>
-                <input 
-                  type="time" 
+                <input
+                  type="time"
                   value={heureDisponibilite}
                   onChange={e => setHeureDisponibilite(e.target.value)}
                   className="px-3 py-2 text-sm rounded-lg border border-sky-300 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 text-sky-900 font-medium"

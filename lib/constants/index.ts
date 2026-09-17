@@ -27,3 +27,8 @@ export const STATUS = {
   REJETEE: "rejetee",
   FINANCEE: "financee",
 } as const;
+
+// Registres partagés pour les assets
+export * from "./images";
+export * from "./icons";
+

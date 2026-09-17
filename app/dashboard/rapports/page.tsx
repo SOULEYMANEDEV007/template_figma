@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
 import { StatusBadge } from "@/components/ui/ldf-badge";
+import { IMAGES } from "@/lib/constants";
 import {
   BarChart3, Building2, CheckCircle2, CreditCard, Download,
   FileSpreadsheet, FileText, Loader2, Package, Printer, TrendingUp,
@@ -296,11 +297,11 @@ export default function RapportsPage() {
         {/* En-tête imprimable / PDF officiel */}
         <div className="pb-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-3">
-            <img src="/logos/viflo_logo.jpeg" alt="ViFlo" className="h-9 object-contain" />
+            <img src={IMAGES.logos.vifloNew} alt="ViFlo" className="h-9 object-contain" />
             <div className="h-6 w-px bg-gray-200" />
-            <img src="/logos/logo-fades.PNG" alt="FADES" className="h-8 object-contain" />
+            <img src={IMAGES.logos.fades} alt="FADES" className="h-8 object-contain" />
             <div className="h-6 w-px bg-gray-200" />
-            <img src="/logos/logo-afg-bank_atlantic.png" alt="AFG Bank" className="h-6 object-contain" />
+            <img src={IMAGES.logos.afgBank} alt="AFG Bank" className="h-6 object-contain" />
           </div>
           <div className="text-right">
             <span className="text-[10px] font-bold tracking-wider uppercase bg-orange-100 text-orange-800 px-2 py-0.5 rounded">

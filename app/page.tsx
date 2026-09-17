@@ -2,7 +2,7 @@
 "use client";
 import { useLDFAuthStore } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
-import { ChevronRight } from "lucide-react";
+import { IMAGES, ICONS } from "@/lib/constants";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -51,7 +51,7 @@ export default function RootPage() {
         onClick={() => setSkip(true)}
         className="absolute top-6 right-6 px-5 py-2.5 bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 text-white/80 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 shadow-2xl z-50 group hover:text-white"
       >
-        Entrer <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+        Entrer <ICONS.chevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
       </button>
 
       {/* ─── Système Orbital ─── */}
@@ -60,7 +60,7 @@ export default function RootPage() {
         {/* Centre : Viflo */}
         <div className="absolute z-20 w-44 h-44 bg-white/95 backdrop-blur-xl rounded-full shadow-[0_0_40px_rgba(255,107,53,0.3)] flex flex-col items-center justify-center p-6 border border-white/20">
           <Image
-            src="/logos/viflo_logo_text.jpeg"
+            src={IMAGES.logos.vifloText}
             alt="Viflo"
             width={100} height={100}
             className="object-contain drop-shadow-lg"
@@ -113,19 +113,19 @@ export default function RootPage() {
           <span className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold">Soutenu par</span>
           <div className="h-6 w-[1px] bg-gray-200"></div>
           <Image
-            src="/logos/logo-afg-bank_atlantic.png"
+            src={IMAGES.logos.afgBank}
             alt="AFG Bank"
             width={80} height={30}
             className="object-contain opacity-90 mix-blend-multiply"
           />
           <Image
-            src="/logos/new_logo-viflo.JPG"
+            src={IMAGES.logos.vifloNew}
             alt="Vitalis Viflo"
             width={80} height={30}
             className="object-contain opacity-90 mix-blend-multiply"
           />
           <Image
-            src="/logos/logo-fades.PNG"
+            src={IMAGES.logos.fades}
             alt="Fades"
             width={80} height={30}
             className="object-contain opacity-90 mix-blend-multiply"

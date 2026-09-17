@@ -6,6 +6,7 @@ import { getDashboardPath, useLDFAuthStore } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
 import { setCookie } from "cookies-next";
 import { Building2, Eye, EyeOff, Lock, Mail, MapPin, Phone, ShieldCheck, Sparkles, User } from "lucide-react";
+import { IMAGES } from "@/lib/constants";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -109,7 +110,7 @@ export default function RegisterPage() {
         {/* Logo ViFlo */}
         <div className="relative z-10 flex items-center gap-3">
           <div className="w-20 h-20 rounded-2xl overflow-hidden flex items-center justify-center bg-white p-2 shadow-lg border border-white/20">
-            <Image src="/logos/viflo_logo.jpeg" alt="ViFlo" width={160} height={160} className="object-contain w-full h-full" onError={() => { }} />
+            <Image src={IMAGES.logos.vifloNew} alt="ViFlo" width={160} height={160} className="object-contain w-full h-full" />
           </div>
           <div>
             <p className="text-white font-bold text-2xl leading-none">
@@ -160,7 +161,7 @@ export default function RegisterPage() {
           {/* Mobile logo ViFlo */}
           <div className="lg:hidden flex items-center gap-3 mb-8">
             <div className="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center bg-white border border-gray-200 p-1">
-              <Image src="/logos/viflo_logo.jpeg" alt="ViFlo" width={48} height={48} className="object-contain w-full h-full" />
+              <Image src={IMAGES.logos.vifloNew} alt="ViFlo" width={48} height={48} className="object-contain w-full h-full" />
             </div>
             <div>
               <p className="font-bold text-gray-900 text-lg">ViFlo <span className="text-orange-500">FADES</span></p>

@@ -27,7 +27,7 @@ export const getDossierBySouscription = (id: string) => null;
 export const getHistoriqueBySouscription = (id: string) => [];
 
 export const mockUsers = [
-  { id: "USR-001", email: "admin@viflo.ci", password: "admin123", nom: "Admin", prenom: "Système", role: "admin" },
+  { id: "USR-001", email: "admin@viflo.ci", password: "admin123", nom: "Admin", prenom: "Administrateur", role: "admin" },
   { id: "USR-002", email: "banque@afgbank.ci", password: "banque123", nom: "Traoré", prenom: "Abdoulaye", role: "banque", banqueId: "AFG-001" },
 ];
 
@@ -36,7 +36,7 @@ export const mockSouscripteursUsers = [
 ];
 
 export const demoAccounts = [
-  { email: "admin@viflo.ci", password: "admin123", role: "admin", nom: "Admin", prenom: "Système" },
+  { email: "admin@viflo.ci", password: "admin123", role: "admin", nom: "Admin", prenom: "Administrateur" },
   { email: "banque@afgbank.ci", password: "banque123", role: "banque", nom: "Traoré", prenom: "Abdoulaye" },
   { email: "fournisseur@ldf.ci", password: "fournisseur123", role: "fournisseur", nom: "LDF", prenom: "Groupe" },
   { email: "client@viflo.ci", password: "client123", role: "souscripteur", nom: "Coulibaly", prenom: "Mamadou" },
