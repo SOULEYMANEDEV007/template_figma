@@ -31,4 +31,5 @@ export const STATUS = {
 // Registres partagés pour les assets
 export * from "./images";
 export * from "./icons";
+export * from "./besoins";
 

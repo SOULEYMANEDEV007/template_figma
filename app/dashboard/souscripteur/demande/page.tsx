@@ -3,7 +3,7 @@
 
 import { emitInAppNotification, useLDFAuthStore } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
-import { OFFICIAL_FOURNISSEURS, getPartnerLogo } from "@/lib/constants";
+import { OFFICIAL_FOURNISSEURS, getPartnerLogo, CATEGORIES_BESOIN, NATURES_BESOIN } from "@/lib/constants";
 import { ArrowLeft, ArrowRight, Building2, Check, FileText, MapPin, Package, Send, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -172,22 +172,31 @@ export default function NouvelleDemandeSouscripteur() {
                 <div>
                   <label className="block text-xs font-semibold text-gray-600 mb-2">Nature du besoin *</label>
                   <select className={sel} value={natureBesoin} onChange={e => setNatureBesoin(e.target.value)} required>
-                    <option value="">Sélectionnez la nature</option>
-                    <option value="Equipement personnel">Équipement personnel</option>
-                    <option value="Equipement professionnel">Équipement professionnel</option>
-                    <option value="Scolarite / Etudes">Scolarité / Études</option>
-                    <option value="Autre">Autre</option>
+                    <option value="">Sélectionnez la nature du besoin</option>
+                    {NATURES_BESOIN.map(grp => (
+                      <optgroup key={grp.groupe} label={grp.groupe}>
+                        {grp.options.map(opt => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </optgroup>
+                    ))}
                   </select>
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-600 mb-2">Catégorie *</label>
                   <select className={sel} value={categorie} onChange={e => setCategorie(e.target.value)} required>
-                    <option value="">Sélectionnez une catégorie</option>
-                    <option value="Informatique & Multimedia">Informatique & Multimédia</option>
-                    <option value="Electromenager">Électroménager</option>
-                    <option value="Mobilier & Bureau">Mobilier & Bureau</option>
-                    <option value="Fournitures scolaires">Fournitures scolaires</option>
-                    <option value="Materiel de BTP">Matériel spécialisé</option>
+                    <option value="">Sélectionnez une catégorie de produit</option>
+                    {CATEGORIES_BESOIN.map(grp => (
+                      <optgroup key={grp.groupe} label={grp.groupe}>
+                        {grp.options.map(opt => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </optgroup>
+                    ))}
                   </select>
                 </div>
                 <div className="md:col-span-2">
@@ -304,6 +313,25 @@ export default function NouvelleDemandeSouscripteur() {
                         <div className="flex items-center gap-2">
                           <p className={`text-sm font-bold truncate ${isSelected ? "text-[#ff6b35]" : "text-[#0B2447]"}`}>{f.nom}</p>
                           <span className="text-[9px] bg-emerald-50 text-emerald-700 px-1.5 py-0.5 border border-emerald-200 rounded-md font-medium">Agréé</span>
+                          {(() => {
+                            const cat = (categorie || "").toLowerCase();
+                            const s = f.nom.toLowerCase();
+                            const match =
+                              (cat.includes("auto") && s.includes("rymco")) ||
+                              ((cat.includes("ciment") || cat.includes("materia") || cat.includes("logement")) && s.includes("sodimac")) ||
+                              (cat.includes("peinture") && (s.includes("drocolor") || s.includes("sodimac"))) ||
+                              (cat.includes("electro") && (s.includes("nasco") || s.includes("lg") || s.includes("sociam"))) ||
+                              (cat.includes("image") && (s.includes("lg") || s.includes("sociam") || s.includes("smart"))) ||
+                              (cat.includes("informatique") && s.includes("smart")) ||
+                              (cat.includes("fourniture") && s.includes("librairie")) ||
+                              (cat.includes("mobilier") && (s.includes("nasco") || s.includes("librairie"))) ||
+                              (cat.includes("outil") && (s.includes("sodimac") || s.includes("rymco")));
+                            return match ? (
+                              <span className="text-[9px] bg-orange-100 text-orange-800 px-1.5 py-0.5 border border-orange-200 rounded-md font-semibold">
+                                Recommandé
+                              </span>
+                            ) : null;
+                          })()}
                         </div>
                         <p className="text-[11px] text-gray-500 truncate mt-0.5">{f.secteurActivite || f.raisonSociale}</p>
                       </div>

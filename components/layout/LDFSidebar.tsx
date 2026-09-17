@@ -153,19 +153,19 @@ export default function LDFSidebar() {
         "flex items-center border-b border-white/8 flex-shrink-0",
         isSidebarCollapsed && !mobile ? "justify-center px-3 py-4" : "px-4 py-4 gap-3",
       )}>
-        <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center bg-white p-1 shadow-sm">
+        <div className="w-15 h-15 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center bg-white p-1 shadow-sm">
           <Image
             src={IMAGES.logos.vifloNew}
             alt="ViFlo"
-            width={40}
-            height={40}
+            width={50}
+            height={50}
             className="object-contain w-full h-full"
           />
         </div>
         {(!isSidebarCollapsed || mobile) && (
           <div className="min-w-0">
             <p className="text-white font-bold text-base leading-none tracking-tight truncate">
-              ViFlo by <span style={{ color: "#FF9E44", font: 12 }}>FADES</span>
+              ViFlo<span className="text-[11px] font-semibold text-[#FF9E44] ml-0.5" style={{ fontSize: "11px", color: "#FFFFFF" }}>by</span><span className="text-[11px] font-semibold text-[#FF9E44] ml-0.5" style={{ fontSize: "11px", color: "#FF9E44" }}>FADES</span>
             </p>
             <p className="text-[10px] mt-0.5 truncate" style={{ color: "rgba(190,215,255,0.55)" }}>Donnons vie à vos projets</p>
           </div>

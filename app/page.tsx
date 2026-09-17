@@ -122,8 +122,8 @@ export default function RootPage() {
           <span className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold">Soutenu par</span>
           <div className="h-6 w-[1px] bg-gray-200"></div>
           <Image
-            src={IMAGES.logos.afgBank}
-            alt="AFG Bank"
+            src={IMAGES.logos.fades}
+            alt="Fades"
             width={80} height={30}
             className="object-contain opacity-90 mix-blend-multiply"
           />
@@ -134,8 +134,8 @@ export default function RootPage() {
             className="object-contain opacity-90 mix-blend-multiply"
           />
           <Image
-            src={IMAGES.logos.fades}
-            alt="Fades"
+            src={IMAGES.logos.afgBank}
+            alt="AFG Bank"
             width={80} height={30}
             className="object-contain opacity-90 mix-blend-multiply"
           />
