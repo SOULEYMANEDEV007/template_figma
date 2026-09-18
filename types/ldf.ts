@@ -6,7 +6,7 @@
 // ============================================================
 // RÔLES
 // ============================================================
-export type LDFUserRole = "admin" | "banque" | "fournisseur" | "souscripteur";
+export type LDFUserRole = "admin" | "banque" | "fournisseur" | "souscripteur" | "owner";
 
 export interface LDFUser {
   id: string;

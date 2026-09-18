@@ -7,6 +7,9 @@ import { deleteCookie, getCookie, setCookie } from "cookies-next";
 import { create } from "zustand";
 import { toast } from "sonner";
 
+// Flag de contrôle du profil Propriétaire (Désactivé jusqu'à validation formelle de la direction)
+export const IS_OWNER_PROFILE_ENABLED = false;
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 type AuthState = {
   user: LDFUser | null;
@@ -170,6 +173,13 @@ export const useLDFAuthStore = create<AuthState & AuthActions>((set, get) => ({
       throw new Error("Identifiants invalides");
     }
 
+    if (account.role === "owner" && !IS_OWNER_PROFILE_ENABLED) {
+      const msg = "Le profil Propriétaire est actuellement désactivé (en attente de validation de la direction).";
+      set({ isLoading: false, error: msg });
+      toast.error(msg);
+      throw new Error(msg);
+    }
+
     const user = mockUsers.find((u) => u.email.toLowerCase() === email.toLowerCase())
       ?? mockSouscripteursUsers.find((u) => u.email.toLowerCase() === email.toLowerCase());
     if (!user) {
@@ -283,6 +293,7 @@ export const useLDFAuthStore = create<AuthState & AuthActions>((set, get) => ({
 export function getRoleLabel(role: string): string {
   const labels: Record<string, string> = {
     admin: "Administrateur ViFlo",
+    owner: "Propriétaire ViFlo (Supervision)",
     banque: "Responsable Banque",
     fournisseur: "Fournisseur",
     souscripteur: "Client / Souscripteur",

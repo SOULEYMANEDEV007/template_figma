@@ -46,6 +46,18 @@ export const demoAccounts = [
     banqueId: "AFG-001",
     banqueNom: "AFG Bank",
   },
+  {
+    email: "owner@viflo.ci",
+    password: "owner123",
+    role: "owner",
+    label: "Propriétaire ViFlo (Supervision)",
+    nom: "",
+    prenom: "Propriétaire",
+    disabled: true,
+    badge: "En attente de validation",
+    banqueId: "AFG-001",
+    banqueNom: "AFG Bank",
+  },
 ];
 
 // ============================================================
@@ -104,6 +116,20 @@ export const mockUsers = [
     statut: "actif",
     isActive: true,
     createdAt: "2024-01-01",
+  },
+  {
+    id: "USR-OWNER-001",
+    email: "owner@viflo.ci",
+    password: "owner123",
+    nom: "",
+    prenom: "Propriétaire",
+    firstName: "Propriétaire",
+    lastName: "",
+    role: "owner",
+    telephone: "+225 07 00 00 00 01",
+    statut: "inactif",
+    isActive: false,
+    createdAt: "2026-01-01",
   },
 ];
 

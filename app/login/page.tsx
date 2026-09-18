@@ -3,13 +3,14 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { demoAccounts } from "@/lib/ldfData";
-import { getDashboardPath, useLDFAuthStore } from "@/stores/ldfAuth";
+import { getDashboardPath, useLDFAuthStore, IS_OWNER_PROFILE_ENABLED } from "@/stores/ldfAuth";
 import { IMAGES } from "@/lib/constants";
 import {
   Eye, EyeOff, Lock, Mail, Sparkles, ShieldCheck,
   Building2,
   TrendingUp,
   User,
+  Crown,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -57,19 +58,26 @@ export default function LoginPage() {
 
   const fillDemo = (idx: number) => {
     const acc = demoAccounts[idx];
+    if (acc.disabled || (acc.role === "owner" && !IS_OWNER_PROFILE_ENABLED)) {
+      toast.warning("Profil en attente de validation", {
+        description: "Le profil Propriétaire ViFlo est actuellement désactivé en attente de validation par la direction.",
+      });
+      return;
+    }
     setEmail(acc.email);
     setPassword(acc.password);
     setSelectedDemo(idx);
   };
 
-  const ROLE_ICONS = [ShieldCheck, Building2, TrendingUp, User];
+  const ROLE_ICONS = [ShieldCheck, Building2, TrendingUp, User, Crown];
   const ROLE_COLORS = [
     "border-purple-200 bg-purple-50 hover:border-purple-400 data-[active=true]:border-purple-500 data-[active=true]:bg-purple-50",
     "border-cyan-200 bg-cyan-50 hover:border-cyan-400 data-[active=true]:border-cyan-500 data-[active=true]:bg-cyan-50",
     "border-green-200 bg-green-50 hover:border-green-400 data-[active=true]:border-green-500 data-[active=true]:bg-green-50",
     "border-amber-200 bg-amber-50 hover:border-amber-400 data-[active=true]:border-amber-500 data-[active=true]:bg-amber-50",
+    "border-slate-300 bg-slate-100/70 hover:border-slate-400 data-[active=true]:border-slate-500 data-[active=true]:bg-slate-100",
   ];
-  const ICON_COLORS = ["text-purple-600", "text-cyan-600", "text-green-600", "text-amber-600"];
+  const ICON_COLORS = ["text-purple-600", "text-cyan-600", "text-green-600", "text-amber-600", "text-slate-600"];
 
   return (
     <div className="min-h-screen flex">
@@ -256,18 +264,28 @@ export default function LoginPage() {
 
             <div className="space-y-2">
               {demoAccounts.map((acc, idx) => {
-                const Icon = ROLE_ICONS[idx];
+                const Icon = ROLE_ICONS[idx] || User;
+                const isOwnerDisabled = (acc.role === "owner" && !IS_OWNER_PROFILE_ENABLED) || acc.disabled;
                 return (
                   <button
                     key={acc.email}
                     type="button"
                     data-active={selectedDemo === idx}
                     onClick={() => fillDemo(idx)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all duration-200 text-left ${ROLE_COLORS[idx]}`}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all duration-200 text-left ${
+                      ROLE_COLORS[idx] || "border-gray-200 bg-gray-50"
+                    } ${isOwnerDisabled ? "opacity-60 cursor-not-allowed border-dashed" : ""}`}
                   >
-                    <Icon className={`w-4 h-4 flex-shrink-0 ${ICON_COLORS[idx]}`} />
+                    <Icon className={`w-4 h-4 flex-shrink-0 ${ICON_COLORS[idx] || "text-gray-600"}`} />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-gray-800 truncate">{acc.label}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-semibold text-gray-800 truncate">{acc.label}</p>
+                        {isOwnerDisabled && (
+                          <span className="text-[10px] bg-amber-100 text-amber-800 font-semibold px-2 py-0.5 rounded-full border border-amber-300 flex-shrink-0">
+                            En attente de validation
+                          </span>
+                        )}
+                      </div>
                       <p className="text-xs text-gray-500 truncate">{acc.email}</p>
                     </div>
                     <span className="text-xs text-gray-400 font-mono flex-shrink-0">{acc.password}</span>

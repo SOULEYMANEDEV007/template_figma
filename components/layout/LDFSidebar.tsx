@@ -44,6 +44,26 @@ function getNav(role: LDFUserRole, unreadCount: number): { main: NavItem[]; bott
     };
   }
 
+  if (role === "owner") {
+    return {
+      main: [
+        ...common,
+        { name: "Souscriptions", href: "/dashboard/souscriptions", icon: ICONS.souscriptions },
+        { name: "Devis", href: "/dashboard/devis", icon: ICONS.documentation },
+        { name: "Dossiers", href: "/dashboard/dossiers", icon: ICONS.shield },
+        { name: "Paiements", href: "/dashboard/paiements", icon: ICONS.paiements },
+        { name: "Articles servis", href: "/dashboard/articles", icon: ICONS.articles },
+        { name: "Notifications", href: "/dashboard/notifications", icon: ICONS.notifications, badge: unreadCount },
+        { name: "Rapports", href: "/dashboard/rapports", icon: ICONS.rapports },
+      ],
+      bottom: [
+        { name: "Fournisseurs", href: "/dashboard/admin/fournisseurs", icon: ICONS.fournisseur },
+        { name: "Agences AFG CI", href: "/dashboard/admin/banques", icon: ICONS.banque },
+        { name: "Paramètres", href: "/dashboard/parametres", icon: ICONS.settings },
+      ],
+    };
+  }
+
   if (role === "banque") {
     return {
       main: [
@@ -200,10 +220,14 @@ export default function LDFSidebar() {
       {(() => {
         const displayName = user.role === "admin" || (user.prenom === "Administrateur" && (!user.nom || user.nom === "Admin"))
           ? "Administrateur"
+          : user.role === "owner"
+          ? "Propriétaire"
           : [user.prenom, user.nom].filter(Boolean).join(" ");
 
         const initials = user.role === "admin" || (user.prenom === "Administrateur" && (!user.nom || user.nom === "Admin"))
           ? "A"
+          : user.role === "owner"
+          ? "P"
           : `${user.prenom?.[0] || user.nom?.[0] || 'U'}${user.nom?.[0] || ''}`;
 
         return (
