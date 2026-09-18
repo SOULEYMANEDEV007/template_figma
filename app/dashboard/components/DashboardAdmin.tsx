@@ -23,7 +23,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
       <p className="font-semibold text-gray-700 mb-1">{label}</p>
       {payload.map((p: any) => (
         <div key={p.name} className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full" style={{ background: p.fill || p.color }} />
+          <span className="w-2 h-2 rounded-full" style={{ background: p.fill?.startsWith('url') ? '#2563eb' : (p.fill || p.color) }} />
           <span className="text-gray-500">{p.name} :</span>
           <span className="font-medium text-gray-800">{p.value}</span>
         </div>
@@ -42,20 +42,20 @@ export default function DashboardAdmin() {
     .slice(0, 5);
 
   const COULEURS_FOURNISSEURS: Record<string, string> = {
-    'FOUR-LDF-001': '#ea580c', // Librairie de France
-    'FOUR-DRO-002': '#dc2626', // Drocolor
-    'FOUR-COM-003': '#0284c7', // COMAFRIQUE
-    'FOUR-INO-004': '#10b981', // INOVIM
-    'FOUR-KAY-005': '#8b5cf6', // KAYDAN
-    'FOUR-SOC-006': '#f59e0b', // SOCIDA
-    'FOUR-RYM-007': '#06b6d4', // RYMCO
-    'FOUR-LG-008': '#a21caf', // LG
-    'FOUR-SDM-009': '#4b5563', // SODIMAC
-    'FOUR-SCM-010': '#d97706', // SOCIAM
+    'FOUR-LDF-001': '#ea580c', // Librairie de France (Orange ViFlo)
+    'FOUR-DRO-002': '#2563eb', // Drocolor (Bleu Roi éclatant - contraste maximal avec l'Orange LDF !)
+    'FOUR-COM-003': '#059669', // COMAFRIQUE (Vert Émeraude)
+    'FOUR-INO-004': '#7c3aed', // INOVIM (Violet Profond)
+    'FOUR-KAY-005': '#db2777', // KAYDAN (Rose Magenta)
+    'FOUR-SOC-006': '#0891b2', // SOCIDA (Bleu Cyan Lagon)
+    'FOUR-RYM-007': '#d97706', // RYMCO (Ambre Doré)
+    'FOUR-LG-008': '#e11d48', // LG (Rouge Carmin)
+    'FOUR-SDM-009': '#475569', // SODIMAC (Gris Ardoise)
+    'FOUR-SCM-010': '#4f46e5', // SOCIAM (Indigo)
   };
 
   const PALETTE_FALLBACK = [
-    '#ea580c', '#0284c7', '#10b981', '#8b5cf6', '#f43f5e', '#f59e0b', '#06b6d4', '#6366f1',
+    '#ea580c', '#2563eb', '#059669', '#7c3aed', '#db2777', '#0891b2', '#d97706', '#e11d48', '#475569', '#4f46e5',
   ];
 
   // Activité récente générée dynamiquement depuis les vraies données
@@ -134,15 +134,21 @@ export default function DashboardAdmin() {
         {/* Évolution souscriptions */}
         <div className="section-card p-5 lg:col-span-2">
           <h2 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <BarChart3 className="w-4 h-4 text-amber-500" /> Évolution des souscriptions
+            <BarChart3 className="w-4 h-4 text-blue-600" /> Évolution des souscriptions
           </h2>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={chartData}>
+              <defs>
+                <linearGradient id="barGradientAdmin" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.95} />
+                  <stop offset="100%" stopColor="#1d4ed8" stopOpacity={0.8} />
+                </linearGradient>
+              </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
               <XAxis dataKey="mois" tick={{ fontSize: 11 }} />
               <YAxis tick={{ fontSize: 11 }} />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="souscriptions" name="Souscriptions" fill="#ff6b35" radius={[5, 5, 0, 0]} />
+              <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(59, 130, 246, 0.05)' }} />
+              <Bar dataKey="souscriptions" name="Souscriptions" fill="url(#barGradientAdmin)" radius={[5, 5, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -203,10 +209,10 @@ export default function DashboardAdmin() {
             </div>
             <div className="flex items-center justify-between pt-1 border-t border-gray-50 text-[11px] text-gray-500">
               <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-orange-500" />
+                <span className="w-2 h-2 rounded-full bg-[#0284c7]" />
                 Banque financeuse :
               </span>
-              <span className="font-bold text-orange-600">AFG Bank</span>
+              <span className="font-bold text-[#0284c7]">AFG Bank</span>
             </div>
           </div>
         </div>

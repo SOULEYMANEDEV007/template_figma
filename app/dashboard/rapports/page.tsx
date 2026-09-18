@@ -18,16 +18,16 @@ const fmtCFA = (v: number) =>
   new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 }).format(isNaN(v) ? 0 : v) + " FCFA";
 
 const COULEURS_FOURNISSEURS: Record<string, string> = {
-  'FOUR-LDF-001': '#ea580c', // Librairie de France
-  'FOUR-DRO-002': '#dc2626', // Drocolor
-  'FOUR-COM-003': '#0284c7', // COMAFRIQUE
-  'FOUR-INO-004': '#10b981', // INOVIM
-  'FOUR-KAY-005': '#8b5cf6', // KAYDAN
-  'FOUR-SOC-006': '#f59e0b', // SOCIDA
-  'FOUR-RYM-007': '#06b6d4', // RYMCO
-  'FOUR-LG-008': '#a21caf', // LG
-  'FOUR-SDM-009': '#4b5563', // SODIMAC
-  'FOUR-SCM-010': '#d97706', // SOCIAM
+  'FOUR-LDF-001': '#ea580c', // Librairie de France (Orange ViFlo)
+  'FOUR-DRO-002': '#2563eb', // Drocolor (Bleu Roi éclatant - contraste maximal avec Orange LDF !)
+  'FOUR-COM-003': '#059669', // COMAFRIQUE (Vert Émeraude)
+  'FOUR-INO-004': '#7c3aed', // INOVIM (Violet Profond)
+  'FOUR-KAY-005': '#db2777', // KAYDAN (Rose Magenta)
+  'FOUR-SOC-006': '#0891b2', // SOCIDA (Bleu Cyan Lagon)
+  'FOUR-RYM-007': '#d97706', // RYMCO (Ambre Doré)
+  'FOUR-LG-008': '#e11d48', // LG (Rouge Carmin)
+  'FOUR-SDM-009': '#475569', // SODIMAC (Gris Ardoise)
+  'FOUR-SCM-010': '#4f46e5', // SOCIAM (Indigo)
 };
 
 const PALETTE_AGENCES = [
@@ -41,7 +41,7 @@ const PALETTE_AGENCES = [
 ];
 
 const PALETTE_FOURNISSEURS_FALLBACK = [
-  '#ea580c', '#0284c7', '#10b981', '#8b5cf6', '#f43f5e', '#f59e0b', '#06b6d4', '#6366f1',
+  '#ea580c', '#2563eb', '#059669', '#7c3aed', '#db2777', '#0891b2', '#d97706', '#e11d48', '#475569', '#4f46e5',
 ];
 
 export default function RapportsPage() {

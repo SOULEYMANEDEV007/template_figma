@@ -689,12 +689,12 @@ export const paiementsParMois = [
 
 // AFG Bank est la seule banque — graphique de répartition par fournisseur
 export const souscriptionsParBanque = [
-  { banque: "AFG Bank", valeur: 100, couleur: "#ff6b35" },
+  { banque: "AFG Bank", valeur: 100, couleur: "#0284c7" },
 ];
 
 export const souscriptionsParFournisseur = [
-  { fournisseur: "LDF Groupe", valeur: 59, couleur: "#ff6b35" },
-  { fournisseur: "Drocolor",   valeur: 41, couleur: "#ff8c42" },
+  { fournisseur: "LDF Groupe", valeur: 59, couleur: "#ea580c" },
+  { fournisseur: "Drocolor",   valeur: 41, couleur: "#2563eb" },
 ];
 
 export const souscriptionsParStatut = [
@@ -887,12 +887,12 @@ export const paiementsParMois = [
 ];
 
 export const souscriptionsParBanque = [
-  { banque: "AFG Bank", valeur: 100, couleur: "#ff6b35" },
+  { banque: "AFG Bank", valeur: 100, couleur: "#0284c7" },
 ];
 
 export const souscriptionsParFournisseur = [
-  { fournisseur: "LDF Groupe", valeur: 50, couleur: "#ff6b35" },
-  { fournisseur: "Drocolor", valeur: 50, couleur: "#ff8c42" },
+  { fournisseur: "LDF Groupe", valeur: 50, couleur: "#ea580c" },
+  { fournisseur: "Drocolor", valeur: 50, couleur: "#2563eb" },
 ];
 
 export const souscriptionsParMois = [
