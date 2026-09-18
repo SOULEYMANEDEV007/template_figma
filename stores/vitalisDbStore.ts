@@ -241,9 +241,186 @@ export interface VHistorique {
   date: string;
 }
 
+export interface VUser {
+  id: string;
+  firstName: string;
+  lastName: string;
+  nom?: string;
+  prenom?: string;
+  email: string;
+  role: 'admin' | 'banque' | 'fournisseur' | 'souscripteur' | 'owner';
+  telephone?: string;
+  phone?: string;
+  organisationId?: string;
+  organisationName?: string;
+  banqueId?: string;
+  fournisseurId?: string;
+  statut?: 'actif' | 'inactif';
+  isActive: boolean;
+  createdAt: string;
+  lastLoginAt?: string;
+}
+
+export interface VConnexionLog {
+  id: string;
+  userId: string;
+  userName: string;
+  email: string;
+  role: string;
+  date: string;
+  ip: string;
+  appareil: string;
+  statut: 'succes' | 'echec';
+}
+
 // ============================================================
 // DONNÉES INITIALES (Seed)
 // ============================================================
+
+const SEED_USERS: VUser[] = [
+  {
+    id: 'USR-001',
+    email: 'admin@viflo.ci',
+    firstName: 'Administrateur',
+    lastName: '',
+    nom: '',
+    prenom: 'Administrateur',
+    role: 'admin',
+    telephone: '+225 07 00 00 00 00',
+    phone: '+225 07 00 00 00 00',
+    organisationName: 'LDF Groupe',
+    statut: 'actif',
+    isActive: true,
+    createdAt: '2026-01-01',
+    lastLoginAt: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'USR-002',
+    email: 'banque@afgbank.ci',
+    firstName: 'Abdoulaye',
+    lastName: 'Traoré',
+    nom: 'Traoré',
+    prenom: 'Abdoulaye',
+    role: 'banque',
+    banqueId: 'AFG-001',
+    organisationId: 'AFG-001',
+    organisationName: 'AFG Bank',
+    telephone: '+225 07 01 00 00 00',
+    phone: '+225 07 01 00 00 00',
+    statut: 'actif',
+    isActive: true,
+    createdAt: '2026-01-01',
+    lastLoginAt: new Date(Date.now() - 3 * 3600 * 1000).toISOString(),
+  },
+  {
+    id: 'USR-003',
+    email: 'fournisseur@ldf.ci',
+    firstName: 'LDF',
+    lastName: 'Groupe',
+    nom: 'Groupe LDF',
+    prenom: 'Librairie de France',
+    role: 'fournisseur',
+    fournisseurId: 'FOUR-LDF-001',
+    organisationId: 'FOUR-LDF-001',
+    organisationName: 'Librairie de France Groupe',
+    telephone: '+225 07 02 00 00 00',
+    phone: '+225 07 02 00 00 00',
+    statut: 'actif',
+    isActive: true,
+    createdAt: '2026-01-01',
+    lastLoginAt: new Date(Date.now() - 25 * 3600 * 1000).toISOString(),
+  },
+  {
+    id: 'USR-004',
+    email: 'client@viflo.ci',
+    firstName: 'Mamadou',
+    lastName: 'Coulibaly',
+    nom: 'Coulibaly',
+    prenom: 'Mamadou',
+    role: 'souscripteur',
+    organisationName: 'Particulier',
+    telephone: '+225 07 01 11 22 33',
+    phone: '+225 07 01 11 22 33',
+    statut: 'actif',
+    isActive: true,
+    createdAt: '2026-01-05',
+    lastLoginAt: new Date(Date.now() - 48 * 3600 * 1000).toISOString(),
+  },
+  {
+    id: 'USR-OWNER-001',
+    email: 'owner@viflo.ci',
+    firstName: 'Propriétaire',
+    lastName: '',
+    nom: '',
+    prenom: 'Propriétaire',
+    role: 'owner',
+    organisationName: 'LDF Groupe',
+    telephone: '+225 07 00 00 00 01',
+    phone: '+225 07 00 00 00 01',
+    statut: 'inactif',
+    isActive: false,
+    createdAt: '2026-01-01',
+    lastLoginAt: new Date(Date.now() - 40 * 60 * 1000).toISOString(),
+  },
+];
+
+const SEED_CONNEXIONS_LOGS: VConnexionLog[] = [
+  {
+    id: 'LOG-001',
+    userId: 'USR-001',
+    userName: 'Administrateur',
+    email: 'admin@viflo.ci',
+    role: 'admin',
+    date: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
+    ip: '192.168.1.10 (Abidjan)',
+    appareil: 'Chrome / Windows 11',
+    statut: 'succes',
+  },
+  {
+    id: 'LOG-002',
+    userId: 'USR-OWNER-001',
+    userName: 'Propriétaire',
+    email: 'owner@viflo.ci',
+    role: 'owner',
+    date: new Date(Date.now() - 40 * 60 * 1000).toISOString(),
+    ip: '192.168.1.15 (Abidjan)',
+    appareil: 'Chrome / Windows 11',
+    statut: 'succes',
+  },
+  {
+    id: 'LOG-003',
+    userId: 'USR-002',
+    userName: 'Abdoulaye Traoré',
+    email: 'banque@afgbank.ci',
+    role: 'banque',
+    date: new Date(Date.now() - 3 * 3600 * 1000).toISOString(),
+    ip: '10.0.4.82 (Agence Plateau)',
+    appareil: 'Edge / Windows 10',
+    statut: 'succes',
+  },
+  {
+    id: 'LOG-004',
+    userId: 'USR-003',
+    userName: 'Librairie de France Groupe',
+    email: 'fournisseur@ldf.ci',
+    role: 'fournisseur',
+    date: new Date(Date.now() - 25 * 3600 * 1000).toISOString(),
+    ip: '160.154.21.90 (Abidjan)',
+    appareil: 'Chrome / MacOS',
+    statut: 'succes',
+  },
+  {
+    id: 'LOG-005',
+    userId: 'USR-004',
+    userName: 'Mamadou Coulibaly',
+    email: 'client@viflo.ci',
+    role: 'souscripteur',
+    date: new Date(Date.now() - 48 * 3600 * 1000).toISOString(),
+    ip: '41.207.24.11 (Mobile Abidjan)',
+    appareil: 'Mobile Safari / iOS',
+    statut: 'succes',
+  },
+];
 
 const SEED_AGENCES_AFG: VAgenceAFG[] = [
   { id: 'AGE-AFG-001', code: 'AFG-PLT', nom: 'Agence Plateau', ville: 'Abidjan', adresse: 'Avenue Chardy, Immeuble SCIAM, Plateau', telephone: '+225 27 20 31 58 00', email: 'plateau@afgbank.ci', responsable: 'M. Kouadio KOFFI', statut: 'actif' },
@@ -678,6 +855,17 @@ interface VitalisDbState {
   seedIfNeeded: () => void;
   resetAllData: () => void;
   syncMissingDossiers: () => void;
+
+  // ── UTILISATEURS & TRAÇABILITÉ CONNEXIONS ───────────────────
+  users: VUser[];
+  connexionsLogs: VConnexionLog[];
+  addUser: (data: Partial<VUser>) => VUser;
+  updateUser: (id: string, data: Partial<VUser>) => void;
+  deleteUser: (id: string) => void;
+  getUserById: (id: string) => VUser | undefined;
+  getUserByEmail: (email: string) => VUser | undefined;
+  recordLogin: (email: string, details?: { ip?: string; appareil?: string; statut?: 'succes' | 'echec' }) => void;
+  clearConnexionsLogs: () => void;
 }
 
 export const useVitalisDb = create<VitalisDbState>()(
@@ -692,6 +880,8 @@ export const useVitalisDb = create<VitalisDbState>()(
       dossiers: DEMO_DOSSIERS,
       paiements: DEMO_PAIEMENTS,
       historique: [],
+      users: SEED_USERS,
+      connexionsLogs: SEED_CONNEXIONS_LOGS,
       notifications: [
         { id: 'NOTIF-001', titre: 'Bienvenue', message: 'Bienvenue sur la plateforme Vitalis AFG Bank', lue: false, date: new Date().toISOString() }
       ],
@@ -729,6 +919,12 @@ export const useVitalisDb = create<VitalisDbState>()(
           if (!state.fournisseurs || state.fournisseurs.length === 0) {
             set({ fournisseurs: SEED_FOURNISSEURS });
           }
+          if (!state.users || state.users.length === 0) {
+            set({ users: SEED_USERS });
+          }
+          if (!state.connexionsLogs || state.connexionsLogs.length === 0) {
+            set({ connexionsLogs: SEED_CONNEXIONS_LOGS });
+          }
           return;
         }
         set({
@@ -739,6 +935,8 @@ export const useVitalisDb = create<VitalisDbState>()(
           devis: DEMO_DEVIS,
           dossiers: DEMO_DOSSIERS,
           paiements: DEMO_PAIEMENTS,
+          users: SEED_USERS,
+          connexionsLogs: SEED_CONNEXIONS_LOGS,
           _seeded: true,
         });
       },
@@ -749,6 +947,8 @@ export const useVitalisDb = create<VitalisDbState>()(
         dossiers: DEMO_DOSSIERS,
         paiements: DEMO_PAIEMENTS,
         historique: [],
+        users: SEED_USERS,
+        connexionsLogs: SEED_CONNEXIONS_LOGS,
       }),
 
       syncMissingDossiers: () => {
@@ -1183,6 +1383,113 @@ export const useVitalisDb = create<VitalisDbState>()(
           tauxApprobation: total > 0 ? Math.round((valides / total) * 100) : 0,
         };
       },
+
+      // ── IMPLÉMENTATION UTILISATEURS & TRAÇABILITÉ CONNEXIONS ─────
+      addUser: (data) => {
+        const state = get();
+        const currentUsers = state.users && state.users.length > 0 ? state.users : SEED_USERS;
+        const id = data.id || `USR-${String(currentUsers.length + 1).padStart(3, "0")}`;
+        const newUser: VUser = {
+          id,
+          firstName: data.firstName || data.prenom || "",
+          lastName: data.lastName || data.nom || "",
+          nom: data.nom || data.lastName || "",
+          prenom: data.prenom || data.firstName || "",
+          email: data.email || "",
+          role: data.role || "fournisseur",
+          telephone: data.telephone || data.phone || "",
+          phone: data.telephone || data.phone || "",
+          organisationId: data.organisationId,
+          organisationName: data.organisationName || "LDF Groupe",
+          statut: data.statut || (data.isActive === false ? "inactif" : "actif"),
+          isActive: data.isActive !== undefined ? data.isActive : true,
+          createdAt: data.createdAt || new Date().toISOString().split("T")[0],
+          lastLoginAt: data.lastLoginAt,
+        };
+        set({ users: [...currentUsers, newUser] });
+        return newUser;
+      },
+
+      updateUser: (id, data) => set(state => {
+        const currentUsers = state.users && state.users.length > 0 ? state.users : SEED_USERS;
+        return {
+          users: currentUsers.map(u => {
+            if (u.id !== id) return u;
+            const updated = { ...u, ...data };
+            if (data.firstName !== undefined) updated.prenom = data.firstName;
+            if (data.lastName !== undefined) updated.nom = data.lastName;
+            if (data.prenom !== undefined) updated.firstName = data.prenom;
+            if (data.nom !== undefined) updated.lastName = data.nom;
+            if (data.isActive !== undefined) updated.statut = data.isActive ? "actif" : "inactif";
+            return updated;
+          })
+        };
+      }),
+
+      deleteUser: (id) => set(state => {
+        const currentUsers = state.users && state.users.length > 0 ? state.users : SEED_USERS;
+        return {
+          users: currentUsers.filter(u => u.id !== id)
+        };
+      }),
+
+      getUserById: (id) => {
+        const currentUsers = get().users && get().users.length > 0 ? get().users : SEED_USERS;
+        return currentUsers.find(u => u.id === id);
+      },
+
+      getUserByEmail: (email) => {
+        const currentUsers = get().users && get().users.length > 0 ? get().users : SEED_USERS;
+        return currentUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+      },
+
+      recordLogin: (email, details) => {
+        const now = new Date().toISOString();
+        const statut = details?.statut ?? 'succes';
+        const ip = details?.ip ?? '127.0.0.1 (Abidjan)';
+        const appareil = details?.appareil ?? (typeof window !== 'undefined' && navigator.userAgent.includes('Win') ? 'Chrome / Windows 11' : 'Navigateur Web');
+
+        set(state => {
+          const currentUsers = state.users && state.users.length > 0 ? state.users : SEED_USERS;
+          const userIdx = currentUsers.findIndex(u => u.email.toLowerCase() === email.toLowerCase());
+          let userName = email;
+          let userRole = 'inconnu';
+          let userId = 'USR-ANON';
+
+          let updatedUsers = [...currentUsers];
+          if (userIdx !== -1) {
+            const u = currentUsers[userIdx];
+            userName = [u.firstName, u.lastName].filter(Boolean).join(' ') || u.nom || email;
+            userRole = u.role;
+            userId = u.id;
+            updatedUsers[userIdx] = {
+              ...u,
+              lastLoginAt: now,
+            };
+          }
+
+          const newLog: VConnexionLog = {
+            id: `LOG-${Date.now().toString(36)}-${Math.random().toString(36).substr(2, 4)}`,
+            userId,
+            userName,
+            email,
+            role: userRole,
+            date: now,
+            ip,
+            appareil,
+            statut,
+          };
+
+          const currentLogs = state.connexionsLogs && state.connexionsLogs.length > 0 ? state.connexionsLogs : SEED_CONNEXIONS_LOGS;
+
+          return {
+            users: updatedUsers,
+            connexionsLogs: [newLog, ...currentLogs],
+          };
+        });
+      },
+
+      clearConnexionsLogs: () => set({ connexionsLogs: [] }),
     }),
     {
       name: 'vitalis-db-v1',
@@ -1196,6 +1503,8 @@ export const useVitalisDb = create<VitalisDbState>()(
         dossiers: state.dossiers,
         paiements: state.paiements,
         historique: state.historique,
+        users: state.users,
+        connexionsLogs: state.connexionsLogs,
         _seeded: state._seeded,
       }),
     }

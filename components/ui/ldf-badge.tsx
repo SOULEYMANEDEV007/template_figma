@@ -96,6 +96,8 @@ export function RoleBadge({ role }: { role: string }) {
     admin:       { label: "Administrateur", className: "bg-purple-50 text-purple-700" },
     banque:      { label: "Banque",         className: "bg-cyan-50 text-cyan-700"     },
     fournisseur: { label: "Fournisseur",    className: "bg-green-50 text-green-700"   },
+    owner:       { label: "Propriétaire",   className: "bg-slate-100 text-slate-700 border border-slate-300" },
+    souscripteur:{ label: "Souscripteur",   className: "bg-amber-50 text-amber-700"   },
   };
   const c = config[role] ?? { label: role, className: "bg-gray-100 text-gray-600" };
   return (

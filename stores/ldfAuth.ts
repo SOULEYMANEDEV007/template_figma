@@ -6,6 +6,7 @@ import type { LDFUser, LDFUserRole, Notification } from "@/types/ldf";
 import { deleteCookie, getCookie, setCookie } from "cookies-next";
 import { create } from "zustand";
 import { toast } from "sonner";
+import { useVitalisDb } from "./vitalisDbStore";
 
 // Flag de contrôle du profil Propriétaire (Désactivé jusqu'à validation formelle de la direction)
 export const IS_OWNER_PROFILE_ENABLED = false;
@@ -109,7 +110,7 @@ export function saveStoredNotifications(notifs: Notification[]) {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(NOTIF_STORAGE_KEY, JSON.stringify(notifs));
-  } catch {}
+  } catch { }
 }
 
 export function getFilteredNotifications(role: string): Notification[] {
@@ -180,12 +181,26 @@ export const useLDFAuthStore = create<AuthState & AuthActions>((set, get) => ({
       throw new Error(msg);
     }
 
-    const user = mockUsers.find((u) => u.email.toLowerCase() === email.toLowerCase())
-      ?? mockSouscripteursUsers.find((u) => u.email.toLowerCase() === email.toLowerCase());
+    // Traçabilité de la connexion dans VitalisDbStore
+    try {
+      useVitalisDb.getState().recordLogin(email, {
+        ip: typeof window !== "undefined" && window.location.hostname === "localhost" ? "127.0.0.1 (Abidjan)" : "192.168.1.10",
+        appareil: typeof window !== "undefined" && navigator.userAgent.includes("Win") ? "Chrome / Windows 11" : "Navigateur Web",
+        statut: "succes",
+      });
+    } catch { }
+
+    const dbUser = useVitalisDb.getState().getUserByEmail(email);
+    const user = dbUser ? { ...dbUser } : (
+      mockUsers.find((u) => u.email.toLowerCase() === email.toLowerCase())
+      ?? mockSouscripteursUsers.find((u) => u.email.toLowerCase() === email.toLowerCase())
+    );
     if (!user) {
       set({ isLoading: false, error: "Utilisateur introuvable." });
       throw new Error("Utilisateur introuvable");
     }
+
+    user.lastLoginAt = new Date().toISOString();
 
     if (user.role === "admin") {
       user.nom = "";
@@ -249,7 +264,7 @@ export const useLDFAuthStore = create<AuthState & AuthActions>((set, get) => ({
       });
       try {
         toast.info(newNotif.titre, { description: newNotif.message });
-      } catch {}
+      } catch { }
     }
   },
 
