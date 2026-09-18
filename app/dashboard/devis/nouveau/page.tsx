@@ -269,7 +269,7 @@ function NouveauDevisContent() {
   const { user } = useLDFAuthStore();
   const {
     souscriptions, fournisseurs, pointsRelais, agencesAFG,
-    addDevis, updateSouscription,
+    addDevis, updateSouscription, updateDossier, getDossierBySouscription,
   } = useVitalisDb();
 
   // Pré-sélection depuis l'URL (?souscriptionId=SOUS-001)
@@ -448,6 +448,15 @@ function NouveauDevisContent() {
           fournisseurs: updatedFournisseurs,
           statut: "pret_pour_depot",
         });
+
+        // Synchroniser le montant du dossier associé s'il existe déjà
+        const dossierLie = getDossierBySouscription(souscriptionId);
+        if (dossierLie) {
+          updateDossier(dossierLie.id, {
+            montantTotal: montantFinal,
+            montant: montantFinal,
+          });
+        }
 
         emitInAppNotification({
           titre: `Devis chiffré prêt : ${ref}`,
