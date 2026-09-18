@@ -27,19 +27,29 @@ export interface VFournisseur {
   id: string;
   code: string;
   nom: string;
-  raisonSociale: string;
+  raisonSociale?: string;
+  nomDirecteur?: string;
   email: string;
   emailCommercial?: string;
   telephone: string;
   telephoneCommercial?: string;
   adresse: string;
   ville: string;
+  region?: string;
   quartier?: string;
   rccm?: string;
+  compteContribuable?: string;
+  situationJuridique?: string;
+  nombreEmployes?: number;
+  dureePartenariatAFG?: number;
+  numeroContratAFG?: string;
+  nombreSouscriptions?: number;
+  montantTotal?: number;
   secteurActivite?: string;
   logo?: string;
   agreVitalis: boolean;
   dateAgrementVitalis?: string;
+  dateAgrement?: string;
   statut: 'prospect' | 'en_cours_agrement' | 'agree' | 'actif' | 'suspendu' | 'expire';
 }
 
@@ -259,55 +269,71 @@ const SEED_FOURNISSEURS: VFournisseur[] = [
     email: 'info@drocolor.ci', emailCommercial: 'ventes@drocolor.ci',
     telephone: '+225 27 23 45 67 89', telephoneCommercial: '+225 05 06 07 08 09',
     adresse: 'Zone Industrielle de Yopougon', ville: 'Abidjan', quartier: 'Yopougon',
-    rccm: 'CI-ABJ-2018-B-45678', secteurActivite: 'Matériel informatique et électronique',
+    rccm: 'CI-ABJ-2018-B-45678', secteurActivite: 'Peinture, revêtements bâtiment & carrosserie, étanchéité',
     logo: '/images/drocolor-logo.jfif', agreVitalis: true, dateAgrementVitalis: '2023-03-20', statut: 'actif',
   },
   {
-    id: 'FOUR-SMT-003', code: 'SMART', nom: 'SMART TECHNOLOGIE', raisonSociale: 'Smart Technologie CI SA',
-    email: 'contact@smarttech.ci', emailCommercial: 'b2b@smarttech.ci',
-    telephone: '+225 27 20 12 34 56', telephoneCommercial: '+225 01 52 53 54 55',
-    adresse: 'Rue des Jardins, Plateau', ville: 'Abidjan', quartier: 'Plateau',
-    rccm: 'CI-ABJ-2020-B-78901', secteurActivite: 'Informatique et solutions digitales',
-    logo: '/images/logo-smart-techno.png', agreVitalis: true, dateAgrementVitalis: '2023-06-10', statut: 'actif',
-  },
-  {
-    id: 'FOUR-NAS-004', code: 'NASCO', nom: 'NASCO', raisonSociale: 'NASCO Distribution SARL',
-    email: 'info@nasko.ci', emailCommercial: 'pro@nasko.ci',
-    telephone: '+225 27 21 98 76 54', telephoneCommercial: '+225 07 77 88 99 00',
+    id: 'FOUR-COM-003', code: 'COMAF', nom: 'COMAFRIQUE', raisonSociale: 'Comafrique Technologies CI',
+    email: 'contact@comafrique.ci', emailCommercial: 'b2b@comafrique.ci',
+    telephone: '+225 27 21 75 80 00', telephoneCommercial: '+225 07 15 20 25 30',
     adresse: 'Boulevard de Marseille, Treichville', ville: 'Abidjan', quartier: 'Treichville',
-    rccm: 'CI-ABJ-2019-B-34567', secteurActivite: 'Électroménager, meubles et équipements',
-    logo: '/images/logo-nasko.png', agreVitalis: true, dateAgrementVitalis: '2023-09-05', statut: 'actif',
+    rccm: 'CI-ABJ-2015-B-44332', secteurActivite: 'Technologies, Informatique & Solutions digitales',
+    logo: '/images/logo-comafrique.webp', agreVitalis: true, dateAgrementVitalis: '2023-06-10', statut: 'actif',
   },
   {
-    id: 'FOUR-RYM-005', code: 'RYMCO', nom: 'RYMCO', raisonSociale: 'RYMCO Côte d\'Ivoire',
+    id: 'FOUR-INO-004', code: 'INOVIM', nom: 'INOVIM', raisonSociale: 'Groupe INOVIM Immobilier',
+    email: 'contact@inovim-group.com', emailCommercial: 'projets@inovim-group.com',
+    telephone: '+225 27 22 40 85 00', telephoneCommercial: '+225 05 30 40 50 60',
+    adresse: 'Cocody Ambassades, Rue des Jardins', ville: 'Abidjan', quartier: 'Cocody',
+    rccm: 'CI-ABJ-2019-B-88771', secteurActivite: 'Immobilier, Logement & Aménagement',
+    logo: '/images/logo-inovim.jpg', agreVitalis: true, dateAgrementVitalis: '2023-04-15', statut: 'actif',
+  },
+  {
+    id: 'FOUR-KAY-005', code: 'KAYDAN', nom: 'KAYDAN', raisonSociale: 'KAYDAN Groupe',
+    email: 'contact@kaydan.ci', emailCommercial: 'immobilier@kaydan.ci',
+    telephone: '+225 27 22 48 90 00', telephoneCommercial: '+225 07 88 99 00 11',
+    adresse: 'Immeuble Kaydan, Cocody Riviera Golf', ville: 'Abidjan', quartier: 'Cocody',
+    rccm: 'CI-ABJ-2014-B-66554', secteurActivite: 'Promotion immobilière, BTP & Construction',
+    logo: '/images/logo-kaydan.webp', agreVitalis: true, dateAgrementVitalis: '2023-03-12', statut: 'actif',
+  },
+  {
+    id: 'FOUR-SCD-006', code: 'SOCIDA', nom: 'SOCIDA', raisonSociale: 'Société de Concessionnaires pour l\'Automobile (SOCIDA)',
+    email: 'contact@socida.ci', emailCommercial: 'ventes@socida.ci',
+    telephone: '+225 27 21 21 40 00', telephoneCommercial: '+225 07 01 02 03 04',
+    adresse: 'Boulevard de Marseille, Km 4, Zone 3', ville: 'Abidjan', quartier: 'Treichville',
+    rccm: 'CI-ABJ-2010-B-11998', secteurActivite: 'Automobile, Véhicules neufs, Utilitaires & Pièces',
+    logo: '/images/logo-socida.jpg', agreVitalis: true, dateAgrementVitalis: '2023-01-18', statut: 'actif',
+  },
+  {
+    id: 'FOUR-RYM-007', code: 'RYMCO', nom: 'RYMCO', raisonSociale: 'RYMCO Côte d\'Ivoire',
     email: 'b2b@rymco.ci', emailCommercial: 'commercial@rymco.ci',
     telephone: '+225 27 21 25 00 00', telephoneCommercial: '+225 05 44 55 66 77',
     adresse: 'Zone Industrielle de Vridi', ville: 'Abidjan', quartier: 'Treichville',
-    rccm: 'CI-ABJ-2017-B-90123', secteurActivite: 'Équipements, matériel & quincaillerie',
+    rccm: 'CI-ABJ-2017-B-90123', secteurActivite: 'Automobile, Deux-roues, Équipements & Matériel',
     logo: '/images/logo_rymco.jpg', agreVitalis: true, dateAgrementVitalis: '2023-02-28', statut: 'actif',
   },
   {
-    id: 'FOUR-LG-006', code: 'LG', nom: 'LG', raisonSociale: 'LG Electronics Côte d\'Ivoire',
+    id: 'FOUR-LG-008', code: 'LG', nom: 'LG', raisonSociale: 'LG Electronics Côte d\'Ivoire',
     email: 'contact@lg-ci.com', emailCommercial: 'b2b@lg-ci.com',
     telephone: '+225 27 21 75 00 00', telephoneCommercial: '+225 07 10 20 30 40',
     adresse: 'Boulevard Valéry Giscard d\'Estaing', ville: 'Abidjan', quartier: 'Marcory',
-    rccm: 'CI-ABJ-2016-B-55443', secteurActivite: 'Électroménager et électronique grand public',
+    rccm: 'CI-ABJ-2016-B-55443', secteurActivite: 'Électroménager, Climatisation & Électronique',
     logo: '/images/logo_lg.webp', agreVitalis: true, dateAgrementVitalis: '2023-05-12', statut: 'actif',
   },
   {
-    id: 'FOUR-SOD-007', code: 'SODIMAC', nom: 'SODIMAC', raisonSociale: 'SODIMAC CI',
+    id: 'FOUR-SOD-009', code: 'SODIMAC', nom: 'SODIMAC', raisonSociale: 'SODIMAC CI',
     email: 'contact@sodimac.ci', emailCommercial: 'ventes@sodimac.ci',
     telephone: '+225 27 21 24 50 00', telephoneCommercial: '+225 05 11 22 33 44',
     adresse: 'Boulevard de Marseille, Zone 3', ville: 'Abidjan', quartier: 'Treichville',
-    rccm: 'CI-ABJ-2014-B-88776', secteurActivite: 'Matériaux, outillage et aménagement maison',
+    rccm: 'CI-ABJ-2014-B-88776', secteurActivite: 'Matériaux de construction, Cimenterie & Aménagement',
     logo: '/images/logo_sodimac_ci.jpg', agreVitalis: true, dateAgrementVitalis: '2023-04-18', statut: 'actif',
   },
   {
-    id: 'FOUR-SOC-008', code: 'SOCIAM', nom: 'SOCIAM', raisonSociale: 'Société Ivoirienne d\'Appareillage Ménager (SOCIAM)',
+    id: 'FOUR-SOC-010', code: 'SOCIAM', nom: 'SOCIAM', raisonSociale: 'Société Ivoirienne d\'Appareillage Ménager (SOCIAM)',
     email: 'contact@sociam.ci', emailCommercial: 'corporate@sociam.ci',
     telephone: '+225 27 21 28 88 88', telephoneCommercial: '+225 07 99 88 77 66',
     adresse: 'Zone Industrielle de Koumassi', ville: 'Abidjan', quartier: 'Koumassi',
-    rccm: 'CI-ABJ-2011-B-33221', secteurActivite: 'Électroménager, image & son, froid',
+    rccm: 'CI-ABJ-2011-B-33221', secteurActivite: 'Électroménager, Image & Son, Froid',
     logo: '/images/sociam_logo.webp', agreVitalis: true, dateAgrementVitalis: '2023-01-22', statut: 'actif',
   },
 ];
@@ -365,7 +391,7 @@ const DEMO_SOUSCRIPTIONS: VSouscription[] = [
     banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-001', agenceNom: 'Agence Plateau',
     fournisseurs: [
       { fournisseurId: 'FOUR-LDF-001', fournisseurNom: 'Librairie de France Groupe', devisId: 'DEV-003', statut: 'devis_cree' },
-      { fournisseurId: 'FOUR-SMT-003', fournisseurNom: 'SMART TECHNOLOGIE', statut: 'en_attente' },
+      { fournisseurId: 'FOUR-COM-003', fournisseurNom: 'COMAFRIQUE', statut: 'en_attente' },
     ],
     montantTotal: 1200000, duree: 36, statut: 'en_analyse_bancaire',
     dateCreation: twoDaysAgo, dateMiseAJour: yesterday,
@@ -377,7 +403,7 @@ const DEMO_SOUSCRIPTIONS: VSouscription[] = [
     souscripteurEntreprise: 'DIGITAL SOLUTIONS CI', souscripteurTelephone: '+225 27 22 33 44 55',
     souscripteurEmail: 'contact@digitalsolutions.ci',
     banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-003', agenceNom: 'Agence Marcory',
-    fournisseurs: [{ fournisseurId: 'FOUR-CAR-005', fournisseurNom: 'CARREFOUR', statut: 'en_attente' }],
+    fournisseurs: [{ fournisseurId: 'FOUR-INO-004', fournisseurNom: 'INOVIM', statut: 'en_attente' }],
     montantTotal: 2500000, duree: 36, statut: 'en_preparation',
     dateCreation: today, dateMiseAJour: today,
     observations: 'Dossier en cours de constitution.',
@@ -388,7 +414,7 @@ const DEMO_SOUSCRIPTIONS: VSouscription[] = [
     souscripteurTelephone: '+225 05 87 65 43 21', souscripteurEmail: 'b.assi@yahoo.fr',
     banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-004', agenceNom: 'Agence Yopougon',
     fournisseurs: [{ fournisseurId: 'FOUR-DRO-002', fournisseurNom: 'Drocolor', devisId: 'DEV-005', statut: 'valide' }],
-    montantTotal: 975000, duree: 36, statut: 'fournisseur_paye',
+    montantTotal: 975000, duree: 36, statut: 'livre',
     dateCreation: oneWeekAgo, dateMiseAJour: yesterday, dateValidation: twoDaysAgo,
   },
 ];
@@ -408,7 +434,7 @@ const DEMO_DEVIS: VDevis[] = [
     ],
     totalHT: 287500, tva: 0, totalTTC: 287500,
     conditions: 'Paiement à la réception de la commande validée par AFG Bank. Livraison franco de port à Abidjan.',
-    delaiLivraisonAbidjan: '7 jours ouvrés', delaiLivraisonInterieur: '15 jours ouvrés', validiteDevis: '30 jours ouvrés',
+    delaiLivraisonAbidjan: '7 jours ouvrés', delaiLivraisonInterieur: '15 jours ouvrés', validiteDevis: '60 jours',
     statut: 'valide', dateCreation: oneWeekAgo, dateExpiration: today, dateValidation: twoDaysAgo, dateMiseAJour: twoDaysAgo,
   },
   {
@@ -417,11 +443,13 @@ const DEMO_DEVIS: VDevis[] = [
     fournisseurId: 'FOUR-DRO-002', fournisseurNom: 'Drocolor',
     banqueId: 'AFG-001', banqueNom: 'AFG Bank',
     articles: [
-      { id: 'ART-006', designation: 'Cartables scolaires', quantite: 30, prixUnitaire: 15000, remise: 10, montantHT: 405000 },
+      { id: 'ART-006', designation: 'Peinture Acrylique Extérieure Drocolor (Fût 25kg)', quantite: 8, prixUnitaire: 45000, remise: 5, montantHT: 342000 },
+      { id: 'ART-007', designation: 'Sous-couche Primaire d\'Accrochage Façade (20L)', quantite: 4, prixUnitaire: 38000, remise: 0, montantHT: 152000 },
+      { id: 'ART-008', designation: 'Kit outillage peintre Pro (Rouleaux, Brosses, Bâches)', quantite: 4, prixUnitaire: 39000, remise: 0, montantHT: 156000 },
     ],
-    totalHT: 405000, tva: 0, totalTTC: 405000,
+    totalHT: 650000, tva: 0, totalTTC: 650000,
     conditions: "Livraison franco de port à l'adresse du client.",
-    delaiLivraisonAbidjan: '7 jours ouvrés', delaiLivraisonInterieur: '15 jours ouvrés', validiteDevis: '30 jours ouvrés',
+    delaiLivraisonAbidjan: '7 jours ouvrés', delaiLivraisonInterieur: '15 jours ouvrés', validiteDevis: '60 jours',
     statut: 'envoye', dateCreation: yesterday, dateExpiration: today, dateMiseAJour: yesterday,
   },
   {
@@ -435,7 +463,7 @@ const DEMO_DEVIS: VDevis[] = [
     ],
     totalHT: 141250, tva: 0, totalTTC: 141250,
     conditions: 'Livraison franco de port.',
-    delaiLivraisonAbidjan: '7 jours ouvrés', delaiLivraisonInterieur: '15 jours ouvrés', validiteDevis: '30 jours ouvrés',
+    delaiLivraisonAbidjan: '7 jours ouvrés', delaiLivraisonInterieur: '15 jours ouvrés', validiteDevis: '60 jours',
     statut: 'en_attente_validation', dateCreation: twoDaysAgo, dateExpiration: today, dateMiseAJour: twoDaysAgo,
   },
   {
@@ -444,12 +472,13 @@ const DEMO_DEVIS: VDevis[] = [
     fournisseurId: 'FOUR-DRO-002', fournisseurNom: 'Drocolor',
     banqueId: 'AFG-001', banqueNom: 'AFG Bank',
     articles: [
-      { id: 'ART-009', designation: 'Ordinateurs portables HP 15" i5', quantite: 3, prixUnitaire: 275000, remise: 5, montantHT: 783750 },
-      { id: 'ART-010', designation: 'Imprimante Brother DCP-L2550', quantite: 1, prixUnitaire: 180000, remise: 0, montantHT: 180000 },
+      { id: 'ART-009', designation: 'Peinture Façade Hydrofuge Drocolor Pro 25L', quantite: 8, prixUnitaire: 65000, remise: 5, montantHT: 494000 },
+      { id: 'ART-010', designation: 'Peinture Émulsion Intérieure Blanche Drocolor 20L', quantite: 8, prixUnitaire: 40000, remise: 0, montantHT: 320000 },
+      { id: 'ART-011', designation: 'Enduit de lissage & garnissage Façade Pro', quantite: 6, prixUnitaire: 26833, remise: 0, montantHT: 161000 },
     ],
-    totalHT: 963750, tva: 0, totalTTC: 963750,
+    totalHT: 975000, tva: 0, totalTTC: 975000,
     conditions: 'Garantie constructeur 2 ans incluse. Livraison à domicile.',
-    delaiLivraisonAbidjan: '7 jours ouvrés', delaiLivraisonInterieur: '15 jours ouvrés', validiteDevis: '30 jours ouvrés',
+    delaiLivraisonAbidjan: '7 jours ouvrés', delaiLivraisonInterieur: '15 jours ouvrés', validiteDevis: '60 jours',
     statut: 'valide', dateCreation: oneWeekAgo, dateExpiration: today, dateValidation: twoDaysAgo, dateMiseAJour: twoDaysAgo,
   },
 ];
@@ -475,7 +504,7 @@ const DEMO_DOSSIERS: VDossier[] = [
   {
     id: 'DOS-003', reference: 'DOS-2026-003', souscriptionId: 'SOUS-003', souscriptionRef: 'VF-2026-003',
     souscripteurId: 'SCP-003', souscripteurNom: 'KONÉ', souscripteurPrenom: 'Ibrahim', typeSouscripteur: 'physique',
-    fournisseursNoms: 'LDF Groupe + SMART TECHNOLOGIE', devisIds: ['DEV-003'],
+    fournisseursNoms: 'LDF Groupe + COMAFRIQUE', devisIds: ['DEV-003'],
     banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-001',
     montantTotal: 1200000, statut: 'depose_banque',
     dateCreation: today, dateReception: today, dateMiseAJour: today,
@@ -485,7 +514,7 @@ const DEMO_DOSSIERS: VDossier[] = [
     souscripteurId: 'SCP-005', souscripteurNom: 'ASSI', souscripteurPrenom: 'Brice', typeSouscripteur: 'physique',
     fournisseursNoms: 'Drocolor', devisIds: ['DEV-005'],
     banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-004',
-    montantTotal: 975000, statut: 'accepte',
+    montantTotal: 975000, statut: 'livre',
     commentaireAFG: 'Financement accordé — Équipements professionnels conformes au programme.',
     dateCreation: oneWeekAgo, dateReception: oneWeekAgo, dateDebutAnalyse: twoDaysAgo, dateValidation: yesterday, dateMiseAJour: yesterday,
   },
@@ -583,6 +612,12 @@ interface VitalisDbState {
   addNotification: (data: Omit<VNotification, 'id' | 'lue' | 'date'>) => void;
   markNotificationAsRead: (id: string) => void;
   getUnreadNotifications: (userId?: string) => VNotification[];
+
+  // ── ACTIONS FOURNISSEURS ───────────────────────────────────
+  addFournisseur: (data: Partial<VFournisseur>) => VFournisseur;
+  updateFournisseur: (id: string, data: Partial<VFournisseur>) => void;
+  deleteFournisseur: (id: string) => void;
+  getFournisseurById: (id: string) => VFournisseur | undefined;
 
   // ── ACTIONS SOUSCRIPTIONS ──────────────────────────────────
   addSouscription: (data: Omit<VSouscription, 'id'>) => VSouscription;
@@ -683,7 +718,13 @@ export const useVitalisDb = create<VitalisDbState>()(
       },
 
       seedIfNeeded: () => {
-        if (get()._seeded) return;
+        const state = get();
+        if (state._seeded) {
+          if (!state.fournisseurs || state.fournisseurs.length === 0) {
+            set({ fournisseurs: SEED_FOURNISSEURS });
+          }
+          return;
+        }
         set({
           agencesAFG: SEED_AGENCES_AFG,
           fournisseurs: SEED_FOURNISSEURS,
@@ -739,6 +780,60 @@ export const useVitalisDb = create<VitalisDbState>()(
           set({ dossiers: currentDossiers });
         }
       },
+
+      // ── FOURNISSEURS ──────────────────────────────────────────
+      addFournisseur: (data) => {
+        const id = data.id || `FOUR-${Date.now()}`;
+        const newF: VFournisseur = {
+          id,
+          code: data.code || (data.nom ? data.nom.substring(0, 6).toUpperCase().replace(/\s/g, '') : 'FOUR'),
+          nom: data.nom || 'Nouveau Fournisseur',
+          raisonSociale: data.raisonSociale || data.nom || 'Fournisseur',
+          nomDirecteur: data.nomDirecteur || '',
+          email: data.email || '',
+          telephone: data.telephone || '',
+          adresse: data.adresse || '',
+          ville: data.ville || 'Abidjan',
+          region: data.region || 'District Autonome d\'Abidjan',
+          rccm: data.rccm || '',
+          compteContribuable: data.compteContribuable || '',
+          situationJuridique: data.situationJuridique || 'SARL',
+          nombreEmployes: Number(data.nombreEmployes || 1),
+          dureePartenariatAFG: Number(data.dureePartenariatAFG || 12),
+          numeroContratAFG: data.numeroContratAFG || '',
+          statut: data.statut || 'prospect',
+          agreVitalis: data.statut === 'actif' || data.statut === 'agree',
+          nombreSouscriptions: data.nombreSouscriptions || 0,
+          montantTotal: data.montantTotal || 0,
+          secteurActivite: data.secteurActivite || 'Commerce général & distribution',
+          dateAgrementVitalis: (data.statut === 'actif' || data.statut === 'agree') ? new Date().toISOString().split('T')[0] : undefined,
+          ...data,
+        };
+        set(s => ({ fournisseurs: [newF, ...s.fournisseurs] }));
+        return newF;
+      },
+
+      updateFournisseur: (id, data) => set(s => ({
+        fournisseurs: s.fournisseurs.map(f => {
+          if (f.id === id) {
+            const next = { ...f, ...data };
+            if (data.statut) {
+              next.agreVitalis = data.statut === 'actif' || data.statut === 'agree';
+              if (next.agreVitalis && !next.dateAgrementVitalis) {
+                next.dateAgrementVitalis = new Date().toISOString().split('T')[0];
+              }
+            }
+            return next;
+          }
+          return f;
+        }),
+      })),
+
+      deleteFournisseur: (id) => set(s => ({
+        fournisseurs: s.fournisseurs.filter(f => f.id !== id),
+      })),
+
+      getFournisseurById: (id) => get().fournisseurs.find(f => f.id === id),
 
       // ── SOUSCRIPTIONS ───────────────────────────────────────
       addSouscription: (data) => {
@@ -961,6 +1056,14 @@ export const useVitalisDb = create<VitalisDbState>()(
           }
         });
 
+        currentPaiements.forEach(p => {
+          const sub = souscriptions.find(s => s.id === p.souscriptionId);
+          if (sub && ['livre', 'servie', 'cloture'].includes(sub.statut) && p.statut !== 'servi') {
+            p.statut = 'servi';
+            changed = true;
+          }
+        });
+
         if (changed) {
           set({ paiements: currentPaiements });
         }
@@ -1050,13 +1153,15 @@ export const useVitalisDb = create<VitalisDbState>()(
       name: 'vitalis-db-v1',
       storage: createJSONStorage(() => (typeof window !== 'undefined' ? localStorage : { getItem: () => null, setItem: () => { }, removeItem: () => { } })),
       partialize: (state) => ({
+        fournisseurs: state.fournisseurs,
+        agencesAFG: state.agencesAFG,
+        pointsRelais: state.pointsRelais,
         souscriptions: state.souscriptions,
         devis: state.devis,
         dossiers: state.dossiers,
         paiements: state.paiements,
         historique: state.historique,
         _seeded: state._seeded,
-        // Les données de référence (agences, fournisseurs, relais) ne changent pas : pas besoin de les persister
       }),
     }
   )

@@ -8,12 +8,12 @@ import { useLDFAuthStore } from "@/stores/ldfAuth";
 import {
   ArrowLeft, Building2, CheckCircle2, CreditCard, Download,
   FileText, MapPin, Package, Phone, Plus, User, Printer, Send, Truck, Clock,
-  BookOpen, ShieldCheck, Sparkles,
+  BookOpen, ShieldCheck, Sparkles, Mail, Eye, AlertCircle, Check, X,
 } from "lucide-react";
 import { IMAGES } from "@/lib/constants";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
 import { emitInAppNotification } from "@/stores/ldfAuth";
 
@@ -33,6 +33,7 @@ export default function SouscriptionDetailPage() {
   } = useVitalisDb();
 
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
   const [submittingDossier, setSubmittingDossier] = useState(false);
   const [dateDisponibilite, setDateDisponibilite] = useState(new Date().toISOString().split("T")[0]);
   const [heureDisponibilite, setHeureDisponibilite] = useState("08:00");
@@ -41,6 +42,83 @@ export default function SouscriptionDetailPage() {
   const devis = sub ? getDevisBySouscription(sub.id)[0] : null;
   const dossier = sub ? getDossierBySouscription(sub.id) : null;
   const historique = sub ? getHistoriqueBySouscription(sub.id) : [];
+
+  // Détails de livraison structurés
+  const deliveryInfo = useMemo(() => {
+    if (sub?.detailsLivraison) return sub.detailsLivraison;
+    const obs = sub?.observations || "";
+    const isDomicile = obs.toLowerCase().includes("domicile");
+    const destMatch = obs.match(/Destinataire:\s*([^(|\n]+)(?:\(([^)]+)\))?/);
+    const relaisMatch = obs.match(/(?:Point Relais|Relais):\s*([^\]|\n]+)/);
+    const zoneMatch = obs.match(/Zone:\s*([^|\n]+)/);
+    return {
+      mode: isDomicile ? "domicile" : "point_relais",
+      adresse: obs.includes("Domicile:") ? (obs.match(/Domicile:\s*([^\]|\n]+)/)?.[1] || "") : "",
+      pointRelaisNom: relaisMatch ? relaisMatch[1].replace(/^[^(]*\(([^)]*)\).*/, "$1").trim() : "",
+      destinataireNom: destMatch ? destMatch[1].trim() : `${sub?.souscripteurPrenom || ""} ${sub?.souscripteurNom || ""}`.trim(),
+      destinataireTelephone: destMatch && destMatch[2] ? destMatch[2].trim() : (sub?.souscripteurTelephone || ""),
+      zone: zoneMatch ? zoneMatch[1].trim() : "",
+    };
+  }, [sub]);
+
+  // Alerte In-App automatique au client dès que le devis est disponible
+  useEffect(() => {
+    if (devis && sub && (sub.statut === "en_preparation" || sub.statut === "pret_pour_depot")) {
+      emitInAppNotification({
+        titre: `Constitution du dossier physique : ${sub.reference}`,
+        message: `Votre devis est prêt ! Veuillez imprimer votre dossier (fiche d'adhésion VITALIS + devis) et rassembler vos pièces (CNI, attestation de travail, 3 derniers bulletins de salaire) pour les déposer à votre agence AFG Bank (${sub.agenceNom || "Agence Centrale"}).`,
+        categorie: "dossier",
+        reference: sub.reference,
+        lien: `/dashboard/souscriptions/${sub.id}`,
+        roles: ["souscripteur"],
+      });
+    }
+  }, [devis?.id, sub?.id]);
+
+  const handleConfirmerDepotPhysique = () => {
+    if (!sub) return;
+    updateSouscription(sub.id, { statut: "depose_banque" });
+    if (dossier) {
+      updateDossier(dossier.id, { statut: "depose_banque" });
+    } else {
+      addDossier({
+        reference: generateRef("DOS"),
+        souscriptionId: sub.id,
+        souscriptionRef: sub.reference,
+        souscripteurId: sub.souscripteurId,
+        souscripteurNom: sub.souscripteurNom,
+        souscripteurPrenom: sub.souscripteurPrenom,
+        typeSouscripteur: sub.typeSouscripteur,
+        fournisseursNoms: sub.fournisseurNom || (devis?.fournisseurNom || "Librairie de France Groupe"),
+        devisIds: devis ? [devis.id] : [],
+        banqueId: "AFG-001",
+        banqueNom: "AFG Bank",
+        agenceId: sub.agenceId || "AGE-AFG-001",
+        montantTotal: sub.montantTotal || devis?.totalTTC || 0,
+        montant: sub.montantTotal || devis?.totalTTC || 0,
+        statut: "depose_banque",
+        dateCreation: new Date().toISOString().split("T")[0],
+        dateReception: new Date().toISOString().split("T")[0],
+        dateMiseAJour: new Date().toISOString().split("T")[0],
+      });
+    }
+    addHistorique({
+      souscriptionId: sub.id,
+      action: "dossier_depose",
+      description: `Dossier physique déposé par le client à l'agence AFG Bank (${sub.agenceNom || "Agence Centrale"})`,
+      auteur: `${sub.souscripteurPrenom} ${sub.souscripteurNom}`,
+      date: new Date().toISOString(),
+    });
+    emitInAppNotification({
+      titre: `Dossier physique déposé : ${sub.reference}`,
+      message: `${sub.souscripteurPrenom} ${sub.souscripteurNom} a déposé son dossier physique à l'agence AFG Bank. Analyse de solvabilité requise.`,
+      categorie: "dossier",
+      reference: sub.reference,
+      lien: `/dashboard/souscriptions/${sub.id}`,
+      roles: ["banque", "admin"],
+    });
+    toast.success("Dépôt physique enregistré ! Votre dossier est maintenant entre les mains d'AFG Bank.");
+  };
 
   const handlePrintDossier = () => {
     if (!sub) return;
@@ -201,10 +279,44 @@ export default function SouscriptionDetailPage() {
   const processSteps = [
     { id: "sub", label: "1. Demande & Besoin", statut: "complete" as const, date: sub.dateCreation },
     { id: "devis", label: "2. Devis fournisseur", statut: devis ? ("complete" as const) : ("pending" as const) },
-    /*{ id: "depot", label: "3. Dépôt dossier en agence", statut: isApres(currentEffectifStatut, "depose_banque") ? ("complete" as const) : currentEffectifStatut === "pret_pour_depot" ? ("current" as const) : ("pending" as const) },*/
-    { id: "banque", label: "3. Décision AFG Bank", statut: isApres(currentEffectifStatut, "accepte") ? ("complete" as const) : (currentEffectifStatut === "refuse" || currentEffectifStatut === "rejete") ? ("rejected" as const) : currentEffectifStatut === "en_analyse_bancaire" ? ("current" as const) : ("pending" as const) },
-    { id: "paiement", label: "4. Virement fournisseur", statut: isApres(currentEffectifStatut, "fournisseur_paye") ? ("complete" as const) : (currentEffectifStatut === "accepte" || currentEffectifStatut === "valide" || currentEffectifStatut === "finance") ? ("current" as const) : ("pending" as const) },
-    { id: "livraison", label: "5. Retrait des articles", statut: (currentEffectifStatut === "cloture" || currentEffectifStatut === "livre" || currentEffectifStatut === "servie") ? ("complete" as const) : (currentEffectifStatut === "fournisseur_paye" || currentEffectifStatut === "commande_en_preparation") ? ("current" as const) : ("pending" as const) },
+    {
+      id: "depot",
+      label: "3. Dépôt dossier physique",
+      statut: (isApres(currentEffectifStatut, "depose_banque") || isApres(currentEffectifStatut, "en_analyse_bancaire") || isApres(currentEffectifStatut, "accepte"))
+        ? ("complete" as const)
+        : devis
+          ? ("current" as const)
+          : ("pending" as const),
+    },
+    {
+      id: "banque",
+      label: "4. Décision AFG Bank",
+      statut: isApres(currentEffectifStatut, "accepte")
+        ? ("complete" as const)
+        : (currentEffectifStatut === "refuse" || currentEffectifStatut === "rejete")
+          ? ("rejected" as const)
+          : (currentEffectifStatut === "en_analyse_bancaire" || currentEffectifStatut === "depose_banque")
+            ? ("current" as const)
+            : ("pending" as const),
+    },
+    {
+      id: "paiement",
+      label: "5. Virement fournisseur",
+      statut: isApres(currentEffectifStatut, "fournisseur_paye")
+        ? ("complete" as const)
+        : (currentEffectifStatut === "accepte" || currentEffectifStatut === "valide" || currentEffectifStatut === "finance")
+          ? ("current" as const)
+          : ("pending" as const),
+    },
+    {
+      id: "livraison",
+      label: "6. Retrait des articles",
+      statut: (currentEffectifStatut === "cloture" || currentEffectifStatut === "livre" || currentEffectifStatut === "servie")
+        ? ("complete" as const)
+        : (currentEffectifStatut === "fournisseur_paye" || currentEffectifStatut === "commande_en_preparation")
+          ? ("current" as const)
+          : ("pending" as const),
+    },
   ];
 
   const handleConfirmerPaiement = () => {
@@ -383,32 +495,92 @@ export default function SouscriptionDetailPage() {
         </div>
       )}
 
-      {devis && !dossier && (
-        <div className="p-4 rounded-xl border bg-amber-50/90 border-amber-300 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
-              <Printer className="w-5 h-5" />
+      {/* ── Étape 3 : Constitution du dossier physique & Dépôt agence AFG ── */}
+      {devis && !isApres(currentEffectifStatut, "depose_banque") && (
+        <div className="p-5 rounded-2xl border bg-gradient-to-r from-amber-50 to-orange-50 border-amber-300 shadow-sm space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+            <div className="flex items-start gap-3.5">
+              <div className="w-11 h-11 rounded-xl bg-orange-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+                <FileText className="w-6 h-6" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="text-sm font-bold text-gray-900">Étape 3 active : Constitution & Dépôt du dossier physique AFG Bank</p>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-100 text-orange-800 border border-orange-200">
+                    Action client requise
+                  </span>
+                </div>
+                <p className="text-xs text-gray-700 mt-1 leading-relaxed">
+                  Votre devis chiffré est prêt ({fmtCFA(sub.montantTotal || devis.totalTTC)}). Veuillez constituer votre dossier physique avec les pièces obligatoires et le déposer à votre agence <strong>AFG Bank ({sub.agenceNom || "Agence Centrale"})</strong> pour analyse et accord de crédit.
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm font-bold text-gray-900">En attente de devis complémentaires ou traitement</p>
-              <p className="text-xs text-gray-700 mt-0.5 leading-relaxed">
-                Le dossier numérique sera automatiquement transmis à la banque dès que tous les fournisseurs sollicités auront émis leur devis.
-                N'oubliez pas d'imprimer l'ensemble et de vous présenter physiquement en agence AFG Bank.
-              </p>
+
+            <div className="flex items-center gap-2 flex-wrap self-start sm:self-auto">
+              <button
+                type="button"
+                onClick={() => setShowEmailModal(true)}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-amber-300 hover:bg-amber-100/50 text-amber-900 text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+                title="Consulter l'avis officiel par email"
+              >
+                <Mail className="w-3.5 h-3.5 text-amber-600" /> Avis email
+              </button>
+              <button
+                type="button"
+                onClick={handlePrintDossier}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-orange-300 hover:bg-orange-50 text-orange-700 text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+                title="Imprimer le dossier complet (Fiche VITALIS + Devis)"
+              >
+                <Printer className="w-3.5 h-3.5" /> Imprimer le dossier
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmerDepotPhysique}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold shadow-sm transition-colors whitespace-nowrap cursor-pointer"
+              >
+                <Check className="w-3.5 h-3.5" /> J'ai déposé mon dossier physique en agence
+              </button>
             </div>
           </div>
-          <div className="flex items-center gap-2 flex-wrap self-start sm:self-auto">
-            <button
-              onClick={handlePrintDossier}
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-orange-600 text-white text-xs font-bold hover:bg-orange-700 transition-colors shadow-sm whitespace-nowrap"
-            >
-              <Printer className="w-3.5 h-3.5" /> Imprimer le dossier
-            </button>
+
+          {/* Checklist interactive des pièces à fournir */}
+          <div className="bg-white/80 border border-amber-200/80 rounded-xl p-3.5">
+            <p className="text-xs font-bold text-amber-950 mb-2 flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              Checklist des pièces physiques à apporter au guichet AFG Bank :
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 text-xs text-gray-700">
+              <div className="flex items-center gap-2 p-2 bg-emerald-50/60 rounded-lg border border-emerald-100">
+                <Check className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                <span>Fiche d'adhésion VITALIS signée</span>
+              </div>
+              <div className="flex items-center gap-2 p-2 bg-emerald-50/60 rounded-lg border border-emerald-100">
+                <Check className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                <span>Devis chiffré fournisseur (60 jrs)</span>
+              </div>
+              <div className="flex items-center gap-2 p-2 bg-emerald-50/60 rounded-lg border border-emerald-100">
+                <Check className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                <span>Photocopie CNI ou Passeport</span>
+              </div>
+              <div className="flex items-center gap-2 p-2 bg-emerald-50/60 rounded-lg border border-emerald-100">
+                <Check className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                <span>Attestation de travail originale (-3 mois)</span>
+              </div>
+              <div className="flex items-center gap-2 p-2 bg-emerald-50/60 rounded-lg border border-emerald-100">
+                <Check className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                <span>3 derniers bulletins de salaire</span>
+              </div>
+              <div className="flex items-center gap-2 p-2 bg-emerald-50/60 rounded-lg border border-emerald-100">
+                <Check className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                <span>Justificatif domicile (CIE/SODECI) & RIB</span>
+              </div>
+            </div>
           </div>
         </div>
       )}
 
-      {dossier && (dossier.statut === "depose_banque" || dossier.statut === "recu" || dossier.statut === "en_analyse_bancaire" || dossier.statut === "en_cours_traitement") && (
+      {/* ── Étape 4 : Décision bancaire AFG Bank ── */}
+      {isApres(currentEffectifStatut, "depose_banque") && !isApres(currentEffectifStatut, "accepte") && sub.statut !== "refuse" && sub.statut !== "rejete" && (
         <div className="p-4 rounded-xl border bg-purple-50/90 border-purple-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm">
           <div className="flex items-start gap-3">
             <div className="w-10 h-10 rounded-xl bg-purple-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
@@ -418,14 +590,14 @@ export default function SouscriptionDetailPage() {
               <p className="text-sm font-bold text-gray-900">Étape 4 active : Décision du dossier par AFG Bank</p>
               <p className="text-xs text-gray-600 mt-0.5">
                 {user?.role === "banque" || user?.role === "admin"
-                  ? "Le dossier complet est soumis à l'agence bancaire. Procédez à l'analyse de solvabilité et au comité de crédit."
-                  : "Le dossier complet est en cours de décision par les analystes d'AFG Bank."}
+                  ? "Le dossier physique et numérique est soumis à l'agence AFG. Procédez à l'analyse de solvabilité et au comité de crédit."
+                  : "Votre dossier physique est bien déposé à l'agence AFG Bank. L'analyse de solvabilité et la décision de crédit sont en cours."}
               </p>
             </div>
           </div>
           {(user?.role === "banque" || user?.role === "admin") && (
             <Link
-              href={`/dashboard/dossiers/${dossier.id}`}
+              href={dossier ? `/dashboard/dossiers/${dossier.id}` : "/dashboard/dossiers"}
               className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-purple-600 text-white text-xs font-bold hover:bg-purple-700 transition-colors shadow-sm self-start sm:self-auto whitespace-nowrap"
             >
               <ShieldCheck className="w-3.5 h-3.5" /> Instruire le dossier →
@@ -600,6 +772,47 @@ export default function SouscriptionDetailPage() {
             </div>
           )}
 
+          {/* Détails et Destination de livraison client */}
+          <div className="section-card border-l-4 border-l-blue-500">
+            <div className="section-card-header bg-blue-50/40">
+              <div className="flex items-center gap-2">
+                <Truck className="w-4 h-4 text-blue-600" />
+                <h3 className="text-sm font-semibold text-gray-900">Modalités & Destination de la livraison (Détails client)</h3>
+              </div>
+              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800">
+                {deliveryInfo.mode === "point_relais" ? "Point Relais Vitalis" : "Livraison à domicile"}
+              </span>
+            </div>
+            <div className="section-card-body grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p className="text-xs text-gray-400 mb-0.5">Mode de livraison</p>
+                <p className="text-sm font-semibold text-gray-800">
+                  {deliveryInfo.mode === "point_relais" ? "Retrait en Point Relais Partenaire" : "Livraison directe à domicile / site"}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-400 mb-0.5">Lieu / Adresse</p>
+                <p className="text-sm font-medium text-gray-800">
+                  {deliveryInfo.mode === "point_relais"
+                    ? (deliveryInfo.pointRelaisNom ? `Point Relais : ${deliveryInfo.pointRelaisNom}` : (deliveryInfo.zone || "Point Relais désigné"))
+                    : (deliveryInfo.adresse || deliveryInfo.zone || "Adresse indiquée par le client")}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-400 mb-0.5">Destinataire désigné</p>
+                <p className="text-sm font-medium text-gray-800">
+                  {deliveryInfo.destinataireNom || `${sub.souscripteurPrenom} ${sub.souscripteurNom}`}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-400 mb-0.5">Téléphone direct du destinataire</p>
+                <p className="text-sm font-semibold text-gray-800 text-blue-700">
+                  {deliveryInfo.destinataireTelephone || sub.souscripteurTelephone || "Non spécifié"}
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Fournisseur */}
           {/*div className="section-card">
             <div className="section-card-header">
@@ -748,6 +961,88 @@ export default function SouscriptionDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* ── Modale de simulation d'email officiel de constitution du dossier au client ── */}
+      {showEmailModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden border border-gray-100 flex flex-col max-h-[90vh]">
+            <div className="px-6 py-4 bg-[#0B2447] text-white flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <Mail className="w-5 h-5 text-orange-400" />
+                <div>
+                  <h3 className="text-sm font-bold">Avis de constitution de dossier physique</h3>
+                  <p className="text-[11px] text-blue-200">Email officiel transmis au client : {sub.souscripteurEmail}</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowEmailModal(false)}
+                className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-6 overflow-y-auto space-y-4 text-sm text-gray-700">
+              <div className="p-4 bg-gray-50 rounded-xl border border-gray-100 text-xs space-y-1">
+                <p><strong>De :</strong> ViFlo Vitalis &lt;notifications@viflo.ci&gt;</p>
+                <p><strong>À :</strong> {sub.souscripteurPrenom} {sub.souscripteurNom} &lt;{sub.souscripteurEmail}&gt;</p>
+                <p><strong>Objet :</strong> [VITALIS FADES] Constitution et dépôt de votre dossier physique en agence AFG Bank — Réf : {sub.reference}</p>
+              </div>
+
+              <div className="space-y-3">
+                <p>Bonjour <strong>{sub.souscripteurPrenom} {sub.souscripteurNom}</strong>,</p>
+                <p className="leading-relaxed">
+                  Nous avons le plaisir de vous informer que vos devis ont été chiffrés avec succès par nos fournisseurs agréés pour un montant total de <strong>{fmtCFA(sub.montantTotal || devis?.totalTTC || 0)}</strong>.
+                </p>
+                <p className="leading-relaxed">
+                  Afin de permettre au comité de crédit d'<strong>AFG Bank</strong> de procéder à l'analyse et à la validation de votre financement, vous êtes prié(e) de déposer votre dossier physique complet auprès de votre agence de rattachement :
+                </p>
+
+                <div className="p-3.5 bg-orange-50 border border-orange-200 rounded-xl">
+                  <p className="font-bold text-orange-950 text-xs">Agence de dépôt AFG Bank :</p>
+                  <p className="text-sm font-semibold text-orange-900 mt-0.5">{sub.agenceNom || "AFG Bank Atlantic — Agence Centrale Plateau"}</p>
+                  <p className="text-xs text-orange-700 mt-0.5">Délai recommandé : sous 15 jours ouvrés</p>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="font-bold text-gray-900 text-xs uppercase tracking-wider">Pièces physiques exigées au guichet :</p>
+                  <ul className="list-disc list-inside text-xs space-y-1 text-gray-600 bg-gray-50 p-3.5 rounded-xl border border-gray-100">
+                    <li>1x Fiche d'adhésion VITALIS imprimée et signée (mention "Lu et approuvé")</li>
+                    <li>1x Copie du/des devis fournisseur(s) chiffré(s) (validité 60 jours)</li>
+                    <li>1x Photocopie de la pièce d'identité en cours de validité (CNI ou Passeport)</li>
+                    <li>1x Attestation de travail originale ou arrêté de nomination datant de moins de 3 mois</li>
+                    <li>3x Derniers bulletins de salaire</li>
+                    <li>1x Justificatif de domicile récent (Facture CIE ou SODECI de moins de 3 mois)</li>
+                    <li>1x Relevé d'Identité Bancaire (RIB) du compte AFG Bank (possibilité d'ouverture sur place)</li>
+                  </ul>
+                </div>
+
+                <p className="text-xs text-gray-500 pt-2 border-t border-gray-100">
+                  L'équipe ViFlo Vitalis FADES reste à votre entière disposition pour tout renseignement complémentaire.
+                </p>
+              </div>
+            </div>
+
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={handlePrintDossier}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white border border-gray-200 hover:bg-gray-100 text-gray-700 text-xs font-semibold cursor-pointer"
+              >
+                <Printer className="w-3.5 h-3.5 text-orange-600" /> Imprimer le dossier complet
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowEmailModal(false)}
+                className="btn-ldf-primary py-2 px-5 text-xs font-bold rounded-xl cursor-pointer"
+              >
+                Fermer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

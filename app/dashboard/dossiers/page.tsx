@@ -5,7 +5,7 @@ import { StatusBadge } from "@/components/ui/ldf-badge";
 import { useLDFAuthStore, emitInAppNotification } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
 import {
-  CheckCircle2, ChevronLeft, ChevronRight, Eye,
+  ArrowUpDown, CheckCircle2, ChevronLeft, ChevronRight, Eye,
   Filter, Search, ShieldCheck, X, XCircle,
 } from "lucide-react";
 import Link from "next/link";
@@ -31,6 +31,47 @@ const STATUTS_LABELS: Record<string, string> = {
   cloture: "Clôturé",
 };
 
+// Ordre chronologique strict des 6 étapes du cycle de vie VITALIS
+const WORKFLOW_STEP_ORDER: Record<string, number> = {
+  en_preparation: 1,
+  pret_pour_depot: 2,
+  depose_banque: 3,
+  recu: 3,
+  en_analyse_bancaire: 4,
+  en_analyse: 4,
+  en_cours_traitement: 4,
+  accepte: 5,
+  valide: 5,
+  refuse: 5,
+  rejete: 5,
+  finance: 6,
+  fournisseur_paye: 6,
+  commande_en_preparation: 7,
+  livre: 8,
+  servie: 8,
+  cloture: 9,
+};
+
+const ETAPE_NUMERO: Record<string, string> = {
+  en_preparation: "Étape 1/6 : Préparation",
+  pret_pour_depot: "Étape 2/6 : Prêt dépôt",
+  depose_banque: "Étape 3/6 : Déposé banque",
+  recu: "Étape 3/6 : Reçu agence",
+  en_analyse_bancaire: "Étape 4/6 : En analyse",
+  en_analyse: "Étape 4/6 : En analyse",
+  en_cours_traitement: "Étape 4/6 : Instruction",
+  accepte: "Étape 5/6 : Accord accordé",
+  valide: "Étape 5/6 : Validé",
+  refuse: "Dossier rejeté",
+  rejete: "Dossier rejeté",
+  finance: "Étape 5/6 : Financé",
+  fournisseur_paye: "Étape 5/6 : Payé",
+  commande_en_preparation: "Étape 6/6 : Prép. colis",
+  livre: "Étape 6/6 : Livré",
+  servie: "Étape 6/6 : Servi",
+  cloture: "Clôturé",
+};
+
 const PAGE_SIZE = 10;
 
 export default function DossiersPage() {
@@ -39,21 +80,48 @@ export default function DossiersPage() {
 
   const [search, setSearch] = useState("");
   const [filterStatut, setFilterStatut] = useState("");
+  const [sortBy, setSortBy] = useState<"date_desc" | "date_asc" | "workflow" | "montant_desc" | "montant_asc">("date_desc");
   const [showFilters, setShowFilters] = useState(false);
   const [page, setPage] = useState(1);
   const [actionTarget, setActionTarget] = useState<string | null>(null); // ID du dossier en cours d'action
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
-    return dossiers.filter(d => {
+    const list = dossiers.filter(d => {
       const matchSearch = !q ||
         d.reference.toLowerCase().includes(q) ||
         d.souscripteurNom.toLowerCase().includes(q) ||
         (d.souscripteurPrenom?.toLowerCase().includes(q));
       const matchStatut = !filterStatut || d.statut === filterStatut;
       return matchSearch && matchStatut;
-    }).sort((a, b) => b.dateCreation.localeCompare(a.dateCreation));
-  }, [dossiers, search, filterStatut]);
+    });
+
+    return list.sort((a, b) => {
+      if (sortBy === "date_desc") {
+        const dComp = (b.dateCreation || "").localeCompare(a.dateCreation || "");
+        if (dComp !== 0) return dComp;
+        return (b.reference || "").localeCompare(a.reference || "");
+      }
+      if (sortBy === "date_asc") {
+        const dComp = (a.dateCreation || "").localeCompare(b.dateCreation || "");
+        if (dComp !== 0) return dComp;
+        return (a.reference || "").localeCompare(b.reference || "");
+      }
+      if (sortBy === "workflow") {
+        const oA = WORKFLOW_STEP_ORDER[a.statut] || 99;
+        const oB = WORKFLOW_STEP_ORDER[b.statut] || 99;
+        if (oA !== oB) return oA - oB;
+        return (b.dateCreation || "").localeCompare(a.dateCreation || "");
+      }
+      if (sortBy === "montant_desc") {
+        return (b.montantTotal || b.montant || 0) - (a.montantTotal || a.montant || 0);
+      }
+      if (sortBy === "montant_asc") {
+        return (a.montantTotal || a.montant || 0) - (b.montantTotal || b.montant || 0);
+      }
+      return 0;
+    });
+  }, [dossiers, search, filterStatut, sortBy]);
 
   const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -139,9 +207,9 @@ export default function DossiersPage() {
         ))}
       </div>
 
-      {/* Filtres */}
+      {/* Filtres & Tri */}
       <div className="section-card p-4 space-y-3">
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
@@ -151,16 +219,34 @@ export default function DossiersPage() {
               className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400 outline-none"
             />
           </div>
+
+          {/* Sélecteur de tri pour respecter l'ordre des dossiers */}
+          <div className="flex items-center gap-1.5 px-3 py-2 border border-gray-200 rounded-xl bg-white text-xs">
+            <ArrowUpDown className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />
+            <span className="font-semibold text-gray-600 hidden md:inline whitespace-nowrap">Tri :</span>
+            <select
+              value={sortBy}
+              onChange={e => { setSortBy(e.target.value as any); setPage(1); }}
+              className="bg-transparent border-none outline-none font-medium text-gray-800 cursor-pointer text-xs"
+            >
+              <option value="date_desc">Plus récents d'abord</option>
+              <option value="date_asc">Plus anciens d'abord</option>
+              <option value="workflow">Ordre Workflow Vitalis (1 à 6)</option>
+              <option value="montant_desc">Montant décroissant</option>
+              <option value="montant_asc">Montant croissant</option>
+            </select>
+          </div>
+
           <button
             onClick={() => setShowFilters(v => !v)}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors cursor-pointer whitespace-nowrap
               ${showFilters ? "bg-orange-500 text-white border-orange-500" : "border-gray-200 text-gray-600"}`}
           >
             <Filter className="w-4 h-4" /> Filtres
           </button>
           {(search || filterStatut) && (
             <button onClick={() => { setSearch(""); setFilterStatut(""); setPage(1); }}
-              className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-red-200 text-red-500 hover:bg-red-50 text-sm">
+              className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-red-200 text-red-500 hover:bg-red-50 text-sm cursor-pointer">
               <X className="w-4 h-4" />
             </button>
           )}
@@ -220,7 +306,12 @@ export default function DossiersPage() {
                         <span className="text-xs font-bold text-gray-800">{fmtCFA(d.montantTotal || d.montant)}</span>
                       </td>
                       <td className="px-4 py-3">
-                        <StatusBadge statut={d.statut} size="sm" />
+                        <div className="flex flex-col gap-0.5 items-start">
+                          <StatusBadge statut={d.statut} size="sm" />
+                          <span className="text-[10px] text-gray-400 font-medium">
+                            {ETAPE_NUMERO[d.statut] || "En cours"}
+                          </span>
+                        </div>
                       </td>
                       {canAct && (
                         <td className="px-4 py-3">

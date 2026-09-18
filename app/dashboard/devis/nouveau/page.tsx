@@ -30,7 +30,7 @@ import { toast } from "sonner";
 const CONDITIONS = {
   DELAI_ABIDJAN: "7 jours ouvrés",
   DELAI_INTERIEUR: "15 jours ouvrés",
-  VALIDITE: "30 jours ouvrés",
+  VALIDITE: "60 jours",
 };
 
 const TVA_TAUX = 0; // Programme Vitalis : exonéré TVA
@@ -236,7 +236,7 @@ function NouveauDevisContent() {
   const [conditions, setConditions] = useState("Paiement à réception de la commande validée par AFG Bank. Livraison franco de port.");
   const [observationsFourn, setObservationsFourn] = useState("");
   const [dateCreation] = useState(today());
-  const [dateExpiration] = useState(inDays(30 * 1.4)); // ~30 jours ouvrés
+  const [dateExpiration] = useState(inDays(60)); // 60 jours de validité selon consigne cliente
   const [showPreview, setShowPreview] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);

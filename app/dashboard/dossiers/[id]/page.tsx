@@ -7,11 +7,11 @@ import { useVitalisDb } from "@/stores/vitalisDbStore";
 import { useLDFAuthStore, emitInAppNotification } from "@/stores/ldfAuth";
 import {
   ArrowLeft, BookOpen, Building2, CheckCircle2, CreditCard,
-  FileText, Package, User, XCircle,
+  FileText, Package, User, XCircle, Truck, MapPin, Phone,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import type { DossierStatut } from "@/types/ldf";
 
@@ -44,6 +44,24 @@ export default function DossierDetailPage() {
     : null) || (dossier ? getDevisBySouscription(dossier.souscriptionId)[0] : null);
   const sub = dossier ? getSouscriptionById(dossier.souscriptionId) : null;
   const historique = dossier ? getHistoriqueBySouscription(dossier.souscriptionId) : [];
+
+  // Détails de livraison structurés
+  const deliveryInfo = useMemo(() => {
+    if (sub?.detailsLivraison) return sub.detailsLivraison;
+    const obs = sub?.observations || "";
+    const isDomicile = obs.toLowerCase().includes("domicile");
+    const destMatch = obs.match(/Destinataire:\s*([^(|\n]+)(?:\(([^)]+)\))?/);
+    const relaisMatch = obs.match(/(?:Point Relais|Relais):\s*([^\]|\n]+)/);
+    const zoneMatch = obs.match(/Zone:\s*([^|\n]+)/);
+    return {
+      mode: isDomicile ? "domicile" : "point_relais",
+      adresse: obs.includes("Domicile:") ? (obs.match(/Domicile:\s*([^\]|\n]+)/)?.[1] || "") : "",
+      pointRelaisNom: relaisMatch ? relaisMatch[1].replace(/^[^(]*\(([^)]*)\).*/, "$1").trim() : "",
+      destinataireNom: destMatch ? destMatch[1].trim() : `${sub?.souscripteurPrenom || dossier?.souscripteurPrenom || ""} ${sub?.souscripteurNom || dossier?.souscripteurNom || ""}`.trim(),
+      destinataireTelephone: destMatch && destMatch[2] ? destMatch[2].trim() : (sub?.souscripteurTelephone || ""),
+      zone: zoneMatch ? zoneMatch[1].trim() : "",
+    };
+  }, [sub, dossier]);
 
   if (!dossier) return (
     <div className="flex flex-col items-center justify-center py-24 text-gray-400 gap-3">
@@ -98,31 +116,33 @@ export default function DossierDetailPage() {
 
   const isDossierRejete = currentStatut === "rejete" || currentStatut === "refuse" || sub?.statut === "refuse";
 
-  // Process steps (VITALIS Workflow: Souscription -> Devis validé -> En traitement -> Décision -> Paiement -> Servi)
+  // Process steps (VITALIS Workflow: 1. Demande & Besoin -> 2. Devis fournisseur -> 3. Dépôt dossier physique -> 4. Décision AFG Bank -> 5. Virement fournisseur -> 6. Retrait des articles)
   const processSteps = [
-    { id: "s1", label: "Souscription", statut: "complete" as const },
-    { id: "s2", label: "Devis validé", statut: "complete" as const },
+    { id: "s1", label: "1. Demande & Besoin", statut: "complete" as const, date: sub?.dateCreation || dossier.dateCreation },
+    { id: "s2", label: "2. Devis fournisseur", statut: devis ? ("complete" as const) : ("pending" as const) },
     {
       id: "s3",
-      label: "En traitement",
-      statut: isPasse(effectifStatut, "accepte") || isDossierRejete
+      label: "3. Dépôt dossier physique",
+      statut: (isPasse(effectifStatut, "depose_banque") || isPasse(effectifStatut, "en_analyse_bancaire") || isPasse(effectifStatut, "accepte"))
         ? ("complete" as const)
-        : ["en_cours_traitement", "en_analyse_bancaire", "depose_banque", "recu"].includes(currentStatut)
+        : devis
           ? ("current" as const)
           : ("pending" as const),
     },
     {
       id: "s4",
-      label: "Décision",
+      label: "4. Décision AFG Bank",
       statut: isDossierRejete
         ? ("rejected" as const)
         : isPasse(effectifStatut, "accepte")
           ? ("complete" as const)
-          : ("pending" as const),
+          : ["en_cours_traitement", "en_analyse_bancaire", "depose_banque", "recu"].includes(currentStatut)
+            ? ("current" as const)
+            : ("pending" as const),
     },
     {
       id: "s5",
-      label: "Paiement",
+      label: "5. Virement fournisseur",
       statut: isPasse(effectifStatut, "fournisseur_paye")
         ? ("complete" as const)
         : (effectifStatut === "accepte" || effectifStatut === "valide" || effectifStatut === "finance")
@@ -131,7 +151,7 @@ export default function DossierDetailPage() {
     },
     {
       id: "s6",
-      label: "Servi",
+      label: "6. Retrait des articles",
       statut: (isPasse(effectifStatut, "livre") || effectifStatut === "servie" || effectifStatut === "cloture")
         ? ("complete" as const)
         : (effectifStatut === "fournisseur_paye" || effectifStatut === "commande_en_preparation")
@@ -418,6 +438,47 @@ export default function DossierDetailPage() {
               </div>
             </div>
           )}
+
+          {/* Section Détails et Destination de livraison client */}
+          <div className="section-card border-l-4 border-l-blue-500">
+            <div className="section-card-header bg-blue-50/40">
+              <div className="flex items-center gap-2">
+                <Truck className="w-4 h-4 text-blue-600" />
+                <h3 className="text-sm font-semibold text-gray-900">Modalités & Destination de la livraison (Détails client)</h3>
+              </div>
+              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800">
+                {deliveryInfo.mode === "point_relais" ? "Point Relais Vitalis" : "Livraison à domicile"}
+              </span>
+            </div>
+            <div className="section-card-body grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p className="text-xs text-gray-400 mb-0.5">Mode de livraison</p>
+                <p className="text-sm font-semibold text-gray-800">
+                  {deliveryInfo.mode === "point_relais" ? "Retrait en Point Relais Partenaire" : "Livraison directe à domicile / site"}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-400 mb-0.5">Lieu / Adresse</p>
+                <p className="text-sm font-medium text-gray-800">
+                  {deliveryInfo.mode === "point_relais"
+                    ? (deliveryInfo.pointRelaisNom ? `Point Relais : ${deliveryInfo.pointRelaisNom}` : (deliveryInfo.zone || "Point Relais désigné"))
+                    : (deliveryInfo.adresse || deliveryInfo.zone || "Adresse indiquée par le client")}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-400 mb-0.5">Destinataire désigné</p>
+                <p className="text-sm font-medium text-gray-800">
+                  {deliveryInfo.destinataireNom || `${dossier.souscripteurPrenom || ""} ${dossier.souscripteurNom || ""}`}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-400 mb-0.5">Téléphone direct du destinataire</p>
+                <p className="text-sm font-semibold text-gray-800 text-blue-700">
+                  {deliveryInfo.destinataireTelephone || sub?.souscripteurTelephone || "Non spécifié"}
+                </p>
+              </div>
+            </div>
+          </div>
 
           {/* Section 3 — Devis */}
           {devis && (

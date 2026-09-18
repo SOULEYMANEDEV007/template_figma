@@ -30,8 +30,10 @@ export const IMAGES = {
   partners: {
     ldf: "/images/ldf.png",
     drocolor: "/images/drocolor-logo.jfif", // Premier logo Drocolor (fond rouge)
-    smartTechno: "/images/logo-smart-techno.png",
-    nasko: "/images/logo-nasko.png",
+    comafrique: "/images/logo-comafrique.webp",
+    inovim: "/images/logo-inovim.jpg",
+    kaydan: "/images/logo-kaydan.webp",
+    socida: "/images/logo-socida.jpg",
     rymco: "/images/logo_rymco.jpg",
     lg: "/images/logo_lg.webp",
     sodimac: "/images/logo_sodimac_ci.jpg",
@@ -73,7 +75,7 @@ export const IMAGE_META = {
 } as const;
 
 /**
- * Liste officielle des 8 fournisseurs agréés Vitalis
+ * Liste officielle des 10 fournisseurs agréés Vitalis
  */
 export const OFFICIAL_FOURNISSEURS = [
   {
@@ -96,7 +98,7 @@ export const OFFICIAL_FOURNISSEURS = [
     code: "DRO",
     nom: "Drocolor",
     raisonSociale: "Drocolor Côte d'Ivoire SARL",
-    secteurActivite: "Matériel informatique et électronique",
+    secteurActivite: "Peinture bâtiment & carrosserie, revêtements & étanchéité",
     logo: IMAGES.partners.drocolor,
     adresse: "Zone Industrielle de Yopougon",
     ville: "Abidjan",
@@ -107,41 +109,71 @@ export const OFFICIAL_FOURNISSEURS = [
     statut: "actif" as const,
   },
   {
-    id: "FOUR-SMT-003",
-    code: "SMART",
-    nom: "SMART TECHNOLOGIE",
-    raisonSociale: "Smart Technologie CI SA",
-    secteurActivite: "Informatique et solutions digitales",
-    logo: IMAGES.partners.smartTechno,
-    adresse: "Rue des Jardins, Plateau",
-    ville: "Abidjan",
-    quartier: "Plateau",
-    telephone: "+225 27 20 12 34 56",
-    email: "contact@smarttech.ci",
-    agreVitalis: true,
-    statut: "actif" as const,
-  },
-  {
-    id: "FOUR-NAS-004",
-    code: "NASCO",
-    nom: "NASCO",
-    raisonSociale: "NASCO Distribution SARL",
-    secteurActivite: "Électroménager, meubles et équipements",
-    logo: IMAGES.partners.nasko,
+    id: "FOUR-COM-003",
+    code: "COMAF",
+    nom: "COMAFRIQUE",
+    raisonSociale: "Comafrique Technologies CI",
+    secteurActivite: "Technologies, Informatique & Solutions digitales",
+    logo: IMAGES.partners.comafrique,
     adresse: "Boulevard de Marseille, Treichville",
     ville: "Abidjan",
     quartier: "Treichville",
-    telephone: "+225 27 21 98 76 54",
-    email: "info@nasko.ci",
+    telephone: "+225 27 21 75 80 00",
+    email: "contact@comafrique.ci",
     agreVitalis: true,
     statut: "actif" as const,
   },
   {
-    id: "FOUR-RYM-005",
+    id: "FOUR-INO-004",
+    code: "INOVIM",
+    nom: "INOVIM",
+    raisonSociale: "Groupe INOVIM Immobilier",
+    secteurActivite: "Immobilier, Logement & Aménagement",
+    logo: IMAGES.partners.inovim,
+    adresse: "Cocody Ambassades, Rue des Jardins",
+    ville: "Abidjan",
+    quartier: "Cocody",
+    telephone: "+225 27 22 40 85 00",
+    email: "contact@inovim-group.com",
+    agreVitalis: true,
+    statut: "actif" as const,
+  },
+  {
+    id: "FOUR-KAY-005",
+    code: "KAYDAN",
+    nom: "KAYDAN",
+    raisonSociale: "KAYDAN Groupe",
+    secteurActivite: "Promotion immobilière, BTP & Construction",
+    logo: IMAGES.partners.kaydan,
+    adresse: "Immeuble Kaydan, Cocody Riviera Golf",
+    ville: "Abidjan",
+    quartier: "Cocody",
+    telephone: "+225 27 22 48 90 00",
+    email: "contact@kaydan.ci",
+    agreVitalis: true,
+    statut: "actif" as const,
+  },
+  {
+    id: "FOUR-SCD-006",
+    code: "SOCIDA",
+    nom: "SOCIDA",
+    raisonSociale: "Société de Concessionnaires pour l'Automobile (SOCIDA)",
+    secteurActivite: "Automobile, Véhicules neufs, Utilitaires & Pièces",
+    logo: IMAGES.partners.socida,
+    adresse: "Boulevard de Marseille, Km 4, Zone 3",
+    ville: "Abidjan",
+    quartier: "Treichville",
+    telephone: "+225 27 21 21 40 00",
+    email: "contact@socida.ci",
+    agreVitalis: true,
+    statut: "actif" as const,
+  },
+  {
+    id: "FOUR-RYM-007",
     code: "RYMCO",
     nom: "RYMCO",
     raisonSociale: "RYMCO Côte d'Ivoire",
-    secteurActivite: "Équipements, matériel & quincaillerie",
+    secteurActivite: "Automobile, Deux-roues, Équipements & Matériel",
     logo: IMAGES.partners.rymco,
     adresse: "Zone Industrielle de Vridi",
     ville: "Abidjan",
@@ -152,11 +184,11 @@ export const OFFICIAL_FOURNISSEURS = [
     statut: "actif" as const,
   },
   {
-    id: "FOUR-LG-006",
+    id: "FOUR-LG-008",
     code: "LG",
     nom: "LG",
     raisonSociale: "LG Electronics Côte d'Ivoire",
-    secteurActivite: "Électroménager et électronique grand public",
+    secteurActivite: "Électroménager, Climatisation & Électronique",
     logo: IMAGES.partners.lg,
     adresse: "Boulevard Valéry Giscard d'Estaing",
     ville: "Abidjan",
@@ -167,11 +199,11 @@ export const OFFICIAL_FOURNISSEURS = [
     statut: "actif" as const,
   },
   {
-    id: "FOUR-SOD-007",
+    id: "FOUR-SOD-009",
     code: "SODIMAC",
     nom: "SODIMAC",
     raisonSociale: "SODIMAC CI",
-    secteurActivite: "Matériaux, outillage et aménagement maison",
+    secteurActivite: "Matériaux de construction, Cimenterie & Aménagement",
     logo: IMAGES.partners.sodimac,
     adresse: "Boulevard de Marseille, Zone 3",
     ville: "Abidjan",
@@ -182,11 +214,11 @@ export const OFFICIAL_FOURNISSEURS = [
     statut: "actif" as const,
   },
   {
-    id: "FOUR-SOC-008",
+    id: "FOUR-SOC-010",
     code: "SOCIAM",
     nom: "SOCIAM",
     raisonSociale: "Société Ivoirienne d'Appareillage Ménager (SOCIAM)",
-    secteurActivite: "Électroménager, image & son, froid",
+    secteurActivite: "Électroménager, Image & Son, Froid",
     logo: IMAGES.partners.sociam,
     adresse: "Zone Industrielle de Koumassi",
     ville: "Abidjan",
@@ -206,30 +238,16 @@ export function getPartnerLogo(supplierName?: string, supplierId?: string): stri
 
   const query = `${supplierName || ""} ${supplierId || ""}`.toLowerCase();
 
-  if (query.includes("ldf") || query.includes("librairie")) {
-    return IMAGES.partners.ldf;
-  }
-  if (query.includes("dro") || query.includes("drocolor")) {
-    return IMAGES.partners.drocolor;
-  }
-  if (query.includes("smt") || query.includes("smart")) {
-    return IMAGES.partners.smartTechno;
-  }
-  if (query.includes("nas") || query.includes("nasko") || query.includes("nasco")) {
-    return IMAGES.partners.nasko;
-  }
-  if (query.includes("soc") || query.includes("sociam")) {
-    return IMAGES.partners.sociam;
-  }
-  if (query.includes("rym") || query.includes("rymco")) {
-    return IMAGES.partners.rymco;
-  }
-  if (query.includes("sod") || query.includes("sodimac")) {
-    return IMAGES.partners.sodimac;
-  }
-  if (query.includes("lg")) {
-    return IMAGES.partners.lg;
-  }
+  if (query.includes("ldf") || query.includes("librairie")) return IMAGES.partners.ldf;
+  if (query.includes("dro") || query.includes("drocolor")) return IMAGES.partners.drocolor;
+  if (query.includes("comafrique") || query.includes("comaf")) return IMAGES.partners.comafrique;
+  if (query.includes("inovim")) return IMAGES.partners.inovim;
+  if (query.includes("kaydan")) return IMAGES.partners.kaydan;
+  if (query.includes("socida")) return IMAGES.partners.socida;
+  if (query.includes("soc") || query.includes("sociam")) return IMAGES.partners.sociam;
+  if (query.includes("rym") || query.includes("rymco")) return IMAGES.partners.rymco;
+  if (query.includes("sod") || query.includes("sodimac")) return IMAGES.partners.sodimac;
+  if (query.includes("lg")) return IMAGES.partners.lg;
 
   return IMAGES.partners.ldf;
 }

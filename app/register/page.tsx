@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { getDashboardPath, useLDFAuthStore } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
 import { setCookie } from "cookies-next";
-import { Building2, Eye, EyeOff, Lock, Mail, MapPin, Phone, ShieldCheck, Sparkles, User } from "lucide-react";
+import { Building2, CheckCircle2, Eye, EyeOff, FileText, Lock, Mail, MapPin, Phone, ShieldCheck, Sparkles, Upload, User, X } from "lucide-react";
 import { IMAGES } from "@/lib/constants";
 import Image from "next/image";
 import Link from "next/link";
@@ -25,17 +25,24 @@ export default function RegisterPage() {
   const [prenom, setPrenom] = useState("");
   const [email, setEmail] = useState("");
   const [telephone, setTelephone] = useState("");
-  const [ville, setVille] = useState("");
-  const [quartier, setQuartier] = useState("");
+  const [region, setRegion] = useState("District Autonome d'Abidjan");
+  const [ville, setVille] = useState("Abidjan");
+  const [commune, setCommune] = useState("");
   const [situationPro, setSituationPro] = useState("");
   const [situationMatri, setSituationMatri] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  // Documents justificatifs (Attestation de travail, bulletin de salaire)
+  const [attestationTravailFile, setAttestationTravailFile] = useState<File | null>(null);
+  const [bulletinSalaireFile, setBulletinSalaireFile] = useState<File | null>(null);
+  const [cniFile, setCniFile] = useState<File | null>(null);
+  const [rccmFile, setRccmFile] = useState<File | null>(null);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!nom || !email || !telephone || !ville || !situationPro || !password || !confirmPassword) {
-      toast.error("Veuillez remplir tous les champs obligatoires.");
+    if (!nom || !email || !telephone || !region || !ville || !commune || !situationPro || !password || !confirmPassword) {
+      toast.error("Veuillez remplir tous les champs obligatoires (*).");
       return;
     }
     if (password !== confirmPassword) {
@@ -60,13 +67,21 @@ export default function RegisterPage() {
         lastName: typeProfil === "physique" ? nom : "",
         role: "souscripteur",
         telephone,
+        region,
         ville,
-        quartier,
+        commune,
+        quartier: commune,
         situationPro,
         situationMatri,
         typeProfil,
         banqueId: "AFG-001",
         banqueNom: "AFG Bank",
+        documents: {
+          attestationTravail: attestationTravailFile ? attestationTravailFile.name : null,
+          bulletinSalaire: bulletinSalaireFile ? bulletinSalaireFile.name : null,
+          cni: cniFile ? cniFile.name : null,
+          rccm: rccmFile ? rccmFile.name : null,
+        },
       };
 
       // Authentification immédiate (Simulation car pas de vrai backend)
@@ -248,24 +263,45 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* 4. Localisation */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-gray-700">Ville *</label>
-                <Input
-                  value={ville}
-                  onChange={(e) => setVille(e.target.value)}
-                  placeholder="Ex: Abidjan"
-                  startIcon={<MapPin className="w-4 h-4" />}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-gray-700">Commune / Quartier *</label>
-                <Input
-                  value={quartier}
-                  onChange={(e) => setQuartier(e.target.value)}
-                  placeholder="Ex: Cocody Angré"
-                />
+            {/* 4. Localisation (Région - Ville - Commune) */}
+            <div className="space-y-3">
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Localisation géographique</label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-700">Région *</label>
+                  <select
+                    value={region}
+                    onChange={(e) => setRegion(e.target.value)}
+                    className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400 transition-all cursor-pointer"
+                  >
+                    <option value="District Autonome d'Abidjan">Abidjan (District)</option>
+                    <option value="Gbêkê">Gbêkê (Bouaké)</option>
+                    <option value="San-Pédro">San-Pédro</option>
+                    <option value="Poro">Poro (Korhogo)</option>
+                    <option value="Haut-Sassandra">Haut-Sassandra (Daloa)</option>
+                    <option value="District Autonome de Yamoussoukro">Yamoussoukro</option>
+                    <option value="Indénié-Djuablin">Indénié-Djuablin (Abengourou)</option>
+                    <option value="Tonkpi">Tonkpi (Man)</option>
+                    <option value="Autre région">Autre région de Côte d'Ivoire</option>
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-700">Ville *</label>
+                  <Input
+                    value={ville}
+                    onChange={(e) => setVille(e.target.value)}
+                    placeholder="Ex: Abidjan, Bouaké..."
+                    startIcon={<MapPin className="w-4 h-4 text-orange-500" />}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-700">Commune / Quartier *</label>
+                  <Input
+                    value={commune}
+                    onChange={(e) => setCommune(e.target.value)}
+                    placeholder="Ex: Cocody Angré"
+                  />
+                </div>
               </div>
             </div>
 
@@ -313,6 +349,158 @@ export default function RegisterPage() {
                     <option value="Divorce(e)">Divorcé(e)</option>
                     <option value="Veuf / Veuve">Veuf / Veuve</option>
                   </select>
+                </div>
+              )}
+            </div>
+
+            {/* 6. Pièces justificatives pour constitution du dossier */}
+            <div className="space-y-3 p-4 bg-orange-50/50 border border-orange-200/80 rounded-2xl">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xs font-bold text-gray-900 flex items-center gap-1.5">
+                    <FileText className="w-4 h-4 text-orange-600" />
+                    Pièces justificatives (Constitution du dossier)
+                  </h3>
+                  <p className="text-[11px] text-gray-500 mt-0.5">
+                    Téléversez vos pièces dès maintenant pour accélérer l'analyse de votre dossier par AFG Bank.
+                  </p>
+                </div>
+                <span className="text-[10px] font-semibold text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full">
+                  Fichiers PDF ou Images
+                </span>
+              </div>
+
+              {typeProfil === "physique" ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  {/* Attestation de travail */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-gray-700 flex items-center justify-between">
+                      <span>Attestation de travail *</span>
+                      {attestationTravailFile && (
+                        <span className="text-[10px] text-emerald-600 font-bold flex items-center gap-0.5">
+                          <CheckCircle2 className="w-3 h-3" /> Fichier joint
+                        </span>
+                      )}
+                    </label>
+                    <label className={`flex flex-col items-center justify-center p-3 border-2 border-dashed rounded-xl cursor-pointer transition-all ${
+                      attestationTravailFile ? "border-emerald-400 bg-emerald-50/40" : "border-gray-200 hover:border-orange-300 bg-white"
+                    }`}>
+                      <input
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        className="hidden"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0] || null;
+                          setAttestationTravailFile(f);
+                          if (f) toast.success(`Attestation de travail ajoutée : ${f.name}`);
+                        }}
+                      />
+                      {attestationTravailFile ? (
+                        <div className="flex items-center justify-between w-full">
+                          <div className="flex items-center gap-2 truncate">
+                            <FileText className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                            <span className="text-xs text-gray-800 truncate font-medium">{attestationTravailFile.name}</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={(ev) => {
+                              ev.stopPropagation();
+                              setAttestationTravailFile(null);
+                            }}
+                            className="p-1 hover:bg-red-100 text-red-500 rounded-full"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 text-gray-500">
+                          <Upload className="w-4 h-4 text-orange-500" />
+                          <span className="text-xs">Charger l'attestation de travail (PDF/Photo)</span>
+                        </div>
+                      )}
+                    </label>
+                  </div>
+
+                  {/* Bulletins de salaire */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-gray-700 flex items-center justify-between">
+                      <span>3 Derniers bulletins de salaire *</span>
+                      {bulletinSalaireFile && (
+                        <span className="text-[10px] text-emerald-600 font-bold flex items-center gap-0.5">
+                          <CheckCircle2 className="w-3 h-3" /> Fichier joint
+                        </span>
+                      )}
+                    </label>
+                    <label className={`flex flex-col items-center justify-center p-3 border-2 border-dashed rounded-xl cursor-pointer transition-all ${
+                      bulletinSalaireFile ? "border-emerald-400 bg-emerald-50/40" : "border-gray-200 hover:border-orange-300 bg-white"
+                    }`}>
+                      <input
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        className="hidden"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0] || null;
+                          setBulletinSalaireFile(f);
+                          if (f) toast.success(`Bulletins de salaire ajoutés : ${f.name}`);
+                        }}
+                      />
+                      {bulletinSalaireFile ? (
+                        <div className="flex items-center justify-between w-full">
+                          <div className="flex items-center gap-2 truncate">
+                            <FileText className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                            <span className="text-xs text-gray-800 truncate font-medium">{bulletinSalaireFile.name}</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={(ev) => {
+                              ev.stopPropagation();
+                              setBulletinSalaireFile(null);
+                            }}
+                            className="p-1 hover:bg-red-100 text-red-500 rounded-full"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 text-gray-500">
+                          <Upload className="w-4 h-4 text-orange-500" />
+                          <span className="text-xs">Charger les bulletins de salaire (PDF/Photo)</span>
+                        </div>
+                      )}
+                    </label>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  {/* RCCM Entreprise */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-gray-700">Registre du Commerce (RCCM) *</label>
+                    <label className={`flex flex-col items-center justify-center p-3 border-2 border-dashed rounded-xl cursor-pointer transition-all ${
+                      rccmFile ? "border-emerald-400 bg-emerald-50/40" : "border-gray-200 hover:border-orange-300 bg-white"
+                    }`}>
+                      <input
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        className="hidden"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0] || null;
+                          setRccmFile(f);
+                          if (f) toast.success(`RCCM ajouté : ${f.name}`);
+                        }}
+                      />
+                      {rccmFile ? (
+                        <div className="flex items-center justify-between w-full">
+                          <span className="text-xs text-gray-800 truncate font-medium">{rccmFile.name}</span>
+                          <button type="button" onClick={(ev) => { ev.stopPropagation(); setRccmFile(null); }} className="p-1 text-red-500"><X className="w-3.5 h-3.5" /></button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 text-gray-500">
+                          <Upload className="w-4 h-4 text-orange-500" />
+                          <span className="text-xs">Charger le RCCM (PDF/Photo)</span>
+                        </div>
+                      )}
+                    </label>
+                  </div>
                 </div>
               )}
             </div>

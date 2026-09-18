@@ -118,14 +118,19 @@ export default function DashboardSouscripteur() {
                   <tr><td>Hors Abidjan (Intérieur)</td><td>15 jours ouvrés</td></tr>
                 </table>
 
-                <h2>4. Fournisseurs partenaires (Agrés)</h2>
+                <h2>4. Fournisseurs partenaires (10 Agréés Officiels)</h2>
                 <table>
                   <tr><th>Fournisseur</th><th>Domaine</th></tr>
-                  <tr><td>Librairie de France Groupe</td><td>Fournitures scolaires & bureautiques</td></tr>
-                  <tr><td>Drocolor</td><td>Matériel informatique & électronique</td></tr>
-                  <tr><td>SMART TECHNOLOGIE</td><td>Informatique & solutions digitales</td></tr>
-                  <tr><td>NASCO</td><td>Meubles & équipements de bureau</td></tr>
-                  <tr><td>CARREFOUR</td><td>Grande distribution multi-produits</td></tr>
+                  <tr><td>Librairie de France Groupe</td><td>Fournitures scolaires, livres & bureautique</td></tr>
+                  <tr><td>Drocolor</td><td>Peinture, décoration & revêtements</td></tr>
+                  <tr><td>COMAFRIQUE</td><td>Automobile, pièces détachées & outillage</td></tr>
+                  <tr><td>INOVIM</td><td>Informatique, bureautique & high-tech</td></tr>
+                  <tr><td>KAYDAN</td><td>Immobilier, construction & aménagement</td></tr>
+                  <tr><td>SOCIDA</td><td>Automobile, mobilité & véhicules</td></tr>
+                  <tr><td>RYMCO</td><td>Deux-roues, motocycles & accessoires</td></tr>
+                  <tr><td>LG</td><td>Électroménager, TV & climatisation</td></tr>
+                  <tr><td>SODIMAC</td><td>Matériaux de construction & quincaillerie</td></tr>
+                  <tr><td>SOCIAM</td><td>Électroménager & équipement de la maison</td></tr>
                 </table>
 
                 <div class="footer">

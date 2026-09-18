@@ -15,9 +15,9 @@ export default function RootPage() {
   const [skip, setSkip] = useState(false);
   const [animating, setAnimating] = useState(true);
 
-  // Fournisseurs officiels de l'orbite (8 partenaires agréés Vitalis)
+  // Fournisseurs officiels de l'orbite (10 partenaires agréés Vitalis)
   const orbitFournisseurs = useMemo(() => {
-    if (fournisseurs && fournisseurs.length >= 8) {
+    if (fournisseurs && fournisseurs.length >= 10) {
       return fournisseurs.filter(f => f.statut === "actif");
     }
     return OFFICIAL_FOURNISSEURS;

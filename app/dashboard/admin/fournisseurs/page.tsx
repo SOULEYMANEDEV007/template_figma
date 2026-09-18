@@ -28,8 +28,12 @@ const EMPTY_FORM = {
 };
 
 export default function AdminFournisseursPage() {
-  const { fournisseurs, updateFournisseur: _update } = useVitalisDb();
-  const [localFourn, setLocalFourn] = useState<VFournisseur[]>(fournisseurs);
+  const {
+    fournisseurs = [],
+    addFournisseur,
+    updateFournisseur,
+    deleteFournisseur,
+  } = useVitalisDb();
   const [search, setSearch] = useState("");
   const [filterStatut, setFilterStatut] = useState("");
   const [showForm, setShowForm] = useState(false);
@@ -38,12 +42,12 @@ export default function AdminFournisseursPage() {
   const [form, setForm] = useState(EMPTY_FORM);
 
   const filtered = useMemo(() =>
-    localFourn.filter(f => {
+    fournisseurs.filter(f => {
       const q = search.toLowerCase();
-      const matchSearch = !q || f.nom.toLowerCase().includes(q) || f.ville.toLowerCase().includes(q);
+      const matchSearch = !q || f.nom.toLowerCase().includes(q) || f.ville?.toLowerCase().includes(q);
       const matchStatut = !filterStatut || f.statut === filterStatut;
       return matchSearch && matchStatut;
-    }), [localFourn, search, filterStatut]);
+    }), [fournisseurs, search, filterStatut]);
 
   const openAdd = () => {
     setForm(EMPTY_FORM);
@@ -69,27 +73,40 @@ export default function AdminFournisseursPage() {
       return;
     }
     if (editTarget) {
-      setLocalFourn(prev => prev.map(f => f.id === editTarget.id ? {
-        ...f,
-        nom: form.nom, nomDirecteur: form.nomDirecteur, email: form.email, telephone: form.telephone,
-        adresse: form.adresse, ville: form.ville, region: form.region, rccm: form.rccm,
-        compteContribuable: form.compteContribuable, situationJuridique: form.situationJuridique,
-        nombreEmployes: Number(form.nombreEmployes), dureePartenariatAFG: Number(form.dureePartenariatAFG),
-        numeroContratAFG: form.numeroContratAFG, statut: form.statut,
-      } : f));
+      updateFournisseur(editTarget.id, {
+        nom: form.nom,
+        nomDirecteur: form.nomDirecteur,
+        email: form.email,
+        telephone: form.telephone,
+        adresse: form.adresse,
+        ville: form.ville,
+        region: form.region,
+        rccm: form.rccm,
+        compteContribuable: form.compteContribuable,
+        situationJuridique: form.situationJuridique,
+        nombreEmployes: Number(form.nombreEmployes),
+        dureePartenariatAFG: Number(form.dureePartenariatAFG),
+        numeroContratAFG: form.numeroContratAFG,
+        statut: form.statut,
+      });
       toast.success(`Fournisseur ${form.nom} mis à jour`);
     } else {
-      const newF: VFournisseur = {
-        id: `FOUR-${Date.now()}`,
-        code: form.nom.substring(0, 6).toUpperCase().replace(/\s/g, ""),
-        nom: form.nom, nomDirecteur: form.nomDirecteur, email: form.email, telephone: form.telephone,
-        adresse: form.adresse, ville: form.ville, region: form.region, rccm: form.rccm,
-        compteContribuable: form.compteContribuable, situationJuridique: form.situationJuridique,
-        nombreEmployes: Number(form.nombreEmployes), dureePartenariatAFG: Number(form.dureePartenariatAFG),
-        numeroContratAFG: form.numeroContratAFG, statut: "prospect",
-        agreVitalis: false, nombreSouscriptions: 0, montantTotal: 0,
-      };
-      setLocalFourn(prev => [newF, ...prev]);
+      addFournisseur({
+        nom: form.nom,
+        nomDirecteur: form.nomDirecteur,
+        email: form.email,
+        telephone: form.telephone,
+        adresse: form.adresse,
+        ville: form.ville,
+        region: form.region,
+        rccm: form.rccm,
+        compteContribuable: form.compteContribuable,
+        situationJuridique: form.situationJuridique,
+        nombreEmployes: Number(form.nombreEmployes),
+        dureePartenariatAFG: Number(form.dureePartenariatAFG),
+        numeroContratAFG: form.numeroContratAFG,
+        statut: "prospect",
+      });
       toast.success(`Fournisseur ${form.nom} ajouté (statut : Prospect)`);
     }
     setShowForm(false);
@@ -100,11 +117,9 @@ export default function AdminFournisseursPage() {
       agree: "Agréé", actif: "Actif", suspendu: "Suspendu",
       en_cours_agrement: "Agrément en cours", expire: "Expiré",
     };
-    setLocalFourn(prev => prev.map(p => p.id === f.id ? {
-      ...p, statut: newStatut,
-      agreVitalis: newStatut === "actif" || newStatut === "agree",
-      dateAgrement: (newStatut === "agree" || newStatut === "actif") ? new Date().toISOString().split("T")[0] : p.dateAgrement,
-    } : p));
+    updateFournisseur(f.id, {
+      statut: newStatut,
+    });
     toast.success(`${f.nom} → ${labels[newStatut] ?? newStatut}`);
     setShowConfirmSuspend(null);
   };
@@ -234,6 +249,15 @@ export default function AdminFournisseursPage() {
                           <XCircle className="w-3.5 h-3.5" />
                         </button>
                       )}
+                      <button onClick={() => {
+                        if (confirm(`Voulez-vous supprimer le fournisseur ${f.nom} ?`)) {
+                          deleteFournisseur(f.id);
+                          toast.success(`Fournisseur ${f.nom} supprimé`);
+                        }
+                      }} title="Supprimer définitivement"
+                        className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors">
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   </td>
                 </tr>

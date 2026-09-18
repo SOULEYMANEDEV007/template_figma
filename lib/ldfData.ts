@@ -356,7 +356,7 @@ export const mockDevis = [
     conditionsLivraison: {
       delaiGrandAbidjan: "7 jours ouvrés",
       delaiInterieur: "15 jours ouvrés",
-      validite: "30 jours ouvrés",
+      validite: "60 jours",
     },
     statut: "valide",
     dateCreation: "2026-09-02",
@@ -387,7 +387,7 @@ export const mockDevis = [
     conditionsLivraison: {
       delaiGrandAbidjan: "7 jours ouvrés",
       delaiInterieur: "15 jours ouvrés",
-      validite: "30 jours ouvrés",
+      validite: "60 jours",
     },
     statut: "envoye",
     dateCreation: "2026-09-06",
@@ -418,7 +418,7 @@ export const mockDevis = [
     conditionsLivraison: {
       delaiGrandAbidjan: "7 jours ouvrés",
       delaiInterieur: "15 jours ouvrés",
-      validite: "30 jours ouvrés",
+      validite: "60 jours",
     },
     statut: "en_attente_validation",
     dateCreation: "2026-09-07",
@@ -449,7 +449,7 @@ export const mockDevis = [
     conditionsLivraison: {
       delaiGrandAbidjan: "7 jours ouvrés",
       delaiInterieur: "15 jours ouvrés",
-      validite: "30 jours ouvrés",
+      validite: "60 jours",
     },
     statut: "valide",
     dateCreation: "2026-08-22",

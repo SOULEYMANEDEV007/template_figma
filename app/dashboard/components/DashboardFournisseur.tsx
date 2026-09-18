@@ -135,14 +135,19 @@ export default function DashboardFournisseur() {
                   <tr><td>• Relevé d'Identité Bancaire (RIB)</td><td>• 3 derniers bilans certifiés + RIB société</td></tr>
                 </table>
 
-                <h2>4. Fournisseurs partenaires (Agréés)</h2>
+                <h2>4. Fournisseurs partenaires (Agréés Vitalis)</h2>
                 <table>
                   <tr><th>Fournisseur</th><th>Domaine</th></tr>
                   <tr><td>Librairie de France Groupe</td><td>Fournitures scolaires & bureautiques</td></tr>
-                  <tr><td>Drocolor</td><td>Matériel informatique & électronique</td></tr>
-                  <tr><td>SMART TECHNOLOGIE</td><td>Informatique & solutions digitales</td></tr>
-                  <tr><td>NASCO</td><td>Meubles & équipements de bureau</td></tr>
-                  <tr><td>CARREFOUR</td><td>Grande distribution multi-produits</td></tr>
+                  <tr><td>Drocolor</td><td>Peinture bâtiment & carrosserie, revêtements & étanchéité</td></tr>
+                  <tr><td>COMAFRIQUE</td><td>Technologies, Informatique & Solutions digitales</td></tr>
+                  <tr><td>INOVIM</td><td>Immobilier, Logement & Aménagement</td></tr>
+                  <tr><td>KAYDAN</td><td>Promotion immobilière, BTP & Construction</td></tr>
+                  <tr><td>SOCIDA</td><td>Automobile, Véhicules neufs, Utilitaires & Pièces</td></tr>
+                  <tr><td>RYMCO</td><td>Automobile, Deux-roues, Équipements & Matériel</td></tr>
+                  <tr><td>LG</td><td>Électroménager, Climatisation & Électronique</td></tr>
+                  <tr><td>SODIMAC</td><td>Matériaux de construction, Cimenterie & Aménagement</td></tr>
+                  <tr><td>SOCIAM</td><td>Électroménager, Image & Son, Froid</td></tr>
                 </table>
 
                 <h2>5. Modalités de paiement</h2>
@@ -175,18 +180,26 @@ export default function DashboardFournisseur() {
         <KPICard title="Paiements reçus" value={mesPaiements.filter(p => ['termine', 'encaisse', 'servi', 'fournisseur_paye', 'confirme'].includes(p.statut)).length} icon={CreditCard} variant="gray" subtitle={fmtCFA(montantPaiementsRecus)} />
       </div>
 
-      {/* Action rapide : Demandes de financement & Devis */}
+      {/* Action rapide : Souscription client & Devis */}
       <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl p-5 text-white flex flex-col md:flex-row items-center justify-between shadow-lg gap-4">
         <div>
           <p className="font-semibold text-base flex items-center gap-2">
-            <span>📋</span> Demandes de financement reçues
+            <span>📋</span> Souscriptions & Devis Vitalis
           </p>
-          <p className="text-orange-100 text-xs mt-0.5">Consultez les besoins exprimés par les souscripteurs et établissez vos devis chiffrés pour AFG Bank.</p>
+          <p className="text-orange-100 text-xs mt-0.5">
+            Enregistrez une souscription pour un client en boutique, consultez les demandes reçues ou établissez vos devis chiffrés.
+          </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <Link
+            href="/dashboard/souscriptions/creer"
+            className="flex items-center gap-2 bg-white text-orange-700 hover:bg-orange-50 px-4 py-2.5 rounded-lg text-sm font-bold transition-colors flex-shrink-0 shadow"
+          >
+            <Plus className="w-4 h-4" /> Nouvelle souscription client
+          </Link>
+          <Link
             href="/dashboard/souscriptions"
-            className="flex items-center gap-2 bg-white text-orange-700 hover:bg-orange-50 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors flex-shrink-0 shadow"
+            className="flex items-center gap-2 bg-orange-700 hover:bg-orange-800 text-white border border-orange-400/40 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors flex-shrink-0 shadow"
           >
             <FileText className="w-4 h-4" /> Voir les demandes
           </Link>

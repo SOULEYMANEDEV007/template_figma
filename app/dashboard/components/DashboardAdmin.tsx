@@ -41,13 +41,17 @@ export default function DashboardAdmin() {
     .sort((a, b) => b.dateCreation.localeCompare(a.dateCreation))
     .slice(0, 5);
 
-  // Données graphique par fournisseur avec palette contrastée
   const COULEURS_FOURNISSEURS: Record<string, string> = {
-    'FOUR-LDF-001': '#ea580c', // Orange ViFlo officiel / Librairie de France
-    'FOUR-DRO-002': '#0284c7', // Bleu ciel corporate (Drocolor)
-    'FOUR-SMT-003': '#10b981', // Vert émeraude (SMART TECHNOLOGIE)
-    'FOUR-NSK-004': '#8b5cf6', // Violet royal (NASCO)
-    'FOUR-CRF-005': '#f43f5e', // Rose framboise vif (Carrefour)
+    'FOUR-LDF-001': '#ea580c', // Librairie de France
+    'FOUR-DRO-002': '#dc2626', // Drocolor
+    'FOUR-COM-003': '#0284c7', // COMAFRIQUE
+    'FOUR-INO-004': '#10b981', // INOVIM
+    'FOUR-KAY-005': '#8b5cf6', // KAYDAN
+    'FOUR-SOC-006': '#f59e0b', // SOCIDA
+    'FOUR-RYM-007': '#06b6d4', // RYMCO
+    'FOUR-LG-008': '#a21caf', // LG
+    'FOUR-SDM-009': '#4b5563', // SODIMAC
+    'FOUR-SCM-010': '#d97706', // SOCIAM
   };
 
   const PALETTE_FALLBACK = [
