@@ -197,50 +197,62 @@ export default function LDFSidebar() {
       </nav>
 
       {/* ── Profil utilisateur ── */}
-      <div className={cn(
-        "p-3 flex-shrink-0",
-        isSidebarCollapsed && !mobile ? "flex flex-col items-center gap-2" : "",
-      )} style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
-        {!isSidebarCollapsed || mobile ? (
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm text-white"
-              style={{ background: "linear-gradient(135deg, #FF7B2E, #FFB300)" }}>
-              {user.prenom?.[0] || user.nom?.[0] || 'U'}{user.nom?.[0] || ''}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-white text-sm font-semibold truncate">{user.prenom} {user.nom}</p>
-              <p className="text-xs truncate" style={{ color: "rgba(190,215,255,0.55)" }}>{getRoleLabel(user.role)}</p>
-            </div>
-            <button
-              onClick={logout}
-              title="Déconnexion"
-              className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors flex-shrink-0"
-              style={{ color: "rgba(190,215,255,0.4)" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "#f87171")}
-              onMouseLeave={e => (e.currentTarget.style.color = "rgba(190,215,255,0.4)")}
-            >
-              <ICONS.logout className="w-4 h-4" />
-            </button>
+      {(() => {
+        const displayName = user.role === "admin" || (user.prenom === "Administrateur" && (!user.nom || user.nom === "Admin"))
+          ? "Administrateur"
+          : [user.prenom, user.nom].filter(Boolean).join(" ");
+
+        const initials = user.role === "admin" || (user.prenom === "Administrateur" && (!user.nom || user.nom === "Admin"))
+          ? "A"
+          : `${user.prenom?.[0] || user.nom?.[0] || 'U'}${user.nom?.[0] || ''}`;
+
+        return (
+          <div className={cn(
+            "p-3 flex-shrink-0",
+            isSidebarCollapsed && !mobile ? "flex flex-col items-center gap-2" : "",
+          )} style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+            {!isSidebarCollapsed || mobile ? (
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm text-white"
+                  style={{ background: "linear-gradient(135deg, #FF7B2E, #FFB300)" }}>
+                  {initials}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-white text-sm font-semibold truncate">{displayName}</p>
+                  <p className="text-xs truncate" style={{ color: "rgba(190,215,255,0.55)" }}>{getRoleLabel(user.role)}</p>
+                </div>
+                <button
+                  onClick={logout}
+                  title="Déconnexion"
+                  className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors flex-shrink-0"
+                  style={{ color: "rgba(190,215,255,0.4)" }}
+                  onMouseEnter={e => (e.currentTarget.style.color = "#f87171")}
+                  onMouseLeave={e => (e.currentTarget.style.color = "rgba(190,215,255,0.4)")}
+                >
+                  <ICONS.logout className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm text-white"
+                  style={{ background: "linear-gradient(135deg, #FF7B2E, #FFB300)" }}>
+                  {initials}
+                </div>
+                <button
+                  onClick={logout}
+                  title="Déconnexion"
+                  className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors"
+                  style={{ color: "rgba(190,215,255,0.4)" }}
+                  onMouseEnter={e => (e.currentTarget.style.color = "#f87171")}
+                  onMouseLeave={e => (e.currentTarget.style.color = "rgba(190,215,255,0.4)")}
+                >
+                  <ICONS.logout className="w-4 h-4" />
+                </button>
+              </>
+            )}
           </div>
-        ) : (
-          <>
-            <div className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm text-white"
-              style={{ background: "linear-gradient(135deg, #FF7B2E, #FFB300)" }}>
-              {user.prenom?.[0] || user.nom?.[0] || 'U'}{user.nom?.[0] || ''}
-            </div>
-            <button
-              onClick={logout}
-              title="Déconnexion"
-              className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors"
-              style={{ color: "rgba(190,215,255,0.4)" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "#f87171")}
-              onMouseLeave={e => (e.currentTarget.style.color = "rgba(190,215,255,0.4)")}
-            >
-              <ICONS.logout className="w-4 h-4" />
-            </button>
-          </>
-        )}
-      </div>
+        );
+      })()}
     </div>
   );
 

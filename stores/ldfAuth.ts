@@ -135,6 +135,13 @@ export const useLDFAuthStore = create<AuthState & AuthActions>((set, get) => ({
       const userCookie = getCookie("ldf_user");
       if (userCookie) {
         const user: LDFUser = JSON.parse(userCookie as string);
+        if (user.role === "admin" && (user.nom === "Admin" || user.lastName === "Admin")) {
+          user.nom = "";
+          user.lastName = "";
+          user.prenom = "Administrateur";
+          user.firstName = "Administrateur";
+          setCookie("ldf_user", JSON.stringify(user), { maxAge: 60 * 60 * 24 * 7, sameSite: "lax", secure: false });
+        }
         const filtered = getFilteredNotifications(user.role);
         const unreadCount = filtered.filter((n) => !n.estLue).length;
         set({ user, isAuthenticated: true, isLoading: false, notifications: filtered, unreadCount });
@@ -168,6 +175,13 @@ export const useLDFAuthStore = create<AuthState & AuthActions>((set, get) => ({
     if (!user) {
       set({ isLoading: false, error: "Utilisateur introuvable." });
       throw new Error("Utilisateur introuvable");
+    }
+
+    if (user.role === "admin") {
+      user.nom = "";
+      user.lastName = "";
+      user.prenom = "Administrateur";
+      user.firstName = "Administrateur";
     }
 
     setCookie("ldf_user", JSON.stringify(user), {

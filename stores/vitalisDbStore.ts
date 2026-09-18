@@ -619,6 +619,12 @@ interface VitalisDbState {
   deleteFournisseur: (id: string) => void;
   getFournisseurById: (id: string) => VFournisseur | undefined;
 
+  // ── ACTIONS AGENCES AFG ────────────────────────────────────
+  addAgenceAFG: (data: Partial<VAgenceAFG>) => VAgenceAFG;
+  updateAgenceAFG: (id: string, data: Partial<VAgenceAFG>) => void;
+  deleteAgenceAFG: (id: string) => void;
+  getAgenceAFGById: (id: string) => VAgenceAFG | undefined;
+
   // ── ACTIONS SOUSCRIPTIONS ──────────────────────────────────
   addSouscription: (data: Omit<VSouscription, 'id'>) => VSouscription;
   updateSouscription: (id: string, data: Partial<VSouscription>) => void;
@@ -834,6 +840,35 @@ export const useVitalisDb = create<VitalisDbState>()(
       })),
 
       getFournisseurById: (id) => get().fournisseurs.find(f => f.id === id),
+
+      // ── AGENCES AFG ──────────────────────────────────────────
+      addAgenceAFG: (data) => {
+        const id = data.id || `AGE-AFG-${String(get().agencesAFG.length + 1).padStart(3, '0')}`;
+        const newAg: VAgenceAFG = {
+          id,
+          code: data.code || `AFG-${(data.nom || 'AGC').substring(0, 3).toUpperCase().replace(/\s/g, '')}`,
+          nom: data.nom || 'Nouvelle Agence AFG',
+          ville: data.ville || 'Abidjan',
+          adresse: data.adresse || '',
+          telephone: data.telephone || '',
+          email: data.email || '',
+          responsable: data.responsable || '',
+          statut: data.statut || 'actif',
+          ...data,
+        };
+        set(s => ({ agencesAFG: [...s.agencesAFG, newAg] }));
+        return newAg;
+      },
+
+      updateAgenceAFG: (id, data) => set(s => ({
+        agencesAFG: s.agencesAFG.map(a => a.id === id ? { ...a, ...data } : a),
+      })),
+
+      deleteAgenceAFG: (id) => set(s => ({
+        agencesAFG: s.agencesAFG.filter(a => a.id !== id),
+      })),
+
+      getAgenceAFGById: (id) => get().agencesAFG.find(a => a.id === id),
 
       // ── SOUSCRIPTIONS ───────────────────────────────────────
       addSouscription: (data) => {

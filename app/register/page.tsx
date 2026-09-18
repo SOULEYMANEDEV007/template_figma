@@ -111,7 +111,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex">
       {/* ── Colonne gauche — branding ViFlo ── */}
-      <div className="hidden lg:flex lg:w-[45%] relative overflow-hidden flex-col justify-between p-12 bg-[#0B2447]">
+      <div className="hidden lg:flex lg:w-[45%] lg:h-screen lg:sticky lg:top-0 relative overflow-hidden flex-col justify-between p-12 bg-[#0B2447]">
         {/* Pattern Topographique Décoratif */}
         <div className="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='%23FF7B2E' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E")`,
@@ -170,8 +170,8 @@ export default function RegisterPage() {
       </div>
 
       {/* ── Colonne droite — formulaire ── */}
-      <div className="flex-1 flex flex-col justify-center px-6 py-12 sm:px-12 lg:px-16 bg-gray-50 h-screen overflow-y-auto">
-        <div className="w-full max-w-xl mx-auto py-8">
+      <div className="flex-1 flex flex-col justify-start px-6 py-8 sm:px-12 lg:px-16 bg-gray-50 min-h-screen lg:h-screen lg:overflow-y-auto">
+        <div className="w-full max-w-xl mx-auto py-4">
 
           {/* Mobile logo ViFlo */}
           <div className="lg:hidden flex items-center gap-3 mb-8">
@@ -553,7 +553,7 @@ export default function RegisterPage() {
               </Button>
             </div>
 
-            <div className="text-center mt-6 pb-8">
+            <div className="text-center mt-6 pb-16">
               <p className="text-sm text-gray-600">
                 Vous avez déjà un compte ?{" "}
                 <Link href="/login" className="text-primary hover:text-orange-600 font-semibold transition-colors">
