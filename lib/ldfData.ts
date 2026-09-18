@@ -11,8 +11,8 @@ export const demoAccounts = [
     password: "admin123",
     role: "admin",
     label: "Administrateur ViFlo",
-    nom: "Admin",
-    prenom: "Système",
+    nom: "",
+    prenom: "Administrateur",
     banqueId: "AFG-001",
     banqueNom: "AFG Bank",
   },
@@ -46,6 +46,18 @@ export const demoAccounts = [
     banqueId: "AFG-001",
     banqueNom: "AFG Bank",
   },
+  {
+    email: "owner@viflo.ci",
+    password: "owner123",
+    role: "owner",
+    label: "Propriétaire ViFlo (Supervision)",
+    nom: "",
+    prenom: "Propriétaire",
+    disabled: true,
+    badge: "En attente de validation",
+    banqueId: "AFG-001",
+    banqueNom: "AFG Bank",
+  },
 ];
 
 // ============================================================
@@ -61,10 +73,10 @@ export const mockUsers = [
     id: "USR-001",
     email: "admin@viflo.ci",
     password: "admin123",
-    nom: "Admin",
-    prenom: "Système",
-    firstName: "Système",
-    lastName: "Admin",
+    nom: "",
+    prenom: "Administrateur",
+    firstName: "Administrateur",
+    lastName: "",
     role: "admin",
     telephone: "+225 07 00 00 00 00",
     statut: "actif",
@@ -104,6 +116,20 @@ export const mockUsers = [
     statut: "actif",
     isActive: true,
     createdAt: "2024-01-01",
+  },
+  {
+    id: "USR-OWNER-001",
+    email: "owner@viflo.ci",
+    password: "owner123",
+    nom: "",
+    prenom: "Propriétaire",
+    firstName: "Propriétaire",
+    lastName: "",
+    role: "owner",
+    telephone: "+225 07 00 00 00 01",
+    statut: "inactif",
+    isActive: false,
+    createdAt: "2026-01-01",
   },
 ];
 
@@ -356,7 +382,7 @@ export const mockDevis = [
     conditionsLivraison: {
       delaiGrandAbidjan: "7 jours ouvrés",
       delaiInterieur: "15 jours ouvrés",
-      validite: "30 jours ouvrés",
+      validite: "60 jours",
     },
     statut: "valide",
     dateCreation: "2026-09-02",
@@ -387,7 +413,7 @@ export const mockDevis = [
     conditionsLivraison: {
       delaiGrandAbidjan: "7 jours ouvrés",
       delaiInterieur: "15 jours ouvrés",
-      validite: "30 jours ouvrés",
+      validite: "60 jours",
     },
     statut: "envoye",
     dateCreation: "2026-09-06",
@@ -418,7 +444,7 @@ export const mockDevis = [
     conditionsLivraison: {
       delaiGrandAbidjan: "7 jours ouvrés",
       delaiInterieur: "15 jours ouvrés",
-      validite: "30 jours ouvrés",
+      validite: "60 jours",
     },
     statut: "en_attente_validation",
     dateCreation: "2026-09-07",
@@ -449,7 +475,7 @@ export const mockDevis = [
     conditionsLivraison: {
       delaiGrandAbidjan: "7 jours ouvrés",
       delaiInterieur: "15 jours ouvrés",
-      validite: "30 jours ouvrés",
+      validite: "60 jours",
     },
     statut: "valide",
     dateCreation: "2026-08-22",
@@ -689,12 +715,12 @@ export const paiementsParMois = [
 
 // AFG Bank est la seule banque — graphique de répartition par fournisseur
 export const souscriptionsParBanque = [
-  { banque: "AFG Bank", valeur: 100, couleur: "#ff6b35" },
+  { banque: "AFG Bank", valeur: 100, couleur: "#0284c7" },
 ];
 
 export const souscriptionsParFournisseur = [
-  { fournisseur: "LDF Groupe", valeur: 59, couleur: "#ff6b35" },
-  { fournisseur: "Drocolor",   valeur: 41, couleur: "#ff8c42" },
+  { fournisseur: "LDF Groupe", valeur: 59, couleur: "#ea580c" },
+  { fournisseur: "Drocolor",   valeur: 41, couleur: "#2563eb" },
 ];
 
 export const souscriptionsParStatut = [
@@ -887,12 +913,12 @@ export const paiementsParMois = [
 ];
 
 export const souscriptionsParBanque = [
-  { banque: "AFG Bank", valeur: 100, couleur: "#ff6b35" },
+  { banque: "AFG Bank", valeur: 100, couleur: "#0284c7" },
 ];
 
 export const souscriptionsParFournisseur = [
-  { fournisseur: "LDF Groupe", valeur: 50, couleur: "#ff6b35" },
-  { fournisseur: "Drocolor", valeur: 50, couleur: "#ff8c42" },
+  { fournisseur: "LDF Groupe", valeur: 50, couleur: "#ea580c" },
+  { fournisseur: "Drocolor", valeur: 50, couleur: "#2563eb" },
 ];
 
 export const souscriptionsParMois = [

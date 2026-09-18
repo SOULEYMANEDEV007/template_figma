@@ -22,7 +22,7 @@ const ROUTE_LABELS: Record<string, string> = {
   parametres: "Paramètres",
   admin: "Administration",
   fournisseurs: "Fournisseurs",
-  banques: "Banques",
+  banques: "Agences AFG CI",
   utilisateurs: "Utilisateurs",
   banque: "Banque",
   souscripteurs: "Souscripteurs",
@@ -301,6 +301,14 @@ function ProfileDropdown() {
 
   if (!user) return null;
 
+  const displayName = user.role === "admin" || (user.prenom === "Administrateur" && (!user.nom || user.nom === "Admin"))
+    ? "Administrateur"
+    : [user.prenom, user.nom].filter(Boolean).join(" ");
+
+  const initials = user.role === "admin" || (user.prenom === "Administrateur" && (!user.nom || user.nom === "Admin"))
+    ? "A"
+    : `${user.prenom?.[0] || user.nom?.[0] || 'U'}${user.nom?.[0] || ''}`;
+
   return (
     <div ref={ref} className="relative">
       <button
@@ -309,10 +317,10 @@ function ProfileDropdown() {
       >
         <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white"
           style={{ background: "linear-gradient(135deg, #FF7B2E, #FFB300)" }}>
-          {user.prenom?.[0] || user.nom?.[0] || 'U'}{user.nom?.[0] || ''}
+          {initials}
         </div>
         <div className="hidden sm:block text-left">
-          <p className="text-sm font-semibold text-gray-800 leading-none">{user.prenom} {user.nom}</p>
+          <p className="text-sm font-semibold text-gray-800 leading-none">{displayName}</p>
           <p className="text-xs text-gray-500 leading-none mt-0.5">{user.organisationName ?? "ViFlo"}</p>
         </div>
         <ChevronDown className={cn("w-4 h-4 text-gray-400 transition-transform", open && "rotate-180")} />
@@ -321,7 +329,7 @@ function ProfileDropdown() {
       {open && (
         <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 z-50 fade-in overflow-hidden py-1">
           <div className="px-4 py-3 border-b border-gray-100">
-            <p className="text-sm font-semibold text-gray-900">{user.prenom} {user.nom}</p>
+            <p className="text-sm font-semibold text-gray-900">{displayName}</p>
             <p className="text-xs text-gray-500 truncate">{user.email}</p>
           </div>
           <Link href="/dashboard/parametres" onClick={() => setOpen(false)}

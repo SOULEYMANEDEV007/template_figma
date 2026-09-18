@@ -6,21 +6,37 @@
 // ============================================================
 // RÔLES
 // ============================================================
-export type LDFUserRole = "admin" | "banque" | "fournisseur" | "souscripteur";
+export type LDFUserRole = "admin" | "banque" | "fournisseur" | "souscripteur" | "owner";
 
 export interface LDFUser {
   id: string;
   firstName: string;
   lastName: string;
+  nom?: string;
+  prenom?: string;
   email: string;
   role: LDFUserRole;
   avatar?: string;
   phone?: string;
+  telephone?: string;
   organisationId?: string; // banqueId ou fournisseurId
   organisationName?: string;
+  statut?: "actif" | "inactif";
   isActive: boolean;
   createdAt: string;
   lastLoginAt?: string;
+}
+
+export interface ConnexionLog {
+  id: string;
+  userId: string;
+  userName: string;
+  email: string;
+  role: LDFUserRole | string;
+  date: string;
+  ip: string;
+  appareil: string;
+  statut: "succes" | "echec";
 }
 
 // ============================================================

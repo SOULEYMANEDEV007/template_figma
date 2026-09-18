@@ -14,6 +14,7 @@
 import { LDFModal } from "@/components/ui/ldf-modal";
 import { saveFile } from "@/lib/fileStorage";
 import { mockSouscripteursUsers } from "@/lib/ldfData";
+import { OFFICIAL_FOURNISSEURS, getPartnerLogo } from "@/lib/constants";
 import { emitInAppNotification, useLDFAuthStore } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
 import {
@@ -21,8 +22,9 @@ import {
   Copy, FileText, Info, Key, Loader2, Mail, MapPin, Plus, Search, Trash2,
   Upload, User, Users, X,
 } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 // ── Constantes ──────────────────────────────────────────────────
@@ -55,11 +57,13 @@ interface FormPhysique {
   // Situation pro
   situationPro: string; secteurActivite: string;
   entrepriseEmployeur: string; poste: string;
+  attestationTravailFile?: File | null;
+  bulletinSalaireFile?: File | null;
   // Situation familiale
   situationMatrimoniale: string;
   attestationMariageFile?: File | null;
-  // Géographie
-  pays: string; region: string; ville: string; adresse: string;
+  // Géographie (Région - Ville - Commune)
+  pays: string; region: string; ville: string; commune: string; adresse: string;
   // Contact
   telephone: string; email: string;
   // Banque
@@ -74,8 +78,8 @@ interface FormMorale {
   dateCreation: string; capitalSocial: string; nombreEmployes: string;
   // Dirigeant
   nomDG: string; prenomDG: string;
-  // Siège
-  pays: string; region: string; ville: string; siegeSocial: string;
+  // Siège (Région - Ville - Commune)
+  pays: string; region: string; ville: string; commune: string; siegeSocial: string;
   // Contact
   telephone: string; email: string;
   // Banque
@@ -90,8 +94,9 @@ const defaultPhysique = (): FormPhysique => ({
   type: "physique", nom: "", prenom: "", numeroCNI: "",
   dateNaissance: "", lieuNaissance: "", situationPro: "",
   secteurActivite: "", entrepriseEmployeur: "", poste: "",
+  attestationTravailFile: null, bulletinSalaireFile: null,
   situationMatrimoniale: "", pays: "Côte d'Ivoire",
-  region: "", ville: "", adresse: "", telephone: "", email: "",
+  region: "", ville: "", commune: "", adresse: "", telephone: "", email: "",
   numeroCompte: "", attestationMariageFile: null,
 });
 
@@ -100,7 +105,7 @@ const defaultMorale = (): FormMorale => ({
   secteurActivite: "", rccm: "", compteContribuable: "",
   dateCreation: "", capitalSocial: "", nombreEmployes: "",
   nomDG: "", prenomDG: "", pays: "Côte d'Ivoire",
-  region: "", ville: "", siegeSocial: "", telephone: "", email: "",
+  region: "", ville: "", commune: "", siegeSocial: "", telephone: "", email: "",
   numeroCompte: "", rccmFile: null,
 });
 
@@ -369,7 +374,8 @@ export default function CreerSouscriptionPage() {
       const ref = `VF-${year}-${seq}`;
 
       const agenceChoisie = agencesAFG.find(a => a.id === agenceId);
-      const fournisseursChoisis = fournisseurs
+      const allFournisseursList = (fournisseurs && fournisseurs.length >= 8) ? fournisseurs : OFFICIAL_FOURNISSEURS;
+      const fournisseursChoisis = allFournisseursList
         .filter(f => selectedFournisseurs.includes(f.id))
         .map(f => ({ fournisseurId: f.id, fournisseurNom: f.nom, statut: "en_attente" as const }));
 
@@ -387,6 +393,12 @@ export default function CreerSouscriptionPage() {
       // Sauvegarder les fichiers uploadés si présents
       if (typeSouscripteur === "physique" && formPhysique.situationMatrimoniale === "Marié(e)" && formPhysique.attestationMariageFile) {
         await saveFile(`MARIAGE-${souscripteurId}`, formPhysique.attestationMariageFile, "cni", souscripteurId);
+      }
+      if (typeSouscripteur === "physique" && formPhysique.attestationTravailFile) {
+        await saveFile(`ATTESTATION-${souscripteurId}`, formPhysique.attestationTravailFile, "cni", souscripteurId);
+      }
+      if (typeSouscripteur === "physique" && formPhysique.bulletinSalaireFile) {
+        await saveFile(`BULLETIN-${souscripteurId}`, formPhysique.bulletinSalaireFile, "cni", souscripteurId);
       }
       if (typeSouscripteur === "morale" && formMorale.rccmFile) {
         await saveFile(`RCCM-${souscripteurId}`, formMorale.rccmFile, "rccm", souscripteurId);
@@ -464,7 +476,7 @@ export default function CreerSouscriptionPage() {
   // RENDU
   // ═══════════════════════════════════════════════════════════════
   return (
-    <div className="space-y-6 fade-in max-w-3xl mx-auto">
+    <div className="space-y-6 fade-in max-w-4xl mx-auto">
       {/* Header */}
       <div className="flex items-center gap-3">
         <button
@@ -479,13 +491,13 @@ export default function CreerSouscriptionPage() {
         </div>
       </div>
 
-      {/* Note d'information sur le parcours standard */}
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3 text-xs text-amber-900 shadow-sm">
-        <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+      {/* Note d'information sur la souscription assistée en boutique fournisseur / agence */}
+      <div className="bg-orange-50/80 border border-orange-200 rounded-xl p-4 flex items-start gap-3 text-xs text-orange-950 shadow-xs">
+        <Info className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
         <div className="flex-1">
-          <p className="font-semibold text-amber-950">Mode de saisie assistée (Conseiller / Dépannage en agence)</p>
-          <p className="mt-0.5 text-amber-800 leading-relaxed">
-            Dans le parcours nominal VITALIS (Cahier des charges), les demandes de financement sont directement initiées par les souscripteurs depuis leur espace personnel. Ce formulaire reste actif pour l'assistance en agence bancaire ou en boutique partenaire.
+          <p className="font-semibold text-orange-950">Souscription assistée en boutique / point de vente</p>
+          <p className="mt-0.5 text-orange-900 leading-relaxed">
+            Ce module permet au fournisseur ou conseiller d'enregistrer directement la demande de financement pour un client présent en magasin (par exemple pour un client peu à l'aise avec les outils digitaux). Le compte souscripteur et le dossier Vitalis seront créés et transmis automatiquement.
           </p>
         </div>
       </div>
@@ -660,6 +672,22 @@ export default function CreerSouscriptionPage() {
               <Field label="Poste occupé">
                 <input className={inp} placeholder="Directeur Commercial, Enseignant..." value={formPhysique.poste} onChange={e => setP("poste", e.target.value)} />
               </Field>
+              <Field label="Attestation de travail (PDF / Photo)">
+                <FileUpload
+                  label="Glisser ou cliquer pour charger l'attestation"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  file={formPhysique.attestationTravailFile}
+                  onChange={f => setP("attestationTravailFile", f)}
+                />
+              </Field>
+              <Field label="3 Derniers bulletins de salaire (PDF / Photo)">
+                <FileUpload
+                  label="Glisser ou cliquer pour charger les bulletins"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  file={formPhysique.bulletinSalaireFile}
+                  onChange={f => setP("bulletinSalaireFile", f)}
+                />
+              </Field>
             </div>
           </SectionCard>
 
@@ -685,20 +713,23 @@ export default function CreerSouscriptionPage() {
             </div>
           </SectionCard>
 
-          {/* Géographie */}
-          <SectionCard title="Situation géographique" icon={MapPin}>
+          {/* Géographie (Région - Ville - Commune) */}
+          <SectionCard title="Situation géographique (Région - Ville - Commune)" icon={MapPin}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Field label="Pays">
                 <input className={inp} value={formPhysique.pays} onChange={e => setP("pays", e.target.value)} />
               </Field>
-              <Field label="Région">
+              <Field label="Région" required>
                 <select className={sel} value={formPhysique.region} onChange={e => setP("region", e.target.value)}>
                   <option value="">Sélectionner une région</option>
                   {REGIONS_CI.map(r => <option key={r} value={r}>{r}</option>)}
                 </select>
               </Field>
-              <Field label="Ville">
+              <Field label="Ville" required>
                 <input className={inp} placeholder="Abidjan, Bouaké..." value={formPhysique.ville} onChange={e => setP("ville", e.target.value)} />
+              </Field>
+              <Field label="Commune / Quartier" required>
+                <input className={inp} placeholder="Cocody, Marcory, etc." value={formPhysique.commune} onChange={e => setP("commune", e.target.value)} />
               </Field>
               <Field label="Téléphone" required>
                 <input className={inp} placeholder="+225 07 00 00 00 00" value={formPhysique.telephone} onChange={e => setP("telephone", e.target.value)} />
@@ -833,40 +864,62 @@ export default function CreerSouscriptionPage() {
           </SectionCard>
 
           {/* Fournisseur émetteur */}
-          <SectionCard title="Fournisseur émetteur de la souscription" icon={Building2}>
+          <SectionCard title="Fournisseurs agréés partenaires" icon={Building2}>
             <p className="text-xs text-gray-500 mb-3">
               {user?.role === "fournisseur"
                 ? "Votre établissement est l'émetteur exclusif de cette souscription et du devis associé :"
-                : "Sélectionnez le fournisseur partenaire pour cette souscription :"}
+                : "Sélectionnez le ou les fournisseurs agréés partenaires pour cette souscription :"}
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {fournisseurs
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              {((fournisseurs && fournisseurs.length >= 8) ? fournisseurs : OFFICIAL_FOURNISSEURS)
                 .filter(f => f.agreVitalis && f.statut === "actif")
-                .filter(f => user?.role === "fournisseur" ? (f.id === user.organisationId || f.id === user.fournisseurId) : true)
+                .map(f => {
+                  if (f.id === "FOUR-DRO-002" || f.nom?.toLowerCase().includes("drocolor")) {
+                    return { ...f, secteurActivite: "Peinture bâtiment & carrosserie, revêtements & étanchéité" };
+                  }
+                  return f;
+                })
                 .map(f => {
                 const isSelected = selectedFournisseurs.includes(f.id);
-                const isDisabled = user?.role === "fournisseur" && user.organisationId === f.id;
+                const isDisabled = user?.role === "fournisseur" && (user.organisationId === f.id || user.fournisseurId === f.id);
+                const logoSrc = f.logo || getPartnerLogo(f.nom, f.id);
                 return (
                   <button
                     key={f.id}
                     type="button"
                     disabled={isDisabled}
                     onClick={() => !isDisabled && toggleFournisseur(f.id)}
-                    className={`p-3 rounded-xl border-2 text-left transition-all
-                      ${isSelected ? "border-orange-500 bg-orange-50" : "border-gray-200 hover:border-orange-200 bg-white"}
-                      ${isDisabled ? "opacity-80 cursor-default" : "cursor-pointer"}`}
+                    className={`p-3.5 rounded-xl border-2 text-left transition-all flex items-center gap-3.5
+                      ${isSelected ? "border-orange-500 bg-orange-50/70 shadow-sm ring-1 ring-orange-400/30" : "border-gray-200 hover:border-orange-300 bg-white"}
+                      ${isDisabled ? "opacity-90 cursor-default" : "cursor-pointer"}`}
                   >
-                    <div className="flex items-center gap-2">
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0
-                        ${isSelected ? "bg-orange-500 border-orange-500" : "border-gray-300"}`}>
-                        {isSelected && <Check className="w-3 h-3 text-white" />}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className={`text-xs font-semibold ${isSelected ? "text-orange-700" : "text-gray-700"}`}>{f.nom}</p>
-                        <p className="text-[10px] text-gray-400 truncate">{f.raisonSociale}</p>
-                      </div>
-                      {isDisabled && <span className="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-semibold">Votre établissement (Émetteur)</span>}
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0
+                      ${isSelected ? "bg-orange-500 border-orange-500" : "border-gray-300"}`}>
+                      {isSelected && <Check className="w-3 h-3 text-white" />}
                     </div>
+
+                    <div className="w-11 h-11 rounded-xl bg-white border border-gray-100 p-1 flex items-center justify-center flex-shrink-0 shadow-xs">
+                      {logoSrc ? (
+                        <Image
+                          src={logoSrc}
+                          alt={f.nom}
+                          width={38}
+                          height={38}
+                          className="object-contain max-w-full max-h-full rounded"
+                        />
+                      ) : (
+                        <Building2 className="w-5 h-5 text-gray-400" />
+                      )}
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <p className={`text-xs font-semibold truncate ${isSelected ? "text-orange-900" : "text-gray-800"}`}>{f.nom}</p>
+                        <span className="text-[9px] bg-emerald-50 text-emerald-700 px-1 py-0.2 border border-emerald-200 rounded font-medium">Agréé</span>
+                      </div>
+                      <p className="text-[10px] text-gray-400 truncate mt-0.5">{f.secteurActivite || f.raisonSociale}</p>
+                    </div>
+                    {isDisabled && <span className="text-[9px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-semibold">Émetteur</span>}
                   </button>
                 );
               })}

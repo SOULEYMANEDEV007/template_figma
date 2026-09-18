@@ -11,33 +11,12 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { IMAGES, getPartnerLogo } from "@/lib/constants";
 import { downloadPDFFromHTML } from "@/lib/pdf/generator";
 
 const fmtCFA = (v: any) => {
   const num = typeof v === "number" ? v : Number(v);
   return new Intl.NumberFormat("fr-FR").format(isNaN(num) ? 0 : num) + " FCFA";
-};
-
-const getFournisseurLogo = (fournisseurId?: string, fournisseurNom?: string) => {
-  const nom = (fournisseurNom || "").toLowerCase();
-  const id = (fournisseurId || "").toLowerCase();
-
-  if (id.includes("ldf") || nom.includes("librairie")) {
-    return "/images/ldf.png";
-  }
-  if (id.includes("dro") || nom.includes("drocolor")) {
-    return "/images/drocolor-logo.jfif";
-  }
-  if (id.includes("smt") || nom.includes("smart")) {
-    return "/logos/logo-smart-techno.png";
-  }
-  if (id.includes("nas") || nom.includes("nasko")) {
-    return "/logos/logo-nasko.png";
-  }
-  if (id.includes("car") || nom.includes("carrefour")) {
-    return "/images/logo-carrefour.png";
-  }
-  return "/images/ldf.png";
 };
 
 export default function DevisDetailPage() {
@@ -59,7 +38,7 @@ export default function DevisDetailPage() {
   );
 
   const currentStatut = statut ?? devis.statut;
-  const fournisseurLogo = getFournisseurLogo(devis.fournisseurId, devis.fournisseurNom);
+  const fournisseurLogo = getPartnerLogo(devis.fournisseurNom, devis.fournisseurId);
 
   const handleSend = () => {
     setStatut("envoye");
@@ -154,19 +133,19 @@ export default function DevisDetailPage() {
           {/* 2. Programme VITALIS */}
           <div className="flex flex-col items-center border-l border-r border-gray-200 px-4">
             <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-1">Programme</p>
-            <img src="/logos/new_logo-viflo.JPG" alt="Vitalis" className="h-11 object-contain mix-blend-multiply rounded-xl" crossOrigin="anonymous" />
+            <img src={IMAGES.logos.vifloNew} alt="Vitalis" className="h-11 object-contain mix-blend-multiply rounded-xl" crossOrigin="anonymous" />
           </div>
 
           {/* 3. FADES */}
           <div className="flex items-center">
-            <img src="/logos/logo-fades.PNG" alt="FADES" className="h-14 object-contain" crossOrigin="anonymous" />
+            <img src={IMAGES.logos.fades} alt="FADES" className="h-14 object-contain" crossOrigin="anonymous" />
           </div>
 
           {/* 4. Banque Financement */}
           <div className="flex flex-col items-end pl-2">
             <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-1 mr-1">Financement</p>
             <div className="h-12 px-3 flex items-center justify-center rounded-lg bg-white border border-gray-200 shadow-sm">
-              <img src="/logos/logo-afg-bank_atlantic.png" alt="AFG Bank" className="h-8 object-contain" crossOrigin="anonymous" />
+              <img src={IMAGES.logos.afgBank} alt="AFG Bank" className="h-8 object-contain" crossOrigin="anonymous" />
             </div>
           </div>
         </div>

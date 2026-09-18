@@ -9,7 +9,7 @@ export const VITALIS_CONFIG = {
   DUREE_PAR_DEFAUT: 36, // mois
   DELAI_LIVRAISON_ABIDJAN: "7 jours ouvrés",
   DELAI_LIVRAISON_INTERIEUR: "15 jours ouvrés",
-  VALIDITE_DEVIS: "30 jours ouvrés",
+  VALIDITE_DEVIS: "60 jours",
   BANQUE_FINANCEUSE: "AFG-001", // ID unique AFG Bank
 } as const;
 
@@ -236,7 +236,7 @@ export interface Devis {
   conditionsLivraison: {
     delaiGrandAbidjan: string; // "7 jours ouvrés"
     delaiInterieur: string; // "15 jours ouvrés"
-    validite: string; // "30 jours ouvrés"
+    validite: string; // "60 jours"
   };
 
   // Géographie (Page 9 du cahier des charges)

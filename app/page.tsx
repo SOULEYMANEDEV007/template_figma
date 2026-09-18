@@ -2,10 +2,10 @@
 "use client";
 import { useLDFAuthStore } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
-import { ChevronRight } from "lucide-react";
+import { IMAGES, ICONS, OFFICIAL_FOURNISSEURS, getPartnerLogo } from "@/lib/constants";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function RootPage() {
   const { isAuthenticated, isLoading } = useLDFAuthStore();
@@ -14,6 +14,14 @@ export default function RootPage() {
 
   const [skip, setSkip] = useState(false);
   const [animating, setAnimating] = useState(true);
+
+  // Fournisseurs officiels de l'orbite (10 partenaires agréés Vitalis)
+  const orbitFournisseurs = useMemo(() => {
+    if (fournisseurs && fournisseurs.length >= 10) {
+      return fournisseurs.filter(f => f.statut === "actif");
+    }
+    return OFFICIAL_FOURNISSEURS;
+  }, [fournisseurs]);
 
   // Splash screen timeout: 25 seconds
   useEffect(() => {
@@ -41,9 +49,9 @@ export default function RootPage() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#ff6b35] opacity-20 blur-[120px] rounded-full mix-blend-screen animate-pulse"></div>
         <div className="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] bg-[#1e4a8a] opacity-40 blur-[100px] rounded-full mix-blend-screen"></div>
 
-        {/* Cercles orbitaux de fond */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[360px] h-[360px] rounded-full border border-white/5"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] h-[480px] rounded-full border border-white/5 border-dashed"></div>
+        {/* Cercles orbitaux de fond alignés avec le rayon des satellites (r=210 -> d=420) */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full border border-white/10"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full border border-dashed border-orange-500/25 animate-[spin_60s_linear_infinite]"></div>
       </div>
 
       {/* ─── Bouton Skip ─── */}
@@ -51,7 +59,7 @@ export default function RootPage() {
         onClick={() => setSkip(true)}
         className="absolute top-6 right-6 px-5 py-2.5 bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 text-white/80 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 shadow-2xl z-50 group hover:text-white"
       >
-        Entrer <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+        Entrer <ICONS.chevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
       </button>
 
       {/* ─── Système Orbital ─── */}
@@ -60,7 +68,7 @@ export default function RootPage() {
         {/* Centre : Viflo */}
         <div className="absolute z-20 w-44 h-44 bg-white/95 backdrop-blur-xl rounded-full shadow-[0_0_40px_rgba(255,107,53,0.3)] flex flex-col items-center justify-center p-6 border border-white/20">
           <Image
-            src="/logos/viflo_logo_text.jpeg"
+            src={IMAGES.logos.vifloText}
             alt="Viflo"
             width={100} height={100}
             className="object-contain drop-shadow-lg"
@@ -69,26 +77,27 @@ export default function RootPage() {
 
         {/* Fournisseurs en orbite */}
         <div className="absolute inset-0 animate-[spin_25s_linear_infinite]">
-          {fournisseurs.map((f, i) => {
-            const angle = (i * 360) / fournisseurs.length;
-            const radius = 200; // Distance depuis le centre
+          {orbitFournisseurs.map((f, i) => {
+            const angle = (i * 360) / orbitFournisseurs.length;
+            const radius = 210; // Distance depuis le centre
             const rad = angle * (Math.PI / 180);
             const x = Math.cos(rad) * radius;
             const y = Math.sin(rad) * radius;
+            const logoSrc = f.logo || getPartnerLogo(f.nom, f.id);
 
             return (
               <div
-                key={f.id}
-                className="absolute top-1/2 left-1/2 w-20 h-20 -mt-10 -ml-10 bg-white/95 backdrop-blur-md rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] border-2 border-white/50 p-3 flex items-center justify-center animate-[spin_25s_linear_infinite_reverse] transition-transform hover:scale-110 cursor-default"
+                key={f.id || i}
+                className="absolute top-1/2 left-1/2 w-20 h-20 -mt-10 -ml-10 bg-white/95 backdrop-blur-md rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.18)] border-2 border-white/60 p-2.5 flex items-center justify-center animate-[spin_25s_linear_infinite_reverse] transition-transform hover:scale-115 cursor-default"
                 style={{ transform: `translate(${x}px, ${y}px)` }}
-                title={f.nom}
+                title={`${f.nom} — Partenaire Agréé Vitalis`}
               >
-                {f.logo ? (
+                {logoSrc ? (
                   <Image
-                    src={f.logo}
+                    src={logoSrc}
                     alt={f.nom}
-                    width={48} height={48}
-                    className="object-contain max-w-full max-h-full"
+                    width={56} height={56}
+                    className="object-contain max-w-full max-h-full rounded-md"
                   />
                 ) : (
                   <span className="text-[9px] font-bold text-center text-[#0B2447] leading-tight uppercase tracking-tighter">{f.nom.substring(0, 10)}</span>
@@ -113,20 +122,20 @@ export default function RootPage() {
           <span className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold">Soutenu par</span>
           <div className="h-6 w-[1px] bg-gray-200"></div>
           <Image
-            src="/logos/logo-afg-bank_atlantic.png"
-            alt="AFG Bank"
+            src={IMAGES.logos.fades}
+            alt="Fades"
             width={80} height={30}
             className="object-contain opacity-90 mix-blend-multiply"
           />
           <Image
-            src="/logos/new_logo-viflo.JPG"
+            src={IMAGES.logos.vifloNew}
             alt="Vitalis Viflo"
             width={80} height={30}
             className="object-contain opacity-90 mix-blend-multiply"
           />
           <Image
-            src="/logos/logo-fades.PNG"
-            alt="Fades"
+            src={IMAGES.logos.afgBank}
+            alt="AFG Bank"
             width={80} height={30}
             className="object-contain opacity-90 mix-blend-multiply"
           />

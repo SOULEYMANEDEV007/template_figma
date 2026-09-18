@@ -4,11 +4,7 @@ import { getRoleLabel, useLDFAuthStore } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
 import type { LDFUserRole } from "@/types/ldf";
 import { cn } from "@/lib/utils";
-import {
-  BarChart3, Bell, BookOpen, Building2, ChevronLeft, ChevronRight,
-  CreditCard, FileText, Home, LogOut, Package, Settings, ShieldCheck,
-  Users, X,
-} from "lucide-react";
+import { IMAGES, ICONS } from "@/lib/constants";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -24,26 +20,46 @@ interface NavItem {
 
 function getNav(role: LDFUserRole, unreadCount: number): { main: NavItem[]; bottom: NavItem[] } {
   const common: NavItem[] = [
-    { name: "Dashboard", href: "/dashboard", icon: Home, exact: true },
+    { name: "Dashboard", href: "/dashboard", icon: ICONS.dashboard, exact: true },
   ];
 
   if (role === "admin") {
     return {
       main: [
         ...common,
-        { name: "Souscriptions", href: "/dashboard/souscriptions", icon: FileText },
-        { name: "Devis", href: "/dashboard/devis", icon: BookOpen },
-        { name: "Dossiers", href: "/dashboard/dossiers", icon: ShieldCheck },
-        { name: "Paiements", href: "/dashboard/paiements", icon: CreditCard },
-        { name: "Articles servis", href: "/dashboard/articles", icon: Package },
-        { name: "Notifications", href: "/dashboard/notifications", icon: Bell, badge: unreadCount },
-        { name: "Rapports", href: "/dashboard/rapports", icon: BarChart3 },
+        { name: "Souscriptions", href: "/dashboard/souscriptions", icon: ICONS.souscriptions },
+        { name: "Devis", href: "/dashboard/devis", icon: ICONS.documentation },
+        { name: "Dossiers", href: "/dashboard/dossiers", icon: ICONS.shield },
+        { name: "Paiements", href: "/dashboard/paiements", icon: ICONS.paiements },
+        { name: "Articles servis", href: "/dashboard/articles", icon: ICONS.articles },
+        { name: "Notifications", href: "/dashboard/notifications", icon: ICONS.notifications, badge: unreadCount },
+        { name: "Rapports", href: "/dashboard/rapports", icon: ICONS.rapports },
       ],
       bottom: [
-        { name: "Fournisseurs", href: "/dashboard/admin/fournisseurs", icon: Building2 },
-        { name: "Agences AFG", href: "/dashboard/admin/banques", icon: Building2 },
-        { name: "Utilisateurs", href: "/dashboard/admin/utilisateurs", icon: Users },
-        { name: "Paramètres", href: "/dashboard/parametres", icon: Settings },
+        { name: "Fournisseurs", href: "/dashboard/admin/fournisseurs", icon: ICONS.fournisseur },
+        { name: "Agences AFG CI", href: "/dashboard/admin/banques", icon: ICONS.banque },
+        { name: "Utilisateurs", href: "/dashboard/admin/utilisateurs", icon: ICONS.users },
+        { name: "Paramètres", href: "/dashboard/parametres", icon: ICONS.settings },
+      ],
+    };
+  }
+
+  if (role === "owner") {
+    return {
+      main: [
+        ...common,
+        { name: "Souscriptions", href: "/dashboard/souscriptions", icon: ICONS.souscriptions },
+        { name: "Devis", href: "/dashboard/devis", icon: ICONS.documentation },
+        { name: "Dossiers", href: "/dashboard/dossiers", icon: ICONS.shield },
+        { name: "Paiements", href: "/dashboard/paiements", icon: ICONS.paiements },
+        { name: "Articles servis", href: "/dashboard/articles", icon: ICONS.articles },
+        { name: "Notifications", href: "/dashboard/notifications", icon: ICONS.notifications, badge: unreadCount },
+        { name: "Rapports", href: "/dashboard/rapports", icon: ICONS.rapports },
+      ],
+      bottom: [
+        { name: "Fournisseurs", href: "/dashboard/admin/fournisseurs", icon: ICONS.fournisseur },
+        { name: "Agences AFG CI", href: "/dashboard/admin/banques", icon: ICONS.banque },
+        { name: "Paramètres", href: "/dashboard/parametres", icon: ICONS.settings },
       ],
     };
   }
@@ -52,14 +68,14 @@ function getNav(role: LDFUserRole, unreadCount: number): { main: NavItem[]; bott
     return {
       main: [
         ...common,
-        { name: "Souscripteurs", href: "/dashboard/banque/souscripteurs", icon: Users },
-        { name: "Dossiers", href: "/dashboard/banque/dossiers", icon: ShieldCheck },
-        { name: "Paiements", href: "/dashboard/paiements", icon: CreditCard },
-        { name: "Notifications", href: "/dashboard/notifications", icon: Bell, badge: unreadCount },
-        { name: "Rapports", href: "/dashboard/rapports", icon: BarChart3 },
+        { name: "Souscripteurs", href: "/dashboard/banque/souscripteurs", icon: ICONS.users },
+        { name: "Dossiers", href: "/dashboard/banque/dossiers", icon: ICONS.shield },
+        { name: "Paiements", href: "/dashboard/paiements", icon: ICONS.paiements },
+        { name: "Notifications", href: "/dashboard/notifications", icon: ICONS.notifications, badge: unreadCount },
+        { name: "Rapports", href: "/dashboard/rapports", icon: ICONS.rapports },
       ],
       bottom: [
-        { name: "Paramètres", href: "/dashboard/parametres", icon: Settings },
+        { name: "Paramètres", href: "/dashboard/parametres", icon: ICONS.settings },
       ],
     };
   }
@@ -67,10 +83,10 @@ function getNav(role: LDFUserRole, unreadCount: number): { main: NavItem[]; bott
   if (role === "souscripteur") {
     return {
       main: [
-        { name: "Mes souscriptions", href: "/dashboard/souscripteur", icon: Home, exact: true },
-        { name: "Nouvelle demande", href: "/dashboard/souscripteur/demande", icon: Package },
-        { name: "Notifications", href: "/dashboard/notifications", icon: Bell, badge: unreadCount },
-        { name: "Paramètres", href: "/dashboard/parametres", icon: Settings },
+        { name: "Mes souscriptions", href: "/dashboard/souscripteur", icon: ICONS.dashboard, exact: true },
+        { name: "Nouvelle demande", href: "/dashboard/souscripteur/demande", icon: ICONS.articles },
+        { name: "Notifications", href: "/dashboard/notifications", icon: ICONS.notifications, badge: unreadCount },
+        { name: "Paramètres", href: "/dashboard/parametres", icon: ICONS.settings },
       ],
       bottom: [],
     };
@@ -80,15 +96,15 @@ function getNav(role: LDFUserRole, unreadCount: number): { main: NavItem[]; bott
   return {
     main: [
       ...common,
-      // { name: "Mes Commandes",    href: "/dashboard/fournisseur/commandes",  icon: Package },
-      { name: "Souscriptions", href: "/dashboard/souscriptions", icon: FileText },
-      { name: "Devis", href: "/dashboard/devis", icon: BookOpen },
-      { name: "Feedbacks banque", href: "/dashboard/fournisseur/feedbacks", icon: ShieldCheck },
-      { name: "Paiements", href: "/dashboard/paiements", icon: CreditCard },
-      { name: "Notifications", href: "/dashboard/notifications", icon: Bell, badge: unreadCount },
+      { name: "Souscriptions", href: "/dashboard/souscriptions", icon: ICONS.souscriptions },
+      { name: "Souscription client", href: "/dashboard/souscriptions/creer", icon: ICONS.articles },
+      { name: "Devis", href: "/dashboard/devis", icon: ICONS.documentation },
+      { name: "Feedbacks banque", href: "/dashboard/fournisseur/feedbacks", icon: ICONS.shield },
+      { name: "Paiements", href: "/dashboard/paiements", icon: ICONS.paiements },
+      { name: "Notifications", href: "/dashboard/notifications", icon: ICONS.notifications, badge: unreadCount },
     ],
     bottom: [
-      { name: "Paramètres", href: "/dashboard/parametres", icon: Settings },
+      { name: "Paramètres", href: "/dashboard/parametres", icon: ICONS.settings },
     ],
   };
 }
@@ -157,20 +173,19 @@ export default function LDFSidebar() {
         "flex items-center border-b border-white/8 flex-shrink-0",
         isSidebarCollapsed && !mobile ? "justify-center px-3 py-4" : "px-4 py-4 gap-3",
       )}>
-        <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center bg-white p-1 shadow-sm">
+        <div className="w-15 h-15 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center bg-white p-1 shadow-sm">
           <Image
-            src="/logos/viflo_logo.jpeg"
+            src={IMAGES.logos.vifloNew}
             alt="ViFlo"
-            width={40}
-            height={40}
+            width={50}
+            height={50}
             className="object-contain w-full h-full"
-            onError={() => { }}
           />
         </div>
         {(!isSidebarCollapsed || mobile) && (
           <div className="min-w-0">
             <p className="text-white font-bold text-base leading-none tracking-tight truncate">
-              ViFlo by <span style={{ color: "#FF9E44" }}>FADES</span>
+              ViFlo<span className="text-[11px] font-semibold text-[#FF9E44] ml-0.5" style={{ fontSize: "11px", color: "#FFFFFF" }}>by</span><span className="text-[11px] font-semibold text-[#FF9E44] ml-0.5" style={{ fontSize: "11px", color: "#FF9E44" }}>FADES</span>
             </p>
             <p className="text-[10px] mt-0.5 truncate" style={{ color: "rgba(190,215,255,0.55)" }}>Donnons vie à vos projets</p>
           </div>
@@ -181,7 +196,7 @@ export default function LDFSidebar() {
             className="ml-auto w-7 h-7 rounded-lg flex items-center justify-center transition-colors"
             style={{ color: "rgba(190,215,255,0.6)" }}
           >
-            <X className="w-4 h-4" />
+            <ICONS.close className="w-4 h-4" />
           </button>
         )}
       </div>
@@ -202,50 +217,66 @@ export default function LDFSidebar() {
       </nav>
 
       {/* ── Profil utilisateur ── */}
-      <div className={cn(
-        "p-3 flex-shrink-0",
-        isSidebarCollapsed && !mobile ? "flex flex-col items-center gap-2" : "",
-      )} style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
-        {!isSidebarCollapsed || mobile ? (
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm text-white"
-              style={{ background: "linear-gradient(135deg, #FF7B2E, #FFB300)" }}>
-              {user.prenom?.[0] || user.nom?.[0] || 'U'}{user.nom?.[0] || ''}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-white text-sm font-semibold truncate">{user.prenom} {user.nom}</p>
-              <p className="text-xs truncate" style={{ color: "rgba(190,215,255,0.55)" }}>{getRoleLabel(user.role)}</p>
-            </div>
-            <button
-              onClick={logout}
-              title="Déconnexion"
-              className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors flex-shrink-0"
-              style={{ color: "rgba(190,215,255,0.4)" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "#f87171")}
-              onMouseLeave={e => (e.currentTarget.style.color = "rgba(190,215,255,0.4)")}
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
+      {(() => {
+        const displayName = user.role === "admin" || (user.prenom === "Administrateur" && (!user.nom || user.nom === "Admin"))
+          ? "Administrateur"
+          : user.role === "owner"
+          ? "Propriétaire"
+          : [user.prenom, user.nom].filter(Boolean).join(" ");
+
+        const initials = user.role === "admin" || (user.prenom === "Administrateur" && (!user.nom || user.nom === "Admin"))
+          ? "A"
+          : user.role === "owner"
+          ? "P"
+          : `${user.prenom?.[0] || user.nom?.[0] || 'U'}${user.nom?.[0] || ''}`;
+
+        return (
+          <div className={cn(
+            "p-3 flex-shrink-0",
+            isSidebarCollapsed && !mobile ? "flex flex-col items-center gap-2" : "",
+          )} style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+            {!isSidebarCollapsed || mobile ? (
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm text-white"
+                  style={{ background: "linear-gradient(135deg, #FF7B2E, #FFB300)" }}>
+                  {initials}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-white text-sm font-semibold truncate">{displayName}</p>
+                  <p className="text-xs truncate" style={{ color: "rgba(190,215,255,0.55)" }}>{getRoleLabel(user.role)}</p>
+                </div>
+                <button
+                  onClick={logout}
+                  title="Déconnexion"
+                  className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors flex-shrink-0"
+                  style={{ color: "rgba(190,215,255,0.4)" }}
+                  onMouseEnter={e => (e.currentTarget.style.color = "#f87171")}
+                  onMouseLeave={e => (e.currentTarget.style.color = "rgba(190,215,255,0.4)")}
+                >
+                  <ICONS.logout className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm text-white"
+                  style={{ background: "linear-gradient(135deg, #FF7B2E, #FFB300)" }}>
+                  {initials}
+                </div>
+                <button
+                  onClick={logout}
+                  title="Déconnexion"
+                  className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors"
+                  style={{ color: "rgba(190,215,255,0.4)" }}
+                  onMouseEnter={e => (e.currentTarget.style.color = "#f87171")}
+                  onMouseLeave={e => (e.currentTarget.style.color = "rgba(190,215,255,0.4)")}
+                >
+                  <ICONS.logout className="w-4 h-4" />
+                </button>
+              </>
+            )}
           </div>
-        ) : (
-          <>
-            <div className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm text-white"
-              style={{ background: "linear-gradient(135deg, #FF7B2E, #FFB300)" }}>
-              {user.prenom?.[0] || user.nom?.[0] || 'U'}{user.nom?.[0] || ''}
-            </div>
-            <button
-              onClick={logout}
-              title="Déconnexion"
-              className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors"
-              style={{ color: "rgba(190,215,255,0.4)" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "#f87171")}
-              onMouseLeave={e => (e.currentTarget.style.color = "rgba(190,215,255,0.4)")}
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
-          </>
-        )}
-      </div>
+        );
+      })()}
     </div>
   );
 
@@ -266,8 +297,8 @@ export default function LDFSidebar() {
                      transition-all duration-200 z-10"
         >
           {isSidebarCollapsed
-            ? <ChevronRight className="w-3.5 h-3.5" />
-            : <ChevronLeft className="w-3.5 h-3.5" />}
+            ? <ICONS.chevronRight className="w-3.5 h-3.5" />
+            : <ICONS.chevronLeft className="w-3.5 h-3.5" />}
         </button>
       </aside>
 

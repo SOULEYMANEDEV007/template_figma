@@ -27,19 +27,29 @@ export interface VFournisseur {
   id: string;
   code: string;
   nom: string;
-  raisonSociale: string;
+  raisonSociale?: string;
+  nomDirecteur?: string;
   email: string;
   emailCommercial?: string;
   telephone: string;
   telephoneCommercial?: string;
   adresse: string;
   ville: string;
+  region?: string;
   quartier?: string;
   rccm?: string;
+  compteContribuable?: string;
+  situationJuridique?: string;
+  nombreEmployes?: number;
+  dureePartenariatAFG?: number;
+  numeroContratAFG?: string;
+  nombreSouscriptions?: number;
+  montantTotal?: number;
   secteurActivite?: string;
   logo?: string;
   agreVitalis: boolean;
   dateAgrementVitalis?: string;
+  dateAgrement?: string;
   statut: 'prospect' | 'en_cours_agrement' | 'agree' | 'actif' | 'suspendu' | 'expire';
 }
 
@@ -231,9 +241,186 @@ export interface VHistorique {
   date: string;
 }
 
+export interface VUser {
+  id: string;
+  firstName: string;
+  lastName: string;
+  nom?: string;
+  prenom?: string;
+  email: string;
+  role: 'admin' | 'banque' | 'fournisseur' | 'souscripteur' | 'owner';
+  telephone?: string;
+  phone?: string;
+  organisationId?: string;
+  organisationName?: string;
+  banqueId?: string;
+  fournisseurId?: string;
+  statut?: 'actif' | 'inactif';
+  isActive: boolean;
+  createdAt: string;
+  lastLoginAt?: string;
+}
+
+export interface VConnexionLog {
+  id: string;
+  userId: string;
+  userName: string;
+  email: string;
+  role: string;
+  date: string;
+  ip: string;
+  appareil: string;
+  statut: 'succes' | 'echec';
+}
+
 // ============================================================
 // DONNÉES INITIALES (Seed)
 // ============================================================
+
+const SEED_USERS: VUser[] = [
+  {
+    id: 'USR-001',
+    email: 'admin@viflo.ci',
+    firstName: 'Administrateur',
+    lastName: '',
+    nom: '',
+    prenom: 'Administrateur',
+    role: 'admin',
+    telephone: '+225 07 00 00 00 00',
+    phone: '+225 07 00 00 00 00',
+    organisationName: 'LDF Groupe',
+    statut: 'actif',
+    isActive: true,
+    createdAt: '2026-01-01',
+    lastLoginAt: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'USR-002',
+    email: 'banque@afgbank.ci',
+    firstName: 'Abdoulaye',
+    lastName: 'Traoré',
+    nom: 'Traoré',
+    prenom: 'Abdoulaye',
+    role: 'banque',
+    banqueId: 'AFG-001',
+    organisationId: 'AFG-001',
+    organisationName: 'AFG Bank',
+    telephone: '+225 07 01 00 00 00',
+    phone: '+225 07 01 00 00 00',
+    statut: 'actif',
+    isActive: true,
+    createdAt: '2026-01-01',
+    lastLoginAt: new Date(Date.now() - 3 * 3600 * 1000).toISOString(),
+  },
+  {
+    id: 'USR-003',
+    email: 'fournisseur@ldf.ci',
+    firstName: 'LDF',
+    lastName: 'Groupe',
+    nom: 'Groupe LDF',
+    prenom: 'Librairie de France',
+    role: 'fournisseur',
+    fournisseurId: 'FOUR-LDF-001',
+    organisationId: 'FOUR-LDF-001',
+    organisationName: 'Librairie de France Groupe',
+    telephone: '+225 07 02 00 00 00',
+    phone: '+225 07 02 00 00 00',
+    statut: 'actif',
+    isActive: true,
+    createdAt: '2026-01-01',
+    lastLoginAt: new Date(Date.now() - 25 * 3600 * 1000).toISOString(),
+  },
+  {
+    id: 'USR-004',
+    email: 'client@viflo.ci',
+    firstName: 'Mamadou',
+    lastName: 'Coulibaly',
+    nom: 'Coulibaly',
+    prenom: 'Mamadou',
+    role: 'souscripteur',
+    organisationName: 'Particulier',
+    telephone: '+225 07 01 11 22 33',
+    phone: '+225 07 01 11 22 33',
+    statut: 'actif',
+    isActive: true,
+    createdAt: '2026-01-05',
+    lastLoginAt: new Date(Date.now() - 48 * 3600 * 1000).toISOString(),
+  },
+  {
+    id: 'USR-OWNER-001',
+    email: 'owner@viflo.ci',
+    firstName: 'Propriétaire',
+    lastName: '',
+    nom: '',
+    prenom: 'Propriétaire',
+    role: 'owner',
+    organisationName: 'LDF Groupe',
+    telephone: '+225 07 00 00 00 01',
+    phone: '+225 07 00 00 00 01',
+    statut: 'inactif',
+    isActive: false,
+    createdAt: '2026-01-01',
+    lastLoginAt: new Date(Date.now() - 40 * 60 * 1000).toISOString(),
+  },
+];
+
+const SEED_CONNEXIONS_LOGS: VConnexionLog[] = [
+  {
+    id: 'LOG-001',
+    userId: 'USR-001',
+    userName: 'Administrateur',
+    email: 'admin@viflo.ci',
+    role: 'admin',
+    date: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
+    ip: '192.168.1.10 (Abidjan)',
+    appareil: 'Chrome / Windows 11',
+    statut: 'succes',
+  },
+  {
+    id: 'LOG-002',
+    userId: 'USR-OWNER-001',
+    userName: 'Propriétaire',
+    email: 'owner@viflo.ci',
+    role: 'owner',
+    date: new Date(Date.now() - 40 * 60 * 1000).toISOString(),
+    ip: '192.168.1.15 (Abidjan)',
+    appareil: 'Chrome / Windows 11',
+    statut: 'succes',
+  },
+  {
+    id: 'LOG-003',
+    userId: 'USR-002',
+    userName: 'Abdoulaye Traoré',
+    email: 'banque@afgbank.ci',
+    role: 'banque',
+    date: new Date(Date.now() - 3 * 3600 * 1000).toISOString(),
+    ip: '10.0.4.82 (Agence Plateau)',
+    appareil: 'Edge / Windows 10',
+    statut: 'succes',
+  },
+  {
+    id: 'LOG-004',
+    userId: 'USR-003',
+    userName: 'Librairie de France Groupe',
+    email: 'fournisseur@ldf.ci',
+    role: 'fournisseur',
+    date: new Date(Date.now() - 25 * 3600 * 1000).toISOString(),
+    ip: '160.154.21.90 (Abidjan)',
+    appareil: 'Chrome / MacOS',
+    statut: 'succes',
+  },
+  {
+    id: 'LOG-005',
+    userId: 'USR-004',
+    userName: 'Mamadou Coulibaly',
+    email: 'client@viflo.ci',
+    role: 'souscripteur',
+    date: new Date(Date.now() - 48 * 3600 * 1000).toISOString(),
+    ip: '41.207.24.11 (Mobile Abidjan)',
+    appareil: 'Mobile Safari / iOS',
+    statut: 'succes',
+  },
+];
 
 const SEED_AGENCES_AFG: VAgenceAFG[] = [
   { id: 'AGE-AFG-001', code: 'AFG-PLT', nom: 'Agence Plateau', ville: 'Abidjan', adresse: 'Avenue Chardy, Immeuble SCIAM, Plateau', telephone: '+225 27 20 31 58 00', email: 'plateau@afgbank.ci', responsable: 'M. Kouadio KOFFI', statut: 'actif' },
@@ -259,32 +446,72 @@ const SEED_FOURNISSEURS: VFournisseur[] = [
     email: 'info@drocolor.ci', emailCommercial: 'ventes@drocolor.ci',
     telephone: '+225 27 23 45 67 89', telephoneCommercial: '+225 05 06 07 08 09',
     adresse: 'Zone Industrielle de Yopougon', ville: 'Abidjan', quartier: 'Yopougon',
-    rccm: 'CI-ABJ-2018-B-45678', secteurActivite: 'Matériel informatique et électronique',
+    rccm: 'CI-ABJ-2018-B-45678', secteurActivite: 'Peinture, revêtements bâtiment & carrosserie, étanchéité',
     logo: '/images/drocolor-logo.jfif', agreVitalis: true, dateAgrementVitalis: '2023-03-20', statut: 'actif',
   },
   {
-    id: 'FOUR-SMT-003', code: 'SMART', nom: 'SMART TECHNOLOGIE', raisonSociale: 'Smart Technologie CI SA',
-    email: 'contact@smarttech.ci', emailCommercial: 'b2b@smarttech.ci',
-    telephone: '+225 27 20 12 34 56', telephoneCommercial: '+225 01 52 53 54 55',
-    adresse: 'Rue des Jardins, Plateau', ville: 'Abidjan', quartier: 'Plateau',
-    rccm: 'CI-ABJ-2020-B-78901', secteurActivite: 'Informatique et solutions digitales',
-    logo: '/images/logo-smart-techno.png', agreVitalis: true, dateAgrementVitalis: '2023-06-10', statut: 'actif',
-  },
-  {
-    id: 'FOUR-NAS-004', code: 'NASCO', nom: 'NASCO', raisonSociale: 'NASCO Distribution SARL',
-    email: 'info@nasko.ci', emailCommercial: 'pro@nasko.ci',
-    telephone: '+225 27 21 98 76 54', telephoneCommercial: '+225 07 77 88 99 00',
+    id: 'FOUR-COM-003', code: 'COMAF', nom: 'COMAFRIQUE', raisonSociale: 'Comafrique Technologies CI',
+    email: 'contact@comafrique.ci', emailCommercial: 'b2b@comafrique.ci',
+    telephone: '+225 27 21 75 80 00', telephoneCommercial: '+225 07 15 20 25 30',
     adresse: 'Boulevard de Marseille, Treichville', ville: 'Abidjan', quartier: 'Treichville',
-    rccm: 'CI-ABJ-2019-B-34567', secteurActivite: 'Meubles et équipements de bureau',
-    logo: '/images/logo-nasko.png', agreVitalis: true, dateAgrementVitalis: '2023-09-05', statut: 'actif',
+    rccm: 'CI-ABJ-2015-B-44332', secteurActivite: 'Technologies, Informatique & Solutions digitales',
+    logo: '/images/logo-comafrique.webp', agreVitalis: true, dateAgrementVitalis: '2023-06-10', statut: 'actif',
   },
   {
-    id: 'FOUR-CAR-005', code: 'CARRF', nom: 'CARREFOUR', raisonSociale: "Carrefour Côte d'Ivoire",
-    email: 'b2b@carrefour.ci', emailCommercial: 'corporate@carrefour.ci',
+    id: 'FOUR-INO-004', code: 'INOVIM', nom: 'INOVIM', raisonSociale: 'Groupe INOVIM Immobilier',
+    email: 'contact@inovim-group.com', emailCommercial: 'projets@inovim-group.com',
+    telephone: '+225 27 22 40 85 00', telephoneCommercial: '+225 05 30 40 50 60',
+    adresse: 'Cocody Ambassades, Rue des Jardins', ville: 'Abidjan', quartier: 'Cocody',
+    rccm: 'CI-ABJ-2019-B-88771', secteurActivite: 'Immobilier, Logement & Aménagement',
+    logo: '/images/logo-inovim.jpg', agreVitalis: true, dateAgrementVitalis: '2023-04-15', statut: 'actif',
+  },
+  {
+    id: 'FOUR-KAY-005', code: 'KAYDAN', nom: 'KAYDAN', raisonSociale: 'KAYDAN Groupe',
+    email: 'contact@kaydan.ci', emailCommercial: 'immobilier@kaydan.ci',
+    telephone: '+225 27 22 48 90 00', telephoneCommercial: '+225 07 88 99 00 11',
+    adresse: 'Immeuble Kaydan, Cocody Riviera Golf', ville: 'Abidjan', quartier: 'Cocody',
+    rccm: 'CI-ABJ-2014-B-66554', secteurActivite: 'Promotion immobilière, BTP & Construction',
+    logo: '/images/logo-kaydan.webp', agreVitalis: true, dateAgrementVitalis: '2023-03-12', statut: 'actif',
+  },
+  {
+    id: 'FOUR-SCD-006', code: 'SOCIDA', nom: 'SOCIDA', raisonSociale: 'Société de Concessionnaires pour l\'Automobile (SOCIDA)',
+    email: 'contact@socida.ci', emailCommercial: 'ventes@socida.ci',
+    telephone: '+225 27 21 21 40 00', telephoneCommercial: '+225 07 01 02 03 04',
+    adresse: 'Boulevard de Marseille, Km 4, Zone 3', ville: 'Abidjan', quartier: 'Treichville',
+    rccm: 'CI-ABJ-2010-B-11998', secteurActivite: 'Automobile, Véhicules neufs, Utilitaires & Pièces',
+    logo: '/images/logo-socida.jpg', agreVitalis: true, dateAgrementVitalis: '2023-01-18', statut: 'actif',
+  },
+  {
+    id: 'FOUR-RYM-007', code: 'RYMCO', nom: 'RYMCO', raisonSociale: 'RYMCO Côte d\'Ivoire',
+    email: 'b2b@rymco.ci', emailCommercial: 'commercial@rymco.ci',
     telephone: '+225 27 21 25 00 00', telephoneCommercial: '+225 05 44 55 66 77',
-    adresse: 'Centre Commercial Cap Sud, Marcory', ville: 'Abidjan', quartier: 'Marcory',
-    rccm: 'CI-ABJ-2017-B-90123', secteurActivite: 'Grande distribution multi-produits',
-    logo: '/images/logo-carrefour.png', agreVitalis: true, dateAgrementVitalis: '2023-02-28', statut: 'actif',
+    adresse: 'Zone Industrielle de Vridi', ville: 'Abidjan', quartier: 'Treichville',
+    rccm: 'CI-ABJ-2017-B-90123', secteurActivite: 'Automobile, Deux-roues, Équipements & Matériel',
+    logo: '/images/logo_rymco.jpg', agreVitalis: true, dateAgrementVitalis: '2023-02-28', statut: 'actif',
+  },
+  {
+    id: 'FOUR-LG-008', code: 'LG', nom: 'LG', raisonSociale: 'LG Electronics Côte d\'Ivoire',
+    email: 'contact@lg-ci.com', emailCommercial: 'b2b@lg-ci.com',
+    telephone: '+225 27 21 75 00 00', telephoneCommercial: '+225 07 10 20 30 40',
+    adresse: 'Boulevard Valéry Giscard d\'Estaing', ville: 'Abidjan', quartier: 'Marcory',
+    rccm: 'CI-ABJ-2016-B-55443', secteurActivite: 'Électroménager, Climatisation & Électronique',
+    logo: '/images/logo_lg.webp', agreVitalis: true, dateAgrementVitalis: '2023-05-12', statut: 'actif',
+  },
+  {
+    id: 'FOUR-SOD-009', code: 'SODIMAC', nom: 'SODIMAC', raisonSociale: 'SODIMAC CI',
+    email: 'contact@sodimac.ci', emailCommercial: 'ventes@sodimac.ci',
+    telephone: '+225 27 21 24 50 00', telephoneCommercial: '+225 05 11 22 33 44',
+    adresse: 'Boulevard de Marseille, Zone 3', ville: 'Abidjan', quartier: 'Treichville',
+    rccm: 'CI-ABJ-2014-B-88776', secteurActivite: 'Matériaux de construction, Cimenterie & Aménagement',
+    logo: '/images/logo_sodimac_ci.jpg', agreVitalis: true, dateAgrementVitalis: '2023-04-18', statut: 'actif',
+  },
+  {
+    id: 'FOUR-SOC-010', code: 'SOCIAM', nom: 'SOCIAM', raisonSociale: 'Société Ivoirienne d\'Appareillage Ménager (SOCIAM)',
+    email: 'contact@sociam.ci', emailCommercial: 'corporate@sociam.ci',
+    telephone: '+225 27 21 28 88 88', telephoneCommercial: '+225 07 99 88 77 66',
+    adresse: 'Zone Industrielle de Koumassi', ville: 'Abidjan', quartier: 'Koumassi',
+    rccm: 'CI-ABJ-2011-B-33221', secteurActivite: 'Électroménager, Image & Son, Froid',
+    logo: '/images/sociam_logo.webp', agreVitalis: true, dateAgrementVitalis: '2023-01-22', statut: 'actif',
   },
 ];
 
@@ -341,7 +568,7 @@ const DEMO_SOUSCRIPTIONS: VSouscription[] = [
     banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-001', agenceNom: 'Agence Plateau',
     fournisseurs: [
       { fournisseurId: 'FOUR-LDF-001', fournisseurNom: 'Librairie de France Groupe', devisId: 'DEV-003', statut: 'devis_cree' },
-      { fournisseurId: 'FOUR-SMT-003', fournisseurNom: 'SMART TECHNOLOGIE', statut: 'en_attente' },
+      { fournisseurId: 'FOUR-COM-003', fournisseurNom: 'COMAFRIQUE', statut: 'en_attente' },
     ],
     montantTotal: 1200000, duree: 36, statut: 'en_analyse_bancaire',
     dateCreation: twoDaysAgo, dateMiseAJour: yesterday,
@@ -353,7 +580,7 @@ const DEMO_SOUSCRIPTIONS: VSouscription[] = [
     souscripteurEntreprise: 'DIGITAL SOLUTIONS CI', souscripteurTelephone: '+225 27 22 33 44 55',
     souscripteurEmail: 'contact@digitalsolutions.ci',
     banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-003', agenceNom: 'Agence Marcory',
-    fournisseurs: [{ fournisseurId: 'FOUR-CAR-005', fournisseurNom: 'CARREFOUR', statut: 'en_attente' }],
+    fournisseurs: [{ fournisseurId: 'FOUR-INO-004', fournisseurNom: 'INOVIM', statut: 'en_attente' }],
     montantTotal: 2500000, duree: 36, statut: 'en_preparation',
     dateCreation: today, dateMiseAJour: today,
     observations: 'Dossier en cours de constitution.',
@@ -364,7 +591,7 @@ const DEMO_SOUSCRIPTIONS: VSouscription[] = [
     souscripteurTelephone: '+225 05 87 65 43 21', souscripteurEmail: 'b.assi@yahoo.fr',
     banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-004', agenceNom: 'Agence Yopougon',
     fournisseurs: [{ fournisseurId: 'FOUR-DRO-002', fournisseurNom: 'Drocolor', devisId: 'DEV-005', statut: 'valide' }],
-    montantTotal: 975000, duree: 36, statut: 'fournisseur_paye',
+    montantTotal: 975000, duree: 36, statut: 'livre',
     dateCreation: oneWeekAgo, dateMiseAJour: yesterday, dateValidation: twoDaysAgo,
   },
 ];
@@ -384,7 +611,7 @@ const DEMO_DEVIS: VDevis[] = [
     ],
     totalHT: 287500, tva: 0, totalTTC: 287500,
     conditions: 'Paiement à la réception de la commande validée par AFG Bank. Livraison franco de port à Abidjan.',
-    delaiLivraisonAbidjan: '7 jours ouvrés', delaiLivraisonInterieur: '15 jours ouvrés', validiteDevis: '30 jours ouvrés',
+    delaiLivraisonAbidjan: '7 jours ouvrés', delaiLivraisonInterieur: '15 jours ouvrés', validiteDevis: '60 jours',
     statut: 'valide', dateCreation: oneWeekAgo, dateExpiration: today, dateValidation: twoDaysAgo, dateMiseAJour: twoDaysAgo,
   },
   {
@@ -393,11 +620,13 @@ const DEMO_DEVIS: VDevis[] = [
     fournisseurId: 'FOUR-DRO-002', fournisseurNom: 'Drocolor',
     banqueId: 'AFG-001', banqueNom: 'AFG Bank',
     articles: [
-      { id: 'ART-006', designation: 'Cartables scolaires', quantite: 30, prixUnitaire: 15000, remise: 10, montantHT: 405000 },
+      { id: 'ART-006', designation: 'Peinture Acrylique Extérieure Drocolor (Fût 25kg)', quantite: 8, prixUnitaire: 45000, remise: 5, montantHT: 342000 },
+      { id: 'ART-007', designation: 'Sous-couche Primaire d\'Accrochage Façade (20L)', quantite: 4, prixUnitaire: 38000, remise: 0, montantHT: 152000 },
+      { id: 'ART-008', designation: 'Kit outillage peintre Pro (Rouleaux, Brosses, Bâches)', quantite: 4, prixUnitaire: 39000, remise: 0, montantHT: 156000 },
     ],
-    totalHT: 405000, tva: 0, totalTTC: 405000,
+    totalHT: 650000, tva: 0, totalTTC: 650000,
     conditions: "Livraison franco de port à l'adresse du client.",
-    delaiLivraisonAbidjan: '7 jours ouvrés', delaiLivraisonInterieur: '15 jours ouvrés', validiteDevis: '30 jours ouvrés',
+    delaiLivraisonAbidjan: '7 jours ouvrés', delaiLivraisonInterieur: '15 jours ouvrés', validiteDevis: '60 jours',
     statut: 'envoye', dateCreation: yesterday, dateExpiration: today, dateMiseAJour: yesterday,
   },
   {
@@ -411,7 +640,7 @@ const DEMO_DEVIS: VDevis[] = [
     ],
     totalHT: 141250, tva: 0, totalTTC: 141250,
     conditions: 'Livraison franco de port.',
-    delaiLivraisonAbidjan: '7 jours ouvrés', delaiLivraisonInterieur: '15 jours ouvrés', validiteDevis: '30 jours ouvrés',
+    delaiLivraisonAbidjan: '7 jours ouvrés', delaiLivraisonInterieur: '15 jours ouvrés', validiteDevis: '60 jours',
     statut: 'en_attente_validation', dateCreation: twoDaysAgo, dateExpiration: today, dateMiseAJour: twoDaysAgo,
   },
   {
@@ -420,12 +649,13 @@ const DEMO_DEVIS: VDevis[] = [
     fournisseurId: 'FOUR-DRO-002', fournisseurNom: 'Drocolor',
     banqueId: 'AFG-001', banqueNom: 'AFG Bank',
     articles: [
-      { id: 'ART-009', designation: 'Ordinateurs portables HP 15" i5', quantite: 3, prixUnitaire: 275000, remise: 5, montantHT: 783750 },
-      { id: 'ART-010', designation: 'Imprimante Brother DCP-L2550', quantite: 1, prixUnitaire: 180000, remise: 0, montantHT: 180000 },
+      { id: 'ART-009', designation: 'Peinture Façade Hydrofuge Drocolor Pro 25L', quantite: 8, prixUnitaire: 65000, remise: 5, montantHT: 494000 },
+      { id: 'ART-010', designation: 'Peinture Émulsion Intérieure Blanche Drocolor 20L', quantite: 8, prixUnitaire: 40000, remise: 0, montantHT: 320000 },
+      { id: 'ART-011', designation: 'Enduit de lissage & garnissage Façade Pro', quantite: 6, prixUnitaire: 26833, remise: 0, montantHT: 161000 },
     ],
-    totalHT: 963750, tva: 0, totalTTC: 963750,
+    totalHT: 975000, tva: 0, totalTTC: 975000,
     conditions: 'Garantie constructeur 2 ans incluse. Livraison à domicile.',
-    delaiLivraisonAbidjan: '7 jours ouvrés', delaiLivraisonInterieur: '15 jours ouvrés', validiteDevis: '30 jours ouvrés',
+    delaiLivraisonAbidjan: '7 jours ouvrés', delaiLivraisonInterieur: '15 jours ouvrés', validiteDevis: '60 jours',
     statut: 'valide', dateCreation: oneWeekAgo, dateExpiration: today, dateValidation: twoDaysAgo, dateMiseAJour: twoDaysAgo,
   },
 ];
@@ -451,7 +681,7 @@ const DEMO_DOSSIERS: VDossier[] = [
   {
     id: 'DOS-003', reference: 'DOS-2026-003', souscriptionId: 'SOUS-003', souscriptionRef: 'VF-2026-003',
     souscripteurId: 'SCP-003', souscripteurNom: 'KONÉ', souscripteurPrenom: 'Ibrahim', typeSouscripteur: 'physique',
-    fournisseursNoms: 'LDF Groupe + SMART TECHNOLOGIE', devisIds: ['DEV-003'],
+    fournisseursNoms: 'LDF Groupe + COMAFRIQUE', devisIds: ['DEV-003'],
     banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-001',
     montantTotal: 1200000, statut: 'depose_banque',
     dateCreation: today, dateReception: today, dateMiseAJour: today,
@@ -461,7 +691,7 @@ const DEMO_DOSSIERS: VDossier[] = [
     souscripteurId: 'SCP-005', souscripteurNom: 'ASSI', souscripteurPrenom: 'Brice', typeSouscripteur: 'physique',
     fournisseursNoms: 'Drocolor', devisIds: ['DEV-005'],
     banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-004',
-    montantTotal: 975000, statut: 'accepte',
+    montantTotal: 975000, statut: 'livre',
     commentaireAFG: 'Financement accordé — Équipements professionnels conformes au programme.',
     dateCreation: oneWeekAgo, dateReception: oneWeekAgo, dateDebutAnalyse: twoDaysAgo, dateValidation: yesterday, dateMiseAJour: yesterday,
   },
@@ -560,6 +790,18 @@ interface VitalisDbState {
   markNotificationAsRead: (id: string) => void;
   getUnreadNotifications: (userId?: string) => VNotification[];
 
+  // ── ACTIONS FOURNISSEURS ───────────────────────────────────
+  addFournisseur: (data: Partial<VFournisseur>) => VFournisseur;
+  updateFournisseur: (id: string, data: Partial<VFournisseur>) => void;
+  deleteFournisseur: (id: string) => void;
+  getFournisseurById: (id: string) => VFournisseur | undefined;
+
+  // ── ACTIONS AGENCES AFG ────────────────────────────────────
+  addAgenceAFG: (data: Partial<VAgenceAFG>) => VAgenceAFG;
+  updateAgenceAFG: (id: string, data: Partial<VAgenceAFG>) => void;
+  deleteAgenceAFG: (id: string) => void;
+  getAgenceAFGById: (id: string) => VAgenceAFG | undefined;
+
   // ── ACTIONS SOUSCRIPTIONS ──────────────────────────────────
   addSouscription: (data: Omit<VSouscription, 'id'>) => VSouscription;
   updateSouscription: (id: string, data: Partial<VSouscription>) => void;
@@ -613,6 +855,17 @@ interface VitalisDbState {
   seedIfNeeded: () => void;
   resetAllData: () => void;
   syncMissingDossiers: () => void;
+
+  // ── UTILISATEURS & TRAÇABILITÉ CONNEXIONS ───────────────────
+  users: VUser[];
+  connexionsLogs: VConnexionLog[];
+  addUser: (data: Partial<VUser>) => VUser;
+  updateUser: (id: string, data: Partial<VUser>) => void;
+  deleteUser: (id: string) => void;
+  getUserById: (id: string) => VUser | undefined;
+  getUserByEmail: (email: string) => VUser | undefined;
+  recordLogin: (email: string, details?: { ip?: string; appareil?: string; statut?: 'succes' | 'echec' }) => void;
+  clearConnexionsLogs: () => void;
 }
 
 export const useVitalisDb = create<VitalisDbState>()(
@@ -627,6 +880,8 @@ export const useVitalisDb = create<VitalisDbState>()(
       dossiers: DEMO_DOSSIERS,
       paiements: DEMO_PAIEMENTS,
       historique: [],
+      users: SEED_USERS,
+      connexionsLogs: SEED_CONNEXIONS_LOGS,
       notifications: [
         { id: 'NOTIF-001', titre: 'Bienvenue', message: 'Bienvenue sur la plateforme Vitalis AFG Bank', lue: false, date: new Date().toISOString() }
       ],
@@ -659,7 +914,19 @@ export const useVitalisDb = create<VitalisDbState>()(
       },
 
       seedIfNeeded: () => {
-        if (get()._seeded) return;
+        const state = get();
+        if (state._seeded) {
+          if (!state.fournisseurs || state.fournisseurs.length === 0) {
+            set({ fournisseurs: SEED_FOURNISSEURS });
+          }
+          if (!state.users || state.users.length === 0) {
+            set({ users: SEED_USERS });
+          }
+          if (!state.connexionsLogs || state.connexionsLogs.length === 0) {
+            set({ connexionsLogs: SEED_CONNEXIONS_LOGS });
+          }
+          return;
+        }
         set({
           agencesAFG: SEED_AGENCES_AFG,
           fournisseurs: SEED_FOURNISSEURS,
@@ -668,6 +935,8 @@ export const useVitalisDb = create<VitalisDbState>()(
           devis: DEMO_DEVIS,
           dossiers: DEMO_DOSSIERS,
           paiements: DEMO_PAIEMENTS,
+          users: SEED_USERS,
+          connexionsLogs: SEED_CONNEXIONS_LOGS,
           _seeded: true,
         });
       },
@@ -678,6 +947,8 @@ export const useVitalisDb = create<VitalisDbState>()(
         dossiers: DEMO_DOSSIERS,
         paiements: DEMO_PAIEMENTS,
         historique: [],
+        users: SEED_USERS,
+        connexionsLogs: SEED_CONNEXIONS_LOGS,
       }),
 
       syncMissingDossiers: () => {
@@ -715,6 +986,89 @@ export const useVitalisDb = create<VitalisDbState>()(
           set({ dossiers: currentDossiers });
         }
       },
+
+      // ── FOURNISSEURS ──────────────────────────────────────────
+      addFournisseur: (data) => {
+        const id = data.id || `FOUR-${Date.now()}`;
+        const newF: VFournisseur = {
+          id,
+          code: data.code || (data.nom ? data.nom.substring(0, 6).toUpperCase().replace(/\s/g, '') : 'FOUR'),
+          nom: data.nom || 'Nouveau Fournisseur',
+          raisonSociale: data.raisonSociale || data.nom || 'Fournisseur',
+          nomDirecteur: data.nomDirecteur || '',
+          email: data.email || '',
+          telephone: data.telephone || '',
+          adresse: data.adresse || '',
+          ville: data.ville || 'Abidjan',
+          region: data.region || 'District Autonome d\'Abidjan',
+          rccm: data.rccm || '',
+          compteContribuable: data.compteContribuable || '',
+          situationJuridique: data.situationJuridique || 'SARL',
+          nombreEmployes: Number(data.nombreEmployes || 1),
+          dureePartenariatAFG: Number(data.dureePartenariatAFG || 12),
+          numeroContratAFG: data.numeroContratAFG || '',
+          statut: data.statut || 'prospect',
+          agreVitalis: data.statut === 'actif' || data.statut === 'agree',
+          nombreSouscriptions: data.nombreSouscriptions || 0,
+          montantTotal: data.montantTotal || 0,
+          secteurActivite: data.secteurActivite || 'Commerce général & distribution',
+          dateAgrementVitalis: (data.statut === 'actif' || data.statut === 'agree') ? new Date().toISOString().split('T')[0] : undefined,
+          ...data,
+        };
+        set(s => ({ fournisseurs: [newF, ...s.fournisseurs] }));
+        return newF;
+      },
+
+      updateFournisseur: (id, data) => set(s => ({
+        fournisseurs: s.fournisseurs.map(f => {
+          if (f.id === id) {
+            const next = { ...f, ...data };
+            if (data.statut) {
+              next.agreVitalis = data.statut === 'actif' || data.statut === 'agree';
+              if (next.agreVitalis && !next.dateAgrementVitalis) {
+                next.dateAgrementVitalis = new Date().toISOString().split('T')[0];
+              }
+            }
+            return next;
+          }
+          return f;
+        }),
+      })),
+
+      deleteFournisseur: (id) => set(s => ({
+        fournisseurs: s.fournisseurs.filter(f => f.id !== id),
+      })),
+
+      getFournisseurById: (id) => get().fournisseurs.find(f => f.id === id),
+
+      // ── AGENCES AFG ──────────────────────────────────────────
+      addAgenceAFG: (data) => {
+        const id = data.id || `AGE-AFG-${String(get().agencesAFG.length + 1).padStart(3, '0')}`;
+        const newAg: VAgenceAFG = {
+          id,
+          code: data.code || `AFG-${(data.nom || 'AGC').substring(0, 3).toUpperCase().replace(/\s/g, '')}`,
+          nom: data.nom || 'Nouvelle Agence AFG',
+          ville: data.ville || 'Abidjan',
+          adresse: data.adresse || '',
+          telephone: data.telephone || '',
+          email: data.email || '',
+          responsable: data.responsable || '',
+          statut: data.statut || 'actif',
+          ...data,
+        };
+        set(s => ({ agencesAFG: [...s.agencesAFG, newAg] }));
+        return newAg;
+      },
+
+      updateAgenceAFG: (id, data) => set(s => ({
+        agencesAFG: s.agencesAFG.map(a => a.id === id ? { ...a, ...data } : a),
+      })),
+
+      deleteAgenceAFG: (id) => set(s => ({
+        agencesAFG: s.agencesAFG.filter(a => a.id !== id),
+      })),
+
+      getAgenceAFGById: (id) => get().agencesAFG.find(a => a.id === id),
 
       // ── SOUSCRIPTIONS ───────────────────────────────────────
       addSouscription: (data) => {
@@ -937,6 +1291,14 @@ export const useVitalisDb = create<VitalisDbState>()(
           }
         });
 
+        currentPaiements.forEach(p => {
+          const sub = souscriptions.find(s => s.id === p.souscriptionId);
+          if (sub && ['livre', 'servie', 'cloture'].includes(sub.statut) && p.statut !== 'servi') {
+            p.statut = 'servi';
+            changed = true;
+          }
+        });
+
         if (changed) {
           set({ paiements: currentPaiements });
         }
@@ -1021,18 +1383,129 @@ export const useVitalisDb = create<VitalisDbState>()(
           tauxApprobation: total > 0 ? Math.round((valides / total) * 100) : 0,
         };
       },
+
+      // ── IMPLÉMENTATION UTILISATEURS & TRAÇABILITÉ CONNEXIONS ─────
+      addUser: (data) => {
+        const state = get();
+        const currentUsers = state.users && state.users.length > 0 ? state.users : SEED_USERS;
+        const id = data.id || `USR-${String(currentUsers.length + 1).padStart(3, "0")}`;
+        const newUser: VUser = {
+          id,
+          firstName: data.firstName || data.prenom || "",
+          lastName: data.lastName || data.nom || "",
+          nom: data.nom || data.lastName || "",
+          prenom: data.prenom || data.firstName || "",
+          email: data.email || "",
+          role: data.role || "fournisseur",
+          telephone: data.telephone || data.phone || "",
+          phone: data.telephone || data.phone || "",
+          organisationId: data.organisationId,
+          organisationName: data.organisationName || "LDF Groupe",
+          statut: data.statut || (data.isActive === false ? "inactif" : "actif"),
+          isActive: data.isActive !== undefined ? data.isActive : true,
+          createdAt: data.createdAt || new Date().toISOString().split("T")[0],
+          lastLoginAt: data.lastLoginAt,
+        };
+        set({ users: [...currentUsers, newUser] });
+        return newUser;
+      },
+
+      updateUser: (id, data) => set(state => {
+        const currentUsers = state.users && state.users.length > 0 ? state.users : SEED_USERS;
+        return {
+          users: currentUsers.map(u => {
+            if (u.id !== id) return u;
+            const updated = { ...u, ...data };
+            if (data.firstName !== undefined) updated.prenom = data.firstName;
+            if (data.lastName !== undefined) updated.nom = data.lastName;
+            if (data.prenom !== undefined) updated.firstName = data.prenom;
+            if (data.nom !== undefined) updated.lastName = data.nom;
+            if (data.isActive !== undefined) updated.statut = data.isActive ? "actif" : "inactif";
+            return updated;
+          })
+        };
+      }),
+
+      deleteUser: (id) => set(state => {
+        const currentUsers = state.users && state.users.length > 0 ? state.users : SEED_USERS;
+        return {
+          users: currentUsers.filter(u => u.id !== id)
+        };
+      }),
+
+      getUserById: (id) => {
+        const currentUsers = get().users && get().users.length > 0 ? get().users : SEED_USERS;
+        return currentUsers.find(u => u.id === id);
+      },
+
+      getUserByEmail: (email) => {
+        const currentUsers = get().users && get().users.length > 0 ? get().users : SEED_USERS;
+        return currentUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+      },
+
+      recordLogin: (email, details) => {
+        const now = new Date().toISOString();
+        const statut = details?.statut ?? 'succes';
+        const ip = details?.ip ?? '127.0.0.1 (Abidjan)';
+        const appareil = details?.appareil ?? (typeof window !== 'undefined' && navigator.userAgent.includes('Win') ? 'Chrome / Windows 11' : 'Navigateur Web');
+
+        set(state => {
+          const currentUsers = state.users && state.users.length > 0 ? state.users : SEED_USERS;
+          const userIdx = currentUsers.findIndex(u => u.email.toLowerCase() === email.toLowerCase());
+          let userName = email;
+          let userRole = 'inconnu';
+          let userId = 'USR-ANON';
+
+          let updatedUsers = [...currentUsers];
+          if (userIdx !== -1) {
+            const u = currentUsers[userIdx];
+            userName = [u.firstName, u.lastName].filter(Boolean).join(' ') || u.nom || email;
+            userRole = u.role;
+            userId = u.id;
+            updatedUsers[userIdx] = {
+              ...u,
+              lastLoginAt: now,
+            };
+          }
+
+          const newLog: VConnexionLog = {
+            id: `LOG-${Date.now().toString(36)}-${Math.random().toString(36).substr(2, 4)}`,
+            userId,
+            userName,
+            email,
+            role: userRole,
+            date: now,
+            ip,
+            appareil,
+            statut,
+          };
+
+          const currentLogs = state.connexionsLogs && state.connexionsLogs.length > 0 ? state.connexionsLogs : SEED_CONNEXIONS_LOGS;
+
+          return {
+            users: updatedUsers,
+            connexionsLogs: [newLog, ...currentLogs],
+          };
+        });
+      },
+
+      clearConnexionsLogs: () => set({ connexionsLogs: [] }),
     }),
     {
       name: 'vitalis-db-v1',
       storage: createJSONStorage(() => (typeof window !== 'undefined' ? localStorage : { getItem: () => null, setItem: () => { }, removeItem: () => { } })),
       partialize: (state) => ({
+        fournisseurs: state.fournisseurs,
+        agencesAFG: state.agencesAFG,
+        pointsRelais: state.pointsRelais,
         souscriptions: state.souscriptions,
         devis: state.devis,
         dossiers: state.dossiers,
         paiements: state.paiements,
         historique: state.historique,
+        users: state.users,
+        connexionsLogs: state.connexionsLogs,
         _seeded: state._seeded,
-        // Les données de référence (agences, fournisseurs, relais) ne changent pas : pas besoin de les persister
       }),
     }
   )
