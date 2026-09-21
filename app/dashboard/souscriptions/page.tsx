@@ -32,7 +32,7 @@ const PAGE_SIZE = 10;
 
 export default function SouscriptionsPage() {
   const { user } = useLDFAuthStore();
-  const { souscriptions, fournisseurs } = useVitalisDb();
+  const { souscriptions, fournisseurs, devis } = useVitalisDb();
 
   const [search, setSearch] = useState("");
   const [filterStatut, setFilterStatut] = useState("");
@@ -43,6 +43,21 @@ export default function SouscriptionsPage() {
 
   // Filtrer selon le rôle
   const roleFiltered = useMemo(() => {
+    if (user?.role === "banque") {
+      return souscriptions.filter(s => {
+        // Une banque ne peut voir une souscription que si le devis a été établi par le fournisseur
+        const hasDevisEtabli =
+          (devis || []).some(d => d.souscriptionId === s.id && Number(d.totalTTC) > 0) ||
+          (Array.isArray(s.fournisseurs) && s.fournisseurs.length > 0 && s.fournisseurs.some(f => !!f.devisId && f.statut !== "en_attente"));
+        const isWorkflowApresDevis = !["en_preparation", "brouillon", "en_attente"].includes(s.statut);
+        if (!hasDevisEtabli || !isWorkflowApresDevis) return false;
+
+        if (!user.organisationId || user.organisationId === "AFG-001" || user.banqueId === "AFG-001") {
+          return true;
+        }
+        return s.banqueId === user.organisationId || s.agenceId === user.organisationId;
+      });
+    }
     if (user?.role === "fournisseur" && user.organisationId) {
       return souscriptions.filter(s =>
         s.fournisseurs.some(f => f.fournisseurId === user.organisationId)
@@ -56,7 +71,7 @@ export default function SouscriptionsPage() {
       );
     }
     return souscriptions;
-  }, [souscriptions, user]);
+  }, [souscriptions, devis, user]);
 
   // Appliquer les filtres
   const filtered = useMemo(() => {

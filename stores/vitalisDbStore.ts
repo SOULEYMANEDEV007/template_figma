@@ -1075,7 +1075,7 @@ export const useVitalisDb = create<VitalisDbState>()(
       addSouscription: (data) => {
         const newItem: VSouscription = {
           ...data,
-          id: `SOUS-${Date.now()}`,
+          id: `SOUS-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
         };
         set(s => ({
           souscriptions: [newItem, ...s.souscriptions],
@@ -1090,11 +1090,28 @@ export const useVitalisDb = create<VitalisDbState>()(
         return newItem;
       },
 
-      updateSouscription: (id, data) => set(s => ({
-        souscriptions: s.souscriptions.map(item =>
+      updateSouscription: (id, data) => set(s => {
+        const nextSouscriptions = s.souscriptions.map(item =>
           item.id === id ? { ...item, ...data, dateMiseAJour: new Date().toISOString().split('T')[0] } : item
-        ),
-      })),
+        );
+        let nextDossiers = s.dossiers;
+        if (data.statut) {
+          nextDossiers = s.dossiers.map(d => {
+            if (d.souscriptionId === id) {
+              return {
+                ...d,
+                statut: data.statut as any,
+                dateMiseAJour: new Date().toISOString().split('T')[0],
+              };
+            }
+            return d;
+          });
+        }
+        return {
+          souscriptions: nextSouscriptions,
+          dossiers: nextDossiers,
+        };
+      }),
 
       deleteSouscription: (id) => set(s => ({
         souscriptions: s.souscriptions.filter(item => item.id !== id),
@@ -1104,7 +1121,7 @@ export const useVitalisDb = create<VitalisDbState>()(
 
       // ── DEVIS ────────────────────────────────────────────────
       addDevis: (data) => {
-        const newItem: VDevis = { ...data, id: `DEV-${Date.now()}` };
+        const newItem: VDevis = { ...data, id: `DEV-${Date.now()}-${Math.random().toString(36).substring(2, 7)}` };
         set(s => ({ devis: [newItem, ...s.devis] }));
         // Mettre à jour la souscription liée
         const sous = get().souscriptions.find(s => s.id === data.souscriptionId);
@@ -1219,7 +1236,7 @@ export const useVitalisDb = create<VitalisDbState>()(
       addDossier: (data) => {
         const newItem: VDossier = {
           ...data,
-          id: `DOS-${Date.now()}`,
+          id: `DOS-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
           montant: data.montant || data.montantTotal || 0,
           montantTotal: data.montantTotal || data.montant || 0,
           fournisseurNom: data.fournisseurNom || data.fournisseursNoms,
@@ -1261,7 +1278,7 @@ export const useVitalisDb = create<VitalisDbState>()(
 
       // ── PAIEMENTS ────────────────────────────────────────────
       addPaiement: (data) => {
-        const newItem: VPaiement = { ...data, id: `PAY-${Date.now()}` };
+        const newItem: VPaiement = { ...data, id: `PAY-${Date.now()}-${Math.random().toString(36).substring(2, 7)}` };
         set(s => ({ paiements: [newItem, ...s.paiements] }));
         return newItem;
       },
@@ -1356,8 +1373,19 @@ export const useVitalisDb = create<VitalisDbState>()(
           }
         });
 
-        // Réconciliation stricte des montants des dossiers avec les devis réels
+        // Réconciliation stricte des statuts et montants des dossiers avec la souscription et les devis réels
+        const { souscriptions = [] } = get();
         currentDossiers.forEach(dossier => {
+          // Synchroniser le statut si la souscription est plus avancée
+          const sub = souscriptions.find(s => s.id === dossier.souscriptionId);
+          if (sub) {
+            const workflowAvance = ['accepte', 'valide', 'finance', 'fournisseur_paye', 'commande_en_preparation', 'livre', 'servie', 'cloture'];
+            if (workflowAvance.includes(sub.statut) && dossier.statut !== sub.statut && !['refuse', 'rejete'].includes(dossier.statut)) {
+              dossier.statut = sub.statut as any;
+              changed = true;
+            }
+          }
+
           const linkedDevis = devis.filter(dev =>
             dev.souscriptionId === dossier.souscriptionId || (Array.isArray(dossier.devisIds) && dossier.devisIds.includes(dev.id))
           );
@@ -1415,9 +1443,12 @@ export const useVitalisDb = create<VitalisDbState>()(
       },
 
       // ── HISTORIQUE ───────────────────────────────────────────
-      addHistorique: (data) => set(s => ({
-        historique: [{ ...data, id: `HIST-${Date.now()}` }, ...s.historique],
-      })),
+      addHistorique: (data) => {
+        const uniqueId = `HIST-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+        set(s => ({
+          historique: [{ ...data, id: uniqueId }, ...s.historique],
+        }));
+      },
 
       getHistoriqueBySouscription: (souscriptionId) =>
         get().historique.filter(h => h.souscriptionId === souscriptionId),

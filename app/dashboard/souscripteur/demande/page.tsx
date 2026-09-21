@@ -4,6 +4,7 @@
 import { emitInAppNotification, useLDFAuthStore } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
 import { OFFICIAL_FOURNISSEURS, getPartnerLogo, CATEGORIES_BESOIN, NATURES_BESOIN } from "@/lib/constants";
+import { LISTE_REGIONS_CI, getVillesParRegion, getCommunesParVille } from "@/lib/constants/geography";
 import {
   ArrowLeft, ArrowRight, Building2, Check, FileText, Home, MapPin,
   Package, Send, Loader2, Store, Truck, UserCheck, PhoneCall
@@ -97,10 +98,28 @@ export default function NouvelleDemandeSouscripteur() {
   const [agenceAfgId, setAgenceAfgId] = useState("");
   const [produitRecherche, setProduitRecherche] = useState("");
 
-  // Séparation stricte : Région - Ville - Commune
+  // Séparation stricte : Région - Ville - Commune (avec filtrage dynamique)
   const [region, setRegion] = useState("District Autonome d'Abidjan");
   const [ville, setVille] = useState("Abidjan");
   const [commune, setCommune] = useState("");
+
+  const villesDisponibles = useMemo(() => getVillesParRegion(region), [region]);
+  const communesDisponibles = useMemo(() => getCommunesParVille(region, ville), [region, ville]);
+
+  const handleRegionChange = (newRegion: string) => {
+    setRegion(newRegion);
+    const villes = getVillesParRegion(newRegion);
+    const premiereVille = villes[0] || "";
+    setVille(premiereVille);
+    const communes = getCommunesParVille(newRegion, premiereVille);
+    setCommune(communes[0] || "");
+  };
+
+  const handleVilleChange = (newVille: string) => {
+    setVille(newVille);
+    const communes = getCommunesParVille(region, newVille);
+    setCommune(communes[0] || "");
+  };
 
   // Détails de livraison client
   const [modeLivraison, setModeLivraison] = useState<"point_relais" | "domicile">("point_relais");
@@ -403,41 +422,76 @@ export default function NouvelleDemandeSouscripteur() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1.5">Région *</label>
-                  <select className={sel} value={region} onChange={e => setRegion(e.target.value)} required>
-                    <option value="District Autonome d'Abidjan">District Autonome d'Abidjan</option>
-                    <option value="Gbêkê">Gbêkê (Bouaké)</option>
-                    <option value="San-Pédro">San-Pédro</option>
-                    <option value="Poro">Poro (Korhogo)</option>
-                    <option value="Haut-Sassandra">Haut-Sassandra (Daloa)</option>
-                    <option value="District Autonome de Yamoussoukro">Yamoussoukro</option>
-                    <option value="Indénié-Djuablin">Indénié-Djuablin (Abengourou)</option>
-                    <option value="Tonkpi">Tonkpi (Man)</option>
-                    <option value="Autre région">Autre région</option>
+                  <select className={sel} value={region} onChange={e => handleRegionChange(e.target.value)} required>
+                    <option value="">Sélectionner une région</option>
+                    {LISTE_REGIONS_CI.map(r => (
+                      <option key={r} value={r}>{r}</option>
+                    ))}
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1.5">Ville *</label>
-                  <input
-                    type="text"
-                    className={inp}
-                    placeholder="Ex: Abidjan, Bouaké..."
-                    value={ville}
-                    onChange={e => setVille(e.target.value)}
-                    required
-                  />
+                  {villesDisponibles.length > 0 ? (
+                    <select className={sel} value={ville} onChange={e => handleVilleChange(e.target.value)} required>
+                      <option value="">Sélectionner une ville</option>
+                      {villesDisponibles.map(v => (
+                        <option key={v} value={v}>{v}</option>
+                      ))}
+                      <option value="Autre">Autre ville...</option>
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      className={inp}
+                      placeholder={region ? "Saisir la ville" : "Sélectionnez d'abord une région"}
+                      value={ville}
+                      onChange={e => setVille(e.target.value)}
+                      required
+                    />
+                  )}
+                  {ville === "Autre" && (
+                    <input
+                      type="text"
+                      className={`${inp} mt-2`}
+                      placeholder="Précisez le nom de votre ville"
+                      onChange={e => setVille(e.target.value)}
+                      autoFocus
+                      required
+                    />
+                  )}
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1.5">Commune / Quartier *</label>
-                  <input
-                    type="text"
-                    className={inp}
-                    placeholder="Ex: Cocody Angré, Marcory..."
-                    value={commune}
-                    onChange={e => setCommune(e.target.value)}
-                    required
-                  />
+                  {communesDisponibles.length > 0 ? (
+                    <select className={sel} value={commune} onChange={e => setCommune(e.target.value)} required>
+                      <option value="">Sélectionner une commune / quartier</option>
+                      {communesDisponibles.map(c => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                      <option value="Autre">Autre commune / quartier...</option>
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      className={inp}
+                      placeholder={region ? "Précisez la commune ou quartier" : "Sélectionnez d'abord une région"}
+                      value={commune}
+                      onChange={e => setCommune(e.target.value)}
+                      required
+                    />
+                  )}
+                  {commune === "Autre" && (
+                    <input
+                      type="text"
+                      className={`${inp} mt-2`}
+                      placeholder="Précisez votre commune / quartier"
+                      onChange={e => setCommune(e.target.value)}
+                      autoFocus
+                      required
+                    />
+                  )}
                 </div>
               </div>
             </SectionCard>

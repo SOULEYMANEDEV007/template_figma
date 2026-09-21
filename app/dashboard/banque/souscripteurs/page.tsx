@@ -11,16 +11,27 @@ const fmtCFA = (v: number) => new Intl.NumberFormat("fr-FR").format(v) + " FCFA"
 
 export default function BanqueSouscripteursPage() {
   const { user } = useLDFAuthStore();
-  const { souscriptions } = useVitalisDb();
+  const { souscriptions, devis } = useVitalisDb();
   const [search, setSearch] = useState("");
   const [filterStatut, setFilterStatut] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 10;
 
-  // On prend les souscriptions liées à cette banque
+  // On prend les souscriptions liées à cette banque dont le devis a été effectivement établi par le fournisseur
   const allSubs = useMemo(() =>
     (souscriptions || []).filter(s => {
+      // Règle VITALIS : Une banque ne doit JAMAIS voir une souscription tant que le devis n'est pas établi par le fournisseur
+      const hasDevisEtabli =
+        (devis || []).some(d => d.souscriptionId === s.id && Number(d.totalTTC) > 0) ||
+        (Array.isArray(s.fournisseurs) && s.fournisseurs.length > 0 && s.fournisseurs.some(f => !!f.devisId && f.statut !== "en_attente"));
+
+      const isWorkflowApresDevis = !["en_preparation", "brouillon", "en_attente"].includes(s.statut);
+
+      if (!hasDevisEtabli || !isWorkflowApresDevis) {
+        return false;
+      }
+
       if (user?.role === "banque") {
         if (!user.organisationId || user.organisationId === "AFG-001" || user.banqueId === "AFG-001") {
           return true;
@@ -28,7 +39,7 @@ export default function BanqueSouscripteursPage() {
         return s.banqueId === user.organisationId || s.agenceId === user.organisationId;
       }
       return true;
-    }), [souscriptions, user]);
+    }), [souscriptions, devis, user]);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
@@ -63,13 +74,13 @@ export default function BanqueSouscripteursPage() {
         {[
           { label: "Total", value: allSubs.length, color: "border-l-amber-400 text-amber-700" },
           {
-            label: "En attente",
-            value: allSubs.filter(s => ["en_attente", "soumise", "depose_banque", "en_analyse_bancaire", "en_preparation", "pret_pour_depot"].includes(s.statut)).length,
+            label: "En attente d'analyse",
+            value: allSubs.filter(s => ["depose_banque", "en_analyse_bancaire", "pret_pour_depot", "recu"].includes(s.statut)).length,
             color: "border-l-orange-400 text-orange-700"
           },
           {
             label: "Validés",
-            value: allSubs.filter(s => ["validee", "accepte", "finance", "payee", "servie", "fournisseur_paye", "cloture"].includes(s.statut)).length,
+            value: allSubs.filter(s => ["validee", "accepte", "finance", "payee", "servie", "fournisseur_paye", "cloture", "livre"].includes(s.statut)).length,
             color: "border-l-emerald-400 text-emerald-700"
           },
           {
