@@ -5,7 +5,7 @@ import { useVitalisDb } from "@/stores/vitalisDbStore";
 import { emitInAppNotification, useLDFAuthStore } from "@/stores/ldfAuth";
 import { AlertCircle, CheckCircle2, ChevronRight, Eye, XCircle } from "lucide-react";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 const fmtCFA = (v: number) => new Intl.NumberFormat("fr-FR").format(v) + " FCFA";
@@ -22,8 +22,24 @@ const STATUTS_EN_ATTENTE = [
 
 export default function BanqueDossiersPage() {
   const { user } = useLDFAuthStore();
-  const { dossiers, updateDossier, updateSouscription, getSouscriptionById, addHistorique } = useVitalisDb();
+  const { dossiers, devis, updateDossier, updateSouscription, getSouscriptionById, addHistorique, reconcilierMontants } = useVitalisDb();
   const [activeTab, setActiveTab] = useState<"en_attente" | "tous">("en_attente");
+
+  useEffect(() => {
+    reconcilierMontants?.();
+  }, [reconcilierMontants]);
+
+  // Montant réel garanti cohérent avec les devis émis et validés
+  const getDossierMontant = (d: typeof dossiers[0]) => {
+    const devisLie = devis.filter(dev =>
+      dev.souscriptionId === d.souscriptionId || (Array.isArray(d.devisIds) && d.devisIds.includes(dev.id))
+    );
+    if (devisLie.length > 0) {
+      const sum = devisLie.reduce((acc, dev) => acc + (Number(dev.totalTTC) || 0), 0);
+      if (sum > 0) return sum;
+    }
+    return d.montantTotal || d.montant || 0;
+  };
 
   const mesDossiers = useMemo(() =>
     dossiers.filter(d => {
@@ -186,7 +202,7 @@ export default function BanqueDossiersPage() {
                   </div>
                   <div className="col-span-2">
                     <p className="text-xs text-gray-400">Montant total du financement</p>
-                    <p className="text-xl font-bold text-gray-900">{fmtCFA(d.montantTotal)}</p>
+                    <p className="text-xl font-bold text-gray-900">{fmtCFA(getDossierMontant(d))}</p>
                   </div>
                 </div>
 

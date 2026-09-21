@@ -855,6 +855,7 @@ interface VitalisDbState {
   seedIfNeeded: () => void;
   resetAllData: () => void;
   syncMissingDossiers: () => void;
+  reconcilierMontants: () => void;
 
   // ── UTILISATEURS & TRAÇABILITÉ CONNEXIONS ───────────────────
   users: VUser[];
@@ -1111,7 +1112,12 @@ export const useVitalisDb = create<VitalisDbState>()(
           const fournisseurs = (sous.fournisseurs || []).map(f =>
             f.fournisseurId === data.fournisseurId ? { ...f, devisId: newItem.id, statut: 'devis_cree' as const } : f
           );
-          const montantTotal = (sous.montantTotal || 0) + (data.totalTTC || 0);
+
+          // Calcul réel : Somme de tous les devis associés à cette souscription (y compris le nouveau devis)
+          const autresDevis = get().devis.filter(d => d.souscriptionId === data.souscriptionId && d.id !== newItem.id);
+          const tousDevisSous = [newItem, ...autresDevis];
+          const sommeDevisTTC = tousDevisSous.reduce((acc, d) => acc + (Number(d.totalTTC) || 0), 0);
+          const montantTotal = sommeDevisTTC > 0 ? sommeDevisTTC : (data.totalTTC || 0);
 
           const tousDevisSoumis = fournisseurs.every(f => !!f.devisId);
 
@@ -1121,33 +1127,53 @@ export const useVitalisDb = create<VitalisDbState>()(
               montantTotal,
               statut: 'depose_banque',
             });
-            get().addDossier({
-              reference: get().generateRef('DOS'),
-              souscriptionId: sous.id,
-              souscriptionRef: sous.reference,
-              souscripteurId: sous.souscripteurId,
-              souscripteurNom: sous.souscripteurNom,
-              souscripteurPrenom: sous.souscripteurPrenom,
-              typeSouscripteur: sous.typeSouscripteur,
-              fournisseursNoms: fournisseurs.map(f => f.fournisseurNom).join(', '),
-              fournisseurNom: fournisseurs.map(f => f.fournisseurNom).join(', '),
-              devisIds: fournisseurs.map(f => f.devisId as string),
-              banqueId: 'AFG-001',
-              banqueNom: 'AFG Bank',
-              agenceId: sous.agenceId || 'AGE-AFG-001',
-              montantTotal,
-              montant: montantTotal,
-              statut: 'depose_banque',
-              dateCreation: new Date().toISOString().split('T')[0],
-              dateReception: new Date().toISOString().split('T')[0],
-              dateMiseAJour: new Date().toISOString().split('T')[0],
-            });
+
+            // Vérifier si un dossier existe déjà pour éviter les doublons et synchroniser son montant
+            const dossierExistant = get().dossiers.find(d => d.souscriptionId === sous.id);
+            if (dossierExistant) {
+              get().updateDossier(dossierExistant.id, {
+                montantTotal,
+                montant: montantTotal,
+                devisIds: fournisseurs.map(f => f.devisId as string).filter(Boolean),
+                fournisseursNoms: fournisseurs.map(f => f.fournisseurNom).join(', '),
+                statut: 'depose_banque',
+              });
+            } else {
+              get().addDossier({
+                reference: get().generateRef('DOS'),
+                souscriptionId: sous.id,
+                souscriptionRef: sous.reference,
+                souscripteurId: sous.souscripteurId,
+                souscripteurNom: sous.souscripteurNom,
+                souscripteurPrenom: sous.souscripteurPrenom,
+                typeSouscripteur: sous.typeSouscripteur,
+                fournisseursNoms: fournisseurs.map(f => f.fournisseurNom).join(', '),
+                fournisseurNom: fournisseurs.map(f => f.fournisseurNom).join(', '),
+                devisIds: fournisseurs.map(f => f.devisId as string).filter(Boolean),
+                banqueId: 'AFG-001',
+                banqueNom: 'AFG Bank',
+                agenceId: sous.agenceId || 'AGE-AFG-001',
+                montantTotal,
+                montant: montantTotal,
+                statut: 'depose_banque',
+                dateCreation: new Date().toISOString().split('T')[0],
+                dateReception: new Date().toISOString().split('T')[0],
+                dateMiseAJour: new Date().toISOString().split('T')[0],
+              });
+            }
           } else {
             get().updateSouscription(sous.id, {
               fournisseurs,
               montantTotal,
               statut: 'pret_pour_depot',
             });
+            const dossierExistant = get().dossiers.find(d => d.souscriptionId === sous.id);
+            if (dossierExistant) {
+              get().updateDossier(dossierExistant.id, {
+                montantTotal,
+                montant: montantTotal,
+              });
+            }
           }
         }
         get().addHistorique({
@@ -1159,11 +1185,25 @@ export const useVitalisDb = create<VitalisDbState>()(
         return newItem;
       },
 
-      updateDevis: (id, data) => set(s => ({
-        devis: s.devis.map(item =>
-          item.id === id ? { ...item, ...data, dateMiseAJour: new Date().toISOString().split('T')[0] } : item
-        ),
-      })),
+      updateDevis: (id, data) => {
+        set(s => ({
+          devis: s.devis.map(item =>
+            item.id === id ? { ...item, ...data, dateMiseAJour: new Date().toISOString().split('T')[0] } : item
+          ),
+        }));
+        const devisModifie = get().devis.find(d => d.id === id);
+        if (devisModifie && devisModifie.souscriptionId) {
+          const tousDevis = get().devis.filter(d => d.souscriptionId === devisModifie.souscriptionId);
+          const montantTotalReel = tousDevis.reduce((acc, d) => acc + (Number(d.totalTTC) || 0), 0);
+          if (montantTotalReel > 0) {
+            get().updateSouscription(devisModifie.souscriptionId, { montantTotal: montantTotalReel });
+            const dossier = get().dossiers.find(d => d.souscriptionId === devisModifie.souscriptionId);
+            if (dossier) {
+              get().updateDossier(dossier.id, { montantTotal: montantTotalReel, montant: montantTotalReel });
+            }
+          }
+        }
+      },
 
       deleteDevis: (id) => set(s => ({ devis: s.devis.filter(d => d.id !== id) })),
 
@@ -1301,6 +1341,76 @@ export const useVitalisDb = create<VitalisDbState>()(
 
         if (changed) {
           set({ paiements: currentPaiements });
+        }
+      },
+
+      syncMissingDossiers: () => {
+        const { devis = [], dossiers = [] } = get();
+        let changed = false;
+        const currentDossiers = [...dossiers];
+
+        DEMO_DOSSIERS.forEach(dd => {
+          if (!currentDossiers.some(d => d.id === dd.id || d.reference === dd.reference)) {
+            currentDossiers.push(dd);
+            changed = true;
+          }
+        });
+
+        // Réconciliation stricte des montants des dossiers avec les devis réels
+        currentDossiers.forEach(dossier => {
+          const linkedDevis = devis.filter(dev =>
+            dev.souscriptionId === dossier.souscriptionId || (Array.isArray(dossier.devisIds) && dossier.devisIds.includes(dev.id))
+          );
+          if (linkedDevis.length > 0) {
+            const sumTTC = linkedDevis.reduce((acc, dev) => acc + (Number(dev.totalTTC) || 0), 0);
+            if (sumTTC > 0 && (dossier.montantTotal !== sumTTC || dossier.montant !== sumTTC)) {
+              dossier.montantTotal = sumTTC;
+              dossier.montant = sumTTC;
+              changed = true;
+            }
+          }
+        });
+
+        if (changed) {
+          set({ dossiers: currentDossiers });
+        }
+      },
+
+      reconcilierMontants: () => {
+        get().syncMissingDossiers();
+        get().syncMissingPaiements();
+        const { dossiers = [], souscriptions = [], devis = [] } = get();
+        let dossiersChanged = false;
+        let souscriptionsChanged = false;
+
+        const updatedDossiers = dossiers.map(d => {
+          const linkedDevis = devis.filter(dev =>
+            dev.souscriptionId === d.souscriptionId || (Array.isArray(d.devisIds) && d.devisIds.includes(dev.id))
+          );
+          if (linkedDevis.length > 0) {
+            const sumTTC = linkedDevis.reduce((acc, dev) => acc + (Number(dev.totalTTC) || 0), 0);
+            if (sumTTC > 0 && (d.montantTotal !== sumTTC || d.montant !== sumTTC)) {
+              dossiersChanged = true;
+              return { ...d, montantTotal: sumTTC, montant: sumTTC };
+            }
+          }
+          return d;
+        });
+
+        const updatedSouscriptions = souscriptions.map(s => {
+          const linkedDevis = devis.filter(dev => dev.souscriptionId === s.id);
+          if (linkedDevis.length > 0) {
+            const sumTTC = linkedDevis.reduce((acc, dev) => acc + (Number(dev.totalTTC) || 0), 0);
+            if (sumTTC > 0 && s.montantTotal !== sumTTC) {
+              souscriptionsChanged = true;
+              return { ...s, montantTotal: sumTTC };
+            }
+          }
+          return s;
+        });
+
+        if (dossiersChanged || souscriptionsChanged) {
+          set({ dossiers: updatedDossiers, souscriptions: updatedSouscriptions });
         }
       },
 
@@ -1494,6 +1604,11 @@ export const useVitalisDb = create<VitalisDbState>()(
     {
       name: 'vitalis-db-v1',
       storage: createJSONStorage(() => (typeof window !== 'undefined' ? localStorage : { getItem: () => null, setItem: () => { }, removeItem: () => { } })),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state.reconcilierMontants?.();
+        }
+      },
       partialize: (state) => ({
         fournisseurs: state.fournisseurs,
         agencesAFG: state.agencesAFG,

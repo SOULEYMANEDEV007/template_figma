@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
 import type { DossierStatut } from "@/types/ldf";
 
@@ -75,7 +75,20 @@ export default function DossierDetailPage() {
   const canAct = (user?.role === "banque" || user?.role === "admin") &&
     ["depose_banque", "en_analyse_bancaire", "recu", "en_cours_traitement"].includes(currentStatut);
 
-  const dossierMontant = dossier?.montantTotal || dossier?.montant || devis?.totalTTC || sub?.montantTotal || 0;
+  const linkedDevis = dossier
+    ? (Array.isArray(dossier.devisIds) && dossier.devisIds.length > 0
+        ? dossier.devisIds.map((dId: string) => getDevisById(dId)).filter(Boolean)
+        : getDevisBySouscription(dossier.souscriptionId))
+    : [];
+  const sumDevisTTC = linkedDevis.reduce((sum: number, d: any) => sum + (Number(d?.totalTTC) || 0), 0);
+  const dossierMontant = sumDevisTTC > 0 ? sumDevisTTC : (dossier?.montantTotal || dossier?.montant || devis?.totalTTC || sub?.montantTotal || 0);
+
+  useEffect(() => {
+    if (dossier && sumDevisTTC > 0 && (dossier.montantTotal !== sumDevisTTC || dossier.montant !== sumDevisTTC)) {
+      updateDossier(dossier.id, { montantTotal: sumDevisTTC, montant: sumDevisTTC });
+    }
+  }, [dossier?.id, sumDevisTTC]);
+
   const fournisseurAffiche =
     dossier?.fournisseurNom ||
     dossier?.fournisseursNoms ||

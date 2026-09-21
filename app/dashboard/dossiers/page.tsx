@@ -9,7 +9,7 @@ import {
   Filter, Search, ShieldCheck, X, XCircle,
 } from "lucide-react";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
 
 const fmtCFA = (v: any) => {
@@ -76,7 +76,22 @@ const PAGE_SIZE = 10;
 
 export default function DossiersPage() {
   const { user } = useLDFAuthStore();
-  const { dossiers, updateDossier, updateSouscription } = useVitalisDb();
+  const { dossiers, devis, updateDossier, updateSouscription, reconcilierMontants } = useVitalisDb();
+
+  useEffect(() => {
+    reconcilierMontants?.();
+  }, [reconcilierMontants]);
+
+  const getDossierMontant = (d: typeof dossiers[0]) => {
+    const linkedDevis = devis.filter(dev =>
+      dev.souscriptionId === d.souscriptionId || (Array.isArray(d.devisIds) && d.devisIds.includes(dev.id))
+    );
+    if (linkedDevis.length > 0) {
+      const sum = linkedDevis.reduce((acc, dev) => acc + (Number(dev.totalTTC) || 0), 0);
+      if (sum > 0) return sum;
+    }
+    return d.montantTotal || d.montant || 0;
+  };
 
   const [search, setSearch] = useState("");
   const [filterStatut, setFilterStatut] = useState("");
@@ -114,10 +129,10 @@ export default function DossiersPage() {
         return (b.dateCreation || "").localeCompare(a.dateCreation || "");
       }
       if (sortBy === "montant_desc") {
-        return (b.montantTotal || b.montant || 0) - (a.montantTotal || a.montant || 0);
+        return getDossierMontant(b) - getDossierMontant(a);
       }
       if (sortBy === "montant_asc") {
-        return (a.montantTotal || a.montant || 0) - (b.montantTotal || b.montant || 0);
+        return getDossierMontant(a) - getDossierMontant(b);
       }
       return 0;
     });
@@ -303,7 +318,7 @@ export default function DossiersPage() {
                         <p className="text-xs text-gray-600 truncate max-w-[150px]">{d.fournisseursNoms || d.fournisseurNom || "Librairie de France Groupe"}</p>
                       </td>
                       <td className="px-4 py-3 hidden lg:table-cell text-right">
-                        <span className="text-xs font-bold text-gray-800">{fmtCFA(d.montantTotal || d.montant)}</span>
+                        <span className="text-xs font-bold text-gray-800">{fmtCFA(getDossierMontant(d))}</span>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex flex-col gap-0.5 items-start">

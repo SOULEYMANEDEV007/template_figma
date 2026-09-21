@@ -94,8 +94,8 @@ export default function SouscriptionDetailPage() {
         banqueId: "AFG-001",
         banqueNom: "AFG Bank",
         agenceId: sub.agenceId || "AGE-AFG-001",
-        montantTotal: sub.montantTotal || devis?.totalTTC || 0,
-        montant: sub.montantTotal || devis?.totalTTC || 0,
+        montantTotal: devis?.totalTTC || sub.montantTotal || 0,
+        montant: devis?.totalTTC || sub.montantTotal || 0,
         statut: "depose_banque",
         dateCreation: new Date().toISOString().split("T")[0],
         dateReception: new Date().toISOString().split("T")[0],
@@ -321,7 +321,7 @@ export default function SouscriptionDetailPage() {
 
   const handleConfirmerPaiement = () => {
     const refPay = generateRef("PAY");
-    const montantTotal = sub.montantTotal || devis?.totalTTC || 0;
+    const montantTotal = devis?.totalTTC || sub.montantTotal || 0;
     const newPay = addPaiement({
       reference: refPay,
       souscriptionId: sub.id,
