@@ -27,8 +27,9 @@ export function LDFTimeline({ events }: TimelineProps) {
     <div className="space-y-0">
       {events.map((ev, idx) => {
         const isLast = idx === events.length - 1;
+        const uniqueKey = ev.id ? `${ev.id}-${idx}` : `hist-${idx}`;
         return (
-          <div key={ev.id} className="relative flex gap-4">
+          <div key={uniqueKey} className="relative flex gap-4">
             {/* Ligne verticale */}
             {!isLast && (
               <div className="absolute left-4 top-10 bottom-0 w-0.5 bg-gray-100 z-0" />

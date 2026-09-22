@@ -15,6 +15,7 @@ import { LDFModal } from "@/components/ui/ldf-modal";
 import { saveFile } from "@/lib/fileStorage";
 import { mockSouscripteursUsers } from "@/lib/ldfData";
 import { OFFICIAL_FOURNISSEURS, getPartnerLogo } from "@/lib/constants";
+import { LISTE_REGIONS_CI, getVillesParRegion, getCommunesParVille } from "@/lib/constants/geography";
 import { emitInAppNotification, useLDFAuthStore } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
 import {
@@ -37,13 +38,7 @@ const STEPS = [
 
 const SITUATIONS_PRO = ["Salarié", "Fonctionnaire"] as const;
 const SITUATIONS_MAT = ["Célibataire", "Marié(e)", "Divorcé(e)", "Veuf/Veuve"] as const;
-const REGIONS_CI = [
-  "Abidjan", "Agnéby-Tiassa", "Bafing", "Bagoué", "Béré", "Bounkani",
-  "Cavally", "Folon", "Gbêkê", "Gontougo", "Grands Ponts", "Guémon",
-  "Hambol", "Haut-Sassandra", "Iffou", "Indénié-Djuablin", "Kabadougou",
-  "La Mé", "Lôh-Djiboua", "Marahoué", "Moronou", "N'Zi", "Nawa",
-  "Poro", "San-Pédro", "Sud-Comoé", "Tonkpi", "Worodougou", "Yamoussoukro",
-];
+const REGIONS_CI = LISTE_REGIONS_CI;
 const FORMES_JURIDIQUES = ["SARL", "SA", "SAS", "EURL", "GIE", "Association", "Autre"];
 
 // ── Types formulaire ─────────────────────────────────────────────
@@ -251,6 +246,55 @@ export default function CreerSouscriptionPage() {
   const setP = (k: keyof FormPhysique, v: any) => setFormPhysique(f => ({ ...f, [k]: v }));
   const setM = (k: keyof FormMorale, v: any) => setFormMorale(f => ({ ...f, [k]: v }));
 
+  // Listes dynamiques géographiques
+  const villesPhysique = useMemo(() => getVillesParRegion(formPhysique.region), [formPhysique.region]);
+  const communesPhysique = useMemo(() => getCommunesParVille(formPhysique.region, formPhysique.ville), [formPhysique.region, formPhysique.ville]);
+
+  const villesMorale = useMemo(() => getVillesParRegion(formMorale.region), [formMorale.region]);
+  const communesMorale = useMemo(() => getCommunesParVille(formMorale.region, formMorale.ville), [formMorale.region, formMorale.ville]);
+
+  const onRegionChangePhysique = (newRegion: string) => {
+    const villes = getVillesParRegion(newRegion);
+    const premiereVille = villes[0] || "";
+    const communes = getCommunesParVille(newRegion, premiereVille);
+    setFormPhysique(f => ({
+      ...f,
+      region: newRegion,
+      ville: premiereVille,
+      commune: communes[0] || "",
+    }));
+  };
+
+  const onVilleChangePhysique = (newVille: string) => {
+    const communes = getCommunesParVille(formPhysique.region, newVille);
+    setFormPhysique(f => ({
+      ...f,
+      ville: newVille,
+      commune: communes[0] || "",
+    }));
+  };
+
+  const onRegionChangeMorale = (newRegion: string) => {
+    const villes = getVillesParRegion(newRegion);
+    const premiereVille = villes[0] || "";
+    const communes = getCommunesParVille(newRegion, premiereVille);
+    setFormMorale(f => ({
+      ...f,
+      region: newRegion,
+      ville: premiereVille,
+      commune: communes[0] || "",
+    }));
+  };
+
+  const onVilleChangeMorale = (newVille: string) => {
+    const communes = getCommunesParVille(formMorale.region, newVille);
+    setFormMorale(f => ({
+      ...f,
+      ville: newVille,
+      commune: communes[0] || "",
+    }));
+  };
+
   // ── Recherche souscripteur ───────────────────────────────────
   const handleSearch = () => {
     if (!searchQuery.trim()) return;
@@ -433,7 +477,7 @@ export default function CreerSouscriptionPage() {
         categorie: "souscription",
         reference: ref,
         lien: `/dashboard/souscriptions/${nouvelle.id}`,
-        roles: ["admin", "fournisseur", "banque"],
+        roles: ["admin", "fournisseur"],
       });
 
       if (asBrouillon) {
@@ -720,16 +764,38 @@ export default function CreerSouscriptionPage() {
                 <input className={inp} value={formPhysique.pays} onChange={e => setP("pays", e.target.value)} />
               </Field>
               <Field label="Région" required>
-                <select className={sel} value={formPhysique.region} onChange={e => setP("region", e.target.value)}>
+                <select className={sel} value={formPhysique.region} onChange={e => onRegionChangePhysique(e.target.value)}>
                   <option value="">Sélectionner une région</option>
-                  {REGIONS_CI.map(r => <option key={r} value={r}>{r}</option>)}
+                  {LISTE_REGIONS_CI.map(r => <option key={r} value={r}>{r}</option>)}
                 </select>
               </Field>
               <Field label="Ville" required>
-                <input className={inp} placeholder="Abidjan, Bouaké..." value={formPhysique.ville} onChange={e => setP("ville", e.target.value)} />
+                {villesPhysique.length > 0 ? (
+                  <select className={sel} value={formPhysique.ville} onChange={e => onVilleChangePhysique(e.target.value)}>
+                    <option value="">Sélectionner une ville</option>
+                    {villesPhysique.map(v => <option key={v} value={v}>{v}</option>)}
+                    <option value="Autre">Autre ville...</option>
+                  </select>
+                ) : (
+                  <input className={inp} placeholder={formPhysique.region ? "Saisir la ville" : "Sélectionnez d'abord une région"} value={formPhysique.ville} onChange={e => setP("ville", e.target.value)} />
+                )}
+                {formPhysique.ville === "Autre" && (
+                  <input className={`${inp} mt-2`} placeholder="Précisez le nom de votre ville" onChange={e => setP("ville", e.target.value)} autoFocus />
+                )}
               </Field>
               <Field label="Commune / Quartier" required>
-                <input className={inp} placeholder="Cocody, Marcory, etc." value={formPhysique.commune} onChange={e => setP("commune", e.target.value)} />
+                {communesPhysique.length > 0 ? (
+                  <select className={sel} value={formPhysique.commune} onChange={e => setP("commune", e.target.value)}>
+                    <option value="">Sélectionner une commune / quartier</option>
+                    {communesPhysique.map(c => <option key={c} value={c}>{c}</option>)}
+                    <option value="Autre">Autre commune / quartier...</option>
+                  </select>
+                ) : (
+                  <input className={inp} placeholder={formPhysique.region ? "Précisez la commune ou quartier" : "Sélectionnez d'abord une région"} value={formPhysique.commune} onChange={e => setP("commune", e.target.value)} />
+                )}
+                {formPhysique.commune === "Autre" && (
+                  <input className={`${inp} mt-2`} placeholder="Précisez votre commune / quartier" onChange={e => setP("commune", e.target.value)} autoFocus />
+                )}
               </Field>
               <Field label="Téléphone" required>
                 <input className={inp} placeholder="+225 07 00 00 00 00" value={formPhysique.telephone} onChange={e => setP("telephone", e.target.value)} />
@@ -808,13 +874,38 @@ export default function CreerSouscriptionPage() {
                 <input className={inp} value={formMorale.pays} onChange={e => setM("pays", e.target.value)} />
               </Field>
               <Field label="Région">
-                <select className={sel} value={formMorale.region} onChange={e => setM("region", e.target.value)}>
-                  <option value="">Sélectionner</option>
-                  {REGIONS_CI.map(r => <option key={r} value={r}>{r}</option>)}
+                <select className={sel} value={formMorale.region} onChange={e => onRegionChangeMorale(e.target.value)}>
+                  <option value="">Sélectionner une région</option>
+                  {LISTE_REGIONS_CI.map(r => <option key={r} value={r}>{r}</option>)}
                 </select>
               </Field>
               <Field label="Ville">
-                <input className={inp} placeholder="Abidjan..." value={formMorale.ville} onChange={e => setM("ville", e.target.value)} />
+                {villesMorale.length > 0 ? (
+                  <select className={sel} value={formMorale.ville} onChange={e => onVilleChangeMorale(e.target.value)}>
+                    <option value="">Sélectionner une ville</option>
+                    {villesMorale.map(v => <option key={v} value={v}>{v}</option>)}
+                    <option value="Autre">Autre ville...</option>
+                  </select>
+                ) : (
+                  <input className={inp} placeholder={formMorale.region ? "Saisir la ville" : "Sélectionnez d'abord une région"} value={formMorale.ville} onChange={e => setM("ville", e.target.value)} />
+                )}
+                {formMorale.ville === "Autre" && (
+                  <input className={`${inp} mt-2`} placeholder="Précisez la ville" onChange={e => setM("ville", e.target.value)} autoFocus />
+                )}
+              </Field>
+              <Field label="Commune / Quartier">
+                {communesMorale.length > 0 ? (
+                  <select className={sel} value={formMorale.commune} onChange={e => setM("commune", e.target.value)}>
+                    <option value="">Sélectionner une commune / quartier</option>
+                    {communesMorale.map(c => <option key={c} value={c}>{c}</option>)}
+                    <option value="Autre">Autre commune / quartier...</option>
+                  </select>
+                ) : (
+                  <input className={inp} placeholder={formMorale.region ? "Précisez la commune ou quartier" : "Sélectionnez d'abord une région"} value={formMorale.commune} onChange={e => setM("commune", e.target.value)} />
+                )}
+                {formMorale.commune === "Autre" && (
+                  <input className={`${inp} mt-2`} placeholder="Précisez la commune / quartier" onChange={e => setM("commune", e.target.value)} autoFocus />
+                )}
               </Field>
               <Field label="Téléphone" required>
                 <input className={inp} placeholder="+225 27 00 00 00 00" value={formMorale.telephone} onChange={e => setM("telephone", e.target.value)} />

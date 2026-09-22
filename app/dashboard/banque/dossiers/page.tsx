@@ -175,7 +175,14 @@ export default function BanqueDossiersPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {displayed.map(d => (
+          {displayed.map(d => {
+            const sub = getSouscriptionById(d.souscriptionId);
+            const statutEffectif = sub && ["accepte", "valide", "finance", "fournisseur_paye", "commande_en_preparation", "livre", "servie", "cloture", "refuse", "rejetee"].includes(sub.statut)
+              ? sub.statut
+              : d.statut;
+            const isDecide = ["accepte", "valide", "finance", "fournisseur_paye", "commande_en_preparation", "livre", "servie", "cloture", "refuse", "rejetee"].includes(statutEffectif);
+
+            return (
             <div key={d.id} className="section-card hover:shadow-md transition-shadow">
               <div className="p-5">
                 {/* Header */}
@@ -187,7 +194,7 @@ export default function BanqueDossiersPage() {
                       Reçu le {new Date(d.dateReception).toLocaleDateString("fr-FR")}
                     </p>
                   </div>
-                  <StatusBadge statut={d.statut} />
+                  <StatusBadge statut={statutEffectif} />
                 </div>
 
                 {/* Infos */}
@@ -208,15 +215,15 @@ export default function BanqueDossiersPage() {
 
                 {/* Commentaire / Motif rejet */}
                 {(d.commentaireAFG || d.motifRejet) && (
-                  <div className={`p-2.5 rounded-lg text-xs mb-4 ${d.statut === "accepte" ? "bg-emerald-50 text-emerald-700" :
-                      d.statut === "refuse" ? "bg-red-50 text-red-700" :
+                  <div className={`p-2.5 rounded-lg text-xs mb-4 ${statutEffectif === "accepte" ? "bg-emerald-50 text-emerald-700" :
+                      statutEffectif === "refuse" || statutEffectif === "rejetee" ? "bg-red-50 text-red-700" :
                         "bg-gray-50 text-gray-600"}`}>
                     {d.commentaireAFG || d.motifRejet}
                   </div>
                 )}
 
                 {/* Actions selon statut */}
-                {d.statut === "depose_banque" || d.statut === "recu" || d.statut === "pret_pour_depot" ? (
+                {!isDecide && (statutEffectif === "depose_banque" || statutEffectif === "recu" || statutEffectif === "pret_pour_depot") ? (
                   <div className="flex items-center gap-2">
                     <button onClick={() => handleAnalyser(d)}
                       className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors">
@@ -227,7 +234,7 @@ export default function BanqueDossiersPage() {
                       <Eye className="w-4 h-4" /> Voir
                     </Link>
                   </div>
-                ) : d.statut === "en_analyse_bancaire" || d.statut === "en_analyse" || d.statut === "informations_demandees" ? (
+                ) : !isDecide && (statutEffectif === "en_analyse_bancaire" || statutEffectif === "en_analyse" || statutEffectif === "informations_demandees") ? (
                   <div className="flex items-center gap-2">
                     <button onClick={() => handleAccepter(d)}
                       className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">
@@ -250,7 +257,8 @@ export default function BanqueDossiersPage() {
                 )}
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

@@ -71,34 +71,6 @@ export default function DossierDetailPage() {
     </div>
   );
 
-  const currentStatut = statut ?? dossier.statut;
-  const canAct = (user?.role === "banque" || user?.role === "admin") &&
-    ["depose_banque", "en_analyse_bancaire", "recu", "en_cours_traitement"].includes(currentStatut);
-
-  const linkedDevis = dossier
-    ? (Array.isArray(dossier.devisIds) && dossier.devisIds.length > 0
-        ? dossier.devisIds.map((dId: string) => getDevisById(dId)).filter(Boolean)
-        : getDevisBySouscription(dossier.souscriptionId))
-    : [];
-  const sumDevisTTC = linkedDevis.reduce((sum: number, d: any) => sum + (Number(d?.totalTTC) || 0), 0);
-  const dossierMontant = sumDevisTTC > 0 ? sumDevisTTC : (dossier?.montantTotal || dossier?.montant || devis?.totalTTC || sub?.montantTotal || 0);
-
-  useEffect(() => {
-    if (dossier && sumDevisTTC > 0 && (dossier.montantTotal !== sumDevisTTC || dossier.montant !== sumDevisTTC)) {
-      updateDossier(dossier.id, { montantTotal: sumDevisTTC, montant: sumDevisTTC });
-    }
-  }, [dossier?.id, sumDevisTTC]);
-
-  const fournisseurAffiche =
-    dossier?.fournisseurNom ||
-    dossier?.fournisseursNoms ||
-    devis?.fournisseurNom ||
-    sub?.fournisseurNom ||
-    (sub?.fournisseurs && sub.fournisseurs.length > 0
-      ? sub.fournisseurs.map((f: any) => f.fournisseurNom).join(", ")
-      : "") ||
-    "Librairie de France Groupe";
-
   // Ordre chronologique des étapes du workflow VITALIS
   const isPasse = (statutCandidat: string, statutSeuil: string) => {
     const ordre = [
@@ -119,15 +91,58 @@ export default function DossierDetailPage() {
     ];
     const idxCandidat = ordre.indexOf(statutCandidat);
     const idxSeuil = ordre.indexOf(statutSeuil);
-    return idxCandidat !== -1 && idxCandidat >= idxSeuil;
+    return idxCandidat !== -1 && idxSeuil !== -1 && idxCandidat >= idxSeuil;
   };
 
+  const brutStatut = statut ?? dossier.statut;
   // Le statut le plus avancé entre le dossier et sa souscription liée
-  const effectifStatut = [currentStatut, sub?.statut || ""].reduce((max, curr) => {
+  const effectifStatut = [brutStatut, sub?.statut || ""].reduce((max, curr) => {
     return isPasse(curr, max) ? curr : max;
-  }, currentStatut);
+  }, brutStatut);
 
-  const isDossierRejete = currentStatut === "rejete" || currentStatut === "refuse" || sub?.statut === "refuse";
+  const isDossierRejete = brutStatut === "rejete" || brutStatut === "refuse" || sub?.statut === "refuse" || sub?.statut === "rejetee";
+
+  // Une fois qu'une décision a été prise ou que les étapes sont terminées, aucun bouton d'action banque ne doit rester visible
+  const isDecideOuTermine = isDossierRejete ||
+    isPasse(effectifStatut, "accepte") ||
+    ["accepte", "valide", "refuse", "rejete", "finance", "fournisseur_paye", "commande_en_preparation", "livre", "servie", "cloture"].includes(effectifStatut);
+
+  const canAct = (user?.role === "banque" || user?.role === "admin") &&
+    !isDecideOuTermine &&
+    ["depose_banque", "en_analyse_bancaire", "recu", "en_cours_traitement"].includes(effectifStatut);
+
+  const currentStatut = isDossierRejete ? "refuse" : effectifStatut;
+
+  const linkedDevis = dossier
+    ? (Array.isArray(dossier.devisIds) && dossier.devisIds.length > 0
+        ? dossier.devisIds.map((dId: string) => getDevisById(dId)).filter(Boolean)
+        : getDevisBySouscription(dossier.souscriptionId))
+    : [];
+  const sumDevisTTC = linkedDevis.reduce((sum: number, d: any) => sum + (Number(d?.totalTTC) || 0), 0);
+  const dossierMontant = sumDevisTTC > 0 ? sumDevisTTC : (dossier?.montantTotal || dossier?.montant || devis?.totalTTC || sub?.montantTotal || 0);
+
+  useEffect(() => {
+    if (dossier && sumDevisTTC > 0 && (dossier.montantTotal !== sumDevisTTC || dossier.montant !== sumDevisTTC)) {
+      updateDossier(dossier.id, { montantTotal: sumDevisTTC, montant: sumDevisTTC });
+    }
+  }, [dossier?.id, sumDevisTTC]);
+
+  // Synchronisation automatique du statut du dossier s'il était resté bloqué en arrière
+  useEffect(() => {
+    if (dossier && effectifStatut && effectifStatut !== dossier.statut && !isDossierRejete) {
+      updateDossier(dossier.id, { statut: effectifStatut as any });
+    }
+  }, [dossier?.id, effectifStatut, isDossierRejete]);
+
+  const fournisseurAffiche =
+    dossier?.fournisseurNom ||
+    dossier?.fournisseursNoms ||
+    devis?.fournisseurNom ||
+    sub?.fournisseurNom ||
+    (sub?.fournisseurs && sub.fournisseurs.length > 0
+      ? sub.fournisseurs.map((f: any) => f.fournisseurNom).join(", ")
+      : "") ||
+    "Librairie de France Groupe";
 
   // Process steps (VITALIS Workflow: 1. Demande & Besoin -> 2. Devis fournisseur -> 3. Dépôt dossier physique -> 4. Décision AFG Bank -> 5. Virement fournisseur -> 6. Retrait des articles)
   const processSteps = [
