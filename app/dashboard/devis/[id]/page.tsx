@@ -205,7 +205,7 @@ export default function DevisDetailPage() {
                 {devis.articles.map((a, i) => (
                   <tr key={i} className="hover:bg-gray-50/50">
                     <td className="py-3 px-4 font-semibold text-gray-800">{a.designation}</td>
-                    <td className="py-3 px-4 font-mono text-xs text-gray-500">{a.reference}</td>
+                    <td className="py-3 px-4 font-mono text-xs text-gray-500">{a.reference || a.ref || a.code || a.id || "—"}</td>
                     <td className="py-3 px-4 text-right font-medium">{a.quantite}</td>
                     <td className="py-3 px-4 text-right whitespace-nowrap text-gray-700">{fmtCFA(a.prixUnitaire)}</td>
                     <td className="py-3 px-4 text-right text-gray-500">{a.remise > 0 ? `${a.remise}%` : "—"}</td>

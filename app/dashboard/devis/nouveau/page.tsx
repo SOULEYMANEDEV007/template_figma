@@ -199,7 +199,7 @@ function DevisPreview({
           {articles.map((a: any, idx: number) => (
             <tr key={idx}>
               <td className="py-2.5 px-3 font-medium text-gray-800">{a.designation || "—"}</td>
-              <td className="py-2.5 px-3 text-gray-500 font-mono">{a.reference || "—"}</td>
+              <td className="py-2.5 px-3 text-gray-500 font-mono">{a.reference || a.ref || a.code || a.id || "—"}</td>
               <td className="py-2.5 px-3 text-center">{a.quantite}</td>
               <td className="py-2.5 px-3 text-right">{fmtCFA(a.prixUnitaire)}</td>
               <td className="py-2.5 px-3 text-right text-green-700 font-semibold">{a.remise ? `${a.remise}%` : "0%"}</td>
@@ -413,7 +413,11 @@ function NouveauDevisContent() {
 
       const articlesValides = articles
         .filter(a => a.designation)
-        .map(a => ({ ...a, id: `ART-${Date.now()}-${Math.random()}` }));
+        .map((a, idx) => ({
+          ...a,
+          id: a.id || `ART-${Date.now()}-${idx}`,
+          reference: a.reference || a.ref || a.code || `REF-${String(idx + 1).padStart(3, "0")}`,
+        }));
 
       const nouveauDevis = addDevis({
         reference: ref,

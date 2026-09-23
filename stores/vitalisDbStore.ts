@@ -603,11 +603,11 @@ const DEMO_DEVIS: VDevis[] = [
     fournisseurId: 'FOUR-LDF-001', fournisseurNom: 'Librairie de France Groupe',
     banqueId: 'AFG-001', banqueNom: 'AFG Bank',
     articles: [
-      { id: 'ART-001', designation: 'Cahiers 96 pages', quantite: 50, prixUnitaire: 500, remise: 0, montantHT: 25000 },
-      { id: 'ART-002', designation: 'Stylos bleus Bic (boîte)', quantite: 20, prixUnitaire: 2500, remise: 5, montantHT: 47500 },
-      { id: 'ART-003', designation: 'Règles 30cm', quantite: 50, prixUnitaire: 300, remise: 0, montantHT: 15000 },
-      { id: 'ART-004', designation: 'Classeurs A4 rigides', quantite: 30, prixUnitaire: 3500, remise: 0, montantHT: 105000 },
-      { id: 'ART-005', designation: 'Ramettes Papier A4 (500 feuilles)', quantite: 20, prixUnitaire: 5000, remise: 5, montantHT: 95000 },
+      { id: 'ART-001', reference: 'CAH-96', designation: 'Cahiers 96 pages', quantite: 50, prixUnitaire: 500, remise: 0, montantHT: 25000 },
+      { id: 'ART-002', reference: 'STY-BIC', designation: 'Stylos bleus Bic (boîte)', quantite: 20, prixUnitaire: 2500, remise: 5, montantHT: 47500 },
+      { id: 'ART-003', reference: 'REG-30', designation: 'Règles 30cm', quantite: 50, prixUnitaire: 300, remise: 0, montantHT: 15000 },
+      { id: 'ART-004', reference: 'CLS-A4', designation: 'Classeurs A4 rigides', quantite: 30, prixUnitaire: 3500, remise: 0, montantHT: 105000 },
+      { id: 'ART-005', reference: 'RAM-A4', designation: 'Ramettes Papier A4 (500 feuilles)', quantite: 20, prixUnitaire: 5000, remise: 5, montantHT: 95000 },
     ],
     totalHT: 287500, tva: 0, totalTTC: 287500,
     conditions: 'Paiement à la réception de la commande validée par AFG Bank. Livraison franco de port à Abidjan.',
@@ -620,9 +620,9 @@ const DEMO_DEVIS: VDevis[] = [
     fournisseurId: 'FOUR-DRO-002', fournisseurNom: 'Drocolor',
     banqueId: 'AFG-001', banqueNom: 'AFG Bank',
     articles: [
-      { id: 'ART-006', designation: 'Peinture Acrylique Extérieure Drocolor (Fût 25kg)', quantite: 8, prixUnitaire: 45000, remise: 5, montantHT: 342000 },
-      { id: 'ART-007', designation: 'Sous-couche Primaire d\'Accrochage Façade (20L)', quantite: 4, prixUnitaire: 38000, remise: 0, montantHT: 152000 },
-      { id: 'ART-008', designation: 'Kit outillage peintre Pro (Rouleaux, Brosses, Bâches)', quantite: 4, prixUnitaire: 39000, remise: 0, montantHT: 156000 },
+      { id: 'ART-006', reference: 'DRO-PAC-25', designation: 'Peinture Acrylique Extérieure Drocolor (Fût 25kg)', quantite: 8, prixUnitaire: 45000, remise: 5, montantHT: 342000 },
+      { id: 'ART-007', reference: 'DRO-PRI-20', designation: 'Sous-couche Primaire d\'Accrochage Façade (20L)', quantite: 4, prixUnitaire: 38000, remise: 0, montantHT: 152000 },
+      { id: 'ART-008', reference: 'DRO-KIT-PRO', designation: 'Kit outillage peintre Pro (Rouleaux, Brosses, Bâches)', quantite: 4, prixUnitaire: 39000, remise: 0, montantHT: 156000 },
     ],
     totalHT: 650000, tva: 0, totalTTC: 650000,
     conditions: "Livraison franco de port à l'adresse du client.",
@@ -635,8 +635,8 @@ const DEMO_DEVIS: VDevis[] = [
     fournisseurId: 'FOUR-LDF-001', fournisseurNom: 'Librairie de France Groupe',
     banqueId: 'AFG-001', banqueNom: 'AFG Bank',
     articles: [
-      { id: 'ART-007', designation: 'Classeurs A4', quantite: 20, prixUnitaire: 3500, remise: 0, montantHT: 70000 },
-      { id: 'ART-008', designation: 'Ramettes papier A4', quantite: 15, prixUnitaire: 5000, remise: 5, montantHT: 71250 },
+      { id: 'ART-007', reference: 'CLS-A4', designation: 'Classeurs A4', quantite: 20, prixUnitaire: 3500, remise: 0, montantHT: 70000 },
+      { id: 'ART-008', reference: 'RAM-A4', designation: 'Ramettes papier A4', quantite: 15, prixUnitaire: 5000, remise: 5, montantHT: 71250 },
     ],
     totalHT: 141250, tva: 0, totalTTC: 141250,
     conditions: 'Livraison franco de port.',
@@ -649,9 +649,9 @@ const DEMO_DEVIS: VDevis[] = [
     fournisseurId: 'FOUR-DRO-002', fournisseurNom: 'Drocolor',
     banqueId: 'AFG-001', banqueNom: 'AFG Bank',
     articles: [
-      { id: 'ART-009', designation: 'Peinture Façade Hydrofuge Drocolor Pro 25L', quantite: 8, prixUnitaire: 65000, remise: 5, montantHT: 494000 },
-      { id: 'ART-010', designation: 'Peinture Émulsion Intérieure Blanche Drocolor 20L', quantite: 8, prixUnitaire: 40000, remise: 0, montantHT: 320000 },
-      { id: 'ART-011', designation: 'Enduit de lissage & garnissage Façade Pro', quantite: 6, prixUnitaire: 26833, remise: 0, montantHT: 161000 },
+      { id: 'ART-009', reference: 'DRO-PFH-25', designation: 'Peinture Façade Hydrofuge Drocolor Pro 25L', quantite: 8, prixUnitaire: 65000, remise: 5, montantHT: 494000 },
+      { id: 'ART-010', reference: 'DRO-PEI-20', designation: 'Peinture Émulsion Intérieure Blanche Drocolor 20L', quantite: 8, prixUnitaire: 40000, remise: 0, montantHT: 320000 },
+      { id: 'ART-011', reference: 'DRO-END-PRO', designation: 'Enduit de lissage & garnissage Façade Pro', quantite: 6, prixUnitaire: 26833, remise: 0, montantHT: 161000 },
     ],
     totalHT: 975000, tva: 0, totalTTC: 975000,
     conditions: 'Garantie constructeur 2 ans incluse. Livraison à domicile.',
@@ -1121,7 +1121,16 @@ export const useVitalisDb = create<VitalisDbState>()(
 
       // ── DEVIS ────────────────────────────────────────────────
       addDevis: (data) => {
-        const newItem: VDevis = { ...data, id: `DEV-${Date.now()}-${Math.random().toString(36).substring(2, 7)}` };
+        const cleanedArticles = (data.articles || []).map((art: any, idx: number) => ({
+          ...art,
+          id: art.id || `ART-${Date.now()}-${idx}`,
+          reference: art.reference || art.ref || art.code || `REF-${String(idx + 1).padStart(3, '0')}`,
+        }));
+        const newItem: VDevis = {
+          ...data,
+          articles: cleanedArticles,
+          id: `DEV-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`
+        };
         set(s => ({ devis: [newItem, ...s.devis] }));
         // Mettre à jour la souscription liée
         const sous = get().souscriptions.find(s => s.id === data.souscriptionId);
@@ -1648,6 +1657,35 @@ export const useVitalisDb = create<VitalisDbState>()(
               }
               return f;
             });
+          }
+
+          // Migration automatique des articles de devis sans référence
+          if (state.devis && Array.isArray(state.devis)) {
+            state.devis = state.devis.map((d: any) => ({
+              ...d,
+              articles: (d.articles || []).map((art: any, idx: number) => {
+                let ref = art.reference || art.ref || art.code;
+                if (!ref || ref === '—' || ref === '-') {
+                  const des = (art.designation || '').toLowerCase();
+                  if (des.includes('cahier')) ref = 'CAH-96';
+                  else if (des.includes('stylo')) ref = 'STY-BIC';
+                  else if (des.includes('règle') || des.includes('regle')) ref = 'REG-30';
+                  else if (des.includes('classeur')) ref = 'CLS-A4';
+                  else if (des.includes('ramette')) ref = 'RAM-A4';
+                  else if (des.includes('peinture acrylique')) ref = 'DRO-PAC-25';
+                  else if (des.includes('primaire') || des.includes('sous-couche')) ref = 'DRO-PRI-20';
+                  else if (des.includes('outillage') || des.includes('kit')) ref = 'DRO-KIT-PRO';
+                  else if (des.includes('hydrofuge')) ref = 'DRO-PFH-25';
+                  else if (des.includes('émulsion') || des.includes('emulsion')) ref = 'DRO-PEI-20';
+                  else if (des.includes('enduit')) ref = 'DRO-END-PRO';
+                  else ref = art.id || `REF-${String(idx + 1).padStart(3, '0')}`;
+                }
+                return {
+                  ...art,
+                  reference: ref,
+                };
+              })
+            }));
           }
         }
       },
