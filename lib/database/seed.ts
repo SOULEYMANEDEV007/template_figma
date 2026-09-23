@@ -102,7 +102,7 @@ const fournisseurs: Fournisseur[] = [
     siteWeb: "https://drocolor.ci",
     rccm: "CI-ABJ-2018-B-45678",
     secteurActivite: "Peinture, revêtements bâtiment & carrosserie, étanchéité",
-    logo: "/images/drocolor-logo.jfif",
+    logo: "/images/drocolor_logo.jpg",
     agreVitalis: true,
     dateAgrementVitalis: "2023-03-20",
     numeroContratAFG: "CONT-AFG-DRO-2023-002",

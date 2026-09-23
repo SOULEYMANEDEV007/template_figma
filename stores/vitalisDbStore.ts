@@ -447,7 +447,7 @@ const SEED_FOURNISSEURS: VFournisseur[] = [
     telephone: '+225 27 23 45 67 89', telephoneCommercial: '+225 05 06 07 08 09',
     adresse: 'Zone Industrielle de Yopougon', ville: 'Abidjan', quartier: 'Yopougon',
     rccm: 'CI-ABJ-2018-B-45678', secteurActivite: 'Peinture, revêtements bâtiment & carrosserie, étanchéité',
-    logo: '/images/drocolor-logo.jfif', agreVitalis: true, dateAgrementVitalis: '2023-03-20', statut: 'actif',
+    logo: '/images/drocolor_logo.jpg', agreVitalis: true, dateAgrementVitalis: '2023-03-20', statut: 'actif',
   },
   {
     id: 'FOUR-COM-003', code: 'COMAF', nom: 'COMAFRIQUE', raisonSociale: 'Comafrique Technologies CI',
@@ -1638,6 +1638,17 @@ export const useVitalisDb = create<VitalisDbState>()(
       onRehydrateStorage: () => (state) => {
         if (state) {
           state.reconcilierMontants?.();
+          // Migration automatique des anciens chemins de logo Drocolor (.jfif -> .jpg)
+          if (state.fournisseurs && Array.isArray(state.fournisseurs)) {
+            state.fournisseurs = state.fournisseurs.map((f: any) => {
+              if (f.id === 'FOUR-DRO-002' || f.nom?.toLowerCase().includes('drocolor')) {
+                if (!f.logo || f.logo.includes('.jfif')) {
+                  return { ...f, logo: '/images/drocolor_logo.jpg' };
+                }
+              }
+              return f;
+            });
+          }
         }
       },
       partialize: (state) => ({

@@ -29,7 +29,7 @@ export const IMAGES = {
   // --- LOGOS DES FOURNISSEURS & PARTENAIRES AGRÉÉS ---
   partners: {
     ldf: "/images/ldf.png",
-    drocolor: "/images/drocolor-logo.jpg", // Premier logo Drocolor (fond rouge)
+    drocolor: "/images/drocolor_logo.jpg", // Premier logo Drocolor (fond rouge)
     comafrique: "/images/logo-comafrique.webp",
     inovim: "/images/logo-inovim.jpg",
     kaydan: "/images/logo-kaydan.webp",

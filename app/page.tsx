@@ -83,7 +83,7 @@ export default function RootPage() {
             const rad = angle * (Math.PI / 180);
             const x = Math.cos(rad) * radius;
             const y = Math.sin(rad) * radius;
-            const logoSrc = f.logo || getPartnerLogo(f.nom, f.id);
+            const logoSrc = (f.logo && !f.logo.includes('.jfif')) ? f.logo : getPartnerLogo(f.nom, f.id);
 
             return (
               <div
