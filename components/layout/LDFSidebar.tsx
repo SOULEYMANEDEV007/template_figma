@@ -175,7 +175,7 @@ export default function LDFSidebar() {
       )}>
         <div className="w-15 h-15 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center bg-white p-1 shadow-sm">
           <Image
-            src={IMAGES.logos.vifloNew}
+            src={IMAGES.logos.vifloText}
             alt="ViFlo"
             width={50}
             height={50}
@@ -221,14 +221,14 @@ export default function LDFSidebar() {
         const displayName = user.role === "admin" || (user.prenom === "Administrateur" && (!user.nom || user.nom === "Admin"))
           ? "Administrateur"
           : user.role === "owner"
-          ? "Propriétaire"
-          : [user.prenom, user.nom].filter(Boolean).join(" ");
+            ? "Propriétaire"
+            : [user.prenom, user.nom].filter(Boolean).join(" ");
 
         const initials = user.role === "admin" || (user.prenom === "Administrateur" && (!user.nom || user.nom === "Admin"))
           ? "A"
           : user.role === "owner"
-          ? "P"
-          : `${user.prenom?.[0] || user.nom?.[0] || 'U'}${user.nom?.[0] || ''}`;
+            ? "P"
+            : `${user.prenom?.[0] || user.nom?.[0] || 'U'}${user.nom?.[0] || ''}`;
 
         return (
           <div className={cn(

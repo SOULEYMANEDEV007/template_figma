@@ -205,8 +205,8 @@ export function PDFDevis({ devis }: PDFDevisProps) {
                   <tr key={index}>
                     <td className="px-4 py-3">
                       <p className="font-medium text-gray-900">{article.designation}</p>
-                      {article.reference && (
-                        <p className="text-xs text-gray-500">Réf: {article.reference}</p>
+                      {(article.reference || article.id) && (
+                        <p className="text-xs text-gray-500">Réf: {article.reference || article.id}</p>
                       )}
                     </td>
                     <td className="text-center px-4 py-3 text-gray-700">{article.quantite}</td>

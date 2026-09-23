@@ -192,7 +192,7 @@ export default function SouscriptionDetailPage() {
           ${(devis.articles || []).map(a => `
             <tr>
               <td><strong>${a.designation}</strong></td>
-              <td style="font-family: monospace; font-size: 11px; color: #64748b;">${a.reference || '—'}</td>
+              <td style="font-family: monospace; font-size: 11px; color: #64748b;">${a.reference || a.ref || a.code || a.id || '—'}</td>
               <td style="text-align: center;">${a.quantite}</td>
               <td style="text-align: right;">${fmtCFA(a.prixUnitaire)}</td>
               <td style="text-align: right; font-weight: bold;">${fmtCFA(a.montantHT)}</td>
@@ -854,7 +854,7 @@ export default function SouscriptionDetailPage() {
                   {(devis?.articles || []).map(a => (
                     <tr key={a.id}>
                       <td className="font-medium text-gray-800">{a.designation}</td>
-                      <td className="font-mono text-xs text-gray-500">{a.reference}</td>
+                      <td className="font-mono text-xs text-gray-500">{a.reference || a.ref || a.code || a.id || "—"}</td>
                       <td>{a.quantite}</td>
                       <td>{fmtCFA(a.prixUnitaire)}</td>
                       <td>{a.remise && a.remise > 0 ? `${a.remise}%` : "—"}</td>
