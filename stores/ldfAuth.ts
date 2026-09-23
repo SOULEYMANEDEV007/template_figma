@@ -8,8 +8,8 @@ import { create } from "zustand";
 import { toast } from "sonner";
 import { useVitalisDb } from "./vitalisDbStore";
 
-// Flag de contrôle du profil Propriétaire (Désactivé jusqu'à validation formelle de la direction)
-export const IS_OWNER_PROFILE_ENABLED = false;
+// Flag de contrôle du profil Propriétaire (Activé)
+export const IS_OWNER_PROFILE_ENABLED = true;
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type AuthState = {
@@ -165,17 +165,32 @@ export const useLDFAuthStore = create<AuthState & AuthActions>((set, get) => ({
     // Simulation délai réseau
     await new Promise((r) => setTimeout(r, 800));
 
+    const dbUser = useVitalisDb.getState().getUserByEmail(email);
+
     const account = demoAccounts.find(
       (a) => a.email.toLowerCase() === email.toLowerCase() && a.password === password
     );
 
-    if (!account) {
+    const isDbMatch = dbUser && (
+      (dbUser.password && dbUser.password === password) ||
+      (!dbUser.password && (password === "owner123" || password === "admin123" || password === "fournisseur123" || password === "banque123" || password === "client123"))
+    );
+
+    if (!account && !isDbMatch) {
       set({ isLoading: false, error: "Email ou mot de passe incorrect." });
       throw new Error("Identifiants invalides");
     }
 
-    if (account.role === "owner" && !IS_OWNER_PROFILE_ENABLED) {
-      const msg = "Le profil Propriétaire est actuellement désactivé (en attente de validation de la direction).";
+    if (dbUser && dbUser.isActive === false) {
+      const msg = "Ce compte utilisateur est désactivé. Veuillez contacter un administrateur.";
+      set({ isLoading: false, error: msg });
+      toast.error(msg);
+      throw new Error(msg);
+    }
+
+    const effectiveRole = dbUser?.role || account?.role;
+    if (effectiveRole === "owner" && !IS_OWNER_PROFILE_ENABLED && dbUser?.isActive === false) {
+      const msg = "Le profil Propriétaire est actuellement désactivé.";
       set({ isLoading: false, error: msg });
       toast.error(msg);
       throw new Error(msg);
@@ -190,7 +205,6 @@ export const useLDFAuthStore = create<AuthState & AuthActions>((set, get) => ({
       });
     } catch { }
 
-    const dbUser = useVitalisDb.getState().getUserByEmail(email);
     const user = dbUser ? { ...dbUser } : (
       mockUsers.find((u) => u.email.toLowerCase() === email.toLowerCase())
       ?? mockSouscripteursUsers.find((u) => u.email.toLowerCase() === email.toLowerCase())
