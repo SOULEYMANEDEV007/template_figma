@@ -97,7 +97,7 @@ export default function LoginPage() {
         {/* Logo ViFlo */}
         <div className="relative z-10 flex items-center gap-3">
           <div className="w-20 h-20 rounded-2xl overflow-hidden flex items-center justify-center bg-white p-2 shadow-lg border border-white/20">
-            <Image src={IMAGES.logos.vifloNew} alt="ViFlo" width={160} height={160} className="object-contain w-full h-full" />
+            <Image src={IMAGES.logos.vifloText} alt="ViFlo" width={160} height={160} className="object-contain w-full h-full" />
           </div>
           <div>
             <p className="text-white font-bold text-2xl leading-none">
@@ -272,9 +272,8 @@ export default function LoginPage() {
                     type="button"
                     data-active={selectedDemo === idx}
                     onClick={() => fillDemo(idx)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all duration-200 text-left ${
-                      ROLE_COLORS[idx] || "border-gray-200 bg-gray-50"
-                    } ${isOwnerDisabled ? "opacity-60 cursor-not-allowed border-dashed" : ""}`}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all duration-200 text-left ${ROLE_COLORS[idx] || "border-gray-200 bg-gray-50"
+                      } ${isOwnerDisabled ? "opacity-60 cursor-not-allowed border-dashed" : ""}`}
                   >
                     <Icon className={`w-4 h-4 flex-shrink-0 ${ICON_COLORS[idx] || "text-gray-600"}`} />
                     <div className="flex-1 min-w-0">
