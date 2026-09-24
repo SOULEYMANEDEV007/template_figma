@@ -4,7 +4,8 @@ import { StatusBadge } from "@/components/ui/ldf-badge";
 import { ConfirmModal, LDFModal } from "@/components/ui/ldf-modal";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
 import type { VFournisseur } from "@/stores/vitalisDbStore";
-import { Building2, CheckCircle, Edit, PauseCircle, Plus, Search, ShieldCheck, Trash2, XCircle } from "lucide-react";
+import { useLDFAuthStore } from "@/stores/ldfAuth";
+import { Building2, CheckCircle, Edit, PauseCircle, Plus, Search, Shield, ShieldCheck, Trash2, XCircle } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -28,6 +29,8 @@ const EMPTY_FORM = {
 };
 
 export default function AdminFournisseursPage() {
+  const { user } = useLDFAuthStore();
+  const isOwner = user?.role === "owner";
   const {
     fournisseurs = [],
     addFournisseur,
@@ -135,9 +138,16 @@ export default function AdminFournisseursPage() {
             {filtered.length} fournisseur{filtered.length > 1 ? "s" : ""} · Programme VITALIS
           </p>
         </div>
-        <button onClick={openAdd} className="btn-ldf-primary">
-          <Plus className="w-4 h-4" /> Ajouter un fournisseur
-        </button>
+        {isOwner ? (
+          <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-blue-50 border border-blue-200 text-xs font-semibold text-blue-700">
+            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+            Mode Supervision (Lecture seule)
+          </div>
+        ) : (
+          <button onClick={openAdd} className="btn-ldf-primary">
+            <Plus className="w-4 h-4" /> Ajouter un fournisseur
+          </button>
+        )}
       </div>
 
       {/* Recherche + filtres */}
@@ -168,13 +178,13 @@ export default function AdminFournisseursPage() {
                 <th className="text-left text-xs font-semibold text-gray-500 px-4 py-3 hidden md:table-cell">Responsable / RCCM</th>
                 <th className="text-left text-xs font-semibold text-gray-500 px-4 py-3 hidden lg:table-cell">Souscriptions</th>
                 <th className="text-left text-xs font-semibold text-gray-500 px-4 py-3">Statut Agrément</th>
-                <th className="text-left text-xs font-semibold text-gray-500 px-4 py-3">Actions</th>
+                {!isOwner && <th className="text-left text-xs font-semibold text-gray-500 px-4 py-3">Actions</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="text-center py-12 text-gray-400 text-sm">
+                  <td colSpan={isOwner ? 5 : 6} className="text-center py-12 text-gray-400 text-sm">
                     Aucun fournisseur trouvé
                   </td>
                 </tr>
@@ -206,60 +216,62 @@ export default function AdminFournisseursPage() {
                   <td className="px-4 py-3">
                     <StatusBadge statut={f.statut} size="sm" />
                   </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-1">
-                      <button onClick={() => openEdit(f)} title="Modifier"
-                        className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                        <Edit className="w-3.5 h-3.5" />
-                      </button>
-                      {/* Actions de workflow d'agrément */}
-                      {f.statut === "prospect" && (
-                        <button onClick={() => handleChangeStatut(f, "en_cours_agrement")} title="Lancer l'agrément"
-                          className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-amber-50 hover:text-amber-600 transition-colors">
-                          <ShieldCheck className="w-3.5 h-3.5" />
-                        </button>
-                      )}
-                      {f.statut === "en_cours_agrement" && (
-                        <button onClick={() => handleChangeStatut(f, "agree")} title="Accorder l'agrément"
+                  {!isOwner && (
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => openEdit(f)} title="Modifier"
                           className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                          <CheckCircle className="w-3.5 h-3.5" />
+                          <Edit className="w-3.5 h-3.5" />
                         </button>
-                      )}
-                      {f.statut === "agree" && (
-                        <button onClick={() => handleChangeStatut(f, "actif")} title="Activer"
-                          className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-emerald-50 hover:text-emerald-600 transition-colors">
-                          <CheckCircle className="w-3.5 h-3.5" />
-                        </button>
-                      )}
-                      {f.statut === "actif" && (
-                        <button onClick={() => setShowConfirmSuspend(f)} title="Suspendre"
-                          className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-yellow-50 hover:text-yellow-600 transition-colors">
-                          <PauseCircle className="w-3.5 h-3.5" />
-                        </button>
-                      )}
-                      {f.statut === "suspendu" && (
-                        <button onClick={() => handleChangeStatut(f, "actif")} title="Réactiver"
-                          className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-emerald-50 hover:text-emerald-600 transition-colors">
-                          <CheckCircle className="w-3.5 h-3.5" />
-                        </button>
-                      )}
-                      {f.statut !== "expire" && (
-                        <button onClick={() => handleChangeStatut(f, "expire")} title="Marquer comme expiré"
+                        {/* Actions de workflow d'agrément */}
+                        {f.statut === "prospect" && (
+                          <button onClick={() => handleChangeStatut(f, "en_cours_agrement")} title="Lancer l'agrément"
+                            className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                            <ShieldCheck className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                        {f.statut === "en_cours_agrement" && (
+                          <button onClick={() => handleChangeStatut(f, "agree")} title="Accorder l'agrément"
+                            className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                            <CheckCircle className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                        {f.statut === "agree" && (
+                          <button onClick={() => handleChangeStatut(f, "actif")} title="Activer"
+                            className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-emerald-50 hover:text-emerald-600 transition-colors">
+                            <CheckCircle className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                        {f.statut === "actif" && (
+                          <button onClick={() => setShowConfirmSuspend(f)} title="Suspendre"
+                            className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-yellow-50 hover:text-yellow-600 transition-colors">
+                            <PauseCircle className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                        {f.statut === "suspendu" && (
+                          <button onClick={() => handleChangeStatut(f, "actif")} title="Réactiver"
+                            className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-emerald-50 hover:text-emerald-600 transition-colors">
+                            <CheckCircle className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                        {f.statut !== "expire" && (
+                          <button onClick={() => handleChangeStatut(f, "expire")} title="Marquer comme expiré"
+                            className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors">
+                            <XCircle className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                        <button onClick={() => {
+                          if (confirm(`Voulez-vous supprimer le fournisseur ${f.nom} ?`)) {
+                            deleteFournisseur(f.id);
+                            toast.success(`Fournisseur ${f.nom} supprimé`);
+                          }
+                        }} title="Supprimer définitivement"
                           className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors">
-                          <XCircle className="w-3.5 h-3.5" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
-                      )}
-                      <button onClick={() => {
-                        if (confirm(`Voulez-vous supprimer le fournisseur ${f.nom} ?`)) {
-                          deleteFournisseur(f.id);
-                          toast.success(`Fournisseur ${f.nom} supprimé`);
-                        }
-                      }} title="Supprimer définitivement"
-                        className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors">
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </td>
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

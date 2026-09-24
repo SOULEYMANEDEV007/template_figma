@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
 import type { VAgenceAFG } from "@/stores/vitalisDbStore";
+import { useLDFAuthStore } from "@/stores/ldfAuth";
 import { StatusBadge } from "@/components/ui/ldf-badge";
 import { ConfirmModal, LDFModal } from "@/components/ui/ldf-modal";
 import { IMAGES } from "@/lib/constants/images";
@@ -29,6 +30,8 @@ const EMPTY_FORM: Omit<VAgenceAFG, "id"> = {
 };
 
 export default function AdminBanquesPage() {
+  const { user } = useLDFAuthStore();
+  const isOwner = user?.role === "owner";
   const {
     agencesAFG = [],
     dossiers = [],
@@ -159,9 +162,16 @@ export default function AdminBanquesPage() {
           </div>
         </div>
 
-        <button onClick={openAdd} className="btn-ldf-primary">
-          <Plus className="w-4 h-4" /> Ajouter une agence
-        </button>
+        {isOwner ? (
+          <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-blue-50 border border-blue-200 text-xs font-semibold text-blue-700">
+            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+            Mode Supervision (Lecture seule)
+          </div>
+        ) : (
+          <button onClick={openAdd} className="btn-ldf-primary">
+            <Plus className="w-4 h-4" /> Ajouter une agence
+          </button>
+        )}
       </div>
 
       {/* ── 4 Cartes KPIs Synthèse Réseau ── */}
@@ -341,22 +351,24 @@ export default function AdminBanquesPage() {
                   </div>
                 </div>
 
-                {/* Boutons d'action */}
-                <div className="px-5 py-3 bg-gray-50/50 border-t border-gray-100 flex items-center gap-2">
-                  <button
-                    onClick={() => openEdit(agence)}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-colors shadow-2xs"
-                  >
-                    <Edit className="w-3.5 h-3.5 text-gray-500" /> Modifier
-                  </button>
-                  <button
-                    onClick={() => setShowConfirmDelete(agence)}
-                    className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors border border-transparent hover:border-red-100"
-                    title="Supprimer l'agence"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                {/* Boutons d'action (masqués pour le rôle owner) */}
+                {!isOwner && (
+                  <div className="px-5 py-3 bg-gray-50/50 border-t border-gray-100 flex items-center gap-2">
+                    <button
+                      onClick={() => openEdit(agence)}
+                      className="flex-1 flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-colors shadow-2xs"
+                    >
+                      <Edit className="w-3.5 h-3.5 text-gray-500" /> Modifier
+                    </button>
+                    <button
+                      onClick={() => setShowConfirmDelete(agence)}
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors border border-transparent hover:border-red-100"
+                      title="Supprimer l'agence"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
               </div>
             );
           })}

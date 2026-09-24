@@ -22,6 +22,7 @@ const STATUTS_EN_ATTENTE = [
 
 export default function BanqueDossiersPage() {
   const { user } = useLDFAuthStore();
+  const isOwner = user?.role === "owner";
   const { dossiers, devis, updateDossier, updateSouscription, getSouscriptionById, addHistorique, reconcilierMontants } = useVitalisDb();
   const [activeTab, setActiveTab] = useState<"en_attente" | "tous">("en_attente");
 
@@ -223,7 +224,7 @@ export default function BanqueDossiersPage() {
                 )}
 
                 {/* Actions selon statut */}
-                {!isDecide && (statutEffectif === "depose_banque" || statutEffectif === "recu" || statutEffectif === "pret_pour_depot") ? (
+                {!isOwner && !isDecide && (statutEffectif === "depose_banque" || statutEffectif === "recu" || statutEffectif === "pret_pour_depot") ? (
                   <div className="flex items-center gap-2">
                     <button onClick={() => handleAnalyser(d)}
                       className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors">
@@ -234,7 +235,7 @@ export default function BanqueDossiersPage() {
                       <Eye className="w-4 h-4" /> Voir
                     </Link>
                   </div>
-                ) : !isDecide && (statutEffectif === "en_analyse_bancaire" || statutEffectif === "en_analyse" || statutEffectif === "informations_demandees") ? (
+                ) : !isOwner && !isDecide && (statutEffectif === "en_analyse_bancaire" || statutEffectif === "en_analyse" || statutEffectif === "informations_demandees") ? (
                   <div className="flex items-center gap-2">
                     <button onClick={() => handleAccepter(d)}
                       className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">

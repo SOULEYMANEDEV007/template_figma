@@ -5,10 +5,23 @@ import DashboardAdmin from "./components/DashboardAdmin";
 import DashboardBanque from "./components/DashboardBanque";
 import DashboardFournisseur from "./components/DashboardFournisseur";
 import DashboardSouscripteur from "./components/DashboardSouscripteur";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 // ─── Dashboard principal — routeur par rôle ───────────────────────────────────
 export default function DashboardPage() {
   const { user } = useLDFAuthStore();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      if (url.searchParams.get("error") === "access-denied") {
+        toast.error("Accès refusé : votre profil n'a pas les autorisations pour accéder à cette section.");
+        url.searchParams.delete("error");
+        window.history.replaceState({}, "", url.pathname);
+      }
+    }
+  }, []);
 
   return (
     <div className="space-y-4 fade-in">

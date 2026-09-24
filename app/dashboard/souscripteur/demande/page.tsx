@@ -99,7 +99,7 @@ export default function NouvelleDemandeSouscripteur() {
   const [produitRecherche, setProduitRecherche] = useState("");
 
   // Séparation stricte : Région - Ville - Commune (avec filtrage dynamique)
-  const [region, setRegion] = useState("District Autonome d'Abidjan");
+  const [region, setRegion] = useState("District d'Abidjan");
   const [ville, setVille] = useState("Abidjan");
   const [commune, setCommune] = useState("");
 

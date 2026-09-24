@@ -322,7 +322,7 @@ export const useLDFAuthStore = create<AuthState & AuthActions>((set, get) => ({
 export function getRoleLabel(role: string): string {
   const labels: Record<string, string> = {
     admin: "Administrateur ViFlo",
-    owner: "Propriétaire ViFlo (Supervision)",
+    owner: "Superviseur ViFlo",
     banque: "Responsable Banque",
     fournisseur: "Fournisseur",
     souscripteur: "Client / Souscripteur",
