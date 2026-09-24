@@ -12,12 +12,12 @@ import { toast } from "sonner";
 const fmtCFA = (v: number) => new Intl.NumberFormat("fr-FR").format(v) + " FCFA";
 
 const STATUTS_FOURNISSEUR = [
-  { value: "prospect",          label: "Prospect"          },
+  { value: "prospect", label: "Prospect" },
   { value: "en_cours_agrement", label: "Agrément en cours" },
-  { value: "agree",             label: "Agréé"             },
-  { value: "actif",             label: "Actif"             },
-  { value: "suspendu",          label: "Suspendu"          },
-  { value: "expire",            label: "Expiré"            },
+  { value: "agree", label: "Agréé" },
+  { value: "actif", label: "Actif" },
+  { value: "suspendu", label: "Suspendu" },
+  { value: "expire", label: "Expiré" },
 ];
 
 const EMPTY_FORM = {
@@ -138,12 +138,7 @@ export default function AdminFournisseursPage() {
             {filtered.length} fournisseur{filtered.length > 1 ? "s" : ""} · Programme VITALIS
           </p>
         </div>
-        {isOwner ? (
-          <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-blue-50 border border-blue-200 text-xs font-semibold text-blue-700">
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-            Mode Supervision (Lecture seule)
-          </div>
-        ) : (
+        {user?.role === "admin" && (
           <button onClick={openAdd} className="btn-ldf-primary">
             <Plus className="w-4 h-4" /> Ajouter un fournisseur
           </button>
@@ -178,13 +173,13 @@ export default function AdminFournisseursPage() {
                 <th className="text-left text-xs font-semibold text-gray-500 px-4 py-3 hidden md:table-cell">Responsable / RCCM</th>
                 <th className="text-left text-xs font-semibold text-gray-500 px-4 py-3 hidden lg:table-cell">Souscriptions</th>
                 <th className="text-left text-xs font-semibold text-gray-500 px-4 py-3">Statut Agrément</th>
-                {!isOwner && <th className="text-left text-xs font-semibold text-gray-500 px-4 py-3">Actions</th>}
+                {user?.role === "admin" && <th className="text-left text-xs font-semibold text-gray-500 px-4 py-3">Actions</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={isOwner ? 5 : 6} className="text-center py-12 text-gray-400 text-sm">
+                  <td colSpan={user?.role === "admin" ? 6 : 5} className="text-center py-12 text-gray-400 text-sm">
                     Aucun fournisseur trouvé
                   </td>
                 </tr>
@@ -216,7 +211,7 @@ export default function AdminFournisseursPage() {
                   <td className="px-4 py-3">
                     <StatusBadge statut={f.statut} size="sm" />
                   </td>
-                  {!isOwner && (
+                  {user?.role === "admin" && (
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1">
                         <button onClick={() => openEdit(f)} title="Modifier"
@@ -284,36 +279,36 @@ export default function AdminFournisseursPage() {
         title={editTarget ? "Modifier le fournisseur" : "Ajouter un fournisseur"} size="lg">
         <div className="grid grid-cols-2 gap-4">
           {[
-            { key: "nom",                label: "Raison sociale *",       placeholder: "Papeterie Centrale CI", full: false },
-            { key: "nomDirecteur",        label: "Directeur / Gérant *",   placeholder: "M. Bamba Seydou",       full: false },
-            { key: "email",               label: "Email *",                placeholder: "contact@papetci.ci",    full: false },
-            { key: "telephone",           label: "Téléphone",              placeholder: "+225 07 08 12 34 56",   full: false },
-            { key: "rccm",                label: "RCCM *",                 placeholder: "CI-ABJ-2021-B-12345",   full: false },
-            { key: "compteContribuable",  label: "Compte contribuable",    placeholder: "0123456789",            full: false },
-            { key: "situationJuridique",  label: "Forme juridique",        placeholder: "SARL, SA...",           full: false },
-            { key: "nombreEmployes",      label: "Nb. employés",           placeholder: "10",                    full: false, type: "number" },
-            { key: "ville",               label: "Ville",                  placeholder: "Abidjan",               full: false },
-            { key: "region",              label: "Région",                 placeholder: "Abidjan Lagunes",       full: false },
-            { key: "adresse",             label: "Adresse",                placeholder: "Zone Industrielle...",  full: true  },
-            { key: "numeroContratAFG",    label: "N° Contrat AFG Bank",    placeholder: "AFG-2026-F-001",        full: true  },
+            { key: "nom", label: "Raison sociale *", placeholder: "Papeterie Centrale CI", full: false },
+            { key: "nomDirecteur", label: "Directeur / Gérant *", placeholder: "M. Bamba Seydou", full: false },
+            { key: "email", label: "Email *", placeholder: "contact@papetci.ci", full: false },
+            { key: "telephone", label: "Téléphone", placeholder: "+225 07 08 12 34 56", full: false },
+            { key: "rccm", label: "RCCM *", placeholder: "CI-ABJ-2021-B-12345", full: false },
+            { key: "compteContribuable", label: "Compte contribuable", placeholder: "0123456789", full: false },
+            { key: "situationJuridique", label: "Forme juridique", placeholder: "SARL, SA...", full: false },
+            { key: "nombreEmployes", label: "Nb. employés", placeholder: "10", full: false, type: "number" },
+            { key: "ville", label: "Ville", placeholder: "Abidjan", full: false },
+            { key: "region", label: "Région", placeholder: "Abidjan Lagunes", full: false },
+            { key: "adresse", label: "Adresse", placeholder: "Zone Industrielle...", full: true },
+            { key: "numeroContratAFG", label: "N° Contrat AFG Bank", placeholder: "AFG-2026-F-001", full: true },
           ].map((field: any) => (
             <div key={field.key} className={field.full ? "col-span-2" : ""}>
               <label className="ldf-label">{field.label}</label>
               {field.type === "number" ? (
                 <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden h-[42px] focus-within:ring-2 focus-within:ring-orange-400/50">
-                  <button type="button" 
-                    onClick={() => setf(field.key, String(Math.max(0, Number((form as any)[field.key] || 0) - 1)))} 
+                  <button type="button"
+                    onClick={() => setf(field.key, String(Math.max(0, Number((form as any)[field.key] || 0) - 1)))}
                     className="w-10 h-full flex items-center justify-center bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-900 border-r border-gray-200 transition-colors font-medium"
                   >
                     -
                   </button>
-                  <input type="text" 
-                    value={(form as any)[field.key]} 
-                    onChange={e => setf(field.key, e.target.value.replace(/\D/g, ''))} 
-                    className="flex-1 w-full h-full text-center outline-none text-sm font-semibold text-gray-700 bg-white" 
+                  <input type="text"
+                    value={(form as any)[field.key]}
+                    onChange={e => setf(field.key, e.target.value.replace(/\D/g, ''))}
+                    className="flex-1 w-full h-full text-center outline-none text-sm font-semibold text-gray-700 bg-white"
                   />
-                  <button type="button" 
-                    onClick={() => setf(field.key, String(Number((form as any)[field.key] || 0) + 1))} 
+                  <button type="button"
+                    onClick={() => setf(field.key, String(Number((form as any)[field.key] || 0) + 1))}
                     className="w-10 h-full flex items-center justify-center bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-900 border-l border-gray-200 transition-colors font-medium"
                   >
                     +

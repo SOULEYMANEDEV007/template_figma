@@ -162,12 +162,7 @@ export default function AdminBanquesPage() {
           </div>
         </div>
 
-        {isOwner ? (
-          <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-blue-50 border border-blue-200 text-xs font-semibold text-blue-700">
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-            Mode Supervision (Lecture seule)
-          </div>
-        ) : (
+        {user?.role === "admin" && (
           <button onClick={openAdd} className="btn-ldf-primary">
             <Plus className="w-4 h-4" /> Ajouter une agence
           </button>
@@ -351,8 +346,8 @@ export default function AdminBanquesPage() {
                   </div>
                 </div>
 
-                {/* Boutons d'action (masqués pour le rôle owner) */}
-                {!isOwner && (
+                {/* Boutons d'action (réservés exclusivement au profil admin) */}
+                {user?.role === "admin" && (
                   <div className="px-5 py-3 bg-gray-50/50 border-t border-gray-100 flex items-center gap-2">
                     <button
                       onClick={() => openEdit(agence)}
