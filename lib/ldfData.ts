@@ -50,7 +50,7 @@ export const demoAccounts = [
     email: "owner@viflo.ci",
     password: "owner123",
     role: "owner",
-    label: "Propriétaire ViFlo (Supervision)",
+    label: "Superviseur ViFlo",
     nom: "",
     prenom: "Propriétaire",
     disabled: false,

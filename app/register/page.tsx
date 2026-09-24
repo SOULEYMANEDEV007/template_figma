@@ -26,7 +26,7 @@ export default function RegisterPage() {
   const [prenom, setPrenom] = useState("");
   const [email, setEmail] = useState("");
   const [telephone, setTelephone] = useState("");
-  const [region, setRegion] = useState("District Autonome d'Abidjan");
+  const [region, setRegion] = useState("District d'Abidjan");
   const [ville, setVille] = useState("Abidjan");
   const [commune, setCommune] = useState("");
 

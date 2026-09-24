@@ -37,27 +37,30 @@ export function middleware(request: NextRequest) {
       const user = JSON.parse(userCookie);
       const role: string = user.role ?? "";
 
-      // Routes admin uniquement
+      // Profils disposant d'un acces superviseur / observabilite globale (admin et owner)
+      const isSuperviseur = role === "admin" || role === "owner";
+
+      // Routes admin (fournisseurs, agences AFG banques, utilisateurs)
       const adminOnly = ["/dashboard/admin"];
-      if (adminOnly.some(r => pathname.startsWith(r)) && role !== "admin") {
+      if (adminOnly.some(r => pathname.startsWith(r)) && !isSuperviseur) {
         return NextResponse.redirect(new URL("/dashboard?error=access-denied", request.url));
       }
 
-      // Routes banque uniquement
+      // Routes banque
       const banqueOnly = ["/dashboard/banque"];
-      if (banqueOnly.some(r => pathname.startsWith(r)) && role !== "banque" && role !== "admin") {
+      if (banqueOnly.some(r => pathname.startsWith(r)) && role !== "banque" && !isSuperviseur) {
         return NextResponse.redirect(new URL("/dashboard?error=access-denied", request.url));
       }
 
-      // Routes fournisseur uniquement
+      // Routes fournisseur
       const fournisseurOnly = ["/dashboard/fournisseur"];
-      if (fournisseurOnly.some(r => pathname.startsWith(r)) && role !== "fournisseur" && role !== "admin") {
+      if (fournisseurOnly.some(r => pathname.startsWith(r)) && role !== "fournisseur" && !isSuperviseur) {
         return NextResponse.redirect(new URL("/dashboard?error=access-denied", request.url));
       }
 
-      // Routes souscripteur uniquement
+      // Routes souscripteur
       const souscripteurRoutes = ["/dashboard/souscripteur"];
-      if (souscripteurRoutes.some(r => pathname.startsWith(r)) && role !== "souscripteur" && role !== "admin") {
+      if (souscripteurRoutes.some(r => pathname.startsWith(r)) && role !== "souscripteur" && !isSuperviseur) {
         return NextResponse.redirect(new URL("/dashboard?error=access-denied", request.url));
       }
     } catch {
