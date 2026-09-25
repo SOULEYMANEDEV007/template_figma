@@ -676,18 +676,18 @@ export default function NouvelleDemandeSouscripteur() {
 
                   // Logique de recommandation par catégorie
                   const cat = (categorie || "").toLowerCase();
-                  const s = f.nom.toLowerCase();
+                  const s = (f.nom || "").toLowerCase();
                   const isRecommended =
-                    (cat.includes("auto") && (s.includes("socida") || s.includes("rymco"))) ||
-                    (cat.includes("logement") && (s.includes("inovim") || s.includes("kaydan") || s.includes("sodimac"))) ||
-                    ((cat.includes("ciment") || cat.includes("materia")) && (s.includes("sodimac") || s.includes("kaydan"))) ||
-                    ((cat.includes("peinture") || cat.includes("revetement")) && (s.includes("drocolor") || s.includes("sodimac"))) ||
+                    (cat.includes("auto") && (s.includes("socida") || s.includes("rymco") || s.includes("rimco") || s.includes("atc") || s.includes("comafrique"))) ||
+                    (cat.includes("logement") && (s.includes("oribat") || s.includes("inovim") || s.includes("kaydan") || s.includes("sodimac") || s.includes("sodismad"))) ||
+                    ((cat.includes("ciment") || cat.includes("materia") || cat.includes("batiment")) && (s.includes("bernabe") || s.includes("sodimac") || s.includes("sodismad") || s.includes("kaydan"))) ||
+                    ((cat.includes("peinture") || cat.includes("revetement")) && (s.includes("drocolor") || s.includes("sippec"))) ||
                     (cat.includes("electro") && (s.includes("lg") || s.includes("sociam"))) ||
-                    (cat.includes("image") && (s.includes("lg") || s.includes("sociam") || s.includes("comafrique"))) ||
-                    (cat.includes("informatique") && s.includes("comafrique")) ||
-                    (cat.includes("fourniture") && s.includes("librairie")) ||
-                    (cat.includes("mobilier") && (s.includes("inovim") || s.includes("librairie") || s.includes("sodimac"))) ||
-                    (cat.includes("outil") && (s.includes("sodimac") || s.includes("rymco")));
+                    (cat.includes("image") && (s.includes("lg") || s.includes("sociam") || s.includes("comafrique") || s.includes("atc"))) ||
+                    (cat.includes("informatique") && (s.includes("comafrique") || s.includes("atc"))) ||
+                    (cat.includes("fourniture") && (s.includes("librairie") || s.includes("ldf"))) ||
+                    ((cat.includes("mobilier") || cat.includes("interieur")) && (s.includes("technibat") || s.includes("inovim") || s.includes("librairie"))) ||
+                    (cat.includes("outil") && (s.includes("bernabe") || s.includes("sodimac") || s.includes("sodismad") || s.includes("rymco")));
 
                   return (
                     <button

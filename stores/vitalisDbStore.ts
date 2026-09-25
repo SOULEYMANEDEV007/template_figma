@@ -435,83 +435,143 @@ const SEED_AGENCES_AFG: VAgenceAFG[] = [
 const SEED_FOURNISSEURS: VFournisseur[] = [
   {
     id: 'FOUR-LDF-001', code: 'LDF', nom: 'Librairie de France Groupe', raisonSociale: 'Librairie de France Groupe CI',
+    nomDirecteur: 'M. René YÉDIETI',
     email: 'contact@ldfgroupe.ci', emailCommercial: 'commercial@ldfgroupe.ci',
     telephone: '+225 27 21 35 75 00', telephoneCommercial: '+225 07 08 09 10 11',
     adresse: 'Boulevard Valéry Giscard d\'Estaing, Marcory Zone 4', ville: 'Abidjan', quartier: 'Marcory',
-    rccm: 'CI-ABJ-2015-B-12345', secteurActivite: 'Fournitures scolaires et bureautiques',
+    rccm: 'CI-ABJ-2015-B-12345', secteurActivite: 'Éducation, Fournitures scolaires & bureautiques',
     logo: '/images/ldf.png', agreVitalis: true, dateAgrementVitalis: '2023-01-15', statut: 'actif',
+    nombreSouscriptions: 2, montantTotal: 428750,
   },
   {
     id: 'FOUR-DRO-002', code: 'DRO', nom: 'Drocolor', raisonSociale: "Drocolor Côte d'Ivoire SARL",
+    nomDirecteur: 'M. Bernard KOUASSI',
     email: 'info@drocolor.ci', emailCommercial: 'ventes@drocolor.ci',
     telephone: '+225 27 23 45 67 89', telephoneCommercial: '+225 05 06 07 08 09',
     adresse: 'Zone Industrielle de Yopougon', ville: 'Abidjan', quartier: 'Yopougon',
-    rccm: 'CI-ABJ-2018-B-45678', secteurActivite: 'Peinture, revêtements bâtiment & carrosserie, étanchéité',
+    rccm: 'CI-ABJ-2018-B-45678', secteurActivite: 'Peinture bâtiment & carrosserie, revêtements & étanchéité',
     logo: '/images/drocolor_logo.jpg', agreVitalis: true, dateAgrementVitalis: '2023-03-20', statut: 'actif',
+    nombreSouscriptions: 2, montantTotal: 1625000,
   },
   {
-    id: 'FOUR-COM-003', code: 'COMAF', nom: 'COMAFRIQUE', raisonSociale: 'Comafrique Technologies CI',
-    email: 'contact@comafrique.ci', emailCommercial: 'b2b@comafrique.ci',
+    id: 'FOUR-SPE-013', code: 'SIPPEC', nom: 'SIPPEC', raisonSociale: 'Société Industrielle de Produits Plastiques et Chimiques (SIPPEC)',
+    nomDirecteur: 'M. Ali HACHEM',
+    email: 'contact@sippec.ci', emailCommercial: 'commercial@sippec.ci',
+    telephone: '+225 27 23 46 62 20', telephoneCommercial: '+225 07 45 50 55 60',
+    adresse: 'Zone Industrielle de Yopougon', ville: 'Abidjan', quartier: 'Yopougon',
+    rccm: 'CI-ABJ-1998-B-31055', secteurActivite: 'Peinture bâtiment, carrosserie, industrie & plasturgie',
+    logo: '/images/sippec-logo.webp', agreVitalis: true, dateAgrementVitalis: '2023-05-18', statut: 'actif',
+    nombreSouscriptions: 0, montantTotal: 0,
+  },
+  {
+    id: 'FOUR-ATC-003', code: 'ATC', nom: 'ATC Comafrique', raisonSociale: 'ATC Comafrique CI SA',
+    nomDirecteur: 'M. Alain KOFFI',
+    email: 'contact@atccomafrique.ci', emailCommercial: 'b2b@atccomafrique.ci',
     telephone: '+225 27 21 75 80 00', telephoneCommercial: '+225 07 15 20 25 30',
     adresse: 'Boulevard de Marseille, Treichville', ville: 'Abidjan', quartier: 'Treichville',
-    rccm: 'CI-ABJ-2015-B-44332', secteurActivite: 'Technologies, Informatique & Solutions digitales',
-    logo: '/images/logo-comafrique.webp', agreVitalis: true, dateAgrementVitalis: '2023-06-10', statut: 'actif',
+    rccm: 'CI-ABJ-2015-B-44332', secteurActivite: 'Automobile, Véhicules neufs, utilitaires & engins',
+    logo: '/images/atc-comafrique-logo.webp', agreVitalis: true, dateAgrementVitalis: '2023-06-10', statut: 'actif',
+    nombreSouscriptions: 1, montantTotal: 0,
   },
   {
-    id: 'FOUR-INO-004', code: 'INOVIM', nom: 'INOVIM', raisonSociale: 'Groupe INOVIM Immobilier',
-    email: 'contact@inovim-group.com', emailCommercial: 'projets@inovim-group.com',
-    telephone: '+225 27 22 40 85 00', telephoneCommercial: '+225 05 30 40 50 60',
-    adresse: 'Cocody Ambassades, Rue des Jardins', ville: 'Abidjan', quartier: 'Cocody',
-    rccm: 'CI-ABJ-2019-B-88771', secteurActivite: 'Immobilier, Logement & Aménagement',
-    logo: '/images/logo-inovim.jpg', agreVitalis: true, dateAgrementVitalis: '2023-04-15', statut: 'actif',
-  },
-  {
-    id: 'FOUR-KAY-005', code: 'KAYDAN', nom: 'KAYDAN', raisonSociale: 'KAYDAN Groupe',
-    email: 'contact@kaydan.ci', emailCommercial: 'immobilier@kaydan.ci',
-    telephone: '+225 27 22 48 90 00', telephoneCommercial: '+225 07 88 99 00 11',
-    adresse: 'Immeuble Kaydan, Cocody Riviera Golf', ville: 'Abidjan', quartier: 'Cocody',
-    rccm: 'CI-ABJ-2014-B-66554', secteurActivite: 'Promotion immobilière, BTP & Construction',
-    logo: '/images/logo-kaydan.webp', agreVitalis: true, dateAgrementVitalis: '2023-03-12', statut: 'actif',
+    id: 'FOUR-RYM-007', code: 'RYMCO', nom: 'Rimco', raisonSociale: 'RYMCO Côte d\'Ivoire (Rimco Motors)',
+    nomDirecteur: 'M. Rida FAWAZ',
+    email: 'b2b@rymco.ci', emailCommercial: 'commercial@rymco.ci',
+    telephone: '+225 27 21 25 00 00', telephoneCommercial: '+225 05 44 55 66 77',
+    adresse: 'Zone Industrielle de Vridi', ville: 'Abidjan', quartier: 'Treichville',
+    rccm: 'CI-ABJ-2017-B-90123', secteurActivite: 'Automobile, Concessionnaire véhicules, deux-roues & pièces',
+    logo: '/images/logo_rymco.jpg', agreVitalis: true, dateAgrementVitalis: '2023-02-28', statut: 'actif',
+    nombreSouscriptions: 0, montantTotal: 0,
   },
   {
     id: 'FOUR-SCD-006', code: 'SOCIDA', nom: 'SOCIDA', raisonSociale: 'Société de Concessionnaires pour l\'Automobile (SOCIDA)',
+    nomDirecteur: 'M. Olivier MEITÉ',
     email: 'contact@socida.ci', emailCommercial: 'ventes@socida.ci',
     telephone: '+225 27 21 21 40 00', telephoneCommercial: '+225 07 01 02 03 04',
     adresse: 'Boulevard de Marseille, Km 4, Zone 3', ville: 'Abidjan', quartier: 'Treichville',
     rccm: 'CI-ABJ-2010-B-11998', secteurActivite: 'Automobile, Véhicules neufs, Utilitaires & Pièces',
     logo: '/images/logo-socida.jpg', agreVitalis: true, dateAgrementVitalis: '2023-01-18', statut: 'actif',
+    nombreSouscriptions: 0, montantTotal: 0,
   },
   {
-    id: 'FOUR-RYM-007', code: 'RYMCO', nom: 'RYMCO', raisonSociale: 'RYMCO Côte d\'Ivoire',
-    email: 'b2b@rymco.ci', emailCommercial: 'commercial@rymco.ci',
-    telephone: '+225 27 21 25 00 00', telephoneCommercial: '+225 05 44 55 66 77',
-    adresse: 'Zone Industrielle de Vridi', ville: 'Abidjan', quartier: 'Treichville',
-    rccm: 'CI-ABJ-2017-B-90123', secteurActivite: 'Automobile, Deux-roues, Équipements & Matériel',
-    logo: '/images/logo_rymco.jpg', agreVitalis: true, dateAgrementVitalis: '2023-02-28', statut: 'actif',
+    id: 'FOUR-ORI-014', code: 'ORIBAT', nom: 'Oribat', raisonSociale: 'ORIBAT SARL (Organisation Ivoirienne de Bâtiment)',
+    nomDirecteur: 'M. Sidiki SANOGO',
+    email: 'contact@oribat.ci', emailCommercial: 'commercial@oribat.ci',
+    telephone: '+225 27 22 42 57 87', telephoneCommercial: '+225 07 07 43 00 00',
+    adresse: 'Cocody Angré, Carrefour les Oscars', ville: 'Abidjan', quartier: 'Cocody',
+    rccm: 'CI-ABJ-2012-B-45210', secteurActivite: 'Logement & Promotion immobilière (Logements économiques & standing, aménagement foncier)',
+    logo: '/images/oribat-logo.webp', agreVitalis: true, dateAgrementVitalis: '2023-02-14', statut: 'actif',
+    nombreSouscriptions: 0, montantTotal: 0,
   },
   {
-    id: 'FOUR-LG-008', code: 'LG', nom: 'LG', raisonSociale: 'LG Electronics Côte d\'Ivoire',
-    email: 'contact@lg-ci.com', emailCommercial: 'b2b@lg-ci.com',
-    telephone: '+225 27 21 75 00 00', telephoneCommercial: '+225 07 10 20 30 40',
-    adresse: 'Boulevard Valéry Giscard d\'Estaing', ville: 'Abidjan', quartier: 'Marcory',
-    rccm: 'CI-ABJ-2016-B-55443', secteurActivite: 'Électroménager, Climatisation & Électronique',
-    logo: '/images/logo_lg.webp', agreVitalis: true, dateAgrementVitalis: '2023-05-12', statut: 'actif',
+    id: 'FOUR-INO-004', code: 'INOVIM', nom: 'InOovIm', raisonSociale: 'Groupe InOovIm Immobilier',
+    nomDirecteur: 'Mme Sylvie KOUAMÉ',
+    email: 'contact@inovim-group.com', emailCommercial: 'projets@inovim-group.com',
+    telephone: '+225 27 22 40 85 00', telephoneCommercial: '+225 05 30 40 50 60',
+    adresse: 'Cocody Ambassades, Rue des Jardins', ville: 'Abidjan', quartier: 'Cocody',
+    rccm: 'CI-ABJ-2019-B-88771', secteurActivite: 'Logement, Promotion immobilière & Aménagement',
+    logo: '/images/logo-inovim.jpg', agreVitalis: true, dateAgrementVitalis: '2023-04-15', statut: 'actif',
+    nombreSouscriptions: 1, montantTotal: 2500000,
   },
   {
-    id: 'FOUR-SOD-009', code: 'SODIMAC', nom: 'SODIMAC', raisonSociale: 'SODIMAC CI',
-    email: 'contact@sodimac.ci', emailCommercial: 'ventes@sodimac.ci',
+    id: 'FOUR-KAY-005', code: 'KAYDAN', nom: 'Kaydan Group', raisonSociale: 'KAYDAN Groupe SA',
+    nomDirecteur: 'M. Stéphane DIOP',
+    email: 'contact@kaydan.ci', emailCommercial: 'immobilier@kaydan.ci',
+    telephone: '+225 27 22 48 90 00', telephoneCommercial: '+225 07 88 99 00 11',
+    adresse: 'Immeuble Kaydan, Cocody Riviera Golf', ville: 'Abidjan', quartier: 'Cocody',
+    rccm: 'CI-ABJ-2014-B-66554', secteurActivite: 'Logement, Promotion immobilière, BTP & Architecture',
+    logo: '/images/logo-kaydan.webp', agreVitalis: true, dateAgrementVitalis: '2023-03-12', statut: 'actif',
+    nombreSouscriptions: 0, montantTotal: 0,
+  },
+  {
+    id: 'FOUR-BER-011', code: 'BERNABE', nom: 'Bernabé CI', raisonSociale: 'Bernabé Côte d\'Ivoire SA',
+    nomDirecteur: 'M. Patrick THIERRY',
+    email: 'info.ci@bernabeafrique.com', emailCommercial: 'commercial@bernabeafrique.com',
+    telephone: '+225 27 21 35 76 47', telephoneCommercial: '+225 07 00 80 24 15',
+    adresse: 'Boulevard de Marseille, Km 4, Treichville', ville: 'Abidjan', quartier: 'Treichville',
+    rccm: 'CI-ABJ-1960-B-00845', secteurActivite: 'Bâtiment, Matériel de construction, quincaillerie industrielle & outillage',
+    logo: '/images/bernabe-ci-logo2.webp', agreVitalis: true, dateAgrementVitalis: '2023-01-20', statut: 'actif',
+    nombreSouscriptions: 0, montantTotal: 0,
+  },
+  {
+    id: 'FOUR-SOD-009', code: 'SODISMAD', nom: 'SODIS-MAD CI', raisonSociale: 'Société de Distribution de Matériaux Divers en Côte d\'Ivoire',
+    nomDirecteur: 'M. Cissé SOULEYMANE',
+    email: 'contact@sodismadci.com', emailCommercial: 'ventes@sodismadci.com',
     telephone: '+225 27 21 24 50 00', telephoneCommercial: '+225 05 11 22 33 44',
-    adresse: 'Boulevard de Marseille, Zone 3', ville: 'Abidjan', quartier: 'Treichville',
-    rccm: 'CI-ABJ-2014-B-88776', secteurActivite: 'Matériaux de construction, Cimenterie & Aménagement',
-    logo: '/images/logo_sodimac_ci.jpg', agreVitalis: true, dateAgrementVitalis: '2023-04-18', statut: 'actif',
+    adresse: 'Zone Industrielle de Yopougon', ville: 'Abidjan', quartier: 'Yopougon',
+    rccm: 'CI-ABJ-2014-B-88776', secteurActivite: 'Bâtiment, Matériaux de construction, gros œuvre & matériaux divers',
+    logo: '/images/sodis-mac-logo.webp', agreVitalis: true, dateAgrementVitalis: '2023-04-18', statut: 'actif',
+    nombreSouscriptions: 0, montantTotal: 0,
+  },
+  {
+    id: 'FOUR-TNB-012', code: 'TECHNIBAT', nom: 'Technibat', raisonSociale: 'Technibat Côte d\'Ivoire (Yeshi Group)',
+    nomDirecteur: 'M. Youssef HACHEM',
+    email: 'contact@technibat.ci', emailCommercial: 'projets@technibat.ci',
+    telephone: '+225 27 21 21 39 39', telephoneCommercial: '+225 07 99 88 77 66',
+    adresse: 'Boulevard de Marseille, Km 4, Treichville', ville: 'Abidjan', quartier: 'Treichville',
+    rccm: 'CI-ABJ-2013-B-51204', secteurActivite: 'Aménagement d\'intérieur, mobilier, quincaillerie d\'ameublement & sanitaire',
+    logo: '/images/technibat-logo.webp', agreVitalis: true, dateAgrementVitalis: '2023-03-25', statut: 'actif',
+    nombreSouscriptions: 0, montantTotal: 0,
   },
   {
     id: 'FOUR-SOC-010', code: 'SOCIAM', nom: 'SOCIAM', raisonSociale: 'Société Ivoirienne d\'Appareillage Ménager (SOCIAM)',
+    nomDirecteur: 'M. Nabil KHALIL',
     email: 'contact@sociam.ci', emailCommercial: 'corporate@sociam.ci',
     telephone: '+225 27 21 28 88 88', telephoneCommercial: '+225 07 99 88 77 66',
     adresse: 'Zone Industrielle de Koumassi', ville: 'Abidjan', quartier: 'Koumassi',
-    rccm: 'CI-ABJ-2011-B-33221', secteurActivite: 'Électroménager, Image & Son, Froid',
+    rccm: 'CI-ABJ-2011-B-33221', secteurActivite: 'Électroménager, Image & Son, Téléviseurs, Froid',
     logo: '/images/sociam_logo.webp', agreVitalis: true, dateAgrementVitalis: '2023-01-22', statut: 'actif',
+    nombreSouscriptions: 0, montantTotal: 0,
+  },
+  {
+    id: 'FOUR-LG-008', code: 'LG', nom: 'LG', raisonSociale: 'LG Electronics Côte d\'Ivoire',
+    nomDirecteur: 'M. Jin-Woo PARK',
+    email: 'contact@lg-ci.com', emailCommercial: 'b2b@lg-ci.com',
+    telephone: '+225 27 21 75 00 00', telephoneCommercial: '+225 07 10 20 30 40',
+    adresse: 'Boulevard Valéry Giscard d\'Estaing', ville: 'Abidjan', quartier: 'Marcory',
+    rccm: 'CI-ABJ-2016-B-55443', secteurActivite: 'Électroménager haut de gamme, Climatisation & Électronique',
+    logo: '/images/logo_lg.webp', agreVitalis: true, dateAgrementVitalis: '2023-05-12', statut: 'actif',
+    nombreSouscriptions: 0, montantTotal: 0,
   },
 ];
 
@@ -919,6 +979,12 @@ export const useVitalisDb = create<VitalisDbState>()(
         if (state._seeded) {
           if (!state.fournisseurs || state.fournisseurs.length === 0) {
             set({ fournisseurs: SEED_FOURNISSEURS });
+          } else {
+            const currentIds = new Set(state.fournisseurs.map(f => f.id));
+            const missing = SEED_FOURNISSEURS.filter(sf => !currentIds.has(sf.id));
+            if (missing.length > 0) {
+              set({ fournisseurs: [...state.fournisseurs, ...missing] });
+            }
           }
           if (!state.users || state.users.length === 0) {
             set({ users: SEED_USERS });
@@ -1647,16 +1713,40 @@ export const useVitalisDb = create<VitalisDbState>()(
       onRehydrateStorage: () => (state) => {
         if (state) {
           state.reconcilierMontants?.();
-          // Migration automatique des anciens chemins de logo Drocolor (.jfif -> .jpg)
+          // Synchronisation automatique de tous les fournisseurs officiels et de leurs logos
           if (state.fournisseurs && Array.isArray(state.fournisseurs)) {
-            state.fournisseurs = state.fournisseurs.map((f: any) => {
-              if (f.id === 'FOUR-DRO-002' || f.nom?.toLowerCase().includes('drocolor')) {
-                if (!f.logo || f.logo.includes('.jfif')) {
-                  return { ...f, logo: '/images/drocolor_logo.jpg' };
-                }
+            // Dédoublonnage préalable par ID
+            const seenIds = new Set<string>();
+            const deduplicated = state.fournisseurs.filter((f: any) => {
+              if (!f || !f.id || seenIds.has(f.id)) return false;
+              seenIds.add(f.id);
+              return true;
+            });
+
+            // Mise à jour des informations et logos officiels
+            const updated = deduplicated.map((f: any) => {
+              const seedMatch = SEED_FOURNISSEURS.find(
+                sf => sf.id === f.id || sf.code?.toUpperCase() === f.code?.toUpperCase() || sf.nom?.toLowerCase() === f.nom?.toLowerCase()
+              );
+              if (seedMatch) {
+                return {
+                  ...seedMatch,
+                  ...f,
+                  logo: seedMatch.logo, // Assure le chemin de logo officiel exact
+                  secteurActivite: seedMatch.secteurActivite || f.secteurActivite,
+                  statut: f.statut || seedMatch.statut,
+                };
               }
               return f;
             });
+
+            // Ajout des fournisseurs officiels manquants
+            const currentIds = new Set(updated.map((f: any) => f.id));
+            const missingFromSeed = SEED_FOURNISSEURS.filter(sf => !currentIds.has(sf.id));
+
+            state.fournisseurs = [...updated, ...missingFromSeed];
+          } else {
+            state.fournisseurs = SEED_FOURNISSEURS;
           }
 
           // Migration automatique des articles de devis sans référence
