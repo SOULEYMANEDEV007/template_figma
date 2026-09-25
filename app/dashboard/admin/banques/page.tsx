@@ -3,9 +3,10 @@
 
 import { useState, useMemo } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   Building2, Edit, Plus, Search, Trash2, MapPin, Phone, Mail,
-  User, ShieldCheck, CheckCircle2, TrendingUp, X, FileText, CreditCard
+  User, ShieldCheck, CheckCircle2, TrendingUp, X, FileText, CreditCard, Eye
 } from "lucide-react";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
 import type { VAgenceAFG } from "@/stores/vitalisDbStore";
@@ -285,12 +286,22 @@ export default function AdminBanquesPage() {
                   {/* En-tête agence */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-11 h-11 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center font-bold text-blue-700 text-sm flex-shrink-0">
+                      <Link
+                        href={`/dashboard/admin/banques/${agence.id}`}
+                        className="w-11 h-11 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center font-bold text-blue-700 text-sm flex-shrink-0 hover:bg-blue-600 hover:text-white transition-colors"
+                        title={`Voir détails de ${agence.nom}`}
+                      >
                         {agence.code?.replace("AFG-", "") || "AFG"}
-                      </div>
+                      </Link>
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <p className="text-sm font-bold text-gray-900 truncate">{agence.nom}</p>
+                          <Link
+                            href={`/dashboard/admin/banques/${agence.id}`}
+                            className="text-sm font-bold text-gray-900 hover:text-blue-600 transition-colors truncate"
+                            title={`Voir détails de ${agence.nom}`}
+                          >
+                            {agence.nom}
+                          </Link>
                         </div>
                         <p className="text-xs text-blue-600 font-mono font-medium">{agence.code}</p>
                       </div>
@@ -346,24 +357,36 @@ export default function AdminBanquesPage() {
                   </div>
                 </div>
 
-                {/* Boutons d'action (réservés exclusivement au profil admin) */}
-                {user?.role === "admin" && (
-                  <div className="px-5 py-3 bg-gray-50/50 border-t border-gray-100 flex items-center gap-2">
-                    <button
-                      onClick={() => openEdit(agence)}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-colors shadow-2xs"
-                    >
-                      <Edit className="w-3.5 h-3.5 text-gray-500" /> Modifier
-                    </button>
-                    <button
-                      onClick={() => setShowConfirmDelete(agence)}
-                      className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors border border-transparent hover:border-red-100"
-                      title="Supprimer l'agence"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                )}
+                {/* Boutons d'action : Accessible à l'Admin et au Superviseur (Owner) avec l'icône Œil */}
+                <div className="px-5 py-3 bg-gray-50/50 border-t border-gray-100 flex items-center gap-2">
+                  <Link
+                    href={`/dashboard/admin/banques/${agence.id}`}
+                    className="flex-1 flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold rounded-lg border border-blue-200 bg-blue-50/80 text-blue-700 hover:bg-blue-600 hover:text-white transition-all shadow-2xs group"
+                    title="Consulter les détails complets de l'agence et ses dossiers"
+                  >
+                    <Eye className="w-3.5 h-3.5 text-blue-600 group-hover:text-white transition-colors" />
+                    <span>Détails & Dossiers</span>
+                  </Link>
+
+                  {user?.role === "admin" && (
+                    <>
+                      <button
+                        onClick={() => openEdit(agence)}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition-colors border border-gray-200 bg-white"
+                        title="Modifier l'agence"
+                      >
+                        <Edit className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => setShowConfirmDelete(agence)}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors border border-transparent hover:border-red-100"
+                        title="Supprimer l'agence"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             );
           })}
