@@ -44,7 +44,9 @@ export const WEB_ROUTES = {
     // Admin routes
     ADMIN: {
         FOURNISSEURS: "/dashboard/admin/fournisseurs",
+        FOURNISSEUR_DETAIL: (id: string) => `/dashboard/admin/fournisseurs/${id}`,
         BANQUES: "/dashboard/admin/banques",
+        BANQUE_DETAIL: (id: string) => `/dashboard/admin/banques/${id}`,
         UTILISATEURS: "/dashboard/admin/utilisateurs",
     },
 

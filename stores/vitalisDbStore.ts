@@ -628,11 +628,11 @@ const DEMO_SOUSCRIPTIONS: VSouscription[] = [
     banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-001', agenceNom: 'Agence Plateau',
     fournisseurs: [
       { fournisseurId: 'FOUR-LDF-001', fournisseurNom: 'Librairie de France Groupe', devisId: 'DEV-003', statut: 'devis_cree' },
-      { fournisseurId: 'FOUR-COM-003', fournisseurNom: 'COMAFRIQUE', statut: 'en_attente' },
+      { fournisseurId: 'FOUR-ATC-003', fournisseurNom: 'ATC Comafrique', statut: 'en_attente' },
     ],
     montantTotal: 1200000, duree: 36, statut: 'en_analyse_bancaire',
     dateCreation: twoDaysAgo, dateMiseAJour: yesterday,
-    observations: 'Commande multi-fournisseurs : fournitures + matériel informatique.',
+    observations: 'Commande multi-fournisseurs : fournitures + équipements automobile.',
   },
   {
     id: 'SOUS-004', reference: 'VF-2026-004', typeSouscripteur: 'morale',
@@ -741,7 +741,7 @@ const DEMO_DOSSIERS: VDossier[] = [
   {
     id: 'DOS-003', reference: 'DOS-2026-003', souscriptionId: 'SOUS-003', souscriptionRef: 'VF-2026-003',
     souscripteurId: 'SCP-003', souscripteurNom: 'KONÉ', souscripteurPrenom: 'Ibrahim', typeSouscripteur: 'physique',
-    fournisseursNoms: 'LDF Groupe + COMAFRIQUE', devisIds: ['DEV-003'],
+    fournisseursNoms: 'LDF Groupe + ATC Comafrique', devisIds: ['DEV-003'],
     banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-001',
     montantTotal: 1200000, statut: 'depose_banque',
     dateCreation: today, dateReception: today, dateMiseAJour: today,
@@ -1715,9 +1715,18 @@ export const useVitalisDb = create<VitalisDbState>()(
           state.reconcilierMontants?.();
           // Synchronisation automatique de tous les fournisseurs officiels et de leurs logos
           if (state.fournisseurs && Array.isArray(state.fournisseurs)) {
+            // 1. Purger définitivement l'ancien Comafrique informatique pour ne conserver que ATC Comafrique (Automobile)
+            const isOldComafrique = (f: any) =>
+              f.id === 'FOUR-COM-003' ||
+              f.code?.toUpperCase() === 'COMAF' ||
+              (f.nom?.toLowerCase() === 'comafrique' && f.secteurActivite?.toLowerCase().includes('technolog')) ||
+              (f.nom?.toLowerCase() === 'comafrique' && f.secteurActivite?.toLowerCase().includes('informat'));
+
+            const withoutOldComafrique = state.fournisseurs.filter((f: any) => !isOldComafrique(f));
+
             // Dédoublonnage préalable par ID
             const seenIds = new Set<string>();
-            const deduplicated = state.fournisseurs.filter((f: any) => {
+            const deduplicated = withoutOldComafrique.filter((f: any) => {
               if (!f || !f.id || seenIds.has(f.id)) return false;
               seenIds.add(f.id);
               return true;

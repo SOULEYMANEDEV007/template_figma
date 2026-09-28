@@ -5,8 +5,8 @@ import { ConfirmModal, LDFModal } from "@/components/ui/ldf-modal";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
 import type { VFournisseur } from "@/stores/vitalisDbStore";
 import { useLDFAuthStore } from "@/stores/ldfAuth";
-import { getPartnerLogo } from "@/lib/constants";
-import { Building2, CheckCircle, Edit, PauseCircle, Plus, Search, ShieldCheck, Trash2, XCircle } from "lucide-react";
+import Link from "next/link";
+import { Building2, CheckCircle, Edit, Eye, PauseCircle, Plus, Search, ShieldCheck, Trash2, XCircle } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -35,6 +35,8 @@ const EMPTY_FORM = {
 export default function AdminFournisseursPage() {
   const { user } = useLDFAuthStore();
   const isOwner = user?.role === "owner";
+  const isAdmin = user?.role === "admin";
+  const isPrivileged = isAdmin || isOwner;
   const {
     fournisseurs = [],
     souscriptions = [],
@@ -89,6 +91,14 @@ export default function AdminFournisseursPage() {
 
   const filtered = useMemo(() =>
     fournisseurs.filter(f => {
+      // Exclure l'ancien Comafrique IT (garder uniquement ATC Comafrique automobile)
+      if (
+        f.id === "FOUR-COM-003" ||
+        f.code === "COMAF" ||
+        (f.nom?.toLowerCase() === "comafrique" && !f.nom?.toLowerCase().includes("atc"))
+      ) {
+        return false;
+      }
       const q = search.toLowerCase();
       const matchSearch =
         !q ||
@@ -236,13 +246,13 @@ export default function AdminFournisseursPage() {
                 <th className="text-left text-xs font-semibold text-gray-500 px-4 py-3 hidden md:table-cell">Responsable / RCCM</th>
                 <th className="text-left text-xs font-semibold text-gray-500 px-4 py-3 hidden lg:table-cell">Souscriptions</th>
                 <th className="text-left text-xs font-semibold text-gray-500 px-4 py-3">Statut Agrément</th>
-                {user?.role === "admin" && <th className="text-left text-xs font-semibold text-gray-500 px-4 py-3">Actions</th>}
+                {isPrivileged && <th className="text-left text-xs font-semibold text-gray-500 px-4 py-3">Actions</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={user?.role === "admin" ? 6 : 5} className="text-center py-12 text-gray-400 text-sm">
+                  <td colSpan={isPrivileged ? 6 : 5} className="text-center py-12 text-gray-400 text-sm">
                     Aucun fournisseur trouvé
                   </td>
                 </tr>
@@ -254,8 +264,12 @@ export default function AdminFournisseursPage() {
                   <tr key={f.id} className="hover:bg-orange-50/30 transition-colors">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        {/* Logo officiel du fournisseur */}
-                        <div className="w-10 h-10 rounded-xl bg-white border border-gray-200 p-1 flex items-center justify-center flex-shrink-0 shadow-xs overflow-hidden">
+                        {/* Logo officiel du fournisseur avec lien vers détail */}
+                        <Link
+                          href={`/dashboard/admin/fournisseurs/${f.id}`}
+                          className="w-10 h-10 rounded-xl bg-white border border-gray-200 p-1 flex items-center justify-center flex-shrink-0 shadow-xs overflow-hidden hover:border-orange-400 transition-colors"
+                          title={`Voir détails de ${f.nom}`}
+                        >
                           {logoSrc ? (
                             <img
                               src={logoSrc}
@@ -268,10 +282,16 @@ export default function AdminFournisseursPage() {
                           ) : (
                             <Building2 className="w-5 h-5 text-amber-600" />
                           )}
-                        </div>
+                        </Link>
                         <div className="min-w-0">
                           <div className="flex items-center gap-2">
-                            <p className="text-sm font-semibold text-gray-900 truncate">{f.nom}</p>
+                            <Link
+                              href={`/dashboard/admin/fournisseurs/${f.id}`}
+                              className="text-sm font-semibold text-gray-900 hover:text-orange-600 transition-colors truncate"
+                              title={`Voir détails de ${f.nom}`}
+                            >
+                              {f.nom}
+                            </Link>
                             <span className="text-[10px] font-mono font-medium text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded flex-shrink-0">
                               {f.code}
                             </span>
@@ -301,59 +321,72 @@ export default function AdminFournisseursPage() {
                     <td className="px-4 py-3">
                       <StatusBadge statut={f.statut} size="sm" />
                     </td>
-                    {user?.role === "admin" && (
+                    {isPrivileged && (
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1">
-                          <button onClick={() => openEdit(f)} title="Modifier"
-                            className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                            <Edit className="w-3.5 h-3.5" />
-                          </button>
-                          {/* Actions de workflow d'agrément */}
-                          {f.statut === "prospect" && (
-                            <button onClick={() => handleChangeStatut(f, "en_cours_agrement")} title="Lancer l'agrément"
-                              className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-amber-50 hover:text-amber-600 transition-colors">
-                              <ShieldCheck className="w-3.5 h-3.5" />
-                            </button>
+                          {/* Bouton Voir Détails (Œil) - Visible pour Admin et Superviseur (Owner) */}
+                          <Link
+                            href={`/dashboard/admin/fournisseurs/${f.id}`}
+                            title="Voir les détails complets (souscriptions, devis, paiements)"
+                            className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-500 hover:bg-orange-50 hover:text-orange-600 transition-colors border border-gray-200 hover:border-orange-300 shadow-2xs"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                          </Link>
+
+                          {isAdmin && (
+                            <>
+                              <button onClick={() => openEdit(f)} title="Modifier"
+                                className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                <Edit className="w-3.5 h-3.5" />
+                              </button>
+                              {/* Actions de workflow d'agrément */}
+                              {f.statut === "prospect" && (
+                                <button onClick={() => handleChangeStatut(f, "en_cours_agrement")} title="Lancer l'agrément"
+                                  className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                  <ShieldCheck className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                              {f.statut === "en_cours_agrement" && (
+                                <button onClick={() => handleChangeStatut(f, "agree")} title="Accorder l'agrément"
+                                  className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                  <CheckCircle className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                              {f.statut === "agree" && (
+                                <button onClick={() => handleChangeStatut(f, "actif")} title="Activer"
+                                  className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-emerald-50 hover:text-emerald-600 transition-colors">
+                                  <CheckCircle className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                              {f.statut === "actif" && (
+                                <button onClick={() => setShowConfirmSuspend(f)} title="Suspendre"
+                                  className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-yellow-50 hover:text-yellow-600 transition-colors">
+                                  <PauseCircle className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                              {f.statut === "suspendu" && (
+                                <button onClick={() => handleChangeStatut(f, "actif")} title="Réactiver"
+                                  className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-emerald-50 hover:text-emerald-600 transition-colors">
+                                  <CheckCircle className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                              {f.statut !== "expire" && (
+                                <button onClick={() => handleChangeStatut(f, "expire")} title="Marquer comme expiré"
+                                  className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors">
+                                  <XCircle className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                              <button onClick={() => {
+                                if (confirm(`Voulez-vous supprimer le fournisseur ${f.nom} ?`)) {
+                                  deleteFournisseur(f.id);
+                                  toast.success(`Fournisseur ${f.nom} supprimé`);
+                                }
+                              }} title="Supprimer définitivement"
+                                className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors">
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </>
                           )}
-                          {f.statut === "en_cours_agrement" && (
-                            <button onClick={() => handleChangeStatut(f, "agree")} title="Accorder l'agrément"
-                              className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                              <CheckCircle className="w-3.5 h-3.5" />
-                            </button>
-                          )}
-                          {f.statut === "agree" && (
-                            <button onClick={() => handleChangeStatut(f, "actif")} title="Activer"
-                              className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-emerald-50 hover:text-emerald-600 transition-colors">
-                              <CheckCircle className="w-3.5 h-3.5" />
-                            </button>
-                          )}
-                          {f.statut === "actif" && (
-                            <button onClick={() => setShowConfirmSuspend(f)} title="Suspendre"
-                              className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-yellow-50 hover:text-yellow-600 transition-colors">
-                              <PauseCircle className="w-3.5 h-3.5" />
-                            </button>
-                          )}
-                          {f.statut === "suspendu" && (
-                            <button onClick={() => handleChangeStatut(f, "actif")} title="Réactiver"
-                              className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-emerald-50 hover:text-emerald-600 transition-colors">
-                              <CheckCircle className="w-3.5 h-3.5" />
-                            </button>
-                          )}
-                          {f.statut !== "expire" && (
-                            <button onClick={() => handleChangeStatut(f, "expire")} title="Marquer comme expiré"
-                              className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors">
-                              <XCircle className="w-3.5 h-3.5" />
-                            </button>
-                          )}
-                          <button onClick={() => {
-                            if (confirm(`Voulez-vous supprimer le fournisseur ${f.nom} ?`)) {
-                              deleteFournisseur(f.id);
-                              toast.success(`Fournisseur ${f.nom} supprimé`);
-                            }
-                          }} title="Supprimer définitivement"
-                            className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors">
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
                         </div>
                       </td>
                     )}
