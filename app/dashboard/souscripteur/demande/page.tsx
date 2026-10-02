@@ -3,7 +3,7 @@
 
 import { emitInAppNotification, useLDFAuthStore } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
-import { OFFICIAL_FOURNISSEURS, getPartnerLogo, CATEGORIES_BESOIN, NATURES_BESOIN } from "@/lib/constants";
+import { OFFICIAL_FOURNISSEURS, getPartnerLogo, CATEGORIES_BESOIN, NATURES_BESOIN, getCategoriesParNature, getFournisseursRecommandesParBesoin } from "@/lib/constants";
 import { LISTE_REGIONS_CI, getVillesParRegion, getCommunesParVille } from "@/lib/constants/geography";
 import {
   ArrowLeft, ArrowRight, Building2, Check, FileText, Home, MapPin,
@@ -97,6 +97,17 @@ export default function NouvelleDemandeSouscripteur() {
   const [montantEstime, setMontantEstime] = useState<string>("");
   const [agenceAfgId, setAgenceAfgId] = useState("");
   const [produitRecherche, setProduitRecherche] = useState("");
+
+  // Catégories de produit strictement filtrées selon la Nature du besoin choisie
+  const categoriesDisponibles = useMemo(() => {
+    return getCategoriesParNature(natureBesoin);
+  }, [natureBesoin]);
+
+  const handleNatureChange = (newNature: string) => {
+    setNatureBesoin(newNature);
+    // Réinitialise la catégorie sélectionnée pour garantir une cohérence stricte
+    setCategorie("");
+  };
 
   // Séparation stricte : Région - Ville - Commune (avec filtrage dynamique)
   const [region, setRegion] = useState("District d'Abidjan");
@@ -340,8 +351,13 @@ export default function NouvelleDemandeSouscripteur() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1.5">Nature du besoin *</label>
-                  <select className={sel} value={natureBesoin} onChange={e => setNatureBesoin(e.target.value)} required>
-                    <option value="">Sélectionnez la nature du besoin</option>
+                  <select
+                    className={sel}
+                    value={natureBesoin}
+                    onChange={e => handleNatureChange(e.target.value)}
+                    required
+                  >
+                    <option value="">Sélectionnez la nature du besoin...</option>
                     {NATURES_BESOIN.map(grp => (
                       <optgroup key={grp.groupe} label={grp.groupe}>
                         {grp.options.map(opt => (
@@ -355,19 +371,37 @@ export default function NouvelleDemandeSouscripteur() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">Catégorie de produit *</label>
-                  <select className={sel} value={categorie} onChange={e => setCategorie(e.target.value)} required>
-                    <option value="">Sélectionnez une catégorie de produit</option>
-                    {CATEGORIES_BESOIN.map(grp => (
-                      <optgroup key={grp.groupe} label={grp.groupe}>
-                        {grp.options.map(opt => (
-                          <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </optgroup>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-semibold text-gray-700">Catégorie de produit *</label>
+                    {natureBesoin && categoriesDisponibles.length > 0 && (
+                      <span className="text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                        {categoriesDisponibles.length} catégorie{categoriesDisponibles.length > 1 ? "s" : ""} disponible{categoriesDisponibles.length > 1 ? "s" : ""}
+                      </span>
+                    )}
+                  </div>
+                  <select
+                    className={`${sel} ${!natureBesoin ? "bg-gray-50 text-gray-400 cursor-not-allowed border-dashed" : ""}`}
+                    value={categorie}
+                    onChange={e => setCategorie(e.target.value)}
+                    disabled={!natureBesoin}
+                    required
+                  >
+                    <option value="">
+                      {!natureBesoin
+                        ? "Veuillez d'abord sélectionner une nature de besoin"
+                        : "Sélectionnez la catégorie de produit correspondante..."}
+                    </option>
+                    {categoriesDisponibles.map(cat => (
+                      <option key={cat.value} value={cat.value}>
+                        {cat.label}
+                      </option>
                     ))}
                   </select>
+                  {!natureBesoin ? (
+                    <p className="text-[11px] text-amber-700 mt-1 flex items-center gap-1 font-medium">
+                      <span>💡</span> Choisissez d'abord la nature du besoin ci-contre pour afficher les catégories correspondantes.
+                    </p>
+                  ) : null}
                 </div>
 
                 <div>
@@ -668,26 +702,19 @@ export default function NouvelleDemandeSouscripteur() {
                 </p>
               </div>
 
-              {/* Grille des 10 fournisseurs agréés */}
+              {/* Grille des fournisseurs agréés */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
                 {filteredFournisseurs.map(f => {
                   const isSelected = selectedFournisseurs.includes(f.id);
                   const logoSrc = f.logo || getPartnerLogo(f.nom, f.id);
 
-                  // Logique de recommandation par catégorie
-                  const cat = (categorie || "").toLowerCase();
-                  const s = (f.nom || "").toLowerCase();
-                  const isRecommended =
-                    (cat.includes("auto") && (s.includes("socida") || s.includes("rymco") || s.includes("rimco") || s.includes("atc") || s.includes("comafrique"))) ||
-                    (cat.includes("logement") && (s.includes("oribat") || s.includes("inovim") || s.includes("kaydan") || s.includes("sodimac") || s.includes("sodismad"))) ||
-                    ((cat.includes("ciment") || cat.includes("materia") || cat.includes("batiment")) && (s.includes("bernabe") || s.includes("sodimac") || s.includes("sodismad") || s.includes("kaydan"))) ||
-                    ((cat.includes("peinture") || cat.includes("revetement")) && (s.includes("drocolor") || s.includes("sippec"))) ||
-                    (cat.includes("electro") && (s.includes("lg") || s.includes("sociam"))) ||
-                    (cat.includes("image") && (s.includes("lg") || s.includes("sociam") || s.includes("comafrique") || s.includes("atc"))) ||
-                    (cat.includes("informatique") && (s.includes("comafrique") || s.includes("atc"))) ||
-                    (cat.includes("fourniture") && (s.includes("librairie") || s.includes("ldf"))) ||
-                    ((cat.includes("mobilier") || cat.includes("interieur")) && (s.includes("technibat") || s.includes("inovim") || s.includes("librairie"))) ||
-                    (cat.includes("outil") && (s.includes("bernabe") || s.includes("sodimac") || s.includes("sodismad") || s.includes("rymco")));
+                  // Recommandation intelligente basée sur la nature et la catégorie sélectionnées
+                  const recoCodes = getFournisseursRecommandesParBesoin(natureBesoin, categorie);
+                  const fCode = (f.code || "").toUpperCase();
+                  const fNom = (f.nom || "").toLowerCase();
+                  const isRecommended = recoCodes.length > 0
+                    ? recoCodes.some(c => fCode.includes(c.toUpperCase()) || fNom.includes(c.toLowerCase()))
+                    : false;
 
                   return (
                     <button
