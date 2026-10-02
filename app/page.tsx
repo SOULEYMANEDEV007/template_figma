@@ -110,12 +110,12 @@ export default function RootPage() {
 
       {/* ─── Textes et Partenaire Financier ─── */}
       <div className="absolute bottom-12 text-center z-10 flex flex-col items-center">
-        <h1 className="text-4xl font-black text-white tracking-[0.15em] uppercase mb-3 drop-shadow-lg">
+        {/*<h1 className="text-4xl font-black text-white tracking-[0.15em] uppercase mb-3 drop-shadow-lg">
           ViFlo
-        </h1>
-        <p className="text-orange-200/80 font-medium text-sm tracking-wide max-w-sm mx-auto mb-8">
+        </h1>*/}
+        {/*<p className="text-orange-200/80 font-medium text-sm tracking-wide max-w-sm mx-auto mb-8">
           Simplifier le financement, fluidifier les achats
-        </p>
+        </p>*/}
 
         {/* Partenaire Bancaire */}
         <div className="flex items-center gap-4 bg-white/95 backdrop-blur-md px-6 py-3 rounded-2xl border border-white/10">
@@ -133,12 +133,12 @@ export default function RootPage() {
             width={80} height={30}
             className="object-contain opacity-90 mix-blend-multiply"
           />
-          <Image
+          {/*Image
             src={IMAGES.logos.afgBank}
             alt="AFG Bank"
             width={80} height={30}
             className="object-contain opacity-90 mix-blend-multiply"
-          />
+          />*/}
         </div>
 
         {/* Indicateur de chargement stylisé */}
@@ -148,6 +148,6 @@ export default function RootPage() {
           <div className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" style={{ animationDelay: "400ms" }} />
         </div>
       </div>
-    </div>
+    </div >
   );
 }

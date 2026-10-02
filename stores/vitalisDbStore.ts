@@ -480,7 +480,7 @@ const SEED_FOURNISSEURS: VFournisseur[] = [
     telephone: '+225 27 21 25 00 00', telephoneCommercial: '+225 05 44 55 66 77',
     adresse: 'Zone Industrielle de Vridi', ville: 'Abidjan', quartier: 'Treichville',
     rccm: 'CI-ABJ-2017-B-90123', secteurActivite: 'Automobile, Concessionnaire véhicules, deux-roues & pièces',
-    logo: '/images/logo_rymco.jpg', agreVitalis: true, dateAgrementVitalis: '2023-02-28', statut: 'actif',
+    logo: '/images/rimco-motor-logo.webp', agreVitalis: true, dateAgrementVitalis: '2023-02-28', statut: 'actif',
     nombreSouscriptions: 0, montantTotal: 0,
   },
   {
@@ -550,7 +550,7 @@ const SEED_FOURNISSEURS: VFournisseur[] = [
     telephone: '+225 27 21 21 39 39', telephoneCommercial: '+225 07 99 88 77 66',
     adresse: 'Boulevard de Marseille, Km 4, Treichville', ville: 'Abidjan', quartier: 'Treichville',
     rccm: 'CI-ABJ-2013-B-51204', secteurActivite: 'Aménagement d\'intérieur, mobilier, quincaillerie d\'ameublement & sanitaire',
-    logo: '/images/technibat-logo.webp', agreVitalis: true, dateAgrementVitalis: '2023-03-25', statut: 'actif',
+    logo: '/images/technibat-logo.png', agreVitalis: true, dateAgrementVitalis: '2023-03-25', statut: 'actif',
     nombreSouscriptions: 0, montantTotal: 0,
   },
   {
