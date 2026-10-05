@@ -5,6 +5,7 @@ import { emitInAppNotification, useLDFAuthStore } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
 import { OFFICIAL_FOURNISSEURS, getPartnerLogo, CATEGORIES_BESOIN, NATURES_BESOIN, getCategoriesParNature, getFournisseursRecommandesParBesoin } from "@/lib/constants";
 import { LISTE_REGIONS_CI, getVillesParRegion, getCommunesParVille } from "@/lib/constants/geography";
+import { FournisseursMultiSelect } from "@/components/souscription/FournisseursMultiSelect";
 import {
   ArrowLeft, ArrowRight, Building2, Check, FileText, Home, MapPin,
   Package, Send, Loader2, Store, Truck, UserCheck, PhoneCall
@@ -541,13 +542,14 @@ export default function NouvelleDemandeSouscripteur() {
                       type="button"
                       onClick={() => setModeLivraison("point_relais")}
                       className={`p-3.5 rounded-xl border text-left flex items-start gap-3 transition-all cursor-pointer ${modeLivraison === "point_relais"
-                          ? "border-orange-500 bg-orange-50/70 shadow-xs ring-1 ring-orange-400/40"
-                          : "border-gray-200 hover:border-orange-200 bg-white"
+                        ? "border-orange-500 bg-orange-50/70 shadow-xs ring-1 ring-orange-400/40"
+                        : "border-gray-200 hover:border-orange-200 bg-white"
                         }`}
                     >
                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${modeLivraison === "point_relais" ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-500"
                         }`}>
                         <Store className="w-4 h-4" />
+
                       </div>
                       <div>
                         <p className="text-xs font-bold text-gray-900">Point Relais Fournisseurs Agréés</p>
@@ -557,7 +559,9 @@ export default function NouvelleDemandeSouscripteur() {
 
                     {/*<button
                       type="button"
+                      disabled={true}
                       onClick={() => setModeLivraison("domicile")}
+
                       className={`p-3.5 rounded-xl border text-left flex items-start gap-3 transition-all cursor-pointer ${
                         modeLivraison === "domicile"
                           ? "border-orange-500 bg-orange-50/70 shadow-xs ring-1 ring-orange-400/40"
@@ -688,89 +692,20 @@ export default function NouvelleDemandeSouscripteur() {
         {step === 2 && (
           <div className="space-y-6 slide-in">
 
-            {/* 2.1 Sélection des fournisseurs agréés */}
+            {/* 2.1 Sélection des fournisseurs agréés via Select à choix multiple */}
             <SectionCard
               title="Sélection des fournisseurs agréés Vitalis"
               icon={Building2}
               badge={`${selectedFournisseurs.length} sélectionné${selectedFournisseurs.length > 1 ? "s" : ""}`}
             >
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
-                <p className="text-xs text-gray-600 leading-relaxed">
-                  Cochez le ou les partenaires auprès desquels vous souhaitez solliciter un devis chiffré (1 devis établi par fournisseur sélectionné) :
-                </p>
-              </div>
-
-              {/* Grille des fournisseurs agréés */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
-                {filteredFournisseurs.map(f => {
-                  const isSelected = selectedFournisseurs.includes(f.id);
-                  const logoSrc = f.logo || getPartnerLogo(f.nom, f.id);
-
-                  // Recommandation intelligente basée sur la nature et la catégorie sélectionnées
-                  const recoCodes = getFournisseursRecommandesParBesoin(natureBesoin, categorie);
-                  const fCode = (f.code || "").toUpperCase();
-                  const fNom = (f.nom || "").toLowerCase();
-                  const isRecommended = recoCodes.length > 0
-                    ? recoCodes.some(c => fCode.includes(c.toUpperCase()) || fNom.includes(c.toLowerCase()))
-                    : false;
-
-                  return (
-                    <button
-                      key={f.id}
-                      type="button"
-                      onClick={() => toggleFournisseur(f.id)}
-                      className={`p-4 rounded-xl border-2 text-left transition-all group relative overflow-hidden flex items-start gap-3.5
-                        ${isSelected
-                          ? "border-[#ff6b35] bg-orange-50/70 shadow-sm ring-1 ring-[#ff6b35]/30"
-                          : isRecommended
-                            ? "border-orange-200 bg-orange-50/20 hover:border-orange-300"
-                            : "border-gray-200 hover:border-gray-300 bg-white"}`}
-                    >
-                      <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors
-                        ${isSelected ? "bg-[#ff6b35] border-[#ff6b35]" : "border-gray-300 group-hover:border-orange-400 bg-white"}`}>
-                        {isSelected && <Check className="w-3.5 h-3.5 text-white" />}
-                      </div>
-
-                      {/* Logo officiel du fournisseur */}
-                      <div className="w-13 h-13 rounded-xl bg-white border border-gray-100 p-1.5 flex items-center justify-center flex-shrink-0 shadow-xs">
-                        {logoSrc ? (
-                          <Image
-                            src={logoSrc}
-                            alt={f.nom}
-                            width={46}
-                            height={46}
-                            className="object-contain max-w-full max-h-full rounded"
-                          />
-                        ) : (
-                          <Building2 className="w-6 h-6 text-gray-400" />
-                        )}
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <p className={`text-sm font-bold truncate ${isSelected ? "text-[#ff6b35]" : "text-[#0B2447]"}`}>
-                            {f.nom}
-                          </p>
-                          <span className="text-[9px] bg-emerald-50 text-emerald-700 px-1.5 py-0.2 border border-emerald-200 rounded font-medium">
-                            Agréé
-                          </span>
-                          {isRecommended && (
-                            <span className="text-[9px] bg-orange-100 text-orange-800 px-1.5 py-0.2 border border-orange-200 rounded font-bold">
-                              Recommandé
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-[11px] text-gray-500 line-clamp-2 mt-1 leading-snug">
-                          {f.secteurActivite || f.raisonSociale}
-                        </p>
-                        <p className="text-[10px] text-gray-400 mt-1">
-                          {f.ville}{f.quartier ? ` · ${f.quartier}` : ""}
-                        </p>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+              <p className="text-xs text-gray-600 mb-3 leading-relaxed">
+                Sélectionnez le ou les partenaires auprès desquels vous souhaitez solliciter un devis chiffré (1 devis distinct établi par fournisseur sélectionné, tous domaines confondus) :
+              </p>
+              <FournisseursMultiSelect
+                selectedIds={selectedFournisseurs}
+                onChange={setSelectedFournisseurs}
+                required
+              />
             </SectionCard>
 
             {/* 2.2 Modalités de financement & Précisions */}

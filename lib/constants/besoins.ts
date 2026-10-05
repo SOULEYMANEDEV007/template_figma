@@ -34,6 +34,40 @@ export interface BesoinOptionGroup {
  * Chaque nature filtre strictement les catégories disponibles.
  */
 export const REFERENTIEL_BESOINS: NatureBesoinItem[] = [
+  // ── 0. ACHATS GROUPÉS & BESOINS MULTI-FOURNISSEURS ───────────────
+  {
+    value: "achats_multi_fournisseurs",
+    label: "Achats groupés & Multi-secteurs (Équipement complet, fournitures, travaux...)",
+    groupe: "Projet Global & Multi-fournisseurs",
+    description: "Financement d'un panier d'équipements et fournitures auprès de plusieurs fournisseurs agréés de différents domaines",
+    categories: [
+      {
+        value: "Équipement global & Pack multi-fournisseurs",
+        label: "Équipement global & Pack multi-fournisseurs (Tous secteurs d'activité confondus)",
+        description: "Regroupement de plusieurs besoins : fournitures, électroménager, aménagement, matériaux, etc.",
+        fournisseursCodes: ["LDF", "DROCOLOR", "SIPPEC", "ATC", "RYMCO", "SOCIDA", "ORIBAT", "INOVIM", "KAYDAN", "BERNABE", "SODISMAD", "TECHNIBAT", "SOCIAM", "LG"],
+      },
+      {
+        value: "Rentrée, Travaux & Cadre de vie",
+        label: "Rentrée scolaire & Rénovation / Cadre de vie (LDF + Peinture / Mobilier / Électroménager)",
+        description: "Besoins combinés pour la rentrée scolaire et le réaménagement du domicile",
+        fournisseursCodes: ["LDF", "DROCOLOR", "SIPPEC", "TECHNIBAT", "SOCIAM", "LG"],
+      },
+      {
+        value: "Projet de construction & Aménagement complet",
+        label: "Construction, Matériaux & Aménagement d'intérieur (Matériaux + Peinture + Mobilier)",
+        description: "Financement groupé pour la construction, la quincaillerie, les revêtements et l'ameublement",
+        fournisseursCodes: ["BERNABE", "SODISMAD", "DROCOLOR", "SIPPEC", "TECHNIBAT"],
+      },
+      {
+        value: "Mobilité, Logistique & Équipement professionnel",
+        label: "Véhicule / Mobilité & Matériel professionnel (Auto + Informatique / Climatisation)",
+        description: "Pack pour l'acquisition de véhicules utilitaires et équipements de bureau/locaux",
+        fournisseursCodes: ["ATC", "RYMCO", "SOCIDA", "LDF", "SOCIAM", "LG"],
+      },
+    ],
+  },
+
   // ── 1. ÉDUCATION, LIVRES & SCOLARITÉ ─────────────────────────────
   {
     value: "scolarite_etudes",

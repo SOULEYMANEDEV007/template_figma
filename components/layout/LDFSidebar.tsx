@@ -5,18 +5,35 @@ import { useVitalisDb } from "@/stores/vitalisDbStore";
 import type { LDFUserRole } from "@/types/ldf";
 import { cn } from "@/lib/utils";
 import { IMAGES, ICONS } from "@/lib/constants";
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 // ─── Navigation par rôle ──────────────────────────────────────────────────────
+interface SubNavItem {
+  name: string;
+  href?: string;
+  disabled?: boolean;
+  badge?: string;
+}
+
 interface NavItem {
   name: string;
   href: string;
   icon: React.ElementType;
   badge?: number;
   exact?: boolean;
+  children?: SubNavItem[];
 }
+
+const BANQUES_SUB_ITEMS: SubNavItem[] = [
+  { name: "AFG Bank CI", href: "/dashboard/admin/banques", disabled: false },
+  { name: "BNI", disabled: true, badge: "Bientôt" },
+  { name: "Société Générale", disabled: true, badge: "Bientôt" },
+  { name: "NSIA Banque", disabled: true, badge: "Bientôt" },
+];
 
 function getNav(role: LDFUserRole, unreadCount: number): { main: NavItem[]; bottom: NavItem[] } {
   const common: NavItem[] = [
@@ -37,7 +54,7 @@ function getNav(role: LDFUserRole, unreadCount: number): { main: NavItem[]; bott
       ],
       bottom: [
         { name: "Fournisseurs", href: "/dashboard/admin/fournisseurs", icon: ICONS.fournisseur },
-        { name: "Agences AFG CI", href: "/dashboard/admin/banques", icon: ICONS.banque },
+        { name: "Banques", href: "/dashboard/admin/banques", icon: ICONS.banque, children: BANQUES_SUB_ITEMS },
         { name: "Utilisateurs", href: "/dashboard/admin/utilisateurs", icon: ICONS.users },
         { name: "Paramètres", href: "/dashboard/parametres", icon: ICONS.settings },
       ],
@@ -58,7 +75,7 @@ function getNav(role: LDFUserRole, unreadCount: number): { main: NavItem[]; bott
       ],
       bottom: [
         { name: "Fournisseurs", href: "/dashboard/admin/fournisseurs", icon: ICONS.fournisseur },
-        { name: "Agences AFG CI", href: "/dashboard/admin/banques", icon: ICONS.banque },
+        { name: "Banques", href: "/dashboard/admin/banques", icon: ICONS.banque, children: BANQUES_SUB_ITEMS },
         { name: "Paramètres", href: "/dashboard/parametres", icon: ICONS.settings },
       ],
     };
@@ -111,7 +128,77 @@ function getNav(role: LDFUserRole, unreadCount: number): { main: NavItem[]; bott
 
 // ─── Item de navigation ───────────────────────────────────────────────────────
 function NavLink({ item, collapsed, pathname }: { item: NavItem; collapsed: boolean; pathname: string }) {
-  const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
+  const hasChildren = item.children && item.children.length > 0;
+  const isChildActive = hasChildren && item.children?.some(c => c.href && (item.exact ? pathname === c.href : pathname.startsWith(c.href)));
+  const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href) || isChildActive;
+
+  // Par défaut ouvert si actif ou toujours ouvert pour l'onglet Banques
+  const [isOpen, setIsOpen] = useState(true);
+
+  if (hasChildren && !collapsed) {
+    return (
+      <div className="space-y-1">
+        <button
+          type="button"
+          onClick={() => setIsOpen(prev => !prev)}
+          className={cn(
+            "ldf-sidebar-item group relative w-full text-left flex items-center justify-between cursor-pointer",
+            isActive && "active",
+          )}
+        >
+          <div className="flex items-center gap-3 min-w-0">
+            <item.icon className="w-5 h-5 flex-shrink-0" />
+            <span className="truncate text-sm">{item.name}</span>
+          </div>
+          <ChevronDown
+            className={cn(
+              "w-4 h-4 text-white/50 transition-transform duration-200 flex-shrink-0",
+              isOpen ? "rotate-180" : ""
+            )}
+          />
+        </button>
+
+        {isOpen && (
+          <div className="pl-6 pr-1 py-1 space-y-1">
+            {item.children?.map((child, idx) => {
+              if (child.disabled) {
+                return (
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between px-3 py-1.5 rounded-lg text-xs text-white/35 cursor-not-allowed select-none bg-white/[0.02]"
+                    title="Banque bientôt disponible en Phase 2"
+                  >
+                    <span className="truncate">{child.name}</span>
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/5 text-white/30 border border-white/5">
+                      {child.badge || "Bientôt"}
+                    </span>
+                  </div>
+                );
+              }
+
+              const isSubActive = child.href ? (item.exact ? pathname === child.href : pathname.startsWith(child.href)) : false;
+
+              return (
+                <Link
+                  key={idx}
+                  href={child.href || "#"}
+                  className={cn(
+                    "flex items-center justify-between px-3 py-1.5 rounded-lg text-xs font-medium transition-all",
+                    isSubActive
+                      ? "bg-white/15 text-white font-semibold shadow-xs"
+                      : "text-white/70 hover:text-white hover:bg-white/10"
+                  )}
+                >
+                  <span className="truncate">{child.name}</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <Link

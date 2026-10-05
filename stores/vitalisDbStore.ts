@@ -573,6 +573,26 @@ const SEED_FOURNISSEURS: VFournisseur[] = [
     logo: '/images/logo_lg.webp', agreVitalis: true, dateAgrementVitalis: '2023-05-12', statut: 'actif',
     nombreSouscriptions: 0, montantTotal: 0,
   },
+  {
+    id: 'FOUR-CMF-015', code: 'CIMAF', nom: 'CIMAF', raisonSociale: 'Ciments de l\'Afrique Côte d\'Ivoire (CIMAF CI)',
+    nomDirecteur: 'M. Mamadou TRAORE',
+    email: 'contact.ci@cimaf.com', emailCommercial: 'ventes.ci@cimaf.com',
+    telephone: '+225 27 21 21 68 00', telephoneCommercial: '+225 07 88 77 66 55',
+    adresse: 'Zone Industrielle de Vridi', ville: 'Abidjan', quartier: 'Port-Bouët / Vridi',
+    rccm: 'CI-ABJ-2011-B-58210', secteurActivite: 'Bâtiment, Matériaux de construction, ciment CPJ & liants hydrauliques',
+    logo: '/images/cimaf-logo.png', agreVitalis: true, dateAgrementVitalis: '2023-06-15', statut: 'actif',
+    nombreSouscriptions: 0, montantTotal: 0,
+  },
+  {
+    id: 'FOUR-SCM-016', code: 'SOCIMAT', nom: 'SOCIMAT (Ciment Bélier)', raisonSociale: 'Société de Ciments d\'Abidjan (SOCIMAT) - LafargeHolcim CI',
+    nomDirecteur: 'M. Franck KOUASSI',
+    email: 'contact-ci@lafargeholcim.com', emailCommercial: 'belier.commandes@lafargeholcim.com',
+    telephone: '+225 27 21 21 70 00', telephoneCommercial: '+225 05 44 33 22 11',
+    adresse: 'Boulevard de Marseille, Treichville Zone Portuaire', ville: 'Abidjan', quartier: 'Treichville',
+    rccm: 'CI-ABJ-1962-B-00123', secteurActivite: 'Bâtiment, Matériaux de construction, Ciment Bélier & solutions BTP',
+    logo: '/images/socimat-belier-logo.jpg', agreVitalis: true, dateAgrementVitalis: '2023-06-15', statut: 'actif',
+    nombreSouscriptions: 0, montantTotal: 0,
+  },
 ];
 
 const SEED_POINTS_RELAIS: VPointRelais[] = [

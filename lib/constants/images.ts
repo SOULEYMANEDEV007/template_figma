@@ -44,6 +44,9 @@ export const IMAGES = {
     technibat: "/images/technibat-logo.png",
     sippec: "/images/sippec-logo.webp",
     oribat: "/images/oribat-logo.webp",
+    cimaf: "/images/cimaf-logo.png",
+    socimat: "/images/socimat-belier-logo.jpg",
+    cimentBelier: "/images/socimat-belier-logo.jpg",
   },
 
   // --- PLACEHOLDERS & FALLBACKS ---
@@ -294,6 +297,36 @@ export const OFFICIAL_FOURNISSEURS = [
     agreVitalis: true,
     statut: "actif" as const,
   },
+  {
+    id: "FOUR-CMF-015",
+    code: "CIMAF",
+    nom: "CIMAF",
+    raisonSociale: "Ciments de l'Afrique Côte d'Ivoire (CIMAF CI)",
+    secteurActivite: "Bâtiment, Matériaux de construction, ciment CPJ & liants hydrauliques",
+    logo: IMAGES.partners.cimaf,
+    adresse: "Zone Industrielle de Vridi",
+    ville: "Abidjan",
+    quartier: "Port-Bouët / Vridi",
+    telephone: "+225 27 21 21 68 00",
+    email: "contact.ci@cimaf.com",
+    agreVitalis: true,
+    statut: "actif" as const,
+  },
+  {
+    id: "FOUR-SCM-016",
+    code: "SOCIMAT",
+    nom: "SOCIMAT (Ciment Bélier)",
+    raisonSociale: "Société de Ciments d'Abidjan (SOCIMAT) - LafargeHolcim CI",
+    secteurActivite: "Bâtiment, Matériaux de construction, Ciment Bélier & solutions BTP",
+    logo: IMAGES.partners.socimat,
+    adresse: "Boulevard de Marseille, Treichville Zone Portuaire",
+    ville: "Abidjan",
+    quartier: "Treichville",
+    telephone: "+225 27 21 21 70 00",
+    email: "contact-ci@lafargeholcim.com",
+    agreVitalis: true,
+    statut: "actif" as const,
+  },
 ];
 
 /**
@@ -304,6 +337,8 @@ export function getPartnerLogo(supplierName?: string, supplierId?: string): stri
 
   const query = `${supplierName || ""} ${supplierId || ""}`.toLowerCase();
 
+  if (query.includes("cimaf") || query.includes("cmf-015") || query.includes("four-cmf")) return IMAGES.partners.cimaf;
+  if (query.includes("socimat") || query.includes("belier") || query.includes("bélier") || query.includes("scm-016") || query.includes("four-scm")) return IMAGES.partners.socimat;
   if (query.includes("oribat") || query.includes("ori-014") || query.includes("four-ori")) return IMAGES.partners.oribat;
   if (query.includes("bernab") || query.includes("ber-011") || query.includes("four-ber")) return IMAGES.partners.bernabe;
   if (query.includes("technibat") || query.includes("tnb-012") || query.includes("four-tnb")) return IMAGES.partners.technibat;

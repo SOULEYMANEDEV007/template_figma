@@ -18,6 +18,7 @@ import { OFFICIAL_FOURNISSEURS, getPartnerLogo } from "@/lib/constants";
 import { LISTE_REGIONS_CI, getVillesParRegion, getCommunesParVille } from "@/lib/constants/geography";
 import { emitInAppNotification, useLDFAuthStore } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
+import { FournisseursMultiSelect } from "@/components/souscription/FournisseursMultiSelect";
 import {
   ArrowLeft, ArrowRight, Building2, Check, CheckCircle2,
   Copy, FileText, Info, Key, Loader2, Mail, MapPin, Plus, Search, Trash2,
@@ -234,11 +235,11 @@ export default function CreerSouscriptionPage() {
   const [duree, setDuree] = useState(36);
   const [observations, setObservations] = useState("");
 
-  // Verrouillage du fournisseur émetteur pour le rôle fournisseur
+  // Pré-sélection par défaut du fournisseur émetteur (sélection multi-fournisseurs libre)
   useEffect(() => {
     if (user?.role === "fournisseur") {
       const monId = user.organisationId || user.fournisseurId || "FOUR-LDF-001";
-      setSelectedFournisseurs([monId]);
+      setSelectedFournisseurs(prev => prev.length === 0 ? [monId] : prev);
     }
   }, [user]);
 
@@ -512,7 +513,8 @@ export default function CreerSouscriptionPage() {
   };
 
   // ── Résumé pour l'étape de confirmation ─────────────────────
-  const fournisseursChoisis = fournisseurs.filter(f => selectedFournisseurs.includes(f.id));
+  const allFournisseursSummaryList = (fournisseurs && fournisseurs.length >= 8) ? fournisseurs : OFFICIAL_FOURNISSEURS;
+  const fournisseursChoisis = allFournisseursSummaryList.filter(f => selectedFournisseurs.includes(f.id));
   const relaisChoisi = pointsRelais.find(r => r.id === selectedPointRelais);
   const agenceChoisie = agencesAFG.find(a => a.id === agenceId);
 
@@ -954,67 +956,19 @@ export default function CreerSouscriptionPage() {
             </Field>
           </SectionCard>
 
-          {/* Fournisseur émetteur */}
+          {/* Fournisseurs agréés sélectionnés via le Select à choix multiple */}
           <SectionCard title="Fournisseurs agréés partenaires" icon={Building2}>
             <p className="text-xs text-gray-500 mb-3">
               {user?.role === "fournisseur"
-                ? "Votre établissement est l'émetteur exclusif de cette souscription et du devis associé :"
-                : "Sélectionnez le ou les fournisseurs agréés partenaires pour cette souscription :"}
+                ? "Votre boutique est sélectionnée par défaut. Vous pouvez sélectionner librement d'autres fournisseurs partenaires selon les achats groupés du client :"
+                : "Sélectionnez le ou les fournisseurs agréés partenaires parmi les différents secteurs d'activité (Éducation, Peinture, Automobile, Logement, Bâtiment, Mobilier, Électroménager) :"}
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              {((fournisseurs && fournisseurs.length >= 8) ? fournisseurs : OFFICIAL_FOURNISSEURS)
-                .filter(f => f.agreVitalis && f.statut === "actif")
-                .map(f => {
-                  if (f.id === "FOUR-DRO-002" || f.nom?.toLowerCase().includes("drocolor")) {
-                    return { ...f, secteurActivite: "Peinture bâtiment & carrosserie, revêtements & étanchéité" };
-                  }
-                  return f;
-                })
-                .map(f => {
-                const isSelected = selectedFournisseurs.includes(f.id);
-                const isDisabled = user?.role === "fournisseur" && (user.organisationId === f.id || user.fournisseurId === f.id);
-                const logoSrc = f.logo || getPartnerLogo(f.nom, f.id);
-                return (
-                  <button
-                    key={f.id}
-                    type="button"
-                    disabled={isDisabled}
-                    onClick={() => !isDisabled && toggleFournisseur(f.id)}
-                    className={`p-3.5 rounded-xl border-2 text-left transition-all flex items-center gap-3.5
-                      ${isSelected ? "border-orange-500 bg-orange-50/70 shadow-sm ring-1 ring-orange-400/30" : "border-gray-200 hover:border-orange-300 bg-white"}
-                      ${isDisabled ? "opacity-90 cursor-default" : "cursor-pointer"}`}
-                  >
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0
-                      ${isSelected ? "bg-orange-500 border-orange-500" : "border-gray-300"}`}>
-                      {isSelected && <Check className="w-3 h-3 text-white" />}
-                    </div>
-
-                    <div className="w-11 h-11 rounded-xl bg-white border border-gray-100 p-1 flex items-center justify-center flex-shrink-0 shadow-xs">
-                      {logoSrc ? (
-                        <Image
-                          src={logoSrc}
-                          alt={f.nom}
-                          width={38}
-                          height={38}
-                          className="object-contain max-w-full max-h-full rounded"
-                        />
-                      ) : (
-                        <Building2 className="w-5 h-5 text-gray-400" />
-                      )}
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <p className={`text-xs font-semibold truncate ${isSelected ? "text-orange-900" : "text-gray-800"}`}>{f.nom}</p>
-                        <span className="text-[9px] bg-emerald-50 text-emerald-700 px-1 py-0.2 border border-emerald-200 rounded font-medium">Agréé</span>
-                      </div>
-                      <p className="text-[10px] text-gray-400 truncate mt-0.5">{f.secteurActivite || f.raisonSociale}</p>
-                    </div>
-                    {isDisabled && <span className="text-[9px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-semibold">Émetteur</span>}
-                  </button>
-                );
-              })}
-            </div>
+            <FournisseursMultiSelect
+              selectedIds={selectedFournisseurs}
+              onChange={setSelectedFournisseurs}
+              presetFournisseurId={user?.role === "fournisseur" ? (user.organisationId || user.fournisseurId || "FOUR-LDF-001") : undefined}
+              required
+            />
           </SectionCard>
 
           {/* Durée du programme */}

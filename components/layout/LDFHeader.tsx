@@ -22,7 +22,7 @@ const ROUTE_LABELS: Record<string, string> = {
   parametres: "Paramètres",
   admin: "Administration",
   fournisseurs: "Fournisseurs",
-  banques: "Agences AFG CI",
+  banques: "Banques",
   utilisateurs: "Utilisateurs",
   banque: "Banque",
   souscripteurs: "Souscripteurs",
