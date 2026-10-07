@@ -76,19 +76,25 @@ export default function SouscriptionsPage() {
   // Appliquer les filtres
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
+    const fournisseurId = user?.role === "fournisseur" ? (user.organisationId || user.fournisseurId) : null;
+
     return roleFiltered.filter(s => {
+      const fournisseursSearch = fournisseurId
+        ? s.fournisseurs.filter(f => f.fournisseurId === fournisseurId)
+        : s.fournisseurs;
+
       const matchSearch = !q ||
         s.reference.toLowerCase().includes(q) ||
         s.souscripteurNom.toLowerCase().includes(q) ||
         (s.souscripteurPrenom?.toLowerCase().includes(q)) ||
         (s.souscripteurEntreprise?.toLowerCase().includes(q)) ||
-        s.fournisseurs.some(f => f.fournisseurNom.toLowerCase().includes(q));
+        fournisseursSearch.some(f => f.fournisseurNom.toLowerCase().includes(q));
       const matchStatut = !filterStatut || s.statut === filterStatut;
       const matchFourn = !filterFournisseur || s.fournisseurs.some(f => f.fournisseurId === filterFournisseur);
       const matchType = !filterType || s.typeSouscripteur === filterType;
       return matchSearch && matchStatut && matchFourn && matchType;
     }).sort((a, b) => b.dateCreation.localeCompare(a.dateCreation));
-  }, [roleFiltered, search, filterStatut, filterFournisseur, filterType]);
+  }, [roleFiltered, search, filterStatut, filterFournisseur, filterType, user]);
 
   const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -271,9 +277,23 @@ export default function SouscriptionsPage() {
                       </div>
                     </td>
                     <td className="px-4 py-3 hidden lg:table-cell">
-                      <span className="text-xs font-semibold text-gray-700">
-                        {s.montantTotal > 0 ? fmtCFA(s.montantTotal) : <span className="text-gray-300 italic text-[10px]">À définir</span>}
-                      </span>
+                      {(() => {
+                        const fournisseurId = user?.role === "fournisseur" ? (user.organisationId || user.fournisseurId) : null;
+                        if (fournisseurId) {
+                          const monDevis = (devis || []).find(d => d.souscriptionId === s.id && d.fournisseurId === fournisseurId);
+                          const montant = monDevis ? monDevis.totalTTC : 0;
+                          return (
+                            <span className="text-xs font-semibold text-gray-700">
+                              {montant > 0 ? fmtCFA(montant) : <span className="text-gray-400 italic text-[11px]">À chiffrer</span>}
+                            </span>
+                          );
+                        }
+                        return (
+                          <span className="text-xs font-semibold text-gray-700">
+                            {s.montantTotal > 0 ? fmtCFA(s.montantTotal) : <span className="text-gray-300 italic text-[10px]">À définir</span>}
+                          </span>
+                        );
+                      })()}
                     </td>
                     <td className="px-4 py-3 hidden lg:table-cell">
                       <span className="text-xs text-gray-500">

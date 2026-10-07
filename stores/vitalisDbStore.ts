@@ -856,6 +856,7 @@ interface VitalisDbState {
   // Tables
   agencesAFG: VAgenceAFG[];
   fournisseurs: VFournisseur[];
+  deletedFournisseurIds: string[];
   pointsRelais: VPointRelais[];
   souscriptions: VSouscription[];
   devis: VDevis[];
@@ -955,6 +956,7 @@ export const useVitalisDb = create<VitalisDbState>()(
       // ── State initial (sera remplacé par seed) ──────────────
       agencesAFG: SEED_AGENCES_AFG,
       fournisseurs: SEED_FOURNISSEURS,
+      deletedFournisseurIds: [],
       pointsRelais: SEED_POINTS_RELAIS,
       souscriptions: DEMO_SOUSCRIPTIONS,
       devis: DEMO_DEVIS,
@@ -1001,7 +1003,8 @@ export const useVitalisDb = create<VitalisDbState>()(
             set({ fournisseurs: SEED_FOURNISSEURS });
           } else {
             const currentIds = new Set(state.fournisseurs.map(f => f.id));
-            const missing = SEED_FOURNISSEURS.filter(sf => !currentIds.has(sf.id));
+            const deletedIds = new Set(state.deletedFournisseurIds || []);
+            const missing = SEED_FOURNISSEURS.filter(sf => !currentIds.has(sf.id) && !deletedIds.has(sf.id));
             if (missing.length > 0) {
               set({ fournisseurs: [...state.fournisseurs, ...missing] });
             }
@@ -1124,6 +1127,7 @@ export const useVitalisDb = create<VitalisDbState>()(
 
       deleteFournisseur: (id) => set(s => ({
         fournisseurs: s.fournisseurs.filter(f => f.id !== id),
+        deletedFournisseurIds: Array.from(new Set([...(s.deletedFournisseurIds || []), id])),
       })),
 
       getFournisseurById: (id) => get().fournisseurs.find(f => f.id === id),
@@ -1771,11 +1775,13 @@ export const useVitalisDb = create<VitalisDbState>()(
 
             // Ajout des fournisseurs officiels manquants
             const currentIds = new Set(updated.map((f: any) => f.id));
-            const missingFromSeed = SEED_FOURNISSEURS.filter(sf => !currentIds.has(sf.id));
+            const deletedIds = new Set(state.deletedFournisseurIds || []);
+            const missingFromSeed = SEED_FOURNISSEURS.filter(sf => !currentIds.has(sf.id) && !deletedIds.has(sf.id));
 
             state.fournisseurs = [...updated, ...missingFromSeed];
           } else {
-            state.fournisseurs = SEED_FOURNISSEURS;
+            const deletedIds = new Set(state.deletedFournisseurIds || []);
+            state.fournisseurs = SEED_FOURNISSEURS.filter(sf => !deletedIds.has(sf.id));
           }
 
           // Migration automatique des articles de devis sans référence
@@ -1810,6 +1816,7 @@ export const useVitalisDb = create<VitalisDbState>()(
       },
       partialize: (state) => ({
         fournisseurs: state.fournisseurs,
+        deletedFournisseurIds: state.deletedFournisseurIds,
         agencesAFG: state.agencesAFG,
         pointsRelais: state.pointsRelais,
         souscriptions: state.souscriptions,

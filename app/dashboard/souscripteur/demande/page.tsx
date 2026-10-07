@@ -3,22 +3,22 @@
 
 import { emitInAppNotification, useLDFAuthStore } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
-import { OFFICIAL_FOURNISSEURS, getPartnerLogo, CATEGORIES_BESOIN, NATURES_BESOIN, getCategoriesParNature, getFournisseursRecommandesParBesoin } from "@/lib/constants";
+import { OFFICIAL_FOURNISSEURS } from "@/lib/constants";
 import { LISTE_REGIONS_CI, getVillesParRegion, getCommunesParVille } from "@/lib/constants/geography";
-import { FournisseursMultiSelect } from "@/components/souscription/FournisseursMultiSelect";
+import { BesoinsMultiplesList, type LigneBesoinItem } from "@/components/souscription/BesoinsMultiplesList";
 import {
   ArrowLeft, ArrowRight, Building2, Check, FileText, Home, MapPin,
-  Package, Send, Loader2, Store, Truck, UserCheck, PhoneCall
+  Package, Send, Loader2, Store, Truck, UserCheck, PhoneCall, ShieldCheck,
+  Sparkles, Info
 } from "lucide-react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
 
 // ── Étapes de progression horizontale ────────────────────────────
 const STEPS = [
-  { id: 1, label: "Expression du besoin & Localisation", icon: Package },
-  { id: 2, label: "Sélection des Fournisseurs & Devis", icon: Building2 },
+  { id: 1, label: "Besoins & Fournisseurs Agréés", icon: Package },
+  { id: 2, label: "Agence AFG & Modalités de Livraison", icon: MapPin },
 ];
 
 function StepIndicator({ current, onStepClick }: { current: number; onStepClick: (step: number) => void }) {
@@ -92,23 +92,24 @@ export default function NouvelleDemandeSouscripteur() {
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
 
-  // --- Étape 1 : Expression du besoin, Localisation & Détails de livraison ---
-  const [natureBesoin, setNatureBesoin] = useState("");
-  const [categorie, setCategorie] = useState("");
-  const [montantEstime, setMontantEstime] = useState<string>("");
+  // --- Étape 1 : Liste dynamique des Besoins & Fournisseurs associés ---
+  const [besoins, setBesoins] = useState<LigneBesoinItem[]>([
+    {
+      id: `BSN-${Date.now()}-1`,
+      nature: "Éducation & Fournitures scolaires",
+      categorie: "Livres & Manuels scolaires",
+      produitRecherche: "",
+      montantEstime: "",
+      fournisseurId: "FOUR-LDF-001",
+      fournisseurNom: "Librairie de France Groupe",
+    },
+  ]);
+
+  const [duree, setDuree] = useState(36);
+  const [observations, setObservations] = useState("");
+
+  // --- Étape 2 : Agence AFG, Localisation & Modalités de livraison ---
   const [agenceAfgId, setAgenceAfgId] = useState("");
-  const [produitRecherche, setProduitRecherche] = useState("");
-
-  // Catégories de produit strictement filtrées selon la Nature du besoin choisie
-  const categoriesDisponibles = useMemo(() => {
-    return getCategoriesParNature(natureBesoin);
-  }, [natureBesoin]);
-
-  const handleNatureChange = (newNature: string) => {
-    setNatureBesoin(newNature);
-    // Réinitialise la catégorie sélectionnée pour garantir une cohérence stricte
-    setCategorie("");
-  };
 
   // Séparation stricte : Région - Ville - Commune (avec filtrage dynamique)
   const [region, setRegion] = useState("District d'Abidjan");
@@ -154,32 +155,6 @@ export default function NouvelleDemandeSouscripteur() {
     }
   }, [user]);
 
-  // --- Étape 2 : Configuration & Fournisseurs ---
-  const [selectedFournisseurs, setSelectedFournisseurs] = useState<string[]>([]);
-  const [duree, setDuree] = useState(36);
-  const [observations, setObservations] = useState("");
-
-  // Fournisseurs agréés officiels Vitalis (10 partenaires)
-  const filteredFournisseurs = useMemo(() => {
-    const list = (fournisseurs && fournisseurs.length >= 8) ? fournisseurs : OFFICIAL_FOURNISSEURS;
-    return list.filter(f => f.statut === "actif").map(f => {
-      // Drocolor est le spécialiste historique de la peinture et des revêtements
-      if (f.id === "FOUR-DRO-002" || f.nom?.toLowerCase().includes("drocolor")) {
-        return {
-          ...f,
-          secteurActivite: "Peinture bâtiment & carrosserie, revêtements & étanchéité",
-        };
-      }
-      return f;
-    });
-  }, [fournisseurs]);
-
-  const toggleFournisseur = (id: string) => {
-    setSelectedFournisseurs(prev =>
-      prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]
-    );
-  };
-
   const selectedRelais = useMemo(() => {
     return (pointsRelais || []).find(p => p.id === pointRelaisId);
   }, [pointsRelais, pointRelaisId]);
@@ -188,31 +163,61 @@ export default function NouvelleDemandeSouscripteur() {
     return (agencesAFG || []).find(a => a.id === agenceAfgId);
   }, [agencesAFG, agenceAfgId]);
 
+  // Validation étape 1
+  const validateStep1 = () => {
+    if (!besoins || besoins.length === 0) {
+      toast.error("Veuillez renseigner au moins un besoin.");
+      return false;
+    }
+
+    for (let i = 0; i < besoins.length; i++) {
+      const b = besoins[i];
+      if (!b.nature) {
+        toast.error(`Besoin #${i + 1} : Veuillez sélectionner la nature du besoin.`);
+        return false;
+      }
+      if (!b.produitRecherche || b.produitRecherche.trim().length < 3) {
+        toast.error(`Besoin #${i + 1} : Veuillez décrire précisément les articles souhaités.`);
+        return false;
+      }
+      if (!b.fournisseurId) {
+        toast.error(`Besoin #${i + 1} : Veuillez sélectionner un fournisseur agréé pour ce besoin.`);
+        return false;
+      }
+    }
+    return true;
+  };
+
   const handleNextStep = () => {
-    if (!natureBesoin || !categorie || !produitRecherche || !region || !ville || !commune) {
-      toast.error("Veuillez renseigner tous les champs obligatoires (*) : Nature, Catégorie, Produit, Région, Ville et Commune.");
-      return;
-    }
-    if (modeLivraison === "point_relais" && !pointRelaisId) {
-      toast.error("Veuillez sélectionner un point relais Vitalis pour la récupération.");
-      return;
-    }
-    if (modeLivraison === "domicile" && !adresseLivraison) {
-      toast.error("Veuillez préciser l'adresse de livraison à domicile.");
-      return;
-    }
-    if (!destinataireTelephone) {
-      toast.error("Veuillez renseigner le numéro de téléphone du destinataire pour la livraison.");
-      return;
-    }
+    if (!validateStep1()) return;
     setStep(2);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (selectedFournisseurs.length === 0) {
-      toast.error("Veuillez sélectionner au moins un fournisseur correspondant à votre besoin.");
+    if (!validateStep1()) {
+      setStep(1);
+      return;
+    }
+
+    if (!region || !ville || !commune) {
+      toast.error("Veuillez renseigner la région, la ville et la commune de localisation.");
+      return;
+    }
+
+    if (modeLivraison === "point_relais" && !pointRelaisId) {
+      toast.error("Veuillez sélectionner un point relais de récupération.");
+      return;
+    }
+
+    if (modeLivraison === "domicile" && !adresseLivraison) {
+      toast.error("Veuillez préciser l'adresse exacte de livraison.");
+      return;
+    }
+
+    if (!destinataireTelephone) {
+      toast.error("Veuillez renseigner le téléphone du destinataire.");
       return;
     }
 
@@ -222,17 +227,42 @@ export default function NouvelleDemandeSouscripteur() {
       const seq = String(Date.now()).slice(-4);
       const ref = `VF-${year}-${seq}`;
 
-      const allFournisseursList = (fournisseurs && fournisseurs.length >= 8) ? fournisseurs : OFFICIAL_FOURNISSEURS;
-      const fournisseursChoisis = allFournisseursList
-        .filter(f => selectedFournisseurs.includes(f.id))
-        .map(f => ({ fournisseurId: f.id, fournisseurNom: f.nom, statut: "en_attente" as const }));
+      // Extraire les fournisseurs distincts
+      const fournisseursMap = new Map<string, string>();
+      besoins.forEach(b => {
+        if (b.fournisseurId && b.fournisseurNom) {
+          fournisseursMap.set(b.fournisseurId, b.fournisseurNom);
+        }
+      });
+
+      const fournisseursChoisis = Array.from(fournisseursMap.entries()).map(([fournisseurId, fournisseurNom]) => ({
+        fournisseurId,
+        fournisseurNom,
+        statut: "en_attente" as const,
+      }));
+
+      // Calcul du montant total estimatif
+      const montantTotalNum = besoins.reduce((acc, b) => {
+        const val = typeof b.montantEstime === "string"
+          ? parseFloat(b.montantEstime.replace(/\s/g, "")) || 0
+          : Number(b.montantEstime) || 0;
+        return acc + val;
+      }, 0);
 
       const nomClient = (user?.lastName || user?.nom || "Konan").trim();
       const prenomClient = (user?.firstName || user?.prenom || "Awa").trim();
       const emailClient = user?.email || "client@viflo.ci";
       const telClient = user?.phone || user?.telephone || "+225 07 00 11 22 33";
 
-      const montantNum = montantEstime ? parseFloat(montantEstime.replace(/\s/g, "")) : 0;
+      // Synthèse détaillée structurée des besoins exprimés
+      const resumeBesoins = besoins.map((b, idx) => {
+        const montantStr = b.montantEstime ? ` (Budget indicatif: ${fmtCFA(Number(b.montantEstime))})` : "";
+        return `[Besoin ${idx + 1}] Secteur: ${b.nature} | Catégorie: ${b.categorie || "Général"} | Fournisseur: ${b.fournisseurNom} | Articles: ${b.produitRecherche}${montantStr}`;
+      }).join("\n");
+
+      const livraisonStr = `Livraison: [${modeLivraison === "point_relais" ? "Point Relais: " + (selectedRelais?.nom || pointRelaisId) : "Domicile: " + adresseLivraison}] | Zone: ${commune}, ${ville} (${region}) | Destinataire: ${destinataireNom || (prenomClient + " " + nomClient)} (${destinataireTelephone || telClient})${instructionsLivraison ? ` | Instructions: ${instructionsLivraison}` : ""}`;
+
+      const obsFinale = `${resumeBesoins}\n\n${livraisonStr}${selectedAgence ? `\nAgence AFG Bank: ${selectedAgence.nom}` : ""}${observations ? `\nNotes client: ${observations}` : ""}`;
 
       const nouvelle = addSouscription({
         reference: ref,
@@ -248,7 +278,7 @@ export default function NouvelleDemandeSouscripteur() {
         agenceNom: selectedAgence?.nom || undefined,
         fournisseurs: fournisseursChoisis,
         fournisseurNom: fournisseursChoisis.map(f => f.fournisseurNom).join(", "),
-        montantTotal: montantNum || 0,
+        montantTotal: montantTotalNum || 0,
         duree,
         statut: "en_attente",
         dateCreation: new Date().toISOString().split("T")[0],
@@ -265,23 +295,35 @@ export default function NouvelleDemandeSouscripteur() {
           destinataireTelephone: destinataireTelephone || telClient,
           instructions: instructionsLivraison,
         },
-        observations: `Besoin: ${natureBesoin} | Catégorie: ${categorie} | Produit: ${produitRecherche}\nLivraison: [${modeLivraison === "point_relais" ? "Point Relais: " + (selectedRelais?.nom || pointRelaisId) : "Domicile: " + adresseLivraison}] | Zone: ${commune}, ${ville} (${region}) | Destinataire: ${destinataireNom || (prenomClient + ' ' + nomClient)} (${destinataireTelephone || telClient})${instructionsLivraison ? ` | Instructions: ${instructionsLivraison}` : ""}${montantNum > 0 ? `\nBudget indicatif: ${fmtCFA(montantNum)}` : ""}${selectedAgence ? ` | Agence AFG: ${selectedAgence.nom}` : ""}${observations ? `\nNotes: ${observations}` : ""}`,
+        observations: obsFinale,
       });
 
-      // Notification pour les fournisseurs et admins
+      // Notification pour chaque fournisseur concerné (dans son espace isolé)
+      fournisseursChoisis.forEach(f => {
+        emitInAppNotification({
+          titre: `Nouvelle demande de devis — ${ref}`,
+          message: `${prenomClient} ${nomClient} sollicite un devis chiffré pour votre enseigne.`,
+          categorie: "devis",
+          reference: ref,
+          lien: `/dashboard/souscriptions/${nouvelle.id}`,
+          roles: ["fournisseur"],
+        });
+      });
+
+      // Notification pour les super-admins et la banque
       emitInAppNotification({
-        titre: `Nouvelle demande client — ${ref}`,
-        message: `${prenomClient} ${nomClient} a exprimé un besoin pour "${produitRecherche}". Établissez votre devis chiffré.`,
-        categorie: "devis",
+        titre: `Nouvelle demande multi-besoins — ${ref}`,
+        message: `${prenomClient} ${nomClient} a initié une demande pour ${fournisseursChoisis.length} fournisseur(s) (${fournisseursChoisis.map(f => f.fournisseurNom).join(", ")}).`,
+        categorie: "souscription",
         reference: ref,
         lien: `/dashboard/souscriptions/${nouvelle.id}`,
-        roles: ["admin", "fournisseur"],
+        roles: ["admin", "banque", "owner"],
       });
 
       // Notification pour le souscripteur lui-même
       emitInAppNotification({
         titre: `Demande de financement ${ref} transmise`,
-        message: `Votre demande pour "${produitRecherche}" a été transmise aux ${fournisseursChoisis.length} fournisseur(s) sélectionné(s). Vous recevrez une alerte dès qu'un devis sera chiffré.`,
+        message: `Votre demande pour ${besoins.length} besoin(s) auprès de ${fournisseursChoisis.length} fournisseur(s) a été transmise. Chaque fournisseur établira son devis chiffré.`,
         categorie: "souscription",
         reference: ref,
         lien: `/dashboard/souscriptions/${nouvelle.id}`,
@@ -289,7 +331,7 @@ export default function NouvelleDemandeSouscripteur() {
       });
 
       toast.success(`Demande ${ref} transmise avec succès !`, {
-        description: "Les fournisseurs agréés sélectionnés ont été notifiés pour établir votre devis."
+        description: `${fournisseursChoisis.length} devis séparé(s) sont en cours d'établissement auprès des fournisseurs sélectionnés.`,
       });
       router.push(`/dashboard/souscriptions/${nouvelle.id}`);
     } catch (err) {
@@ -324,17 +366,15 @@ export default function NouvelleDemandeSouscripteur() {
         </div>
       </div>
 
-      {/* ─── Indicateur de progression horizontale au-dessus du formulaire (comme avant) ─── */}
+      {/* ─── Indicateur de progression horizontale ─── */}
       <div className="bg-white border border-gray-200/80 rounded-2xl p-4 shadow-xs">
         <StepIndicator
           current={step}
           onStepClick={(s) => {
             if (s === 1) {
               setStep(1);
-            } else if (natureBesoin && categorie && produitRecherche && region && ville && pointRelaisId) {
+            } else if (validateStep1()) {
               setStep(2);
-            } else {
-              toast.error("Veuillez d'abord remplir les champs obligatoires de l'étape 1.");
             }
           }}
         />
@@ -343,116 +383,77 @@ export default function NouvelleDemandeSouscripteur() {
       {/* ─── Formulaire principal ─── */}
       <form onSubmit={handleSubmit} className="space-y-6">
 
-        {/* ÉTAPE 1 : EXPRESSION DU BESOIN & LOCALISATION */}
+        {/* ÉTAPE 1 : EXPRESSION DES BESOINS MULTIPLES & FOURNISSEURS */}
         {step === 1 && (
           <div className="space-y-6 slide-in">
+            <BesoinsMultiplesList
+              besoins={besoins}
+              onChange={setBesoins}
+              isBoutique={false}
+            />
 
-            {/* 1.1 Expression du besoin */}
-            <SectionCard title="Identification du besoin" icon={Package} badge="Étape 1 sur 2">
+            {/* Durée du financement */}
+            <SectionCard title="Modalités de Financement" icon={FileText}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">Nature du besoin *</label>
-                  <select
-                    className={sel}
-                    value={natureBesoin}
-                    onChange={e => handleNatureChange(e.target.value)}
-                    required
-                  >
-                    <option value="">Sélectionnez la nature du besoin...</option>
-                    {NATURES_BESOIN.map(grp => (
-                      <optgroup key={grp.groupe} label={grp.groupe}>
-                        {grp.options.map(opt => (
-                          <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </optgroup>
-                    ))}
+                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">Durée de remboursement souhaitée</label>
+                  <select className={sel} value={duree} onChange={e => setDuree(Number(e.target.value))}>
+                    <option value={36}>36 mois (Programme standard Vitalis)</option>
+                    <option value={48}>48 mois</option>
+                    <option value={60}>60 mois</option>
                   </select>
+                  <p className="text-[11px] text-gray-400 mt-1">Taux bonifié Vitalis FADES avec AFG Bank.</p>
                 </div>
 
                 <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <label className="block text-xs font-semibold text-gray-700">Catégorie de produit *</label>
-                    {natureBesoin && categoriesDisponibles.length > 0 && (
-                      <span className="text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                        {categoriesDisponibles.length} catégorie{categoriesDisponibles.length > 1 ? "s" : ""} disponible{categoriesDisponibles.length > 1 ? "s" : ""}
-                      </span>
-                    )}
+                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">Modalités de règlement fournisseurs</label>
+                  <div className="px-3.5 py-2.5 text-xs rounded-xl bg-orange-50/70 border border-orange-200/80 text-orange-950 font-medium">
+                    AFG Bank effectue le règlement direct à chacun de vos fournisseurs partenaires dès accord de financement.
                   </div>
-                  <select
-                    className={`${sel} ${!natureBesoin ? "bg-gray-50 text-gray-400 cursor-not-allowed border-dashed" : ""}`}
-                    value={categorie}
-                    onChange={e => setCategorie(e.target.value)}
-                    disabled={!natureBesoin}
-                    required
-                  >
-                    <option value="">
-                      {!natureBesoin
-                        ? "Veuillez d'abord sélectionner une nature de besoin"
-                        : "Sélectionnez la catégorie de produit correspondante..."}
-                    </option>
-                    {categoriesDisponibles.map(cat => (
-                      <option key={cat.value} value={cat.value}>
-                        {cat.label}
-                      </option>
-                    ))}
-                  </select>
-                  {!natureBesoin ? (
-                    <p className="text-[11px] text-amber-700 mt-1 flex items-center gap-1 font-medium">
-                      <span>💡</span> Choisissez d'abord la nature du besoin ci-contre pour afficher les catégories correspondantes.
-                    </p>
-                  ) : null}
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                    Budget estimatif indicatif (FCFA) <span className="text-gray-400 font-normal">(Optionnel)</span>
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      className={inp}
-                      placeholder="Ex: 1 500 000"
-                      value={montantEstime}
-                      onChange={e => setMontantEstime(e.target.value)}
-                    />
-                    <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">
-                      FCFA
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-gray-400 mt-1">Fourchette indicative pour calibrer les propositions des fournisseurs.</p>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                    Agence AFG Bank de rattachement <span className="text-gray-400 font-normal">(Optionnel)</span>
-                  </label>
-                  <select className={sel} value={agenceAfgId} onChange={e => setAgenceAfgId(e.target.value)}>
-                    <option value="">Sélectionnez une agence AFG Bank</option>
-                    {(agencesAFG || []).map(a => (
-                      <option key={a.id} value={a.id}>
-                        {a.nom} ({a.ville})
-                      </option>
-                    ))}
-                  </select>
-                  <p className="text-[11px] text-gray-400 mt-1">Agence bancaire où sera déposé votre dossier physique de crédit.</p>
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">Description précise des articles recherchés *</label>
-                  <textarea
-                    className={`${inp} min-h-[110px] resize-y`}
-                    placeholder="Précisez les marques, modèles, quantités, dimensions ou finitions recherchées (ex: 1 Véhicule utilitaire plateau, 5 Climatiseurs split 1.5 CV Inverter, 20 sacs de ciment CPJ 42.5, etc.)..."
-                    value={produitRecherche}
-                    onChange={e => setProduitRecherche(e.target.value)}
-                    required
-                  />
+                  <p className="text-[11px] text-gray-400 mt-1">Vous ne réalisez aucune avance financière en boutique.</p>
                 </div>
               </div>
             </SectionCard>
 
-            {/* 1.2 Localisation géographique (Région - Ville - Commune) */}
+            {/* Bouton vers Étape 2 */}
+            <div className="flex justify-end pt-2">
+              <button
+                type="button"
+                onClick={handleNextStep}
+                className="btn-ldf-primary py-3.5 px-8 text-base shadow-lg hover:shadow-xl group flex items-center gap-2.5 rounded-xl font-bold cursor-pointer"
+              >
+                Continuer : Agence AFG & Livraison
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ÉTAPE 2 : AGENCE AFG, LOCALISATION & MODALITÉS DE LIVRAISON */}
+        {step === 2 && (
+          <div className="space-y-6 slide-in">
+
+            {/* 2.1 Agence AFG Bank */}
+            <SectionCard title="Agence AFG Bank de dépôt" icon={Building2} badge="Banque financeuse unique">
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+                  Agence AFG Bank de rattachement <span className="text-gray-400 font-normal">(Optionnel)</span>
+                </label>
+                <select className={sel} value={agenceAfgId} onChange={e => setAgenceAfgId(e.target.value)}>
+                  <option value="">Sélectionnez l'agence AFG Bank la plus proche...</option>
+                  {(agencesAFG || []).map(a => (
+                    <option key={a.id} value={a.id}>
+                      {a.nom} — {a.ville} ({a.adresse})
+                    </option>
+                  ))}
+                </select>
+                <p className="text-[11px] text-gray-400 mt-1">
+                  Agence où vous déposerez votre dossier physique consolidé (fiche d'adhésion signée + vos devis).
+                </p>
+              </div>
+            </SectionCard>
+
+            {/* 2.2 Localisation géographique */}
             <SectionCard title="Localisation géographique (Région - Ville - Commune)" icon={MapPin}>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
@@ -485,16 +486,6 @@ export default function NouvelleDemandeSouscripteur() {
                       required
                     />
                   )}
-                  {ville === "Autre" && (
-                    <input
-                      type="text"
-                      className={`${inp} mt-2`}
-                      placeholder="Précisez le nom de votre ville"
-                      onChange={e => setVille(e.target.value)}
-                      autoFocus
-                      required
-                    />
-                  )}
                 </div>
 
                 <div>
@@ -517,24 +508,13 @@ export default function NouvelleDemandeSouscripteur() {
                       required
                     />
                   )}
-                  {commune === "Autre" && (
-                    <input
-                      type="text"
-                      className={`${inp} mt-2`}
-                      placeholder="Précisez votre commune / quartier"
-                      onChange={e => setCommune(e.target.value)}
-                      autoFocus
-                      required
-                    />
-                  )}
                 </div>
               </div>
             </SectionCard>
 
-            {/* 1.3 Modalités & Coordonnées de livraison */}
+            {/* 2.3 Modalités & Destination de la livraison */}
             <SectionCard title="Modalités & Destination de la livraison" icon={Truck}>
               <div className="space-y-4">
-                {/* Choix du mode de livraison */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-2">Mode de livraison souhaité *</label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -549,46 +529,40 @@ export default function NouvelleDemandeSouscripteur() {
                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${modeLivraison === "point_relais" ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-500"
                         }`}>
                         <Store className="w-4 h-4" />
-
                       </div>
                       <div>
-                        <p className="text-xs font-bold text-gray-900">Point Relais Fournisseurs Agréés</p>
-                        <p className="text-[11px] text-gray-500 mt-0.5">Retrait sécurisé dans l'un de nos points relais agréés</p>
+                        <p className="text-xs font-bold text-gray-900">Point Relais Partenaires Agréés</p>
+                        <p className="text-[11px] text-gray-500 mt-0.5">Retrait sécurisé dans un point relais de votre zone</p>
                       </div>
                     </button>
 
-                    {/*<button
+                    <button
                       type="button"
-                      disabled={true}
                       onClick={() => setModeLivraison("domicile")}
-
-                      className={`p-3.5 rounded-xl border text-left flex items-start gap-3 transition-all cursor-pointer ${
-                        modeLivraison === "domicile"
-                          ? "border-orange-500 bg-orange-50/70 shadow-xs ring-1 ring-orange-400/40"
-                          : "border-gray-200 hover:border-orange-200 bg-white"
-                      }`}
+                      className={`p-3.5 rounded-xl border text-left flex items-start gap-3 transition-all cursor-pointer ${modeLivraison === "domicile"
+                        ? "border-orange-500 bg-orange-50/70 shadow-xs ring-1 ring-orange-400/40"
+                        : "border-gray-200 hover:border-orange-200 bg-white"
+                        }`}
                     >
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                        modeLivraison === "domicile" ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-500"
-                      }`}>
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${modeLivraison === "domicile" ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-500"
+                        }`}>
                         <Home className="w-4 h-4" />
                       </div>
                       <div>
-                        <p className="text-xs font-bold text-gray-900">Livraison à domicile / Site</p>
-                        <p className="text-[11px] text-gray-500 mt-0.5">Livraison directe à votre domicile ou adresse d'entreprise</p>
+                        <p className="text-xs font-bold text-gray-900">Livraison à domicile / Chantier</p>
+                        <p className="text-[11px] text-gray-500 mt-0.5">Livraison sur site par nos équipes logistiques</p>
                       </div>
-                    </button>*/}
+                    </button>
                   </div>
                 </div>
 
-                {/* Champ conditionnel selon le mode */}
                 {modeLivraison === "point_relais" ? (
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1.5">
                       Sélectionnez votre Point Relais de récupération *
                     </label>
                     <select className={sel} value={pointRelaisId} onChange={e => setPointRelaisId(e.target.value)} required>
-                      <option value="">Sélectionnez un point relais partenaire</option>
+                      <option value="">Sélectionnez un point relais partenaire...</option>
                       {(pointsRelais || []).map(p => (
                         <option key={p.id} value={p.id}>
                           {p.ville} — {p.nom} ({p.quartier} - {p.adresse})
@@ -596,7 +570,6 @@ export default function NouvelleDemandeSouscripteur() {
                       ))}
                     </select>
 
-                    {/* Aperçu du point relais sélectionné */}
                     {selectedRelais && (
                       <div className="mt-3 p-3.5 bg-orange-50/60 border border-orange-200/80 rounded-xl flex items-start gap-3">
                         <Store className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
@@ -652,90 +625,20 @@ export default function NouvelleDemandeSouscripteur() {
                         onChange={e => setDestinataireTelephone(e.target.value)}
                         required
                       />
-                      <p className="text-[11px] text-gray-400 mt-1">Numéro appelé par le transporteur ou point relais pour le retrait.</p>
+                      <p className="text-[11px] text-gray-400 mt-1">Numéro contacté lors de la mise à disposition de vos colis.</p>
                     </div>
                   </div>
                 </div>
 
-                {/* Instructions spécifiques */}
+                {/* Consignes particulières */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                    Consignes particulières ou créneau souhaité <span className="text-gray-400 font-normal">(Optionnel)</span>
-                  </label>
-                  <input
-                    type="text"
-                    className={inp}
-                    placeholder="Ex: Prévenir 30 min avant, livraison souhaitée en matinée..."
-                    value={instructionsLivraison}
-                    onChange={e => setInstructionsLivraison(e.target.value)}
-                  />
-                </div>
-              </div>
-            </SectionCard>
-
-            {/* Bouton vers Étape 2 */}
-            <div className="flex justify-end pt-2">
-              <button
-                type="button"
-                onClick={handleNextStep}
-                className="btn-ldf-primary py-3.5 px-8 text-base shadow-lg hover:shadow-xl group flex items-center gap-2.5 rounded-xl font-bold"
-              >
-                Continuer : Sélection des fournisseurs
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
-
-          </div>
-        )}
-
-        {/* ÉTAPE 2 : SÉLECTION DES FOURNISSEURS & CONFIGURATION */}
-        {step === 2 && (
-          <div className="space-y-6 slide-in">
-
-            {/* 2.1 Sélection des fournisseurs agréés via Select à choix multiple */}
-            <SectionCard
-              title="Sélection des fournisseurs agréés Vitalis"
-              icon={Building2}
-              badge={`${selectedFournisseurs.length} sélectionné${selectedFournisseurs.length > 1 ? "s" : ""}`}
-            >
-              <p className="text-xs text-gray-600 mb-3 leading-relaxed">
-                Sélectionnez le ou les partenaires auprès desquels vous souhaitez solliciter un devis chiffré (1 devis distinct établi par fournisseur sélectionné, tous domaines confondus) :
-              </p>
-              <FournisseursMultiSelect
-                selectedIds={selectedFournisseurs}
-                onChange={setSelectedFournisseurs}
-                required
-              />
-            </SectionCard>
-
-            {/* 2.2 Modalités de financement & Précisions */}
-            <SectionCard title="Modalités de Financement & Précisions" icon={FileText}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">Durée de financement</label>
-                  <select className={sel} value={duree} disabled={false}>
-                    <option value={36}>36 mois</option>
-                    <option value={60}>60 mois</option>
-                    <option value={96}>96 mois</option>
-                  </select>
-                  <p className="text-[11px] text-gray-400 mt-1">Échéances mensuelles prélevées sur votre compte bancaire AFG.</p>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">Mode de règlement des articles</label>
-                  <div className="px-3.5 py-2.5 text-xs rounded-xl bg-gray-50 border border-gray-200 text-gray-600 font-medium">
-                    Règlement direct des fournisseurs par AFG Bank après accord de crédit.
-                  </div>
-                  <p className="text-[11px] text-gray-400 mt-1">Vous n'avancez aucun fond directement au fournisseur.</p>
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                    Remarques ou instructions particulières <span className="text-gray-400 font-normal">(Optionnel)</span>
+                    Consignes particulières ou observations <span className="text-gray-400 font-normal">(Optionnel)</span>
                   </label>
                   <textarea
-                    className={`${inp} min-h-[90px] resize-y`}
-                    placeholder="Avez-vous déjà un numéro de proforma, un contact en magasin ou un besoin de livraison urgente ?"
+                    rows={2}
+                    className={`${inp} resize-y`}
+                    placeholder="Instructions supplémentaires, contraintes horaires, etc."
                     value={observations}
                     onChange={e => setObservations(e.target.value)}
                   />
@@ -743,24 +646,36 @@ export default function NouvelleDemandeSouscripteur() {
               </div>
             </SectionCard>
 
-            {/* Boutons Étape 2 */}
+            {/* Note d'information et confidentialité */}
+            <div className="p-4 bg-blue-50/80 border border-blue-200/90 rounded-2xl flex items-start gap-3">
+              <ShieldCheck className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+              <div className="text-xs text-blue-950 space-y-1">
+                <p className="font-bold">Confidentialité & Règle d'Isolation ViFlo</p>
+                <p className="leading-relaxed text-blue-900">
+                  Votre souscription générera un devis distinct par fournisseur sélectionné.
+                  <strong> Chaque fournisseur n'aura accès qu'à son propre devis et ses propres articles</strong>, sans voir les autres fournisseurs intervenant sur votre dossier. Seuls vous, votre agence AFG Bank et la supervision ViFlo bénéficierez de la vue d'ensemble consolidée.
+                </p>
+              </div>
+            </div>
+
+            {/* Boutons d'action */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="w-full sm:w-auto px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm"
+                className="w-full sm:w-auto px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Retour à l'étape 1
+                Retour aux besoins
               </button>
 
               <button
                 type="submit"
-                disabled={submitting || selectedFournisseurs.length === 0}
-                className="w-full sm:w-auto btn-ldf-primary py-3.5 px-8 text-base shadow-lg hover:shadow-xl disabled:opacity-50 flex items-center justify-center gap-2.5 rounded-xl font-bold"
+                disabled={submitting}
+                className="w-full sm:w-auto btn-ldf-primary py-3.5 px-8 text-base shadow-lg hover:shadow-xl disabled:opacity-50 flex items-center justify-center gap-2.5 rounded-xl font-bold cursor-pointer"
               >
                 {submitting ? (
-                  <><Loader2 className="w-5 h-5 animate-spin" /> Envoi en cours...</>
+                  <><Loader2 className="w-5 h-5 animate-spin" /> Transmission en cours...</>
                 ) : (
                   <><Send className="w-5 h-5" /> Soumettre ma demande de financement</>
                 )}

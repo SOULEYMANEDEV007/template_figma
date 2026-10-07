@@ -33,8 +33,9 @@ export default function DevisPage() {
 
   // Filtrer selon le rôle fournisseur
   const roleFiltered = useMemo(() => {
-    if (user?.role === "fournisseur" && user.organisationId) {
-      return devis.filter(d => d.fournisseurId === user.organisationId);
+    if (user?.role === "fournisseur") {
+      const monId = user.organisationId || user.fournisseurId;
+      if (monId) return devis.filter(d => d.fournisseurId === monId);
     }
     return devis;
   }, [devis, user]);
