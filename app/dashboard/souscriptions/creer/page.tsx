@@ -18,6 +18,7 @@ import { OFFICIAL_FOURNISSEURS, getPartnerLogo } from "@/lib/constants";
 import { LISTE_REGIONS_CI, getVillesParRegion, getCommunesParVille } from "@/lib/constants/geography";
 import { emitInAppNotification, useLDFAuthStore } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
+import { BesoinsMultiplesList, type LigneBesoinItem } from "@/components/souscription/BesoinsMultiplesList";
 import {
   ArrowLeft, ArrowRight, Building2, Check, CheckCircle2,
   Copy, FileText, Info, Key, Loader2, Mail, MapPin, Plus, Search, Trash2,
@@ -226,21 +227,24 @@ export default function CreerSouscriptionPage() {
   const [formMorale, setFormMorale] = useState<FormMorale>(defaultMorale());
 
   // ── Étape 2 : Souscription ───────────────────────────────────
-  const [selectedFournisseurs, setSelectedFournisseurs] = useState<string[]>(
-    user?.role === "fournisseur" ? [user.organisationId || user.fournisseurId || "FOUR-LDF-001"] : []
-  );
+  const monFournisseurId = user?.role === "fournisseur" ? (user.organisationId || user.fournisseurId || "FOUR-LDF-001") : "FOUR-LDF-001";
+  const monFournisseurNom = user?.role === "fournisseur" ? (user.organisationName || "Librairie de France Groupe") : "Librairie de France Groupe";
+
+  const [besoins, setBesoins] = useState<LigneBesoinItem[]>([
+    {
+      id: `BSN-${Date.now()}-1`,
+      nature: user?.role === "fournisseur" ? "Éducation & Fournitures scolaires" : "",
+      categorie: user?.role === "fournisseur" ? "Livres & Manuels scolaires" : "",
+      produitRecherche: "",
+      montantEstime: "",
+      fournisseurId: user?.role === "fournisseur" ? monFournisseurId : "",
+      fournisseurNom: user?.role === "fournisseur" ? monFournisseurNom : "",
+    },
+  ]);
   const [selectedPointRelais, setSelectedPointRelais] = useState("");
   const [agenceId, setAgenceId] = useState("");
   const [duree, setDuree] = useState(36);
   const [observations, setObservations] = useState("");
-
-  // Verrouillage du fournisseur émetteur pour le rôle fournisseur
-  useEffect(() => {
-    if (user?.role === "fournisseur") {
-      const monId = user.organisationId || user.fournisseurId || "FOUR-LDF-001";
-      setSelectedFournisseurs([monId]);
-    }
-  }, [user]);
 
   // ── Handlers formulaires ─────────────────────────────────────
   const setP = (k: keyof FormPhysique, v: any) => setFormPhysique(f => ({ ...f, [k]: v }));
@@ -387,13 +391,6 @@ export default function CreerSouscriptionPage() {
     }
   };
 
-  // ── Gestion fournisseurs sélectionnés (Admin uniquement) ─────
-  const toggleFournisseur = (id: string) => {
-    setSelectedFournisseurs(prev =>
-      prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]
-    );
-  };
-
   // ── Validation par étape ─────────────────────────────────────
   const canNext = () => {
     if (step === 0) return true; // La recherche est optionnelle
@@ -405,7 +402,9 @@ export default function CreerSouscriptionPage() {
       return formMorale.nomEntreprise && formMorale.rccm && formMorale.telephone &&
         formMorale.nomDG && formMorale.formeJuridique;
     }
-    if (step === 2) return selectedFournisseurs.length > 0;
+    if (step === 2) {
+      return besoins.length > 0 && besoins.some(b => !!b.fournisseurId && (b.produitRecherche?.trim().length || 0) > 0);
+    }
     return true;
   };
 
@@ -418,10 +417,28 @@ export default function CreerSouscriptionPage() {
       const ref = `VF-${year}-${seq}`;
 
       const agenceChoisie = agencesAFG.find(a => a.id === agenceId);
-      const allFournisseursList = (fournisseurs && fournisseurs.length >= 8) ? fournisseurs : OFFICIAL_FOURNISSEURS;
-      const fournisseursChoisis = allFournisseursList
-        .filter(f => selectedFournisseurs.includes(f.id))
-        .map(f => ({ fournisseurId: f.id, fournisseurNom: f.nom, statut: "en_attente" as const }));
+
+      // Extraire les fournisseurs distincts depuis les lignes de besoins
+      const fournisseursMap = new Map<string, string>();
+      besoins.forEach(b => {
+        if (b.fournisseurId && b.fournisseurNom) {
+          fournisseursMap.set(b.fournisseurId, b.fournisseurNom);
+        }
+      });
+
+      const fournisseursChoisis = Array.from(fournisseursMap.entries()).map(([fournisseurId, fournisseurNom]) => ({
+        fournisseurId,
+        fournisseurNom,
+        statut: "en_attente" as const,
+      }));
+
+      // Montant total estimatif
+      const montantTotalNum = besoins.reduce((acc, b) => {
+        const val = typeof b.montantEstime === "string"
+          ? parseFloat(b.montantEstime.replace(/\s/g, "")) || 0
+          : Number(b.montantEstime) || 0;
+        return acc + val;
+      }, 0);
 
       // Données souscripteur communes (conserver l'identifiant s'il s'agit d'un souscripteur existant)
       const souscripteurId = foundExisting?.souscripteurId || (typeSouscripteur === "physique"
@@ -448,6 +465,14 @@ export default function CreerSouscriptionPage() {
         await saveFile(`RCCM-${souscripteurId}`, formMorale.rccmFile, "rccm", souscripteurId);
       }
 
+      // Synthèse structurée des besoins
+      const resumeBesoins = besoins.map((b, idx) => {
+        const montantStr = b.montantEstime ? ` (${new Intl.NumberFormat("fr-FR").format(Number(b.montantEstime))} FCFA)` : "";
+        return `[Besoin ${idx + 1}] Secteur: ${b.nature} | Fournisseur: ${b.fournisseurNom} | Articles: ${b.produitRecherche}${montantStr}`;
+      }).join("\n");
+
+      const obsFinale = `${resumeBesoins}${observations ? `\n\nNotes complémentaires: ${observations}` : ""}`;
+
       // Créer la souscription dans le store
       const nouvelle = addSouscription({
         reference: ref,
@@ -463,21 +488,22 @@ export default function CreerSouscriptionPage() {
         agenceId: agenceId || undefined,
         agenceNom: agenceChoisie?.nom,
         fournisseurs: fournisseursChoisis,
-        montantTotal: 0, // Sera mis à jour après création des devis
+        fournisseurNom: fournisseursChoisis.map(f => f.fournisseurNom).join(", "),
+        montantTotal: montantTotalNum || 0,
         duree,
-        statut: "en_preparation", // Toujours 'en_preparation' — le bénéficiaire peut ensuite ajouter les devis fournisseurs
+        statut: "en_preparation", // Le client ou fournisseur chiffrera ensuite le devis
         dateCreation: new Date().toISOString().split("T")[0],
         dateMiseAJour: new Date().toISOString().split("T")[0],
-        observations,
+        observations: obsFinale,
       });
 
       emitInAppNotification({
-        titre: `Nouvelle souscription ${ref}`,
-        message: `Dossier constitué pour ${souscripteurPrenom} ${souscripteurNom} — Prêt pour analyse AFG Bank.`,
+        titre: `Nouvelle souscription assistée ${ref}`,
+        message: `Dossier constitué pour ${souscripteurPrenom} ${souscripteurNom} — Prêt pour chiffrage devis et dépôt AFG Bank.`,
         categorie: "souscription",
         reference: ref,
         lien: `/dashboard/souscriptions/${nouvelle.id}`,
-        roles: ["admin", "fournisseur"],
+        roles: ["admin", "fournisseur", "banque", "owner"],
       });
 
       if (asBrouillon) {
@@ -512,7 +538,26 @@ export default function CreerSouscriptionPage() {
   };
 
   // ── Résumé pour l'étape de confirmation ─────────────────────
-  const fournisseursChoisis = fournisseurs.filter(f => selectedFournisseurs.includes(f.id));
+  const fournisseursChoisis = useMemo(() => {
+    const map = new Map<string, any>();
+    besoins.forEach(b => {
+      if (b.fournisseurId && !map.has(b.fournisseurId)) {
+        const found = fournisseurs.find(f => f.id === b.fournisseurId) || { id: b.fournisseurId, nom: b.fournisseurNom };
+        map.set(b.fournisseurId, found);
+      }
+    });
+    return Array.from(map.values());
+  }, [besoins, fournisseurs]);
+
+  const montantTotalEstime = useMemo(() => {
+    return besoins.reduce((acc, b) => {
+      const val = typeof b.montantEstime === "string"
+        ? parseFloat(b.montantEstime.replace(/\s/g, "")) || 0
+        : Number(b.montantEstime) || 0;
+      return acc + val;
+    }, 0);
+  }, [besoins]);
+
   const relaisChoisi = pointsRelais.find(r => r.id === selectedPointRelais);
   const agenceChoisie = agencesAFG.find(a => a.id === agenceId);
 
@@ -954,68 +999,14 @@ export default function CreerSouscriptionPage() {
             </Field>
           </SectionCard>
 
-          {/* Fournisseur émetteur */}
-          <SectionCard title="Fournisseurs agréés partenaires" icon={Building2}>
-            <p className="text-xs text-gray-500 mb-3">
-              {user?.role === "fournisseur"
-                ? "Votre établissement est l'émetteur exclusif de cette souscription et du devis associé :"
-                : "Sélectionnez le ou les fournisseurs agréés partenaires pour cette souscription :"}
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              {((fournisseurs && fournisseurs.length >= 8) ? fournisseurs : OFFICIAL_FOURNISSEURS)
-                .filter(f => f.agreVitalis && f.statut === "actif")
-                .map(f => {
-                  if (f.id === "FOUR-DRO-002" || f.nom?.toLowerCase().includes("drocolor")) {
-                    return { ...f, secteurActivite: "Peinture bâtiment & carrosserie, revêtements & étanchéité" };
-                  }
-                  return f;
-                })
-                .map(f => {
-                const isSelected = selectedFournisseurs.includes(f.id);
-                const isDisabled = user?.role === "fournisseur" && (user.organisationId === f.id || user.fournisseurId === f.id);
-                const logoSrc = f.logo || getPartnerLogo(f.nom, f.id);
-                return (
-                  <button
-                    key={f.id}
-                    type="button"
-                    disabled={isDisabled}
-                    onClick={() => !isDisabled && toggleFournisseur(f.id)}
-                    className={`p-3.5 rounded-xl border-2 text-left transition-all flex items-center gap-3.5
-                      ${isSelected ? "border-orange-500 bg-orange-50/70 shadow-sm ring-1 ring-orange-400/30" : "border-gray-200 hover:border-orange-300 bg-white"}
-                      ${isDisabled ? "opacity-90 cursor-default" : "cursor-pointer"}`}
-                  >
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0
-                      ${isSelected ? "bg-orange-500 border-orange-500" : "border-gray-300"}`}>
-                      {isSelected && <Check className="w-3 h-3 text-white" />}
-                    </div>
-
-                    <div className="w-11 h-11 rounded-xl bg-white border border-gray-100 p-1 flex items-center justify-center flex-shrink-0 shadow-xs">
-                      {logoSrc ? (
-                        <Image
-                          src={logoSrc}
-                          alt={f.nom}
-                          width={38}
-                          height={38}
-                          className="object-contain max-w-full max-h-full rounded"
-                        />
-                      ) : (
-                        <Building2 className="w-5 h-5 text-gray-400" />
-                      )}
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <p className={`text-xs font-semibold truncate ${isSelected ? "text-orange-900" : "text-gray-800"}`}>{f.nom}</p>
-                        <span className="text-[9px] bg-emerald-50 text-emerald-700 px-1 py-0.2 border border-emerald-200 rounded font-medium">Agréé</span>
-                      </div>
-                      <p className="text-[10px] text-gray-400 truncate mt-0.5">{f.secteurActivite || f.raisonSociale}</p>
-                    </div>
-                    {isDisabled && <span className="text-[9px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-semibold">Émetteur</span>}
-                  </button>
-                );
-              })}
-            </div>
-          </SectionCard>
+          {/* Besoins multiples & Sélection des Fournisseurs Agréés */}
+          <BesoinsMultiplesList
+            besoins={besoins}
+            onChange={setBesoins}
+            isBoutique={user?.role === "fournisseur"}
+            currentFournisseurId={user?.role === "fournisseur" ? monFournisseurId : undefined}
+            currentFournisseurNom={user?.role === "fournisseur" ? monFournisseurNom : undefined}
+          />
 
           {/* Durée du programme */}
           <SectionCard title="Durée du financement" icon={FileText}>
@@ -1135,18 +1126,38 @@ export default function CreerSouscriptionPage() {
               <div><p className="text-xs text-gray-400">Banque financeuse</p><p className="font-bold text-orange-600">AFG Bank</p></div>
               <div><p className="text-xs text-gray-400">Agence</p><p className="font-medium">{agenceChoisie?.nom || "Non spécifiée"}</p></div>
               <div><p className="text-xs text-gray-400">Durée programme</p><p className="font-medium">{duree} mois</p></div>
-              <div className="col-span-2">
-                <p className="text-xs text-gray-400">Fournisseur(s)</p>
-                <div className="flex flex-wrap gap-1.5 mt-1">
-                  {fournisseursChoisis.map(f => (
-                    <span key={f.id} className="px-2 py-0.5 bg-orange-100 text-orange-700 text-xs rounded-full font-medium">{f.nom}</span>
+              <div>
+                <p className="text-xs text-gray-400">Budget estimé total</p>
+                <p className="font-bold text-orange-700">
+                  {montantTotalEstime > 0 ? `${new Intl.NumberFormat("fr-FR").format(montantTotalEstime)} FCFA` : "À chiffrer"}
+                </p>
+              </div>
+
+              <div className="col-span-2 pt-2 border-t border-gray-100">
+                <p className="text-xs font-semibold text-gray-600 mb-1.5">
+                  Besoins enregistrés ({besoins.length}) & Fournisseurs associés ({fournisseursChoisis.length}) :
+                </p>
+                <div className="space-y-1.5">
+                  {besoins.map((b, idx) => (
+                    <div key={b.id || idx} className="p-2.5 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-between text-xs">
+                      <div>
+                        <span className="font-semibold text-gray-800">{b.produitRecherche || "Articles non spécifiés"}</span>
+                        <span className="text-gray-400 block text-[11px]">{b.nature} · Fournisseur : <strong className="text-orange-700">{b.fournisseurNom || "Non assigné"}</strong></span>
+                      </div>
+                      {b.montantEstime && (
+                        <span className="font-mono font-bold text-gray-700">
+                          {new Intl.NumberFormat("fr-FR").format(Number(b.montantEstime))} FCFA
+                        </span>
+                      )}
+                    </div>
                   ))}
                 </div>
               </div>
+
               {relaisChoisi && (
-                <div className="col-span-2">
-                  <p className="text-xs text-gray-400">Point relais</p>
-                  <p className="font-medium flex items-center gap-1"><MapPin className="w-3 h-3 text-orange-400" /> {relaisChoisi.nom} — {relaisChoisi.ville}</p>
+                <div className="col-span-2 pt-1">
+                  <p className="text-xs text-gray-400">Point relais de livraison</p>
+                  <p className="font-medium flex items-center gap-1 text-xs"><MapPin className="w-3.5 h-3.5 text-orange-500" /> {relaisChoisi.nom} — {relaisChoisi.ville}</p>
                 </div>
               )}
             </div>

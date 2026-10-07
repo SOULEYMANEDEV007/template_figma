@@ -145,7 +145,7 @@ export default function LoginPage() {
           {[
             { label: "Souscriptions", value: "30+" },
             { label: "Fournisseurs agréés", value: "5" },
-            { label: "Banque partenaire", isLogo: true },
+            { label: "Banque partenaire", value: "1" },
           ].map((s) => (
             <div key={s.label}>
               {s.isLogo ? (

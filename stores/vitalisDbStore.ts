@@ -480,7 +480,7 @@ const SEED_FOURNISSEURS: VFournisseur[] = [
     telephone: '+225 27 21 25 00 00', telephoneCommercial: '+225 05 44 55 66 77',
     adresse: 'Zone Industrielle de Vridi', ville: 'Abidjan', quartier: 'Treichville',
     rccm: 'CI-ABJ-2017-B-90123', secteurActivite: 'Automobile, Concessionnaire véhicules, deux-roues & pièces',
-    logo: '/images/logo_rymco.jpg', agreVitalis: true, dateAgrementVitalis: '2023-02-28', statut: 'actif',
+    logo: '/images/rimco-motor-logo.webp', agreVitalis: true, dateAgrementVitalis: '2023-02-28', statut: 'actif',
     nombreSouscriptions: 0, montantTotal: 0,
   },
   {
@@ -550,7 +550,7 @@ const SEED_FOURNISSEURS: VFournisseur[] = [
     telephone: '+225 27 21 21 39 39', telephoneCommercial: '+225 07 99 88 77 66',
     adresse: 'Boulevard de Marseille, Km 4, Treichville', ville: 'Abidjan', quartier: 'Treichville',
     rccm: 'CI-ABJ-2013-B-51204', secteurActivite: 'Aménagement d\'intérieur, mobilier, quincaillerie d\'ameublement & sanitaire',
-    logo: '/images/technibat-logo.webp', agreVitalis: true, dateAgrementVitalis: '2023-03-25', statut: 'actif',
+    logo: '/images/technibat-logo.png', agreVitalis: true, dateAgrementVitalis: '2023-03-25', statut: 'actif',
     nombreSouscriptions: 0, montantTotal: 0,
   },
   {
@@ -571,6 +571,26 @@ const SEED_FOURNISSEURS: VFournisseur[] = [
     adresse: 'Boulevard Valéry Giscard d\'Estaing', ville: 'Abidjan', quartier: 'Marcory',
     rccm: 'CI-ABJ-2016-B-55443', secteurActivite: 'Électroménager haut de gamme, Climatisation & Électronique',
     logo: '/images/logo_lg.webp', agreVitalis: true, dateAgrementVitalis: '2023-05-12', statut: 'actif',
+    nombreSouscriptions: 0, montantTotal: 0,
+  },
+  {
+    id: 'FOUR-CMF-015', code: 'CIMAF', nom: 'CIMAF', raisonSociale: 'Ciments de l\'Afrique Côte d\'Ivoire (CIMAF CI)',
+    nomDirecteur: 'M. Mamadou TRAORE',
+    email: 'contact.ci@cimaf.com', emailCommercial: 'ventes.ci@cimaf.com',
+    telephone: '+225 27 21 21 68 00', telephoneCommercial: '+225 07 88 77 66 55',
+    adresse: 'Zone Industrielle de Vridi', ville: 'Abidjan', quartier: 'Port-Bouët / Vridi',
+    rccm: 'CI-ABJ-2011-B-58210', secteurActivite: 'Bâtiment, Matériaux de construction, ciment CPJ & liants hydrauliques',
+    logo: '/images/cimaf-logo.png', agreVitalis: true, dateAgrementVitalis: '2023-06-15', statut: 'actif',
+    nombreSouscriptions: 0, montantTotal: 0,
+  },
+  {
+    id: 'FOUR-SCM-016', code: 'SOCIMAT', nom: 'SOCIMAT (Ciment Bélier)', raisonSociale: 'Société de Ciments d\'Abidjan (SOCIMAT) - LafargeHolcim CI',
+    nomDirecteur: 'M. Franck KOUASSI',
+    email: 'contact-ci@lafargeholcim.com', emailCommercial: 'belier.commandes@lafargeholcim.com',
+    telephone: '+225 27 21 21 70 00', telephoneCommercial: '+225 05 44 33 22 11',
+    adresse: 'Boulevard de Marseille, Treichville Zone Portuaire', ville: 'Abidjan', quartier: 'Treichville',
+    rccm: 'CI-ABJ-1962-B-00123', secteurActivite: 'Bâtiment, Matériaux de construction, Ciment Bélier & solutions BTP',
+    logo: '/images/socimat-belier-logo.jpg', agreVitalis: true, dateAgrementVitalis: '2023-06-15', statut: 'actif',
     nombreSouscriptions: 0, montantTotal: 0,
   },
 ];
@@ -836,6 +856,7 @@ interface VitalisDbState {
   // Tables
   agencesAFG: VAgenceAFG[];
   fournisseurs: VFournisseur[];
+  deletedFournisseurIds: string[];
   pointsRelais: VPointRelais[];
   souscriptions: VSouscription[];
   devis: VDevis[];
@@ -935,6 +956,7 @@ export const useVitalisDb = create<VitalisDbState>()(
       // ── State initial (sera remplacé par seed) ──────────────
       agencesAFG: SEED_AGENCES_AFG,
       fournisseurs: SEED_FOURNISSEURS,
+      deletedFournisseurIds: [],
       pointsRelais: SEED_POINTS_RELAIS,
       souscriptions: DEMO_SOUSCRIPTIONS,
       devis: DEMO_DEVIS,
@@ -981,7 +1003,8 @@ export const useVitalisDb = create<VitalisDbState>()(
             set({ fournisseurs: SEED_FOURNISSEURS });
           } else {
             const currentIds = new Set(state.fournisseurs.map(f => f.id));
-            const missing = SEED_FOURNISSEURS.filter(sf => !currentIds.has(sf.id));
+            const deletedIds = new Set(state.deletedFournisseurIds || []);
+            const missing = SEED_FOURNISSEURS.filter(sf => !currentIds.has(sf.id) && !deletedIds.has(sf.id));
             if (missing.length > 0) {
               set({ fournisseurs: [...state.fournisseurs, ...missing] });
             }
@@ -1104,6 +1127,7 @@ export const useVitalisDb = create<VitalisDbState>()(
 
       deleteFournisseur: (id) => set(s => ({
         fournisseurs: s.fournisseurs.filter(f => f.id !== id),
+        deletedFournisseurIds: Array.from(new Set([...(s.deletedFournisseurIds || []), id])),
       })),
 
       getFournisseurById: (id) => get().fournisseurs.find(f => f.id === id),
@@ -1751,11 +1775,13 @@ export const useVitalisDb = create<VitalisDbState>()(
 
             // Ajout des fournisseurs officiels manquants
             const currentIds = new Set(updated.map((f: any) => f.id));
-            const missingFromSeed = SEED_FOURNISSEURS.filter(sf => !currentIds.has(sf.id));
+            const deletedIds = new Set(state.deletedFournisseurIds || []);
+            const missingFromSeed = SEED_FOURNISSEURS.filter(sf => !currentIds.has(sf.id) && !deletedIds.has(sf.id));
 
             state.fournisseurs = [...updated, ...missingFromSeed];
           } else {
-            state.fournisseurs = SEED_FOURNISSEURS;
+            const deletedIds = new Set(state.deletedFournisseurIds || []);
+            state.fournisseurs = SEED_FOURNISSEURS.filter(sf => !deletedIds.has(sf.id));
           }
 
           // Migration automatique des articles de devis sans référence
@@ -1790,6 +1816,7 @@ export const useVitalisDb = create<VitalisDbState>()(
       },
       partialize: (state) => ({
         fournisseurs: state.fournisseurs,
+        deletedFournisseurIds: state.deletedFournisseurIds,
         agencesAFG: state.agencesAFG,
         pointsRelais: state.pointsRelais,
         souscriptions: state.souscriptions,

@@ -1,21 +1,22 @@
 // @ts-nocheck
 "use client";
+
 import { StatusBadge } from "@/components/ui/ldf-badge";
 import { LDFTimeline, ProcessTimeline } from "@/components/ui/ldf-timeline";
 import { ConfirmModal } from "@/components/ui/ldf-modal";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
-import { useLDFAuthStore } from "@/stores/ldfAuth";
+import { useLDFAuthStore, emitInAppNotification } from "@/stores/ldfAuth";
 import {
   ArrowLeft, Building2, CheckCircle2, CreditCard, Download,
   FileText, MapPin, Package, Phone, Plus, User, Printer, Send, Truck, Clock,
   BookOpen, ShieldCheck, Sparkles, Mail, Eye, AlertCircle, Check, X,
+  ExternalLink, Layers
 } from "lucide-react";
-import { IMAGES } from "@/lib/constants";
+import { IMAGES, getPartnerLogo } from "@/lib/constants";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
-import { emitInAppNotification } from "@/stores/ldfAuth";
 
 const fmtCFA = (v: any) => {
   const num = typeof v === "number" ? v : Number(v);
@@ -29,7 +30,7 @@ export default function SouscriptionDetailPage() {
   const {
     getSouscriptionById, getDevisBySouscription, getDossierBySouscription,
     getHistoriqueBySouscription, addDossier, updateDossier, updateSouscription,
-    addPaiement, generateRef, addHistorique,
+    addPaiement, generateRef, addHistorique, fournisseurs: allStoreFournisseurs,
   } = useVitalisDb();
 
   const [showConfirm, setShowConfirm] = useState(false);
@@ -37,9 +38,70 @@ export default function SouscriptionDetailPage() {
   const [submittingDossier, setSubmittingDossier] = useState(false);
   const [dateDisponibilite, setDateDisponibilite] = useState(new Date().toISOString().split("T")[0]);
   const [heureDisponibilite, setHeureDisponibilite] = useState("08:00");
+  const [selectedDevisTab, setSelectedDevisTab] = useState<string>("all"); // 'all' ou devis.id
 
   const sub = getSouscriptionById(id);
-  const devis = sub ? getDevisBySouscription(sub.id)[0] : null;
+
+  // ── RÈGLE D'ISOLATION STRICTE DES FOURNISSEURS ──────────────────────────────
+  const isFournisseur = user?.role === "fournisseur";
+  const monFournisseurId = isFournisseur ? (user?.organisationId || user?.fournisseurId || "FOUR-LDF-001") : null;
+
+  // Vérifier si le fournisseur connecté est concerné par cette souscription
+  const estAssigneFournisseur = useMemo(() => {
+    if (!isFournisseur || !sub) return true;
+    if (!monFournisseurId) return false;
+    return (sub.fournisseurs || []).some(f => f.fournisseurId === monFournisseurId);
+  }, [isFournisseur, sub, monFournisseurId]);
+
+  // Récupération de tous les devis rattachés à cette souscription
+  const tousLesDevis = useMemo(() => {
+    if (!sub) return [];
+    return getDevisBySouscription(sub.id);
+  }, [sub, getDevisBySouscription]);
+
+  // Fournisseurs visibles selon le rôle
+  // FOURNISSEUR : voit STRICTEMENT son enseigne, JAMAIS les concurrents
+  // CLIENT / ADMIN / BANQUE / OWNER : voient l'ensemble des fournisseurs
+  const fournisseursAffiches = useMemo(() => {
+    if (!sub?.fournisseurs) return [];
+    if (isFournisseur && monFournisseurId) {
+      return sub.fournisseurs.filter(f => f.fournisseurId === monFournisseurId);
+    }
+    return sub.fournisseurs;
+  }, [sub?.fournisseurs, isFournisseur, monFournisseurId]);
+
+  // Devis visibles selon le rôle
+  const devisAffiches = useMemo(() => {
+    if (isFournisseur && monFournisseurId) {
+      return tousLesDevis.filter(d => d.fournisseurId === monFournisseurId);
+    }
+    return tousLesDevis;
+  }, [tousLesDevis, isFournisseur, monFournisseurId]);
+
+  // Devis du fournisseur connecté (si rôle fournisseur)
+  const monDevisFournisseur = useMemo(() => {
+    if (!isFournisseur || !monFournisseurId) return devisAffiches[0] || null;
+    return devisAffiches.find(d => d.fournisseurId === monFournisseurId) || null;
+  }, [isFournisseur, monFournisseurId, devisAffiches]);
+
+  // Devis actif pour consultation
+  const devisActif = useMemo(() => {
+    if (isFournisseur) return monDevisFournisseur;
+    if (selectedDevisTab === "all") return devisAffiches[0] || null;
+    return devisAffiches.find(d => d.id === selectedDevisTab) || devisAffiches[0] || null;
+  }, [isFournisseur, monDevisFournisseur, selectedDevisTab, devisAffiches]);
+
+  // Montant effectif affiché
+  // Pour le fournisseur : UNIQUEMENT le montant de son propre devis
+  // Pour les superviseurs et le client : somme consolidée des devis
+  const montantEffectif = useMemo(() => {
+    if (isFournisseur) {
+      return monDevisFournisseur ? (Number(monDevisFournisseur.totalTTC) || 0) : 0;
+    }
+    const totalDesDevis = devisAffiches.reduce((acc, d) => acc + (Number(d.totalTTC) || 0), 0);
+    return totalDesDevis > 0 ? totalDesDevis : (sub?.montantTotal || 0);
+  }, [isFournisseur, monDevisFournisseur, devisAffiches, sub?.montantTotal]);
+
   const dossier = sub ? getDossierBySouscription(sub.id) : null;
   const historique = sub ? getHistoriqueBySouscription(sub.id) : [];
 
@@ -61,19 +123,48 @@ export default function SouscriptionDetailPage() {
     };
   }, [sub]);
 
-  // Alerte In-App automatique au client dès que le devis est disponible
+  // Alerte In-App automatique au client dès qu'un devis est disponible
   useEffect(() => {
-    if (devis && sub && (sub.statut === "en_preparation" || sub.statut === "pret_pour_depot")) {
+    if (devisAffiches.length > 0 && sub && (sub.statut === "en_preparation" || sub.statut === "pret_pour_depot")) {
       emitInAppNotification({
         titre: `Constitution du dossier physique : ${sub.reference}`,
-        message: `Votre devis est prêt ! Veuillez imprimer votre dossier (fiche d'adhésion VITALIS + devis) et rassembler vos pièces (CNI, attestation de travail, 3 derniers bulletins de salaire) pour les déposer à votre agence AFG Bank (${sub.agenceNom || "Agence Centrale"}).`,
+        message: `Vos devis chiffrés sont prêts ! Veuillez imprimer votre dossier (fiche d'adhésion VITALIS + devis) et déposer vos pièces justificatives à votre agence AFG Bank (${sub.agenceNom || "Agence Centrale"}).`,
         categorie: "dossier",
         reference: sub.reference,
         lien: `/dashboard/souscriptions/${sub.id}`,
         roles: ["souscripteur"],
       });
     }
-  }, [devis?.id, sub?.id]);
+  }, [devisAffiches.length, sub?.id]);
+
+  if (!sub) return (
+    <div className="flex flex-col items-center justify-center py-24 text-gray-400 gap-3">
+      <FileText className="w-12 h-12 text-gray-200" />
+      <p className="text-sm">Souscription introuvable</p>
+      <button onClick={() => router.back()} className="btn-ldf-outline text-sm py-2">← Retour</button>
+    </div>
+  );
+
+  // Blocage de sécurité si un fournisseur essaie d'accéder à un dossier qui ne le concerne pas
+  if (isFournisseur && !estAssigneFournisseur) {
+    return (
+      <div className="max-w-xl mx-auto my-16 bg-white p-8 rounded-2xl border border-gray-200 shadow-sm text-center space-y-4">
+        <div className="w-14 h-14 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mx-auto">
+          <ShieldCheck className="w-7 h-7" />
+        </div>
+        <h2 className="text-lg font-bold text-gray-900">Accès confidentiel restreint</h2>
+        <p className="text-xs text-gray-600 leading-relaxed">
+          En application de la règle de stricte étanchéité commerciale ViFlo FADES, chaque fournisseur agréé ne peut consulter que les dossiers pour lesquels des articles lui ont été demandés.
+        </p>
+        <button
+          onClick={() => router.push("/dashboard/souscriptions")}
+          className="btn-ldf-primary py-2.5 px-6 text-xs rounded-xl"
+        >
+          Retour à mes souscriptions
+        </button>
+      </div>
+    );
+  }
 
   const handleConfirmerDepotPhysique = () => {
     if (!sub) return;
@@ -89,13 +180,13 @@ export default function SouscriptionDetailPage() {
         souscripteurNom: sub.souscripteurNom,
         souscripteurPrenom: sub.souscripteurPrenom,
         typeSouscripteur: sub.typeSouscripteur,
-        fournisseursNoms: sub.fournisseurNom || (devis?.fournisseurNom || "Librairie de France Groupe"),
-        devisIds: devis ? [devis.id] : [],
+        fournisseursNoms: sub.fournisseurs.map(f => f.fournisseurNom).join(", ") || "Librairie de France Groupe",
+        devisIds: devisAffiches.map(d => d.id),
         banqueId: "AFG-001",
         banqueNom: "AFG Bank",
         agenceId: sub.agenceId || "AGE-AFG-001",
-        montantTotal: devis?.totalTTC || sub.montantTotal || 0,
-        montant: devis?.totalTTC || sub.montantTotal || 0,
+        montantTotal: montantEffectif,
+        montant: montantEffectif,
         statut: "depose_banque",
         dateCreation: new Date().toISOString().split("T")[0],
         dateReception: new Date().toISOString().split("T")[0],
@@ -117,13 +208,18 @@ export default function SouscriptionDetailPage() {
       lien: `/dashboard/souscriptions/${sub.id}`,
       roles: ["banque", "admin"],
     });
-    toast.success("Dépôt physique enregistré ! Votre dossier est maintenant entre les mains d'AFG Bank.");
+    toast.success("Dépôt physique enregistré ! Votre dossier est entre les mains d'AFG Bank.");
   };
 
   const handlePrintDossier = () => {
     if (!sub) return;
     const w = window.open('', '_blank');
     if (!w) return;
+
+    // Si rôle fournisseur, n'imprimer que son devis
+    // Sinon imprimer la totalité des devis
+    const devisAImprimer = isFournisseur && monDevisFournisseur ? [monDevisFournisseur] : devisAffiches;
+
     w.document.write(`
       <html><head><title>Dossier de Souscription VITALIS - ${sub.reference}</title>
       <style>
@@ -159,6 +255,7 @@ export default function SouscriptionDetailPage() {
         <tr><th>Banque Financeuse</th><td><strong>${sub.banqueNom}</strong></td></tr>
         <tr><th>Agence AFG Bank de Dépôt</th><td><strong>${sub.agenceNom || "Agence Centrale Plateau"}</strong></td></tr>
         <tr><th>Durée de remboursement demandée</th><td><strong>${sub.duree} mois</strong> (Taux bonifié Vitalis)</td></tr>
+        <tr><th>Fournisseur(s) concerné(s)</th><td><strong>${fournisseursAffiches.map(f => f.fournisseurNom).join(", ")}</strong></td></tr>
       </table>
 
       <h2>2. Identité du Souscripteur (Bénéficiaire)</h2>
@@ -172,12 +269,12 @@ export default function SouscriptionDetailPage() {
 
       ${sub.observations ? `
       <h2>3. Expression du Besoin Client</h2>
-      <p style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; font-size: 12px; margin: 8px 0;">
+      <p style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; font-size: 12px; margin: 8px 0; white-space: pre-line;">
         ${sub.observations}
       </p>` : ''}
 
-      ${devis ? `
-      <h2>4. Devis Chiffré Joint — ${devis.fournisseurNom} (Réf : ${devis.reference})</h2>
+      ${devisAImprimer.length > 0 ? devisAImprimer.map((d, dIdx) => `
+      <h2>4.${dIdx + 1}. Devis Chiffré Joint — ${d.fournisseurNom} (Réf : ${d.reference})</h2>
       <table>
         <thead>
           <tr>
@@ -189,7 +286,7 @@ export default function SouscriptionDetailPage() {
           </tr>
         </thead>
         <tbody>
-          ${(devis.articles || []).map(a => `
+          ${(d.articles || []).map(a => `
             <tr>
               <td><strong>${a.designation}</strong></td>
               <td style="font-family: monospace; font-size: 11px; color: #64748b;">${a.reference || a.ref || a.code || a.id || '—'}</td>
@@ -202,15 +299,15 @@ export default function SouscriptionDetailPage() {
         <tfoot>
           <tr>
             <td colspan="4" style="text-align: right; font-weight: bold;">Montant Total HT</td>
-            <td style="text-align: right; font-weight: bold;">${fmtCFA(devis.totalHT || devis.totalTTC)}</td>
+            <td style="text-align: right; font-weight: bold;">${fmtCFA(d.totalHT || d.totalTTC)}</td>
           </tr>
           <tr style="background: #fff7ed; color: #ea580c; font-size: 13px;">
-            <td colspan="4" style="text-align: right; font-weight: bold;">MONTANT TOTAL DU FINANCEMENT (TTC)</td>
-            <td style="text-align: right; font-weight: bold;">${fmtCFA(devis.totalTTC)}</td>
+            <td colspan="4" style="text-align: right; font-weight: bold;">MONTANT TOTAL DU DEVIS (TTC)</td>
+            <td style="text-align: right; font-weight: bold;">${fmtCFA(d.totalTTC)}</td>
           </tr>
         </tfoot>
       </table>
-      ` : ''}
+      `).join('') : ''}
 
       <h2>5. Engagements & Signatures</h2>
       <p style="font-size: 11px; text-align: justify; color: #475569;">
@@ -240,64 +337,44 @@ export default function SouscriptionDetailPage() {
     setTimeout(() => w.print(), 500);
   };
 
-  if (!sub) return (
-    <div className="flex flex-col items-center justify-center py-24 text-gray-400 gap-3">
-      <FileText className="w-12 h-12 text-gray-200" />
-      <p className="text-sm">Souscription introuvable</p>
-      <button onClick={() => router.back()} className="btn-ldf-outline text-sm py-2">← Retour</button>
-    </div>
-  );
-
-  // Statuts "positifs" successifs du workflow VITALIS
-  const isApres = (statut: string, ref: string) => {
+  // Timeline des statuts
+  const currentEffectifStatut = dossier?.statut || sub.statut;
+  const isApres = (statutActuel: string, etapeCible: string) => {
     const ordre = [
-      "en_preparation",
-      "pret_pour_depot",
-      "depose_banque",
-      "recu",
-      "en_analyse_bancaire",
-      "en_cours_traitement",
-      "accepte",
-      "valide",
-      "finance",
-      "fournisseur_paye",
-      "commande_en_preparation",
-      "livre",
-      "servie",
-      "cloture",
+      "en_attente", "en_preparation", "pret_pour_depot", "depose_banque",
+      "en_analyse_bancaire", "accepte", "valide", "finance", "fournisseur_paye",
+      "commande_en_preparation", "livre", "servie", "cloture"
     ];
-    const idxCandidat = ordre.indexOf(statut);
-    const idxRef = ordre.indexOf(ref);
-    return idxCandidat !== -1 && idxCandidat >= idxRef;
+    const idxActuel = ordre.indexOf(statutActuel);
+    const idxCible = ordre.indexOf(etapeCible);
+    if (idxActuel === -1 || idxCible === -1) return false;
+    return idxActuel >= idxCible;
   };
 
-  // Statut le plus avancé entre la souscription et son dossier
-  const currentEffectifStatut = [sub.statut, dossier?.statut || ""].reduce((max, curr) => {
-    return isApres(curr, max) ? curr : max;
-  }, sub.statut);
-
   const processSteps = [
-    { id: "sub", label: "1. Demande & Besoin", statut: "complete" as const, date: sub.dateCreation },
-    { id: "devis", label: "2. Devis fournisseur", statut: devis ? ("complete" as const) : ("pending" as const) },
+    {
+      id: "souscription",
+      label: "1. Souscription client",
+      statut: "complete" as const,
+    },
+    {
+      id: "devis",
+      label: "2. Chiffrage devis",
+      statut: devisAffiches.length > 0 ? ("complete" as const) : ("current" as const),
+    },
     {
       id: "depot",
-      label: "3. Dépôt dossier physique",
-      statut: (isApres(currentEffectifStatut, "depose_banque") || isApres(currentEffectifStatut, "en_analyse_bancaire") || isApres(currentEffectifStatut, "accepte"))
+      label: "3. Dépôt agence AFG",
+      statut: isApres(currentEffectifStatut, "depose_banque")
         ? ("complete" as const)
-        : devis
-          ? ("current" as const)
-          : ("pending" as const),
+        : devisAffiches.length > 0 ? ("current" as const) : ("pending" as const),
     },
     {
       id: "banque",
-      label: "4. Décision AFG Bank",
-      statut: isApres(currentEffectifStatut, "accepte")
+      label: "4. Accord de crédit",
+      statut: isApres(currentEffectifStatut, "accepte") || isApres(currentEffectifStatut, "valide") || isApres(currentEffectifStatut, "finance")
         ? ("complete" as const)
-        : (currentEffectifStatut === "refuse" || currentEffectifStatut === "rejete")
-          ? ("rejected" as const)
-          : (currentEffectifStatut === "en_analyse_bancaire" || currentEffectifStatut === "depose_banque")
-            ? ("current" as const)
-            : ("pending" as const),
+        : isApres(currentEffectifStatut, "depose_banque") ? ("current" as const) : ("pending" as const),
     },
     {
       id: "paiement",
@@ -319,144 +396,71 @@ export default function SouscriptionDetailPage() {
     },
   ];
 
-  const handleConfirmerPaiement = () => {
-    const refPay = generateRef("PAY");
-    const montantTotal = devis?.totalTTC || sub.montantTotal || 0;
-    const newPay = addPaiement({
-      reference: refPay,
-      souscriptionId: sub.id,
-      souscriptionRef: sub.reference,
-      dossierId: dossier?.id || "",
-      dossierRef: dossier?.reference || "",
-      souscripteurNom: `${sub.souscripteurPrenom || ""} ${sub.souscripteurNom || ""}`.trim(),
-      montantTotal,
-      repartitionFournisseurs: [
-        {
-          fournisseurId: devis?.fournisseurId || "FOUR-LDF-001",
-          fournisseurNom: devis?.fournisseurNom || sub.fournisseurNom || "Librairie de France Groupe",
-          devisId: devis?.id || "",
-          montant: montantTotal,
-          statut: "confirme",
-        },
-      ],
-      statut: "termine",
-      dateCreation: new Date().toISOString().split("T")[0],
-      dateValidationAFG: new Date().toISOString().split("T")[0],
-      dateTransfert: new Date().toISOString().split("T")[0],
-      dateMiseAJour: new Date().toISOString().split("T")[0],
-    });
-
-    updateSouscription(sub.id, { statut: "fournisseur_paye", paiementId: newPay.id });
-    if (dossier) updateDossier(dossier.id, { statut: "fournisseur_paye" });
-    addHistorique({
-      souscriptionId: sub.id,
-      action: "paiement_effectue",
-      description: `Virement de ${fmtCFA(montantTotal)} confirmé au fournisseur — Réf ${refPay}`,
-      auteur: `${user?.firstName || "AFG Bank"} ${user?.lastName || ""}`,
-      date: new Date().toISOString(),
-    });
-    emitInAppNotification({
-      titre: `Paiement fournisseur validé : ${refPay}`,
-      message: `AFG Bank a validé le virement de ${fmtCFA(montantTotal)} pour ${sub.reference}. La commande peut être préparée.`,
-      categorie: "paiement",
-      reference: refPay,
-      lien: `/dashboard/souscriptions/${sub.id}`,
-      roles: ["fournisseur", "souscripteur", "banque", "admin"],
-    });
-    toast.success("Virement fournisseur validé ! Étape Paiement complétée ✓");
-  };
-
-  const handleDemarrerPreparation = () => {
-    const pointRelaisMatch = sub?.observations?.match(/Relais:\s*([^|\n]+)/);
-    const pointRelaisName = pointRelaisMatch ? pointRelaisMatch[1].trim() : "votre point relais";
-
-    updateSouscription(sub.id, { statut: "commande_en_preparation" });
-    if (dossier) updateDossier(dossier.id, { statut: "commande_en_preparation" });
-
-    addHistorique({
-      souscriptionId: sub.id,
-      action: "commande_preparation",
-      description: `Commande prête. Disponible au point relais : ${pointRelaisName} le ${new Date(dateDisponibilite).toLocaleDateString("fr-FR")} à partir de ${heureDisponibilite}.`,
-      auteur: `${user?.firstName || "Fournisseur"} ${user?.lastName || ""}`,
-      date: new Date().toISOString(),
-    });
-
-    emitInAppNotification({
-      titre: `Votre commande est prête !`,
-      message: `La commande sera disponible au point relais : ${pointRelaisName} le ${new Date(dateDisponibilite).toLocaleDateString("fr-FR")} à partir de ${heureDisponibilite}.`,
-      categorie: "dossier",
-      reference: sub.reference,
-      lien: `/dashboard/souscriptions/${sub.id}`,
-      roles: ["souscripteur", "banque", "admin", "fournisseur"],
-    });
-
-    toast.success("Client alerté de la disponibilité 📦");
-  };
-
-  const handleConfirmerLivraison = () => {
-    updateSouscription(sub.id, { statut: "livre" });
-    if (dossier) updateDossier(dossier.id, { statut: "livre" });
-    addHistorique({
-      souscriptionId: sub.id,
-      action: "articles_livres",
-      description: "Articles remis au souscripteur contre émargement. Dossier clôturé.",
-      auteur: `${user?.firstName || "Fournisseur"} ${user?.lastName || ""}`,
-      date: new Date().toISOString(),
-    });
-    emitInAppNotification({
-      titre: `Commande servie et livrée : ${sub.reference}`,
-      message: `Tous les articles ont été remis avec succès au souscripteur. Dossier VITALIS clôturé.`,
-      categorie: "dossier",
-      reference: sub.reference,
-      lien: `/dashboard/souscriptions/${sub.id}`,
-      roles: ["souscripteur", "banque", "admin", "fournisseur"],
-    });
-    toast.success("Livraison confirmée ! Commande servie 🎉");
-  };
-
   return (
     <div className="space-y-5 fade-in">
       {/* ── En-tête ── */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div className="flex items-start gap-3">
-          <button onClick={() => router.back()} className="w-9 h-9 rounded-lg border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors flex-shrink-0 mt-0.5">
+          <button onClick={() => router.back()} className="w-9 h-9 rounded-lg border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors flex-shrink-0 mt-0.5 cursor-pointer">
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
             <div className="flex items-center gap-2.5 flex-wrap">
               <h1 className="text-xl font-bold text-gray-900 font-mono">{sub.reference}</h1>
               <StatusBadge statut={sub.statut} size="md" />
+              {isFournisseur && (
+                <span className="text-[11px] font-semibold bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full border border-blue-200 flex items-center gap-1">
+                  <ShieldCheck className="w-3 h-3 text-blue-500" /> Espace Fournisseur Isolé
+                </span>
+              )}
             </div>
-            <p className="text-sm text-gray-500 mt-0.5">
-              Créée le {new Date(sub.dateCreation).toLocaleDateString("fr-FR")} · Dernière MAJ le {new Date(sub.dateMiseAJour).toLocaleDateString("fr-FR")}
+            <p className="text-xs text-gray-500 mt-0.5">
+              Créée le {new Date(sub.dateCreation).toLocaleDateString("fr-FR")} · Agence : <strong>{sub.agenceNom || "AFG Bank"}</strong>
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
-          {!devis && (user?.role === "fournisseur" || user?.role === "admin") && (
-            <Link href={`/dashboard/devis/nouveau?souscriptionId=${sub.id}`} className="btn-ldf-secondary text-sm py-2 px-4">
-              <Plus className="w-3.5 h-3.5" /> Créer un devis
-            </Link>
-          )}
-          {devis && (
-            <Link href={`/dashboard/devis/${devis.id}`} className="btn-ldf-outline text-sm py-2 px-4">
-              <FileText className="w-3.5 h-3.5" /> Voir le devis
+          {/* Bouton créer devis si fournisseur connecté n'a pas encore son devis */}
+          {isFournisseur && !monDevisFournisseur && (
+            <Link href={`/dashboard/devis/nouveau?souscriptionId=${sub.id}`} className="btn-ldf-primary text-xs py-2 px-3.5 shadow-sm">
+              <Plus className="w-3.5 h-3.5" /> Établir votre devis
             </Link>
           )}
 
-          {dossier && (
-            <Link href={`/dashboard/dossiers/${dossier.id}`} className="btn-ldf-outline text-sm py-2 px-4">
-              <CheckCircle2 className="w-3.5 h-3.5" /> Voir le dossier
+          {/* Bouton voir le devis du fournisseur */}
+          {isFournisseur && monDevisFournisseur && (
+            <Link href={`/dashboard/devis/${monDevisFournisseur.id}`} className="btn-ldf-outline text-xs py-2 px-3.5">
+              <FileText className="w-3.5 h-3.5" /> Voir mon devis
             </Link>
           )}
-          {devis && (
+
+          {/* Actions superviseurs / client */}
+          {!isFournisseur && (
+            <>
+              {dossier && (
+                <Link href={`/dashboard/dossiers/${dossier.id}`} className="btn-ldf-outline text-xs py-2 px-3.5">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> Voir le dossier
+                </Link>
+              )}
+              {devisAffiches.length > 0 && (
+                <button
+                  onClick={handlePrintDossier}
+                  className="btn-ldf-primary text-xs py-2 px-3.5 flex items-center gap-1.5 shadow-sm cursor-pointer"
+                  title="Imprimer le dossier complet (Fiche d'adhésion VITALIS + Devis joints) pour dépôt physique en agence AFG Bank"
+                >
+                  <Printer className="w-3.5 h-3.5" /> Imprimer le dossier complet ({devisAffiches.length} devis)
+                </button>
+              )}
+            </>
+          )}
+
+          {isFournisseur && monDevisFournisseur && (
             <button
               onClick={handlePrintDossier}
-              className="btn-ldf-primary text-sm py-2 px-4 flex items-center gap-1.5 shadow-sm"
-              title="Imprimer le dossier complet (Fiche d'adhésion VITALIS + Devis joint) pour dépôt physique en agence AFG Bank"
+              className="btn-ldf-secondary text-xs py-2 px-3.5 flex items-center gap-1.5 cursor-pointer"
             >
-              <Printer className="w-3.5 h-3.5" /> Imprimer le dossier complet (Fiche + Devis)
+              <Printer className="w-3.5 h-3.5" /> Imprimer ma fiche & devis
             </button>
           )}
         </div>
@@ -464,39 +468,45 @@ export default function SouscriptionDetailPage() {
 
       {/* ── Timeline processus ── */}
       <div className="section-card p-5">
-        <h3 className="text-sm font-semibold text-gray-800 mb-4">Progression du dossier</h3>
+        <h3 className="text-sm font-semibold text-gray-800 mb-4">Progression du cycle VITALIS</h3>
         <ProcessTimeline steps={processSteps} />
       </div>
 
-      {/* ── Déclencheurs d'étapes dynamiques ── */}
-      {!devis && (
+      {/* ── Encadré spécifique fournisseur : Rappel d'isolation ── */}
+      {isFournisseur && (
+        <div className="p-3.5 bg-blue-50/70 border border-blue-200/80 rounded-xl flex items-start gap-3 text-xs text-blue-900">
+          <ShieldCheck className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+          <p className="leading-relaxed">
+            <strong>Espace sécurisé & confidentiel :</strong> Vous visualisez exclusivement les besoins, articles et montants relatifs à votre enseigne. Conformément à la règle de discrétion commerciale de ViFlo, aucun autre fournisseur partenaire n'est visible sur votre interface.
+          </p>
+        </div>
+      )}
+
+      {/* ── Étape active 2 : Attente de chiffrage devis ── */}
+      {isFournisseur && !monDevisFournisseur && (
         <div className="p-4 rounded-xl border bg-orange-50/90 border-orange-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm">
           <div className="flex items-start gap-3">
             <div className="w-10 h-10 rounded-xl bg-orange-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
               <BookOpen className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-sm font-bold text-gray-900">Étape 2 active : En attente d'établissement du devis chiffré</p>
+              <p className="text-sm font-bold text-gray-900">Action requise : Établir votre devis chiffré</p>
               <p className="text-xs text-gray-600 mt-0.5">
-                {user?.role === "fournisseur" || user?.role === "admin"
-                  ? "Le bénéficiaire a exprimé son besoin. En tant que fournisseur agréé, établissez le devis chiffré avec les articles correspondants."
-                  : "Votre demande de financement a été transmise aux fournisseurs sélectionnés. Ils préparent actuellement votre devis chiffré."}
+                Le souscripteur a exprimé un besoin dans votre domaine d'activité. Veuillez chiffrer votre devis pour lui permettre de déposer son dossier à la banque.
               </p>
             </div>
           </div>
-          {(user?.role === "fournisseur" || user?.role === "admin") && (
-            <Link
-              href={`/dashboard/devis/nouveau?souscriptionId=${sub.id}`}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-orange-600 text-white text-xs font-bold hover:bg-orange-700 transition-colors shadow-sm self-start sm:self-auto whitespace-nowrap"
-            >
-              <Plus className="w-3.5 h-3.5" /> Établir le devis chiffré →
-            </Link>
-          )}
+          <Link
+            href={`/dashboard/devis/nouveau?souscriptionId=${sub.id}`}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-orange-600 text-white text-xs font-bold hover:bg-orange-700 transition-colors shadow-sm self-start sm:self-auto whitespace-nowrap"
+          >
+            <Plus className="w-3.5 h-3.5" /> Établir le devis chiffré →
+          </Link>
         </div>
       )}
 
-      {/* ── Étape 3 : Constitution du dossier physique & Dépôt agence AFG ── */}
-      {devis && !isApres(currentEffectifStatut, "depose_banque") && (
+      {/* ── Étape active 3 : Constitution du dossier physique & Dépôt agence AFG (Client) ── */}
+      {!isFournisseur && devisAffiches.length > 0 && !isApres(currentEffectifStatut, "depose_banque") && (
         <div className="p-5 rounded-2xl border bg-gradient-to-r from-amber-50 to-orange-50 border-amber-300 shadow-sm space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
             <div className="flex items-start gap-3.5">
@@ -505,13 +515,13 @@ export default function SouscriptionDetailPage() {
               </div>
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <p className="text-sm font-bold text-gray-900">Étape 3 active : Constitution & Dépôt du dossier physique AFG Bank</p>
+                  <p className="text-sm font-bold text-gray-900">Étape active : Dépôt du dossier physique à l'agence AFG Bank</p>
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-100 text-orange-800 border border-orange-200">
                     Action client requise
                   </span>
                 </div>
                 <p className="text-xs text-gray-700 mt-1 leading-relaxed">
-                  Votre devis chiffré est prêt ({fmtCFA(sub.montantTotal || devis.totalTTC)}). Veuillez constituer votre dossier physique avec les pièces obligatoires et le déposer à votre agence <strong>AFG Bank ({sub.agenceNom || "Agence Centrale"})</strong> pour analyse et accord de crédit.
+                  Vos devis ont été chiffrés pour un total de <strong>{fmtCFA(montantEffectif)}</strong>. Veuillez déposer votre dossier physique (fiche de souscription signée + copies de vos devis + justificatifs) auprès de votre agence <strong>AFG Bank ({sub.agenceNom || "Agence Centrale"})</strong> pour analyse de crédit.
                 </p>
               </div>
             </div>
@@ -520,242 +530,218 @@ export default function SouscriptionDetailPage() {
               <button
                 type="button"
                 onClick={() => setShowEmailModal(true)}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-amber-300 hover:bg-amber-100/50 text-amber-900 text-xs font-semibold shadow-xs transition-colors cursor-pointer"
-                title="Consulter l'avis officiel par email"
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 text-xs font-semibold shadow-xs transition-colors cursor-pointer"
               >
-                <Mail className="w-3.5 h-3.5 text-amber-600" /> Avis email
+                <Mail className="w-3.5 h-3.5 text-orange-500" /> Avis de constitution
               </button>
               <button
                 type="button"
                 onClick={handlePrintDossier}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-orange-300 hover:bg-orange-50 text-orange-700 text-xs font-semibold shadow-xs transition-colors cursor-pointer"
-                title="Imprimer le dossier complet (Fiche VITALIS + Devis)"
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
               >
                 <Printer className="w-3.5 h-3.5" /> Imprimer le dossier
               </button>
-              <button
-                type="button"
-                onClick={handleConfirmerDepotPhysique}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold shadow-sm transition-colors whitespace-nowrap cursor-pointer"
-              >
-                <Check className="w-3.5 h-3.5" /> J'ai déposé mon dossier physique en agence
-              </button>
             </div>
           </div>
 
-          {/* Checklist interactive des pièces à fournir */}
-          <div className="bg-white/80 border border-amber-200/80 rounded-xl p-3.5">
-            <p className="text-xs font-bold text-amber-950 mb-2 flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              Checklist des pièces physiques à apporter au guichet AFG Bank :
+          <div className="pt-2 border-t border-orange-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <p className="text-[11px] text-orange-950 flex items-center gap-1.5">
+              <span>📌</span> Avez-vous déjà déposé vos pièces physiques au guichet de votre agence AFG Bank ?
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 text-xs text-gray-700">
-              <div className="flex items-center gap-2 p-2 bg-emerald-50/60 rounded-lg border border-emerald-100">
-                <Check className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-                <span>Fiche d'adhésion VITALIS signée</span>
-              </div>
-              <div className="flex items-center gap-2 p-2 bg-emerald-50/60 rounded-lg border border-emerald-100">
-                <Check className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-                <span>Devis chiffré fournisseur (60 jrs)</span>
-              </div>
-              <div className="flex items-center gap-2 p-2 bg-emerald-50/60 rounded-lg border border-emerald-100">
-                <Check className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-                <span>Photocopie CNI ou Passeport</span>
-              </div>
-              <div className="flex items-center gap-2 p-2 bg-emerald-50/60 rounded-lg border border-emerald-100">
-                <Check className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-                <span>Attestation de travail originale (-3 mois)</span>
-              </div>
-              <div className="flex items-center gap-2 p-2 bg-emerald-50/60 rounded-lg border border-emerald-100">
-                <Check className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-                <span>3 derniers bulletins de salaire</span>
-              </div>
-              <div className="flex items-center gap-2 p-2 bg-emerald-50/60 rounded-lg border border-emerald-100">
-                <Check className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-                <span>Justificatif domicile (CIE/SODECI) & RIB</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Étape 4 : Décision bancaire AFG Bank ── */}
-      {isApres(currentEffectifStatut, "depose_banque") && !isApres(currentEffectifStatut, "accepte") && sub.statut !== "refuse" && sub.statut !== "rejete" && (
-        <div className="p-4 rounded-xl border bg-purple-50/90 border-purple-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-xl bg-purple-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
-              <ShieldCheck className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-sm font-bold text-gray-900">Étape 4 active : Décision du dossier par AFG Bank</p>
-              <p className="text-xs text-gray-600 mt-0.5">
-                {user?.role === "banque" || user?.role === "admin"
-                  ? "Le dossier physique et numérique est soumis à l'agence AFG. Procédez à l'analyse de solvabilité et au comité de crédit."
-                  : "Votre dossier physique est bien déposé à l'agence AFG Bank. L'analyse de solvabilité et la décision de crédit sont en cours."}
-              </p>
-            </div>
-          </div>
-          {(user?.role === "banque" || user?.role === "admin") && (
-            <Link
-              href={dossier ? `/dashboard/dossiers/${dossier.id}` : "/dashboard/dossiers"}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-purple-600 text-white text-xs font-bold hover:bg-purple-700 transition-colors shadow-sm self-start sm:self-auto whitespace-nowrap"
-            >
-              <ShieldCheck className="w-3.5 h-3.5" /> Instruire le dossier →
-            </Link>
-          )}
-        </div>
-      )}
-
-      {/* ── Déclencheurs d'étapes post-validation bancaire ── */}
-      {(sub.statut === "accepte" || sub.statut === "finance") && (
-        <div className="p-4 rounded-xl border bg-amber-50/80 border-amber-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
-              <CreditCard className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-sm font-bold text-gray-900">Étape 5 active : Accord AFG Bank accordé — Virement au fournisseur</p>
-              <p className="text-xs text-gray-600 mt-0.5">
-                {user?.role === "banque" || user?.role === "admin"
-                  ? "En tant qu'établissement bancaire, validez le virement direct des fonds sur le compte du fournisseur pour déclencher la préparation des articles."
-                  : "Le dossier est validé par la banque. En attente de l'exécution du virement par AFG Bank sur votre compte fournisseur pour démarrer la préparation."}
-              </p>
-            </div>
-          </div>
-          {(user?.role === "banque" || user?.role === "admin") ? (
             <button
-              onClick={handleConfirmerPaiement}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-colors shadow-sm self-start sm:self-auto whitespace-nowrap"
+              onClick={handleConfirmerDepotPhysique}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-sm cursor-pointer self-start sm:self-auto"
             >
-              <CreditCard className="w-3.5 h-3.5" /> Valider le virement au fournisseur (AFG Bank) →
+              <Check className="w-3.5 h-3.5" /> J'ai déposé mon dossier physique à l'agence
             </button>
-          ) : (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-300 self-start sm:self-auto whitespace-nowrap">
-              <Clock className="w-3.5 h-3.5 text-amber-600 animate-spin" /> En attente du virement AFG Bank
-            </span>
-          )}
-        </div>
-      )}
-
-      {sub.statut === "fournisseur_paye" && (
-        <div className="p-4 rounded-xl border bg-sky-50/80 border-sky-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-xl bg-sky-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
-              <Package className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-sm font-bold text-gray-900">Étape 6 active : Virement reçu — Préparation de la commande</p>
-              <p className="text-xs text-gray-600 mt-0.5">
-                {user?.role === "fournisseur" || user?.role === "admin"
-                  ? "Le virement a été reçu. Vous pouvez désormais rassembler les articles et démarrer la préparation du colis/kit scolaire."
-                  : "Le virement bancaire a été versé au fournisseur. Ce dernier prépare actuellement le colis."}
-              </p>
-            </div>
-          </div>
-          {(user?.role === "fournisseur" || user?.role === "admin") ? (
-            <div className="flex flex-col sm:flex-row items-end gap-3 w-full sm:w-auto mt-3 sm:mt-0">
-              <div className="flex flex-col gap-1.5 w-full sm:w-auto text-left">
-                <label className="text-xs font-bold text-sky-900">Date disponibilité *</label>
-                <input
-                  type="date"
-                  value={dateDisponibilite}
-                  onChange={e => setDateDisponibilite(e.target.value)}
-                  className="px-3 py-2 text-sm rounded-lg border border-sky-300 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 text-sky-900 font-medium"
-                />
-              </div>
-              <div className="flex flex-col gap-1.5 w-full sm:w-auto text-left">
-                <label className="text-xs font-bold text-sky-900">Heure *</label>
-                <input
-                  type="time"
-                  value={heureDisponibilite}
-                  onChange={e => setHeureDisponibilite(e.target.value)}
-                  className="px-3 py-2 text-sm rounded-lg border border-sky-300 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 text-sky-900 font-medium"
-                />
-              </div>
-              <button
-                onClick={handleDemarrerPreparation}
-                className="flex items-center gap-2 px-5 py-2 rounded-lg bg-sky-600 text-white text-sm font-bold hover:bg-sky-700 transition-colors shadow-sm self-stretch sm:self-auto justify-center whitespace-nowrap"
-              >
-                <Package className="w-4 h-4" /> Alerter le client (Prêt) →
-              </button>
-            </div>
-          ) : (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-100 text-sky-800 border border-sky-300 self-start sm:self-auto whitespace-nowrap">
-              <Clock className="w-3.5 h-3.5 text-sky-600" /> En attente de préparation (Fournisseur)
-            </span>
-          )}
-        </div>
-      )}
-
-      {sub.statut === "commande_en_preparation" && (
-        <div className="p-4 rounded-xl border bg-teal-50/80 border-teal-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-xl bg-teal-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
-              <Truck className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-sm font-bold text-gray-900">Étape 6 active : Articles prêts — Remise et émargement</p>
-              <p className="text-xs text-gray-600 mt-0.5">
-                {user?.role === "fournisseur" || user?.role === "admin"
-                  ? "La commande est prête. Dès que le souscripteur se présente avec sa fiche pour le retrait et signe l'émargement, validez la livraison finale."
-                  : "La commande est prête chez le fournisseur. Le souscripteur peut se présenter avec sa fiche de souscription pour récupérer ses articles."}
-              </p>
-            </div>
-          </div>
-          {(user?.role === "fournisseur" || user?.role === "admin") ? (
-            <button
-              onClick={handleConfirmerLivraison}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-colors shadow-sm self-start sm:self-auto whitespace-nowrap"
-            >
-              <CheckCircle2 className="w-3.5 h-3.5" /> Confirmer la livraison (Articles servis ✓)
-            </button>
-          ) : (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-teal-100 text-teal-800 border border-teal-300 self-start sm:self-auto whitespace-nowrap">
-              <Truck className="w-3.5 h-3.5 text-teal-600" /> Prêt pour retrait / livraison
-            </span>
-          )}
-        </div>
-      )}
-
-      {(sub.statut === "livre" || sub.statut === "servie" || sub.statut === "cloture") && (
-        <div className="p-4 rounded-xl border bg-emerald-50 border-emerald-200 flex items-center gap-3 shadow-sm">
-          <CheckCircle2 className="w-6 h-6 text-emerald-600 flex-shrink-0" />
-          <div>
-            <p className="text-sm font-bold text-emerald-900">Cycle VITALIS 100% complété</p>
-            <p className="text-xs text-emerald-700 mt-0.5">
-              Tous les articles ont été remis au souscripteur contre émargement. Financement et commande finalisés avec succès.
-            </p>
           </div>
         </div>
       )}
 
+      {/* ── Structure 2 colonnes ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* ── Colonne principale ── */}
+
+        {/* ── Colonne principale (2/3) ── */}
         <div className="lg:col-span-2 space-y-5">
-          {/* Souscripteur */}
+
+          {/* 1. SECTION FOURNISSEURS ASSOCIÉS */}
           <div className="section-card">
-            <div className="section-card-header">
+            <div className="section-card-header flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <User className="w-4 h-4 text-amber-500" />
-                <h3 className="text-sm font-semibold text-gray-800">Informations souscripteur</h3>
+                <Building2 className="w-4 h-4 text-orange-500" />
+                <h3 className="text-sm font-semibold text-gray-800">
+                  {isFournisseur ? "Votre Enseigne Agréée" : `Fournisseurs agréés associés (${fournisseursAffiches.length})`}
+                </h3>
               </div>
+              {!isFournisseur && fournisseursAffiches.length > 1 && (
+                <span className="text-[11px] font-semibold bg-orange-50 text-orange-700 px-2.5 py-0.5 rounded-full border border-orange-200">
+                  Multi-fournisseurs consolidé
+                </span>
+              )}
             </div>
-            <div className="section-card-body grid grid-cols-2 gap-4">
-              {[
-                { label: "Nom complet", value: `${sub.souscripteurPrenom} ${sub.souscripteurNom}` },
-                { label: "Téléphone", value: sub.souscripteurTelephone, icon: Phone },
-                { label: "Email", value: sub.souscripteurEmail },
-                { label: "Banque", value: sub.banqueNom },
-              ].map(f => (
-                <div key={f.label}>
-                  <p className="text-xs text-gray-400 mb-0.5">{f.label}</p>
-                  <p className="text-sm font-medium text-gray-800">{f.value}</p>
-                </div>
-              ))}
+
+            <div className="p-4 space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {fournisseursAffiches.map(f => {
+                  const detailFourn = (allStoreFournisseurs || []).find(xf => xf.id === f.fournisseurId);
+                  const devisAssocie = tousLesDevis.find(d => d.fournisseurId === f.fournisseurId);
+                  const logoUrl = detailFourn?.logo || getPartnerLogo(f.fournisseurNom, f.fournisseurId);
+
+                  return (
+                    <div
+                      key={f.fournisseurId}
+                      className="p-3.5 rounded-xl border border-gray-200 bg-white hover:border-orange-300 transition-all shadow-xs flex flex-col justify-between gap-3"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="w-12 h-12 rounded-xl bg-gray-50 border border-gray-100 p-1.5 flex items-center justify-center flex-shrink-0">
+                          {logoUrl ? (
+                            <img src={logoUrl} alt={f.fournisseurNom} className="max-w-full max-h-full object-contain" />
+                          ) : (
+                            <Building2 className="w-6 h-6 text-gray-400" />
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-bold text-gray-900 truncate">{f.fournisseurNom}</p>
+                          <p className="text-[11px] text-gray-500 truncate mt-0.5">
+                            {detailFourn?.secteurActivite || "Fournisseur Agréé Vitalis"}
+                          </p>
+                          <div className="mt-1.5">
+                            {devisAssocie ? (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                                <Check className="w-3 h-3" /> Devis établi : {fmtCFA(devisAssocie.totalTTC)}
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                                <Clock className="w-3 h-3" /> En attente de chiffrage
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-end pt-2 border-t border-gray-100 gap-2">
+                        {devisAssocie ? (
+                          <Link
+                            href={`/dashboard/devis/${devisAssocie.id}`}
+                            className="text-[11px] font-semibold text-orange-600 hover:text-orange-700 flex items-center gap-1"
+                          >
+                            Consulter le devis <ExternalLink className="w-3 h-3" />
+                          </Link>
+                        ) : (
+                          (user?.role === "admin" || (isFournisseur && f.fournisseurId === monFournisseurId)) && (
+                            <Link
+                              href={`/dashboard/devis/nouveau?souscriptionId=${sub.id}&fournisseurId=${f.fournisseurId}`}
+                              className="text-[11px] font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1"
+                            >
+                              Établir ce devis →
+                            </Link>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {!isFournisseur && (
+                <p className="text-[11px] text-gray-400 italic">
+                  💡 Chaque fournisseur n'a accès qu'à son propre devis et n'a aucune visibilité sur les autres enseignes.
+                </p>
+              )}
             </div>
           </div>
 
-          {/* Expression du besoin initiée par le souscripteur (Cahier des charges) */}
+          {/* 2. ARTICLES CHIFFRÉS DANS LE(S) DEVIS */}
+          <div className="section-card">
+            <div className="section-card-header flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-2">
+                <Package className="w-4 h-4 text-orange-500" />
+                <h3 className="text-sm font-semibold text-gray-800">
+                  Articles chiffrés {devisAffiches.length > 0 ? `(${devisAffiches.reduce((sum, d) => sum + (d.articles?.length || 0), 0)} articles)` : ""}
+                </h3>
+              </div>
+
+              {/* Onglets devis si vue superviseur/client avec plusieurs devis */}
+              {!isFournisseur && devisAffiches.length > 1 && (
+                <div className="flex items-center gap-1 bg-gray-100 p-0.5 rounded-xl text-xs">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedDevisTab("all")}
+                    className={`px-2.5 py-1 rounded-lg font-medium transition-all cursor-pointer ${selectedDevisTab === "all" ? "bg-white text-orange-600 shadow-xs font-bold" : "text-gray-600"}`}
+                  >
+                    Vue consolidée
+                  </button>
+                  {devisAffiches.map(d => (
+                    <button
+                      key={d.id}
+                      type="button"
+                      onClick={() => setSelectedDevisTab(d.id)}
+                      className={`px-2.5 py-1 rounded-lg font-medium transition-all cursor-pointer ${selectedDevisTab === d.id ? "bg-white text-orange-600 shadow-xs font-bold" : "text-gray-600"}`}
+                    >
+                      {d.fournisseurNom.split(" ")[0]}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {devisAffiches.length === 0 ? (
+              <div className="py-12 text-center text-gray-400 text-xs space-y-2">
+                <Package className="w-8 h-8 mx-auto text-gray-300" />
+                <p>Aucun devis n'a encore été finalisé pour cette souscription.</p>
+                {isFournisseur && !monDevisFournisseur && (
+                  <Link href={`/dashboard/devis/nouveau?souscriptionId=${sub.id}`} className="inline-block text-orange-600 font-bold hover:underline">
+                    Chiffrer votre devis dès maintenant →
+                  </Link>
+                )}
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="ldf-table">
+                  <thead>
+                    <tr>
+                      <th>Désignation</th>
+                      <th>Référence</th>
+                      <th>Fournisseur</th>
+                      <th className="text-center">Qté</th>
+                      <th className="text-right">Prix Unitaire</th>
+                      <th className="text-right">Montant HT</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(selectedDevisTab === "all" ? devisAffiches : devisAffiches.filter(d => d.id === selectedDevisTab))
+                      .flatMap(d => (d.articles || []).map(a => ({ ...a, fournisseurNom: d.fournisseurNom })))
+                      .map((art, aIdx) => (
+                        <tr key={art.id || aIdx}>
+                          <td className="font-medium text-gray-800">{art.designation}</td>
+                          <td className="font-mono text-xs text-gray-500">{art.reference || art.ref || art.code || art.id || "—"}</td>
+                          <td>
+                            <span className="text-[11px] font-semibold text-gray-700 bg-gray-100 px-2 py-0.5 rounded-full">
+                              {art.fournisseurNom}
+                            </span>
+                          </td>
+                          <td className="text-center">{art.quantite}</td>
+                          <td className="text-right">{fmtCFA(art.prixUnitaire)}</td>
+                          <td className="text-right font-semibold text-gray-800">{fmtCFA(art.montantHT)}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                  <tfoot>
+                    <tr className="bg-orange-50/50">
+                      <td colSpan={5} className="px-4 py-3 text-right text-xs font-bold text-gray-700">
+                        {isFournisseur ? "Total de votre devis (TTC)" : "Total consolidé (TTC)"}
+                      </td>
+                      <td className="px-4 py-3 text-sm font-bold text-orange-700 text-right">
+                        {fmtCFA(montantEffectif)}
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            )}
+          </div>
+
+          {/* 3. EXPRESSION DU BESOIN CLIENT */}
           {sub.observations && (
             <div className="section-card border-l-4 border-l-orange-500">
               <div className="section-card-header bg-orange-50/40">
@@ -772,7 +758,7 @@ export default function SouscriptionDetailPage() {
             </div>
           )}
 
-          {/* Détails et Destination de livraison client */}
+          {/* 4. MODALITÉS & DESTINATION DE LA LIVRAISON */}
           <div className="section-card border-l-4 border-l-blue-500">
             <div className="section-card-header bg-blue-50/40">
               <div className="flex items-center gap-2">
@@ -813,156 +799,107 @@ export default function SouscriptionDetailPage() {
             </div>
           </div>
 
-          {/* Fournisseur */}
-          {/*div className="section-card">
+          {/* 5. INFORMATIONS SOUSCRIPTEUR */}
+          <div className="section-card">
             <div className="section-card-header">
               <div className="flex items-center gap-2">
-                <Building2 className="w-4 h-4 text-amber-500" />
-                <h3 className="text-sm font-semibold text-gray-800">Fournisseur & Banque</h3>
+                <User className="w-4 h-4 text-orange-500" />
+                <h3 className="text-sm font-semibold text-gray-800">Informations souscripteur</h3>
               </div>
             </div>
             <div className="section-card-body grid grid-cols-2 gap-4">
-              <div><p className="text-xs text-gray-400 mb-0.5">Fournisseur(s)</p><p className="text-sm font-medium text-gray-800">{sub.fournisseurNom}</p></div>
-              <div><p className="text-xs text-gray-400 mb-0.5">Banque financeuse</p><p className="text-sm font-medium text-gray-800">{sub.banqueNom}</p></div>
-              <div><p className="text-xs text-gray-400 mb-0.5">Agence de rattachement</p><p className="text-sm font-medium text-gray-800">{sub.agenceNom || "Agence Plateau"}</p></div>
-              <div><p className="text-xs text-gray-400 mb-0.5">Durée souscription</p><p className="text-sm font-medium text-gray-800">{sub.duree} mois</p></div>
-            </div>
-          </div>
-          */}
-
-          {/* Articles */}
-          <div className="section-card">
-            <div className="section-card-header">
-              <div className="flex items-center gap-2">
-                <Package className="w-4 h-4 text-amber-500" />
-                <h3 className="text-sm font-semibold text-gray-800">Articles ({devis?.articles?.length || 0})</h3>
-              </div>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="ldf-table">
-                <thead>
-                  <tr>
-                    <th>Désignation</th>
-                    <th>Référence</th>
-                    <th>Qté</th>
-                    <th>Prix unitaire</th>
-                    <th>Remise</th>
-                    <th>Montant HT</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(devis?.articles || []).map(a => (
-                    <tr key={a.id}>
-                      <td className="font-medium text-gray-800">{a.designation}</td>
-                      <td className="font-mono text-xs text-gray-500">{a.reference || a.ref || a.code || a.id || "—"}</td>
-                      <td>{a.quantite}</td>
-                      <td>{fmtCFA(a.prixUnitaire)}</td>
-                      <td>{a.remise && a.remise > 0 ? `${a.remise}%` : "—"}</td>
-                      <td className="font-semibold text-gray-800">{fmtCFA(a.montantHT)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-                <tfoot>
-                  <tr className="bg-amber-50/50">
-                    <td colSpan={5} className="px-4 py-3 text-right text-sm font-semibold text-gray-700">Total</td>
-                    <td className="px-4 py-3 text-sm font-bold text-amber-700">{fmtCFA(sub.montantTotal)}</td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-          </div>
-
-          {/* Décision banque */}
-          {dossier && (
-            <div className="section-card">
-              <div className="section-card-header">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-amber-500" />
-                  <h3 className="text-sm font-semibold text-gray-800">Décision bancaire</h3>
-                </div>
-                <StatusBadge statut={dossier.statut} />
-              </div>
-              <div className="section-card-body space-y-3">
-                <div className="grid grid-cols-2 gap-4">
-                  <div><p className="text-xs text-gray-400 mb-0.5">Banque</p><p className="text-sm font-medium text-gray-800">{dossier.banqueNom}</p></div>
-                  <div><p className="text-xs text-gray-400 mb-0.5">Date réception</p><p className="text-sm font-medium text-gray-800">{new Date(dossier.dateReception).toLocaleDateString("fr-FR")}</p></div>
-                </div>
-                {dossier.commentaireBanque && (
-                  <div className={`p-3 rounded-lg text-sm ${dossier.statut === "valide" ? "bg-emerald-50 text-emerald-800" : dossier.statut === "rejete" ? "bg-red-50 text-red-800" : "bg-amber-50 text-amber-800"}`}>
-                    {dossier.commentaireBanque}
-                  </div>
-                )}
-                {dossier.motifRejet && (
-                  <div className="p-3 rounded-lg bg-red-50 text-sm text-red-800">
-                    <strong>Motif du rejet :</strong> {dossier.motifRejet}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Paiement */}
-          {sub.paiementId && (
-            <div className="section-card">
-              <div className="section-card-header">
-                <div className="flex items-center gap-2">
-                  <CreditCard className="w-4 h-4 text-amber-500" />
-                  <h3 className="text-sm font-semibold text-gray-800">Paiement</h3>
-                </div>
-                <Link href={`/dashboard/paiements/${sub.paiementId}`} className="text-xs text-amber-600 hover:text-amber-700">
-                  Voir le détail →
-                </Link>
-              </div>
-              <div className="section-card-body">
-                <p className="text-sm text-gray-600">Référence : <span className="font-mono font-semibold text-amber-700">{sub.paiementId}</span></p>
-                <p className="text-xl font-bold text-gray-900 mt-1">{fmtCFA(sub.montantTotal)}</p>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* ── Colonne droite — Timeline ── */}
-        <div className="space-y-5">
-          {/* Récapitulatif */}
-          <div className="section-card">
-            <div className="section-card-header">
-              <h3 className="text-sm font-semibold text-gray-800">Récapitulatif</h3>
-            </div>
-            <div className="section-card-body space-y-3">
               {[
-                { label: "Montant total", value: fmtCFA(sub.montantTotal), highlight: true },
-                { label: "Durée", value: `${sub.duree} mois` },
-                { label: "Banque", value: sub.banqueNom },
-                { label: "Fournisseur", value: sub.fournisseurNom },
-                { label: "Statut", value: null, badge: sub.statut },
-              ].map(r => (
-                <div key={r.label} className="flex justify-between items-center border-b border-gray-50 pb-2 last:border-0 last:pb-0">
-                  <span className="text-xs text-gray-500">{r.label}</span>
-                  {r.badge ? <StatusBadge statut={r.badge} size="sm" /> :
-                    <span className={`text-sm font-semibold ${r.highlight ? "text-amber-700" : "text-gray-800"}`}>{r.value}</span>
-                  }
+                { label: "Nom complet", value: `${sub.souscripteurPrenom || ""} ${sub.souscripteurNom}`.trim() },
+                { label: "Type de personne", value: sub.typeSouscripteur === "physique" ? "Personne Physique" : "Personne Morale" },
+                { label: "Téléphone", value: sub.souscripteurTelephone || "Non spécifié" },
+                { label: "Email", value: sub.souscripteurEmail || "Non spécifié" },
+              ].map(f => (
+                <div key={f.label}>
+                  <p className="text-xs text-gray-400 mb-0.5">{f.label}</p>
+                  <p className="text-sm font-medium text-gray-800">{f.value}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Historique */}
-          <div className="section-card">
-            <div className="section-card-header">
-              <h3 className="text-sm font-semibold text-gray-800">Historique</h3>
+        </div>
+
+        {/* ── Colonne latérale droite (1/3) ── */}
+        <div className="space-y-5">
+
+          {/* Synthèse financière */}
+          <div className="section-card p-5 space-y-3">
+            <h3 className="text-sm font-semibold text-gray-800">Récapitulatif Financier</h3>
+
+            <div className="p-3.5 bg-orange-50/70 border border-orange-200/80 rounded-xl space-y-1">
+              <p className="text-xs text-gray-500">
+                {isFournisseur ? "Montant de votre devis" : "Montant total financé"}
+              </p>
+              <p className="text-xl font-black text-orange-700">
+                {montantEffectif > 0 ? fmtCFA(montantEffectif) : "En attente de chiffrage"}
+              </p>
             </div>
-            <div className="section-card-body">
-              {historique.length > 0 ? (
-                <LDFTimeline events={historique} />
-              ) : (
-                <p className="text-xs text-gray-400 text-center py-4">Aucun historique disponible</p>
-              )}
+
+            <div className="space-y-2.5 pt-2 text-xs">
+              <div className="flex justify-between items-center py-1 border-b border-gray-100">
+                <span className="text-gray-500">Durée du crédit :</span>
+                <span className="font-semibold text-gray-800">{sub.duree} mois</span>
+              </div>
+              <div className="flex justify-between items-center py-1 border-b border-gray-100">
+                <span className="text-gray-500">Banque financeuse :</span>
+                <span className="font-semibold text-gray-800">{sub.banqueNom}</span>
+              </div>
+              <div className="flex justify-between items-center py-1 border-b border-gray-100">
+                <span className="text-gray-500">Agence de dépôt :</span>
+                <span className="font-semibold text-gray-800 truncate max-w-[130px]">{sub.agenceNom || "Agence Centrale"}</span>
+              </div>
+              <div className="flex justify-between items-center py-1 border-b border-gray-100">
+                <span className="text-gray-500">Fournisseur(s) :</span>
+                <span className="font-semibold text-gray-800">
+                  {fournisseursAffiches.length} {isFournisseur ? "enseigne" : "partenaire(s)"}
+                </span>
+              </div>
+              <div className="flex justify-between items-center py-1">
+                <span className="text-gray-500">Statut actuel :</span>
+                <StatusBadge statut={sub.statut} size="sm" />
+              </div>
             </div>
           </div>
+
+          {/* Décision bancaire */}
+          {dossier && (
+            <div className="section-card p-5 space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-semibold text-gray-800">Décision AFG Bank</h3>
+                <StatusBadge statut={dossier.statut} size="sm" />
+              </div>
+              <div className="text-xs text-gray-600 space-y-1">
+                <p><strong>Agence :</strong> {dossier.banqueNom}</p>
+                <p><strong>Date réception :</strong> {new Date(dossier.dateReception).toLocaleDateString("fr-FR")}</p>
+                {dossier.commentaireBanque && (
+                  <p className="mt-2 p-2.5 bg-gray-50 rounded-lg text-gray-700 italic border border-gray-100">
+                    "{dossier.commentaireBanque}"
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Historique */}
+          <div className="section-card p-5 space-y-3">
+            <h3 className="text-sm font-semibold text-gray-800">Historique des actions</h3>
+            {historique.length > 0 ? (
+              <LDFTimeline events={historique} />
+            ) : (
+              <p className="text-xs text-gray-400 py-3 text-center">Aucun historique disponible</p>
+            )}
+          </div>
+
         </div>
+
       </div>
 
-      {/* ── Modale de simulation d'email officiel de constitution du dossier au client ── */}
+      {/* ── Modale Avis de constitution pour le client ── */}
       {showEmailModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs fade-in">
           <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden border border-gray-100 flex flex-col max-h-[90vh]">
@@ -993,7 +930,7 @@ export default function SouscriptionDetailPage() {
               <div className="space-y-3">
                 <p>Bonjour <strong>{sub.souscripteurPrenom} {sub.souscripteurNom}</strong>,</p>
                 <p className="leading-relaxed">
-                  Nous avons le plaisir de vous informer que vos devis ont été chiffrés avec succès par nos fournisseurs agréés pour un montant total de <strong>{fmtCFA(sub.montantTotal || devis?.totalTTC || 0)}</strong>.
+                  Vos devis ont été chiffrés pour un montant total de <strong>{fmtCFA(montantEffectif)}</strong>.
                 </p>
                 <p className="leading-relaxed">
                   Afin de permettre au comité de crédit d'<strong>AFG Bank</strong> de procéder à l'analyse et à la validation de votre financement, vous êtes prié(e) de déposer votre dossier physique complet auprès de votre agence de rattachement :
@@ -1011,16 +948,11 @@ export default function SouscriptionDetailPage() {
                     <li>1x Fiche d'adhésion VITALIS imprimée et signée (mention "Lu et approuvé")</li>
                     <li>1x Copie du/des devis fournisseur(s) chiffré(s) (validité 60 jours)</li>
                     <li>1x Photocopie de la pièce d'identité en cours de validité (CNI ou Passeport)</li>
-                    <li>1x Attestation de travail originale ou arrêté de nomination datant de moins de 3 mois</li>
+                    <li>1x Attestation de travail originale datant de moins de 3 mois</li>
                     <li>3x Derniers bulletins de salaire</li>
-                    <li>1x Justificatif de domicile récent (Facture CIE ou SODECI de moins de 3 mois)</li>
-                    <li>1x Relevé d'Identité Bancaire (RIB) du compte AFG Bank (possibilité d'ouverture sur place)</li>
+                    <li>1x Justificatif de domicile récent (Facture CIE ou SODECI)</li>
                   </ul>
                 </div>
-
-                <p className="text-xs text-gray-500 pt-2 border-t border-gray-100">
-                  L'équipe ViFlo Vitalis FADES reste à votre entière disposition pour tout renseignement complémentaire.
-                </p>
               </div>
             </div>
 
@@ -1043,6 +975,7 @@ export default function SouscriptionDetailPage() {
           </div>
         </div>
       )}
+
     </div>
   );
 }

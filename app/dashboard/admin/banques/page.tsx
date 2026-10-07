@@ -30,6 +30,49 @@ const EMPTY_FORM: Omit<VAgenceAFG, "id"> = {
   statut: "actif",
 };
 
+const BANQUES_PARTENAIRES = [
+  {
+    id: "afg-bank",
+    code: "AFG",
+    nom: "AFG Bank Côte d'Ivoire",
+    nomCourt: "AFG Bank CI",
+    statut: "actif",
+    isPilote: true,
+    logo: IMAGES.logos.afgBank,
+    description: "Banque partenaire pilote officielle du Programme Vitalis FADES en Côte d'Ivoire. Traite et finance l'ensemble des dossiers de la Phase 1.",
+  },
+  {
+    id: "bni",
+    code: "BNI",
+    nom: "Banque Nationale d'Investissement (BNI)",
+    nomCourt: "BNI",
+    statut: "phase2",
+    isPilote: false,
+    logo: null,
+    description: "Établissement bancaire public d'investissement — Partenaire prévu pour l'extension multi-banques en Phase 2.",
+  },
+  {
+    id: "sgci",
+    code: "SGCI",
+    nom: "Société Générale Côte d'Ivoire",
+    nomCourt: "Société Générale",
+    statut: "phase2",
+    isPilote: false,
+    logo: null,
+    description: "Réseau bancaire de détail de premier rang — En cours d'homologation pour la Phase 2.",
+  },
+  {
+    id: "nsia",
+    code: "NSIA",
+    nom: "NSIA Banque Côte d'Ivoire",
+    nomCourt: "NSIA Banque",
+    statut: "phase2",
+    isPilote: false,
+    logo: null,
+    description: "Groupe bancaire panafricain — Conventionnement tripartite en préparation pour la Phase 2.",
+  },
+];
+
 export default function AdminBanquesPage() {
   const { user } = useLDFAuthStore();
   const isOwner = user?.role === "owner";
@@ -41,6 +84,7 @@ export default function AdminBanquesPage() {
     deleteAgenceAFG,
   } = useVitalisDb();
 
+  const [selectedBanqueId, setSelectedBanqueId] = useState("afg-bank");
   const [search, setSearch] = useState("");
   const [filterVille, setFilterVille] = useState("");
   const [filterStatut, setFilterStatut] = useState("");
@@ -136,31 +180,22 @@ export default function AdminBanquesPage() {
 
   const setf = (k: string, v: any) => setForm(f => ({ ...f, [k]: v }));
 
+  const currentBanque = BANQUES_PARTENAIRES.find(b => b.id === selectedBanqueId) || BANQUES_PARTENAIRES[0];
+
   return (
     <div className="space-y-6 fade-in">
       {/* ── En-tête de page ── */}
       <div className="page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-white border border-gray-200 p-1.5 shadow-xs flex items-center justify-center flex-shrink-0">
-            <Image
-              src={IMAGES.logos.afgBank}
-              alt="AFG Bank"
-              width={48}
-              height={48}
-              className="object-contain w-full h-full"
-            />
+        <div>
+          <div className="flex items-center gap-2.5">
+            <h1 className="page-title">AFG Bank Côte d'Ivoire</h1>
+            <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+              Banque Partenaire Active
+            </span>
           </div>
-          <div>
-            <h1 className="page-title flex items-center gap-2">
-              Agences AFG Bank CI
-              <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-blue-50 text-blue-700 border border-blue-200">
-                Banque Financeuse Unique
-              </span>
-            </h1>
-            <p className="page-subtitle">
-              Réseau d'instruction et de validation de crédit du Programme Vitalis FADES · {agencesActives} agences actives
-            </p>
-          </div>
+          <p className="page-subtitle">
+            Réseau d'instruction et de validation de crédit du Programme Vitalis FADES · {totalAgences} agences opérationnelles
+          </p>
         </div>
 
         {user?.role === "admin" && (
@@ -170,44 +205,44 @@ export default function AdminBanquesPage() {
         )}
       </div>
 
-      {/* ── 4 Cartes KPIs Synthèse Réseau ── */}
+      {/* 4 Cartes KPIs Synthèse Réseau */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-blue-600 p-4 shadow-sm">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-semibold text-gray-500">Réseau AFG Bank</p>
-            <Building2 className="w-4 h-4 text-blue-600" />
-          </div>
-          <p className="text-2xl font-bold text-gray-900 mt-1">{totalAgences}</p>
-          <p className="text-[11px] text-gray-400 mt-0.5">{agencesActives} agences opérationnelles</p>
-        </div>
+            <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-blue-600 p-4 shadow-sm">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-semibold text-gray-500">Réseau AFG Bank</p>
+                <Building2 className="w-4 h-4 text-blue-600" />
+              </div>
+              <p className="text-2xl font-bold text-gray-900 mt-1">{totalAgences}</p>
+              <p className="text-[11px] text-gray-400 mt-0.5">{agencesActives} agences opérationnelles</p>
+            </div>
 
-        <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-teal-500 p-4 shadow-sm">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-semibold text-gray-500">Grand Abidjan</p>
-            <MapPin className="w-4 h-4 text-teal-500" />
-          </div>
-          <p className="text-2xl font-bold text-teal-700 mt-1">{agencesAbidjan}</p>
-          <p className="text-[11px] text-gray-400 mt-0.5">Plateau, Cocody, Marcory, Yopougon</p>
-        </div>
+            <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-teal-500 p-4 shadow-sm">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-semibold text-gray-500">Grand Abidjan</p>
+                <MapPin className="w-4 h-4 text-teal-500" />
+              </div>
+              <p className="text-2xl font-bold text-teal-700 mt-1">{agencesAbidjan}</p>
+              <p className="text-[11px] text-gray-400 mt-0.5">Plateau, Cocody, Marcory, Yopougon</p>
+            </div>
 
-        <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-amber-500 p-4 shadow-sm">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-semibold text-gray-500">Intérieur du Pays</p>
-            <MapPin className="w-4 h-4 text-amber-500" />
-          </div>
-          <p className="text-2xl font-bold text-amber-700 mt-1">{agencesInterieur}</p>
-          <p className="text-[11px] text-gray-400 mt-0.5">Bouaké, Yamoussoukro, San-Pedro...</p>
-        </div>
+            <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-amber-500 p-4 shadow-sm">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-semibold text-gray-500">Intérieur du Pays</p>
+                <MapPin className="w-4 h-4 text-amber-500" />
+              </div>
+              <p className="text-2xl font-bold text-amber-700 mt-1">{agencesInterieur}</p>
+              <p className="text-[11px] text-gray-400 mt-0.5">Bouaké, Yamoussoukro, San-Pedro...</p>
+            </div>
 
-        <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-emerald-500 p-4 shadow-sm">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-semibold text-gray-500">Dossiers Instruits</p>
-            <ShieldCheck className="w-4 h-4 text-emerald-500" />
+            <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-emerald-500 p-4 shadow-sm">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-semibold text-gray-500">Dossiers Instruits</p>
+                <ShieldCheck className="w-4 h-4 text-emerald-500" />
+              </div>
+              <p className="text-2xl font-bold text-emerald-700 mt-1">{totalDossiersReseau}</p>
+              <p className="text-[11px] text-gray-400 mt-0.5">{fmtCFA(montantTotalFinanceReseau)} financés</p>
+            </div>
           </div>
-          <p className="text-2xl font-bold text-emerald-700 mt-1">{totalDossiersReseau}</p>
-          <p className="text-[11px] text-gray-400 mt-0.5">{fmtCFA(montantTotalFinanceReseau)} financés</p>
-        </div>
-      </div>
 
       {/* ── Barre de Filtres et Recherche ── */}
       <div className="section-card p-4 space-y-3">

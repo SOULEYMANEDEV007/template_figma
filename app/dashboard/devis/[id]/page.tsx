@@ -37,6 +37,29 @@ export default function DevisDetailPage() {
     </div>
   );
 
+  // Contrôle de confidentialité stricte pour les fournisseurs
+  if (user?.role === "fournisseur") {
+    const monId = user.organisationId || user.fournisseurId;
+    if (monId && devis.fournisseurId !== monId) {
+      return (
+        <div className="max-w-md mx-auto my-16 bg-white p-8 rounded-2xl border border-gray-200 shadow-sm text-center space-y-4">
+          <div className="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mx-auto">
+            <FileText className="w-6 h-6" />
+          </div>
+          <h2 className="text-base font-bold text-gray-900">Accès confidentiel restreint</h2>
+          <p className="text-xs text-gray-500 leading-relaxed">
+            Ce devis a été émis par un autre fournisseur agréé. En vertu de la politique de confidentialité ViFlo, vous n'êtes pas autorisé(e) à consulter les devis des autres partenaires.
+          </p>
+          <button onClick={() => router.push("/dashboard/devis")} className="btn-ldf-primary py-2 px-5 text-xs rounded-xl">
+            Retour à mes devis
+          </button>
+        </div>
+      );
+    }
+
+
+  }
+
   const currentStatut = statut ?? devis.statut;
   const fournisseurLogo = getPartnerLogo(devis.fournisseurNom, devis.fournisseurId);
 
