@@ -536,23 +536,26 @@ export default function NouvelleDemandeSouscripteur() {
                       </div>
                     </button>
 
-                    <button
+                    {/*<button
                       type="button"
+                      disabled={true}
                       onClick={() => setModeLivraison("domicile")}
-                      className={`p-3.5 rounded-xl border text-left flex items-start gap-3 transition-all cursor-pointer ${modeLivraison === "domicile"
-                        ? "border-orange-500 bg-orange-50/70 shadow-xs ring-1 ring-orange-400/40"
-                        : "border-gray-200 hover:border-orange-200 bg-white"
-                        }`}
+                      className={`p-3.5 rounded-xl border text-left flex items-start gap-3 transition-all cursor-pointer ${
+                        modeLivraison === "domicile"
+                          ? "border-orange-500 bg-orange-50/70 shadow-xs ring-1 ring-orange-400/40"
+                          : "border-gray-200 hover:border-orange-200 bg-white"
+                      }`}
                     >
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${modeLivraison === "domicile" ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-500"
-                        }`}>
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                        modeLivraison === "domicile" ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-500"
+                      }`}>
                         <Home className="w-4 h-4" />
                       </div>
                       <div>
-                        <p className="text-xs font-bold text-gray-900">Livraison à domicile / Chantier</p>
-                        <p className="text-[11px] text-gray-500 mt-0.5">Livraison sur site par nos équipes logistiques</p>
+                        <p className="text-xs font-bold text-gray-900">Livraison à domicile / Site</p>
+                        <p className="text-[11px] text-gray-500 mt-0.5">Livraison directe à votre domicile ou adresse d'entreprise</p>
                       </div>
-                    </button>
+                    </button>*/}
                   </div>
                 </div>
 
