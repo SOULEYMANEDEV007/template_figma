@@ -31,8 +31,8 @@ interface NavItem {
 const BANQUES_SUB_ITEMS: SubNavItem[] = [
   { name: "AFG Bank CI", href: "/dashboard/admin/banques", disabled: false },
   { name: "BNI", disabled: true, badge: "Bientôt" },
-  { name: "Société Générale", disabled: true, badge: "Bientôt" },
-  { name: "NSIA Banque", disabled: true, badge: "Bientôt" },
+  { name: "Banque Atlantique", disabled: true, badge: "Bientôt" },
+  { name: "Ecobank", disabled: true, badge: "Bientôt" },
 ];
 
 function getNav(role: LDFUserRole, unreadCount: number): { main: NavItem[]; bottom: NavItem[] } {
