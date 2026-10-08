@@ -396,6 +396,108 @@ export default function SouscriptionDetailPage() {
     },
   ];
 
+  const handleConfirmerPaiement = () => {
+    const refPay = generateRef("PAY");
+    const montantTotal = montantEffectif || sub.montantTotal || 0;
+    const repartition = tousLesDevis.length > 0
+      ? tousLesDevis.map(d => ({
+          fournisseurId: d.fournisseurId,
+          fournisseurNom: d.fournisseurNom,
+          devisId: d.id,
+          montant: Number(d.totalTTC) || 0,
+          statut: "confirme" as const,
+        }))
+      : [{
+          fournisseurId: sub.fournisseurs?.[0]?.fournisseurId || "FOUR-LDF-001",
+          fournisseurNom: sub.fournisseurs?.[0]?.fournisseurNom || sub.fournisseurNom || "Librairie de France Groupe",
+          devisId: "",
+          montant: montantTotal,
+          statut: "confirme" as const,
+        }];
+    const newPay = addPaiement({
+      reference: refPay,
+      souscriptionId: sub.id,
+      souscriptionRef: sub.reference,
+      dossierId: dossier?.id || "",
+      dossierRef: dossier?.reference || "",
+      souscripteurNom: `${sub.souscripteurPrenom || ""} ${sub.souscripteurNom || ""}`.trim(),
+      montantTotal,
+      repartitionFournisseurs: repartition,
+      statut: "termine",
+      dateCreation: new Date().toISOString().split("T")[0],
+      dateValidationAFG: new Date().toISOString().split("T")[0],
+      dateTransfert: new Date().toISOString().split("T")[0],
+      dateMiseAJour: new Date().toISOString().split("T")[0],
+    });
+
+    updateSouscription(sub.id, { statut: "fournisseur_paye", paiementId: newPay.id });
+    if (dossier) updateDossier(dossier.id, { statut: "fournisseur_paye" });
+    addHistorique({
+      souscriptionId: sub.id,
+      action: "paiement_effectue",
+      description: `Virement de ${fmtCFA(montantTotal)} confirmé au fournisseur — Réf ${refPay}`,
+      auteur: `${user?.firstName || "AFG Bank"} ${user?.lastName || ""}`,
+      date: new Date().toISOString(),
+    });
+    emitInAppNotification({
+      titre: `Paiement fournisseur validé : ${refPay}`,
+      message: `AFG Bank a validé le virement de ${fmtCFA(montantTotal)} pour ${sub.reference}. La commande peut être préparée.`,
+      categorie: "paiement",
+      reference: refPay,
+      lien: `/dashboard/souscriptions/${sub.id}`,
+      roles: ["fournisseur", "souscripteur", "banque", "admin"],
+    });
+    toast.success("Virement fournisseur validé ! Étape Paiement complétée ✓");
+  };
+
+  const handleDemarrerPreparation = () => {
+    const pointRelaisMatch = sub?.observations?.match(/Relais:\s*([^|\n]+)/);
+    const pointRelaisName = pointRelaisMatch ? pointRelaisMatch[1].trim() : "votre point relais";
+
+    updateSouscription(sub.id, { statut: "commande_en_preparation" });
+    if (dossier) updateDossier(dossier.id, { statut: "commande_en_preparation" });
+
+    addHistorique({
+      souscriptionId: sub.id,
+      action: "commande_preparation",
+      description: `Commande prête. Disponible au point relais : ${pointRelaisName} le ${new Date(dateDisponibilite).toLocaleDateString("fr-FR")} à partir de ${heureDisponibilite}.`,
+      auteur: `${user?.firstName || "Fournisseur"} ${user?.lastName || ""}`,
+      date: new Date().toISOString(),
+    });
+
+    emitInAppNotification({
+      titre: `Votre commande est prête !`,
+      message: `La commande sera disponible au point relais : ${pointRelaisName} le ${new Date(dateDisponibilite).toLocaleDateString("fr-FR")} à partir de ${heureDisponibilite}.`,
+      categorie: "dossier",
+      reference: sub.reference,
+      lien: `/dashboard/souscriptions/${sub.id}`,
+      roles: ["souscripteur", "banque", "admin", "fournisseur"],
+    });
+
+    toast.success("Client alerté de la disponibilité 📦");
+  };
+
+  const handleConfirmerLivraison = () => {
+    updateSouscription(sub.id, { statut: "livre" });
+    if (dossier) updateDossier(dossier.id, { statut: "livre" });
+    addHistorique({
+      souscriptionId: sub.id,
+      action: "articles_livres",
+      description: "Articles remis au souscripteur contre émargement. Dossier clôturé.",
+      auteur: `${user?.firstName || "Fournisseur"} ${user?.lastName || ""}`,
+      date: new Date().toISOString(),
+    });
+    emitInAppNotification({
+      titre: `Commande servie et livrée : ${sub.reference}`,
+      message: `Tous les articles ont été remis avec succès au souscripteur. Dossier VITALIS clôturé.`,
+      categorie: "dossier",
+      reference: sub.reference,
+      lien: `/dashboard/souscriptions/${sub.id}`,
+      roles: ["souscripteur", "banque", "admin", "fournisseur"],
+    });
+    toast.success("Livraison confirmée ! Commande servie 🎉");
+  };
+
   return (
     <div className="space-y-5 fade-in">
       {/* ── En-tête ── */}
@@ -554,6 +656,156 @@ export default function SouscriptionDetailPage() {
             >
               <Check className="w-3.5 h-3.5" /> J'ai déposé mon dossier physique à l'agence
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Étape 4 : Décision bancaire AFG Bank ── */}
+      {isApres(currentEffectifStatut, "depose_banque") && !isApres(currentEffectifStatut, "accepte") && sub.statut !== "refuse" && sub.statut !== "rejete" && (
+        <div className="p-4 rounded-xl border bg-purple-50/90 border-purple-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-xl bg-purple-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-gray-900">Étape 4 active : Décision du dossier par AFG Bank</p>
+              <p className="text-xs text-gray-600 mt-0.5">
+                {user?.role === "banque" || user?.role === "admin"
+                  ? "Le dossier physique et numérique est soumis à l'agence AFG. Procédez à l'analyse de solvabilité et au comité de crédit."
+                  : "Votre dossier physique est bien déposé à l'agence AFG Bank. L'analyse de solvabilité et la décision de crédit sont en cours."}
+              </p>
+            </div>
+          </div>
+          {(user?.role === "banque" || user?.role === "admin") && (
+            <Link
+              href={dossier ? `/dashboard/dossiers/${dossier.id}` : "/dashboard/dossiers"}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-purple-600 text-white text-xs font-bold hover:bg-purple-700 transition-colors shadow-sm self-start sm:self-auto whitespace-nowrap"
+            >
+              <ShieldCheck className="w-3.5 h-3.5" /> Instruire le dossier →
+            </Link>
+          )}
+        </div>
+      )}
+
+      {/* ── Déclencheurs d'étapes post-validation bancaire ── */}
+      {(sub.statut === "accepte" || sub.statut === "finance") && (
+        <div className="p-4 rounded-xl border bg-amber-50/80 border-amber-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+              <CreditCard className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-gray-900">Étape 5 active : Accord AFG Bank accordé — Virement au fournisseur</p>
+              <p className="text-xs text-gray-600 mt-0.5">
+                {user?.role === "banque" || user?.role === "admin"
+                  ? "En tant qu'établissement bancaire, validez le virement direct des fonds sur le compte du fournisseur pour déclencher la préparation des articles."
+                  : "Le dossier est validé par la banque. En attente de l'exécution du virement par AFG Bank sur votre compte fournisseur pour démarrer la préparation."}
+              </p>
+            </div>
+          </div>
+          {(user?.role === "banque" || user?.role === "admin") ? (
+            <button
+              onClick={handleConfirmerPaiement}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-colors shadow-sm self-start sm:self-auto whitespace-nowrap cursor-pointer"
+            >
+              <CreditCard className="w-3.5 h-3.5" /> Valider le virement au fournisseur (AFG Bank) →
+            </button>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-300 self-start sm:self-auto whitespace-nowrap">
+              <Clock className="w-3.5 h-3.5 text-amber-600 animate-spin" /> En attente du virement AFG Bank
+            </span>
+          )}
+        </div>
+      )}
+
+      {sub.statut === "fournisseur_paye" && (
+        <div className="p-4 rounded-xl border bg-sky-50/80 border-sky-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-xl bg-sky-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+              <Package className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-gray-900">Étape 6 active : Virement reçu — Préparation de la commande</p>
+              <p className="text-xs text-gray-600 mt-0.5">
+                {user?.role === "fournisseur" || user?.role === "admin"
+                  ? "Le virement a été reçu. Vous pouvez désormais rassembler les articles et démarrer la préparation du colis/kit scolaire."
+                  : "Le virement bancaire a été versé au fournisseur. Ce dernier prépare actuellement le colis."}
+              </p>
+            </div>
+          </div>
+          {(user?.role === "fournisseur" || user?.role === "admin") ? (
+            <div className="flex flex-col sm:flex-row items-end gap-3 w-full sm:w-auto mt-3 sm:mt-0">
+              <div className="flex flex-col gap-1.5 w-full sm:w-auto text-left">
+                <label className="text-xs font-bold text-sky-900">Date disponibilité *</label>
+                <input
+                  type="date"
+                  value={dateDisponibilite}
+                  onChange={e => setDateDisponibilite(e.target.value)}
+                  className="px-3 py-2 text-sm rounded-lg border border-sky-300 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 text-sky-900 font-medium"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5 w-full sm:w-auto text-left">
+                <label className="text-xs font-bold text-sky-900">Heure *</label>
+                <input
+                  type="time"
+                  value={heureDisponibilite}
+                  onChange={e => setHeureDisponibilite(e.target.value)}
+                  className="px-3 py-2 text-sm rounded-lg border border-sky-300 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 text-sky-900 font-medium"
+                />
+              </div>
+              <button
+                onClick={handleDemarrerPreparation}
+                className="flex items-center gap-2 px-5 py-2 rounded-lg bg-sky-600 text-white text-sm font-bold hover:bg-sky-700 transition-colors shadow-sm self-stretch sm:self-auto justify-center whitespace-nowrap cursor-pointer"
+              >
+                <Package className="w-4 h-4" /> Alerter le client (Prêt) →
+              </button>
+            </div>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-100 text-sky-800 border border-sky-300 self-start sm:self-auto whitespace-nowrap">
+              <Clock className="w-3.5 h-3.5 text-sky-600" /> En attente de préparation (Fournisseur)
+            </span>
+          )}
+        </div>
+      )}
+
+      {sub.statut === "commande_en_preparation" && (
+        <div className="p-4 rounded-xl border bg-teal-50/80 border-teal-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-xl bg-teal-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+              <Truck className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-gray-900">Étape 6 active : Articles prêts — Remise et émargement</p>
+              <p className="text-xs text-gray-600 mt-0.5">
+                {user?.role === "fournisseur" || user?.role === "admin"
+                  ? "La commande est prête. Dès que le souscripteur se présente avec sa fiche pour le retrait et signe l'émargement, validez la livraison finale."
+                  : "La commande est prête chez le fournisseur. Le souscripteur peut se présenter avec sa fiche de souscription pour récupérer ses articles."}
+              </p>
+            </div>
+          </div>
+          {(user?.role === "fournisseur" || user?.role === "admin") ? (
+            <button
+              onClick={handleConfirmerLivraison}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-colors shadow-sm self-start sm:self-auto whitespace-nowrap cursor-pointer"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5" /> Confirmer la livraison (Articles servis ✓)
+            </button>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-teal-100 text-teal-800 border border-teal-300 self-start sm:self-auto whitespace-nowrap">
+              <Truck className="w-3.5 h-3.5 text-teal-600" /> Prêt pour retrait / livraison
+            </span>
+          )}
+        </div>
+      )}
+
+      {(sub.statut === "livre" || sub.statut === "servie" || sub.statut === "cloture") && (
+        <div className="p-4 rounded-xl border bg-emerald-50 border-emerald-200 flex items-center gap-3 shadow-sm">
+          <CheckCircle2 className="w-6 h-6 text-emerald-600 flex-shrink-0" />
+          <div>
+            <p className="text-sm font-bold text-emerald-900">Cycle VITALIS 100% complété</p>
+            <p className="text-xs text-emerald-700 mt-0.5">
+              Tous les articles ont été remis au souscripteur contre émargement. Financement et commande finalisés avec succès.
+            </p>
           </div>
         </div>
       )}
@@ -822,6 +1074,25 @@ export default function SouscriptionDetailPage() {
             </div>
           </div>
 
+          {/* Paiement */}
+          {sub.paiementId && (
+            <div className="section-card">
+              <div className="section-card-header">
+                <div className="flex items-center gap-2">
+                  <CreditCard className="w-4 h-4 text-orange-500" />
+                  <h3 className="text-sm font-semibold text-gray-800">Paiement</h3>
+                </div>
+                <Link href={`/dashboard/paiements/${sub.paiementId}`} className="text-xs text-orange-600 hover:text-orange-700">
+                  Voir le détail →
+                </Link>
+              </div>
+              <div className="section-card-body">
+                <p className="text-sm text-gray-600">Référence : <span className="font-mono font-semibold text-orange-700">{sub.paiementId}</span></p>
+                <p className="text-xl font-bold text-gray-900 mt-1">{fmtCFA(montantEffectif)}</p>
+              </div>
+            </div>
+          )}
+
         </div>
 
         {/* ── Colonne latérale droite (1/3) ── */}
@@ -879,6 +1150,11 @@ export default function SouscriptionDetailPage() {
                 {dossier.commentaireBanque && (
                   <p className="mt-2 p-2.5 bg-gray-50 rounded-lg text-gray-700 italic border border-gray-100">
                     "{dossier.commentaireBanque}"
+                  </p>
+                )}
+                {dossier.motifRejet && (
+                  <p className="mt-2 p-2.5 bg-red-50 rounded-lg text-red-800 border border-red-100">
+                    <strong>Motif du rejet :</strong> {dossier.motifRejet}
                   </p>
                 )}
               </div>
