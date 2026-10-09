@@ -207,42 +207,42 @@ export default function AdminBanquesPage() {
 
       {/* 4 Cartes KPIs Synthèse Réseau */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-blue-600 p-4 shadow-sm">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold text-gray-500">Réseau AFG Bank</p>
-                <Building2 className="w-4 h-4 text-blue-600" />
-              </div>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{totalAgences}</p>
-              <p className="text-[11px] text-gray-400 mt-0.5">{agencesActives} agences opérationnelles</p>
-            </div>
-
-            <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-teal-500 p-4 shadow-sm">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold text-gray-500">Grand Abidjan</p>
-                <MapPin className="w-4 h-4 text-teal-500" />
-              </div>
-              <p className="text-2xl font-bold text-teal-700 mt-1">{agencesAbidjan}</p>
-              <p className="text-[11px] text-gray-400 mt-0.5">Plateau, Cocody, Marcory, Yopougon</p>
-            </div>
-
-            <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-amber-500 p-4 shadow-sm">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold text-gray-500">Intérieur du Pays</p>
-                <MapPin className="w-4 h-4 text-amber-500" />
-              </div>
-              <p className="text-2xl font-bold text-amber-700 mt-1">{agencesInterieur}</p>
-              <p className="text-[11px] text-gray-400 mt-0.5">Bouaké, Yamoussoukro, San-Pedro...</p>
-            </div>
-
-            <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-emerald-500 p-4 shadow-sm">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold text-gray-500">Dossiers Instruits</p>
-                <ShieldCheck className="w-4 h-4 text-emerald-500" />
-              </div>
-              <p className="text-2xl font-bold text-emerald-700 mt-1">{totalDossiersReseau}</p>
-              <p className="text-[11px] text-gray-400 mt-0.5">{fmtCFA(montantTotalFinanceReseau)} financés</p>
-            </div>
+        <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-blue-600 p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-semibold text-gray-500">Réseau AFG Bank</p>
+            <Building2 className="w-4 h-4 text-blue-600" />
           </div>
+          <p className="text-2xl font-bold text-gray-900 mt-1">{totalAgences}</p>
+          <p className="text-[11px] text-gray-400 mt-0.5">{agencesActives} agences opérationnelles</p>
+        </div>
+
+        <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-teal-500 p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-semibold text-gray-500">Grand Abidjan</p>
+            <MapPin className="w-4 h-4 text-teal-500" />
+          </div>
+          <p className="text-2xl font-bold text-teal-700 mt-1">{agencesAbidjan}</p>
+          <p className="text-[11px] text-gray-400 mt-0.5">Plateau, Cocody, Marcory, Yopougon</p>
+        </div>
+
+        <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-amber-500 p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-semibold text-gray-500">Intérieur du Pays</p>
+            <MapPin className="w-4 h-4 text-amber-500" />
+          </div>
+          <p className="text-2xl font-bold text-amber-700 mt-1">{agencesInterieur}</p>
+          <p className="text-[11px] text-gray-400 mt-0.5">Bouaké, Yamoussoukro, San-Pedro...</p>
+        </div>
+
+        <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-emerald-500 p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-semibold text-gray-500">Dossiers Instruits</p>
+            <ShieldCheck className="w-4 h-4 text-emerald-500" />
+          </div>
+          <p className="text-2xl font-bold text-emerald-700 mt-1">{totalDossiersReseau}</p>
+          <p className="text-[11px] text-gray-400 mt-0.5">{fmtCFA(montantTotalFinanceReseau)} financés</p>
+        </div>
+      </div>
 
       {/* ── Barre de Filtres et Recherche ── */}
       <div className="section-card p-4 space-y-3">
