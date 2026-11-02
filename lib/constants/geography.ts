@@ -1,6 +1,6 @@
 /**
  * Données géographiques de Côte d'Ivoire (Régions, Villes, Communes / Quartiers)
- * Programme Vitalis FADES – LDF Groupe & AFG Bank (Version MVP)
+ * Programme Vitalis FADES – LDF Groupe & AFG BANK (Version MVP)
  */
 
 export interface RegionData {
@@ -151,10 +151,10 @@ export function getCommunesParVille(regionNom: string, villeNom: string): string
     (cleanReg.includes("abidjan")
       ? COTE_D_IVOIRE_GEOGRAPHY[0]
       : cleanReg.includes("gbeke")
-      ? COTE_D_IVOIRE_GEOGRAPHY[1]
-      : cleanReg.includes("lac") || cleanReg.includes("yamoussoukro")
-      ? COTE_D_IVOIRE_GEOGRAPHY[2]
-      : undefined);
+        ? COTE_D_IVOIRE_GEOGRAPHY[1]
+        : cleanReg.includes("lac") || cleanReg.includes("yamoussoukro")
+          ? COTE_D_IVOIRE_GEOGRAPHY[2]
+          : undefined);
 
   if (regionTrouvee) {
     if (cleanVil) {

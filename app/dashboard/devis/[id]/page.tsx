@@ -114,7 +114,7 @@ export default function DevisDetailPage() {
           )}
           {currentStatut === "envoye" && (
             <span className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-              <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" /> Transmis à AFG Bank
+              <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" /> Transmis à AFG BANK
             </span>
           )}
           {(currentStatut === "valide" || currentStatut === "accepte") && (
@@ -134,7 +134,7 @@ export default function DevisDetailPage() {
       {/* Preview devis */}
       <div id="devis-pdf-content" className="section-card bg-white flex flex-col">
 
-        {/* En-tête Logos Officiels (Fournisseur, Programme VITALIS, FADES, AFG Bank) */}
+        {/* En-tête Logos Officiels (Fournisseur, Programme VITALIS, FADES, AFG BANK) */}
         <div className="flex items-center justify-between p-6 sm:p-8 border-b-2 border-[#0B2447]/10 bg-white gap-4 flex-wrap">
           {/* 1. Fournisseur Émetteur qui a établi le devis */}
           <div className="flex items-center gap-3">
@@ -168,7 +168,7 @@ export default function DevisDetailPage() {
           <div className="flex flex-col items-end pl-2">
             <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-1 mr-1">Financement</p>
             <div className="h-12 px-3 flex items-center justify-center rounded-lg bg-white border border-gray-200 shadow-sm">
-              <img src={IMAGES.logos.afgBank} alt="AFG Bank" className="h-8 object-contain" crossOrigin="anonymous" />
+              <img src={IMAGES.logos.afgBank} alt="AFG BANK" className="h-8 object-contain" crossOrigin="anonymous" />
             </div>
           </div>
         </div>

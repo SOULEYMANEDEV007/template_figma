@@ -38,11 +38,11 @@ export default function FournisseurDashboardPage() {
   );
 
   const stats = {
-    devisTotal:    devis.filter(d => !fournisseurId || d.fournisseurId === fournisseurId).length,
-    devisValides:  devis.filter(d => (!fournisseurId || d.fournisseurId === fournisseurId) && d.statut === "valide").length,
+    devisTotal: devis.filter(d => !fournisseurId || d.fournisseurId === fournisseurId).length,
+    devisValides: devis.filter(d => (!fournisseurId || d.fournisseurId === fournisseurId) && d.statut === "valide").length,
     commandesEnCours: mesCommandes.length,
-    livraisonsOk:  mesSouscriptions.filter(s => s.statut === "livre").length,
-    montantTotal:  devis.filter(d => (!fournisseurId || d.fournisseurId === fournisseurId) && d.statut === "valide").reduce((a, d) => a + d.totalTTC, 0),
+    livraisonsOk: mesSouscriptions.filter(s => s.statut === "livre").length,
+    montantTotal: devis.filter(d => (!fournisseurId || d.fournisseurId === fournisseurId) && d.statut === "valide").reduce((a, d) => a + d.totalTTC, 0),
   };
 
   return (
@@ -51,7 +51,7 @@ export default function FournisseurDashboardPage() {
       <div className="page-header">
         <div>
           <h1 className="page-title">Tableau de bord Fournisseur</h1>
-          <p className="page-subtitle">Programme VITALIS · AFG Bank</p>
+          <p className="page-subtitle">Programme VITALIS · AFG BANK</p>
         </div>
         <Link href="/dashboard/devis/nouveau" className="btn-ldf-primary">
           <Plus className="w-4 h-4" /> Nouveau devis
@@ -61,10 +61,10 @@ export default function FournisseurDashboardPage() {
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: "Devis émis",           value: stats.devisTotal,        icon: FileText,     color: "text-blue-600   bg-blue-50"   },
-          { label: "Devis validés",         value: stats.devisValides,      icon: CheckCircle2, color: "text-emerald-600 bg-emerald-50"},
-          { label: "Commandes en cours",    value: stats.commandesEnCours,  icon: Package,      color: "text-amber-600  bg-amber-50"  },
-          { label: "CA validé",             value: fmtCFA(stats.montantTotal), icon: TrendingUp, color: "text-orange-600  bg-orange-50", isStr: true },
+          { label: "Devis émis", value: stats.devisTotal, icon: FileText, color: "text-blue-600   bg-blue-50" },
+          { label: "Devis validés", value: stats.devisValides, icon: CheckCircle2, color: "text-emerald-600 bg-emerald-50" },
+          { label: "Commandes en cours", value: stats.commandesEnCours, icon: Package, color: "text-amber-600  bg-amber-50" },
+          { label: "CA validé", value: fmtCFA(stats.montantTotal), icon: TrendingUp, color: "text-orange-600  bg-orange-50", isStr: true },
         ].map(k => {
           const Icon = k.icon;
           return (
@@ -158,9 +158,9 @@ export default function FournisseurDashboardPage() {
         <h2 className="text-sm font-semibold text-gray-800 mb-4">Accès rapides</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {[
-            { href: "/dashboard/devis/nouveau",           label: "Créer un devis",         icon: Plus,        color: "bg-orange-500 text-white hover:bg-orange-600" },
-            { href: "/dashboard/fournisseur/commandes",   label: "Gérer mes commandes",    icon: Package,     color: "bg-white border border-gray-200 text-gray-700 hover:bg-orange-50 hover:border-orange-300" },
-            { href: "/dashboard/devis",                   label: "Mes devis",              icon: FileText,    color: "bg-white border border-gray-200 text-gray-700 hover:bg-orange-50 hover:border-orange-300" },
+            { href: "/dashboard/devis/nouveau", label: "Créer un devis", icon: Plus, color: "bg-orange-500 text-white hover:bg-orange-600" },
+            { href: "/dashboard/fournisseur/commandes", label: "Gérer mes commandes", icon: Package, color: "bg-white border border-gray-200 text-gray-700 hover:bg-orange-50 hover:border-orange-300" },
+            { href: "/dashboard/devis", label: "Mes devis", icon: FileText, color: "bg-white border border-gray-200 text-gray-700 hover:bg-orange-50 hover:border-orange-300" },
           ].map(r => {
             const Icon = r.icon;
             return (

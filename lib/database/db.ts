@@ -68,7 +68,7 @@ export class VitalisDatabase extends Dexie {
       // Livraisons
       livraisons: "id, reference, souscriptionId, dossierId, datePrevue, statut, type",
 
-      // Agences AFG Bank
+      // Agences AFG BANK
       agencesAFG: "id, code, nom, ville, statut",
     });
   }

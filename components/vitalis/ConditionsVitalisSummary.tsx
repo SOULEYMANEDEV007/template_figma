@@ -32,11 +32,11 @@ export default function ConditionsVitalisSummary({
               Conditions Programme Vitalis
             </h3>
             <p className="text-xs text-amber-800">
-              Financement AFG Bank sur {VITALIS_CONFIG.DUREE_PAR_DEFAUT} mois
+              Financement AFG BANK sur {VITALIS_CONFIG.DUREE_PAR_DEFAUT} mois
             </p>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-2 gap-2 text-xs mb-3">
           <div className="bg-white rounded-lg p-2">
             <p className="text-gray-500">Montant min.</p>
@@ -80,7 +80,7 @@ export default function ConditionsVitalisSummary({
             </div>
             <div>
               <h3 className="font-bold text-gray-900">Programme Vitalis</h3>
-              <p className="text-sm text-gray-600">Conditions du financement AFG Bank</p>
+              <p className="text-sm text-gray-600">Conditions du financement AFG BANK</p>
             </div>
           </div>
           {showPrintButton && (
@@ -137,7 +137,7 @@ export default function ConditionsVitalisSummary({
             </li>
             <li className="flex items-start gap-2">
               <span className="text-emerald-500 mt-0.5">•</span>
-              <span>Compte bancaire AFG Bank obligatoire</span>
+              <span>Compte bancaire AFG BANK obligatoire</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-emerald-500 mt-0.5">•</span>

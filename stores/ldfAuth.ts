@@ -44,7 +44,7 @@ const NOTIF_STORAGE_KEY = "viflo_notifications_db_v1";
 export const DEFAULT_NOTIFICATIONS: Notification[] = [
   {
     id: "NOTIF-001",
-    titre: "Dossier déposé à AFG Bank",
+    titre: "Dossier déposé à AFG BANK",
     message: "Le dossier DOS-2026-0042 (Mamadou Coulibaly) a été remis à l'agence Plateau pour analyse bancaire.",
     categorie: "dossier",
     estLue: false,
@@ -56,7 +56,7 @@ export const DEFAULT_NOTIFICATIONS: Notification[] = [
   },
   {
     id: "NOTIF-002",
-    titre: "Accord de financement AFG Bank",
+    titre: "Accord de financement AFG BANK",
     message: "Comité de crédit : Le dossier DOS-2026-0038 a été accepté pour un montant de 1 250 000 FCFA.",
     categorie: "dossier",
     estLue: false,

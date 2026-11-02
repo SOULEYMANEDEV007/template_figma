@@ -118,7 +118,7 @@ export default function LoginPage() {
               Gérez le cycle complet<br />de vos financements.
             </h2>
             <p className="text-white/80 text-sm mt-4 leading-relaxed max-w-md">
-              Une plateforme centralisée pour les souscripteurs, fournisseurs agréés et la banque partenaire AFG Bank.
+              Une plateforme centralisée pour les souscripteurs, fournisseurs agréés et la banque partenaire AFG BANK.
             </p>
           </div>
 
@@ -151,7 +151,7 @@ export default function LoginPage() {
               {s.isLogo ? (
                 <div className="h-10 flex items-center mb-0.5">
                   <div className="bg-white/5 p-1 rounded-lg border border-white/10 backdrop-blur-sm inline-flex items-center justify-center h-full overflow-hidden">
-                    <Image src={IMAGES.logos.afgBank} alt="AFG Bank" width={80} height={32} className="object-contain w-full h-full rounded bg-white" />
+                    <Image src={IMAGES.logos.afgBank} alt="AFG BANK" width={80} height={32} className="object-contain w-full h-full rounded bg-white" />
                   </div>
                 </div>
               ) : (

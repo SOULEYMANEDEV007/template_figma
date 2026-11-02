@@ -28,10 +28,10 @@ export default function PaiementDetailPage() {
     addHistorique,
   } = useVitalisDb();
 
-  const [statut, setStatut]               = useState<PaiementStatut | null>(null);
+  const [statut, setStatut] = useState<PaiementStatut | null>(null);
   const [showEncaisser, setShowEncaisser] = useState(false);
-  const [showServir, setShowServir]       = useState(false);
-  const [loading, setLoading]             = useState(false);
+  const [showServir, setShowServir] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const rawPaiement = getPaiementById(id);
   const sub = rawPaiement ? getSouscriptionById(rawPaiement.souscriptionId) : null;
@@ -54,7 +54,7 @@ export default function PaiementDetailPage() {
   // Normalisation du paiement
   const souscripteurNom = rawPaiement.souscripteurNom || (sub ? `${sub.souscripteurPrenom || ""} ${sub.souscripteurNom || ""}`.trim() : "Souscripteur");
   const fournisseurNom = rawPaiement.repartitionFournisseurs?.[0]?.fournisseurNom || rawPaiement.fournisseurNom || sub?.fournisseurNom || "Librairie de France Groupe";
-  const banqueNom = rawPaiement.banqueNom || sub?.banqueNom || "AFG Bank";
+  const banqueNom = rawPaiement.banqueNom || sub?.banqueNom || "AFG BANK";
   const montant = rawPaiement.montantTotal || rawPaiement.montant || sub?.montantTotal || 0;
 
   // Calcul du statut effectif
@@ -86,7 +86,7 @@ export default function PaiementDetailPage() {
         souscriptionId: sub.id,
         action: "paiement_encaisse",
         description: `Virement de ${fmtCFA(montant)} validé et encaissé par ${fournisseurNom}`,
-        auteur: `${user?.firstName || "AFG Bank"} ${user?.lastName || ""}`,
+        auteur: `${user?.firstName || "AFG BANK"} ${user?.lastName || ""}`,
         date: new Date().toISOString(),
       });
     }
@@ -143,7 +143,7 @@ export default function PaiementDetailPage() {
   const steps = [
     {
       id: "init",
-      label: "Ordre de virement émis (AFG Bank)",
+      label: "Ordre de virement émis (AFG BANK)",
       date: rawPaiement.dateCreation || rawPaiement.datePaiement,
       done: true,
     },
@@ -327,9 +327,8 @@ export default function PaiementDetailPage() {
                       <div className={`absolute left-3.5 top-7 bottom-0 w-0.5 ${s.done ? "bg-emerald-300" : "bg-gray-100"}`} />
                     )}
                     <div
-                      className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 z-10 ${
-                        s.done ? "bg-emerald-500 text-white shadow-sm" : "bg-gray-100 border-2 border-gray-200"
-                      }`}
+                      className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 z-10 ${s.done ? "bg-emerald-500 text-white shadow-sm" : "bg-gray-100 border-2 border-gray-200"
+                        }`}
                     >
                       {s.done ? (
                         <CheckCircle2 className="w-4 h-4" strokeWidth={2.5} />

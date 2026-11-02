@@ -15,17 +15,17 @@ const fmtCFA = (v: number) => new Intl.NumberFormat("fr-FR").format(v) + " FCFA"
 
 const STATUTS_LABELS: Record<string, string> = {
   // Workflow VITALIS — 11 étapes
-  en_preparation:          "En préparation",
-  pret_pour_depot:         "Prêt pour dépôt",
-  depose_banque:           "Déposé à la banque",
-  en_analyse_bancaire:     "En analyse bancaire",
-  accepte:                 "Accepté",
-  refuse:                  "Refusé",
-  finance:                 "Financé",
-  fournisseur_paye:        "Fournisseur payé",
+  en_preparation: "En préparation",
+  pret_pour_depot: "Prêt pour dépôt",
+  depose_banque: "Déposé à la banque",
+  en_analyse_bancaire: "En analyse bancaire",
+  accepte: "Accepté",
+  refuse: "Refusé",
+  finance: "Financé",
+  fournisseur_paye: "Fournisseur payé",
   commande_en_preparation: "Commande en préparation",
-  livre:                   "Livré",
-  cloture:                 "Clôturé",
+  livre: "Livré",
+  cloture: "Clôturé",
 };
 
 const PAGE_SIZE = 10;
@@ -112,7 +112,7 @@ export default function SouscriptionsPage() {
         <div>
           <h1 className="page-title">Souscriptions Vitalis</h1>
           <p className="page-subtitle">
-            {filtered.length} souscription{filtered.length > 1 ? "s" : ""}{hasFilters ? " filtrées" : " au total"} · Banque : <strong>AFG Bank</strong>
+            {filtered.length} souscription{filtered.length > 1 ? "s" : ""}{hasFilters ? " filtrées" : " au total"} · Banque : <strong>AFG BANK</strong>
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -270,7 +270,7 @@ export default function SouscriptionsPage() {
                                 </span>
                               </div>
                             );
-                        })}
+                          })}
                         {user?.role !== "fournisseur" && s.fournisseurs.length > 3 && (
                           <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded-full">+{s.fournisseurs.length - 3}</span>
                         )}

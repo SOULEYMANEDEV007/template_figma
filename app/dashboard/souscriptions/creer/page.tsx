@@ -484,7 +484,7 @@ export default function CreerSouscriptionPage() {
         souscripteurEntreprise,
         typeSouscripteur,
         banqueId: "AFG-001",
-        banqueNom: "AFG Bank",
+        banqueNom: "AFG BANK",
         agenceId: agenceId || undefined,
         agenceNom: agenceChoisie?.nom,
         fournisseurs: fournisseursChoisis,
@@ -499,7 +499,7 @@ export default function CreerSouscriptionPage() {
 
       emitInAppNotification({
         titre: `Nouvelle souscription assistée ${ref}`,
-        message: `Dossier constitué pour ${souscripteurPrenom} ${souscripteurNom} — Prêt pour chiffrage devis et dépôt AFG Bank.`,
+        message: `Dossier constitué pour ${souscripteurPrenom} ${souscripteurNom} — Prêt pour chiffrage devis et dépôt AFG BANK.`,
         categorie: "souscription",
         reference: ref,
         lien: `/dashboard/souscriptions/${nouvelle.id}`,
@@ -576,7 +576,7 @@ export default function CreerSouscriptionPage() {
         </button>
         <div>
           <h1 className="page-title">Nouvelle souscription Vitalis</h1>
-          <p className="page-subtitle">Programme AFG Bank · Durée {duree} mois</p>
+          <p className="page-subtitle">Programme AFG BANK · Durée {duree} mois</p>
         </div>
       </div>
 
@@ -851,7 +851,7 @@ export default function CreerSouscriptionPage() {
               <Field label="Email">
                 <input type="email" className={inp} placeholder="nom@email.ci" value={formPhysique.email} onChange={e => setP("email", e.target.value)} />
               </Field>
-              <Field label="Numéro de compte AFG Bank">
+              <Field label="Numéro de compte AFG BANK">
                 <input className={inp} placeholder="CI93..." value={formPhysique.numeroCompte} onChange={e => setP("numeroCompte", e.target.value)} />
               </Field>
             </div>
@@ -961,7 +961,7 @@ export default function CreerSouscriptionPage() {
               <Field label="Email">
                 <input type="email" className={inp} placeholder="contact@entreprise.ci" value={formMorale.email} onChange={e => setM("email", e.target.value)} />
               </Field>
-              <Field label="N° Compte AFG Bank">
+              <Field label="N° Compte AFG BANK">
                 <input className={inp} placeholder="CI93..." value={formMorale.numeroCompte} onChange={e => setM("numeroCompte", e.target.value)} />
               </Field>
             </div>
@@ -980,15 +980,15 @@ export default function CreerSouscriptionPage() {
               <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center">
                 <Check className="w-3.5 h-3.5 text-white" />
               </div>
-              <span className="text-sm font-bold text-orange-800">Programme Vitalis — AFG Bank</span>
+              <span className="text-sm font-bold text-orange-800">Programme Vitalis — AFG BANK</span>
             </div>
             <p className="text-xs text-orange-700">
-              Durée standard du programme : <strong>36 mois</strong>. Banque financeuse unique : <strong>AFG Bank</strong>.
+              Durée standard du programme : <strong>36 mois</strong>. Banque financeuse unique : <strong>AFG BANK</strong>.
             </p>
           </div>
 
           {/* Agence AFG */}
-          <SectionCard title="Agence AFG Bank" icon={Building2}>
+          <SectionCard title="Agence AFG BANK" icon={Building2}>
             <Field label="Agence de rattachement">
               <select className={sel} value={agenceId} onChange={e => setAgenceId(e.target.value)}>
                 <option value="">Sélectionner une agence (optionnel)</option>
@@ -1123,7 +1123,7 @@ export default function CreerSouscriptionPage() {
               <h3 className="text-sm font-semibold text-gray-800">Détails de la souscription</h3>
             </div>
             <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-              <div><p className="text-xs text-gray-400">Banque financeuse</p><p className="font-bold text-orange-600">AFG Bank</p></div>
+              <div><p className="text-xs text-gray-400">Banque financeuse</p><p className="font-bold text-orange-600">AFG BANK</p></div>
               <div><p className="text-xs text-gray-400">Agence</p><p className="font-medium">{agenceChoisie?.nom || "Non spécifiée"}</p></div>
               <div><p className="text-xs text-gray-400">Durée programme</p><p className="font-medium">{duree} mois</p></div>
               <div>
@@ -1214,7 +1214,7 @@ export default function CreerSouscriptionPage() {
                 {submitting ? (
                   <><Loader2 className="w-4 h-4 animate-spin" /> Envoi en cours...</>
                 ) : (
-                  <><Check className="w-4 h-4" /> Soumettre à AFG Bank</>
+                  <><Check className="w-4 h-4" /> Soumettre à AFG BANK</>
                 )}
               </button>
             </>
@@ -1285,7 +1285,7 @@ export default function CreerSouscriptionPage() {
             </div>
 
             <p className="text-[11px] text-gray-500 italic bg-amber-50/70 p-2.5 rounded-lg border border-amber-100 text-amber-800">
-              💡 Le souscripteur peut dès à présent se rendre sur la page de connexion pour suivre les devis, la décision d'AFG Bank et la livraison.
+              💡 Le souscripteur peut dès à présent se rendre sur la page de connexion pour suivre les devis, la décision d'AFG BANK et la livraison.
             </p>
           </div>
 

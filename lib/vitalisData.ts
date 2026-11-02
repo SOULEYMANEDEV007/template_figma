@@ -24,7 +24,7 @@ export { VITALIS_CONFIG } from "@/types/vitalis";
 export const AFG_BANK = {
   id: "AFG-001",
   code: "AFG",
-  nom: "AFG Bank",
+  nom: "AFG BANK",
   siege: "Plateau, Abidjan",
   telephone: "+225 27 20 31 58 00",
   email: "contact@afgbank.ci",

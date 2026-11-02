@@ -23,7 +23,7 @@ const CONDITIONS_VITALIS = {
         {
           titre: "Qu'est-ce que Vitalis ?",
           paragraphes: [
-            "Le Programme Vitalis est un dispositif de financement mis en place par AFG Bank pour faciliter l'accès à l'équipement scolaire, éducatif et professionnel pour les particuliers et les entreprises en Côte d'Ivoire.",
+            "Le Programme Vitalis est un dispositif de financement mis en place par AFG BANK pour faciliter l'accès à l'équipement scolaire, éducatif et professionnel pour les particuliers et les entreprises en Côte d'Ivoire.",
             "Ce programme permet aux bénéficiaires de financer leurs achats auprès de fournisseurs agréés, avec un remboursement échelonné sur une durée pouvant aller jusqu'à 48 mois.",
           ],
         },
@@ -32,7 +32,7 @@ const CONDITIONS_VITALIS = {
           liste: [
             "Faciliter l'accès au financement pour l'éducation et la formation",
             "Soutenir les familles et les entreprises dans leurs projets d'équipement",
-            "Développer un partenariat tripartite gagnant-gagnant (Client - Fournisseur - AFG Bank)",
+            "Développer un partenariat tripartite gagnant-gagnant (Client - Fournisseur - AFG BANK)",
             "Stimuler l'économie locale en favorisant l'activité des fournisseurs agréés",
           ],
         },
@@ -50,7 +50,7 @@ const CONDITIONS_VITALIS = {
             "Être âgé de 21 ans minimum et 65 ans maximum",
             "Être salarié ou fonctionnaire avec un revenu stable et justifiable",
             "Justifier d'une ancienneté professionnelle d'au moins 6 mois",
-            "Disposer d'un compte bancaire actif chez AFG Bank ou accepter d'en ouvrir un",
+            "Disposer d'un compte bancaire actif chez AFG BANK ou accepter d'en ouvrir un",
             "Résider en Côte d'Ivoire de manière permanente",
             "Ne pas être inscrit au fichier des incidents de paiement",
           ],
@@ -62,7 +62,7 @@ const CONDITIONS_VITALIS = {
             "Disposer d'un compte contribuable valide",
             "Justifier d'au moins 12 mois d'activité",
             "Présenter des états financiers certifiés des 2 derniers exercices",
-            "Disposer d'un compte professionnel chez AFG Bank",
+            "Disposer d'un compte professionnel chez AFG BANK",
             "Ne pas être en situation de contentieux bancaire",
           ],
         },
@@ -72,7 +72,7 @@ const CONDITIONS_VITALIS = {
           liste: [
             "Carte Nationale d'Identité (CNI) en cours de validité",
             "3 derniers bulletins de salaire ou attestation de travail pour les fonctionnaires",
-            "Relevé d'Identité Bancaire (RIB) AFG Bank",
+            "Relevé d'Identité Bancaire (RIB) AFG BANK",
             "Justificatif de domicile de moins de 3 mois",
             "Attestation de mariage (si marié)",
             "Attestation d'emploi certifiée par l'employeur",
@@ -86,7 +86,7 @@ const CONDITIONS_VITALIS = {
             "Statuts de l'entreprise certifiés conformes",
             "États financiers des 2 derniers exercices",
             "CNI du Directeur Général",
-            "Attestation bancaire AFG Bank",
+            "Attestation bancaire AFG BANK",
           ],
         },
       ],
@@ -112,7 +112,7 @@ const CONDITIONS_VITALIS = {
             `Durée standard : ${VITALIS_CONFIG.DUREE_PAR_DEFAUT} mois (recommandée)`,
             "Durée minimale : 12 mois",
             "Durée maximale : 48 mois",
-            "Remboursement par prélèvement mensuel automatique sur le compte AFG Bank",
+            "Remboursement par prélèvement mensuel automatique sur le compte AFG BANK",
           ],
         },
         {
@@ -138,9 +138,9 @@ const CONDITIONS_VITALIS = {
             "1. Le client se rapproche d'un fournisseur agréé Vitalis",
             "2. Le fournisseur établit un devis détaillé et crée la souscription",
             "3. Le client vérifie et valide les informations de sa souscription",
-            "4. Le fournisseur soumet le dossier complet à AFG Bank",
-            "5. AFG Bank étudie le dossier sous 5 à 7 jours ouvrés maximum",
-            "6. En cas d'acceptation, AFG Bank procède au financement",
+            "4. Le fournisseur soumet le dossier complet à AFG BANK",
+            "5. AFG BANK étudie le dossier sous 5 à 7 jours ouvrés maximum",
+            "6. En cas d'acceptation, AFG BANK procède au financement",
             "7. Le fournisseur prépare et livre les articles commandés",
             "8. Le client commence le remboursement selon l'échéancier convenu",
           ],
@@ -165,7 +165,7 @@ const CONDITIONS_VITALIS = {
         {
           titre: "Critères d'agrément",
           paragraphes: [
-            "Les fournisseurs partenaires du programme Vitalis sont rigoureusement sélectionnés par AFG Bank selon des critères stricts de qualité, de fiabilité et de conformité.",
+            "Les fournisseurs partenaires du programme Vitalis sont rigoureusement sélectionnés par AFG BANK selon des critères stricts de qualité, de fiabilité et de conformité.",
           ],
           liste: [
             "Entreprise légalement constituée avec RCCM valide",
@@ -179,7 +179,7 @@ const CONDITIONS_VITALIS = {
         {
           titre: "Liste des fournisseurs agréés",
           paragraphes: [
-            "La liste complète et actualisée des fournisseurs agréés Vitalis est disponible sur demande auprès de votre agence AFG Bank ou sur le portail en ligne.",
+            "La liste complète et actualisée des fournisseurs agréés Vitalis est disponible sur demande auprès de votre agence AFG BANK ou sur le portail en ligne.",
           ],
         },
       ],
@@ -193,7 +193,7 @@ const CONDITIONS_VITALIS = {
         {
           titre: "Mode de remboursement",
           liste: [
-            "Prélèvement automatique mensuel sur compte AFG Bank",
+            "Prélèvement automatique mensuel sur compte AFG BANK",
             "Date de prélèvement : Le 5 de chaque mois",
             "Première échéance : Un mois après le déblocage des fonds",
             "Possibilité de remboursement anticipé total ou partiel sans pénalité",
@@ -202,7 +202,7 @@ const CONDITIONS_VITALIS = {
         {
           titre: "En cas de difficultés",
           liste: [
-            "Contacter immédiatement votre conseiller AFG Bank",
+            "Contacter immédiatement votre conseiller AFG BANK",
             "Possibilité de report d'échéance (sous conditions, maximum 2 fois)",
             "Proposition de réaménagement du crédit si situation justifiée",
             "Éviter les incidents de paiement pour préserver votre historique bancaire",
@@ -232,8 +232,8 @@ const CONDITIONS_VITALIS = {
           liste: [
             "Fournir des informations exactes et sincères lors de la souscription",
             "Honorer les échéances de remboursement aux dates convenues",
-            "Informer AFG Bank de tout changement de situation (adresse, emploi, etc.)",
-            "Maintenir un compte actif chez AFG Bank pendant toute la durée du crédit",
+            "Informer AFG BANK de tout changement de situation (adresse, emploi, etc.)",
+            "Maintenir un compte actif chez AFG BANK pendant toute la durée du crédit",
             "Souscrire et maintenir l'assurance emprunteur",
             "Vérifier la conformité des articles livrés",
           ],
@@ -259,7 +259,7 @@ const CONDITIONS_VITALIS = {
           titre: "Résolution des litiges",
           paragraphes: [
             "En cas de litige concernant la qualité des articles, le client doit d'abord contacter le fournisseur.",
-            "Si le litige persiste, AFG Bank peut intervenir comme médiateur.",
+            "Si le litige persiste, AFG BANK peut intervenir comme médiateur.",
             "Tout litige non résolu à l'amiable relève de la compétence exclusive des tribunaux d'Abidjan.",
           ],
         },
@@ -272,9 +272,9 @@ const CONDITIONS_VITALIS = {
       couleur: "blue",
       contenu: [
         {
-          titre: "Agences AFG Bank",
+          titre: "Agences AFG BANK",
           paragraphes: [
-            "Pour toute information complémentaire ou assistance, contactez l'une de nos agences AFG Bank réparties sur l'ensemble du territoire national.",
+            "Pour toute information complémentaire ou assistance, contactez l'une de nos agences AFG BANK réparties sur l'ensemble du territoire national.",
           ],
         },
         {
@@ -363,7 +363,7 @@ export default function ConditionsVitalisPage() {
         </div>
         <div className="flex-1 flex flex-col items-end pl-4">
           <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-2 mr-2">Financement</p>
-          <img src={IMAGES.logos.afgBank} alt="AFG Bank" className="h-10 object-contain" />
+          <img src={IMAGES.logos.afgBank} alt="AFG BANK" className="h-10 object-contain" />
         </div>
       </div>
 

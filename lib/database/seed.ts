@@ -669,7 +669,7 @@ export async function seedDatabase() {
 
     // Insérer les agences AFG
     await db.agencesAFG.bulkAdd(agencesAFG);
-    console.log(`✅ ${agencesAFG.length} agences AFG Bank ajoutées`);
+    console.log(`✅ ${agencesAFG.length} agences AFG BANK ajoutées`);
 
     // Insérer les fournisseurs si pas fait
     const fCount = await db.fournisseurs.count();

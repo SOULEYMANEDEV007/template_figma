@@ -176,11 +176,10 @@ export function BesoinsMultiplesList({
           return (
             <div
               key={besoin.id}
-              className={`rounded-2xl border transition-all duration-200 overflow-hidden shadow-xs ${
-                hasSelectedFournisseur
+              className={`rounded-2xl border transition-all duration-200 overflow-hidden shadow-xs ${hasSelectedFournisseur
                   ? "border-orange-200 bg-white ring-1 ring-orange-500/10"
                   : "border-gray-200 bg-white hover:border-gray-300"
-              }`}
+                }`}
             >
               {/* En-tête de la carte besoin */}
               <div className="px-5 py-3.5 bg-gradient-to-r from-gray-50 via-slate-50 to-orange-50/40 border-b border-gray-100 flex items-center justify-between">
@@ -256,16 +255,15 @@ export function BesoinsMultiplesList({
                         value={besoin.categorie}
                         onChange={e => handleUpdateField(besoin.id, "categorie", e.target.value)}
                         disabled={!besoin.nature || categoriesDisponibles.length === 0}
-                        className={`w-full pl-3.5 pr-8 py-2.5 text-xs font-medium border border-gray-200 rounded-xl bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-400/40 focus:border-orange-400 transition-all cursor-pointer ${
-                          !besoin.nature ? "bg-gray-50 text-gray-400 cursor-not-allowed" : ""
-                        }`}
+                        className={`w-full pl-3.5 pr-8 py-2.5 text-xs font-medium border border-gray-200 rounded-xl bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-400/40 focus:border-orange-400 transition-all cursor-pointer ${!besoin.nature ? "bg-gray-50 text-gray-400 cursor-not-allowed" : ""
+                          }`}
                       >
                         <option value="">
                           {!besoin.nature
                             ? "Choisissez d'abord un domaine"
                             : categoriesDisponibles.length === 0
-                            ? "Toutes catégories confondues"
-                            : "Précisez la catégorie..."}
+                              ? "Toutes catégories confondues"
+                              : "Précisez la catégorie..."}
                         </option>
                         {categoriesDisponibles.map(c => (
                           <option key={c.value} value={c.value}>
@@ -338,11 +336,10 @@ export function BesoinsMultiplesList({
                           key={f.id}
                           type="button"
                           onClick={() => handleSelectFournisseur(besoin.id, f.id, f.nom)}
-                          className={`relative text-left p-3 rounded-xl border transition-all cursor-pointer flex items-center gap-3 ${
-                            isSelected
+                          className={`relative text-left p-3 rounded-xl border transition-all cursor-pointer flex items-center gap-3 ${isSelected
                               ? "bg-orange-50/80 border-orange-500 ring-2 ring-orange-500/20 shadow-xs"
                               : "bg-white border-gray-200 hover:border-gray-300 hover:bg-gray-50/60"
-                          }`}
+                            }`}
                         >
                           {/* Logo Fournisseur */}
                           <div className="w-10 h-10 rounded-lg bg-white border border-gray-200/80 p-1 flex items-center justify-center flex-shrink-0 shadow-xs">
@@ -468,7 +465,7 @@ export function BesoinsMultiplesList({
         <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-start gap-2.5 text-[11px] text-slate-300 leading-relaxed">
           <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
           <p>
-            <strong>Règle de consolidation Vitalis :</strong> Vos demandes de devis seront transmises directement à chaque fournisseur sélectionné. Une fois tous vos devis établis et chiffrés, votre <strong>Dossier unique</strong> sera constitué et prêt pour analyse et financement auprès d'<strong>AFG Bank</strong>.
+            <strong>Règle de consolidation Vitalis :</strong> Vos demandes de devis seront transmises directement à chaque fournisseur sélectionné. Une fois tous vos devis établis et chiffrés, votre <strong>Dossier unique</strong> sera constitué et prêt pour analyse et financement auprès d'<strong>AFG BANK</strong>.
           </p>
         </div>
       </div>

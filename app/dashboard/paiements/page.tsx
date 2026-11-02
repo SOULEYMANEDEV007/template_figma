@@ -14,7 +14,7 @@ import type { PaiementStatut } from "@/types/ldf";
 const STATUTS: { value: PaiementStatut; label: string }[] = [
   { value: "en_cours", label: "En cours" },
   { value: "encaisse", label: "Encaissé" },
-  { value: "servi",    label: "Servi"    },
+  { value: "servi", label: "Servi" },
 ];
 
 const fmtCFA = (v: number) => new Intl.NumberFormat("fr-FR").format(isNaN(v) ? 0 : v) + " FCFA";
@@ -28,11 +28,11 @@ export default function PaiementsPage() {
     getSouscriptionById,
   } = useVitalisDb();
 
-  const [search, setSearch]             = useState("");
+  const [search, setSearch] = useState("");
   const [filterStatut, setFilterStatut] = useState("");
   const [filterBanque, setFilterBanque] = useState("");
-  const [showFilters, setShowFilters]   = useState(false);
-  const [page, setPage]                 = useState(1);
+  const [showFilters, setShowFilters] = useState(false);
+  const [page, setPage] = useState(1);
   const PAGE_SIZE = 10;
 
   // Synchronisation au montage si nécessaire
@@ -78,7 +78,7 @@ export default function PaiementsPage() {
       const sub = p.souscriptionId ? getSouscriptionById(p.souscriptionId) : null;
       const souscripteurNom = p.souscripteurNom || (sub ? `${sub.souscripteurPrenom || ""} ${sub.souscripteurNom || ""}`.trim() : "Souscripteur");
       const fournisseurNom = p.repartitionFournisseurs?.[0]?.fournisseurNom || p.fournisseurNom || sub?.fournisseurNom || "Librairie de France Groupe";
-      const banqueNom = p.banqueNom || sub?.banqueNom || "AFG Bank";
+      const banqueNom = p.banqueNom || sub?.banqueNom || "AFG BANK";
       const montant = p.montantTotal || p.montant || sub?.montantTotal || 0;
       const statutNormalise = getStatutCategory(p);
       const datePaiement = p.dateTransfert || p.dateValidationAFG || p.dateCreation || new Date().toISOString().split("T")[0];
@@ -112,7 +112,7 @@ export default function PaiementsPage() {
       // Filtrage par rôle utilisateur
       let matchRole = true;
       if (user?.role === "banque") {
-        // En tant qu'AFG Bank, voit l'ensemble des paiements financés par la banque
+        // En tant qu'AFG BANK, voit l'ensemble des paiements financés par la banque
         matchRole = !p.banqueNom || p.banqueNom.toLowerCase().includes("afg") || p.banqueId === user.organisationId;
       } else if (user?.role === "fournisseur") {
         // En tant que fournisseur, voit les paiements qui lui sont alloués
@@ -128,14 +128,14 @@ export default function PaiementsPage() {
     });
   }, [normalizedPaiements, search, filterStatut, filterBanque, user]);
 
-  const pages     = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const hasFilters = search || filterStatut || filterBanque;
 
   // Totaux KPIs calculés en direct
-  const totalEnCours  = filtered.filter((p: any) => p.statutNormalise === "en_cours").reduce((s: number, p: any) => s + p.montant, 0);
+  const totalEnCours = filtered.filter((p: any) => p.statutNormalise === "en_cours").reduce((s: number, p: any) => s + p.montant, 0);
   const totalEncaisse = filtered.filter((p: any) => p.statutNormalise === "encaisse").reduce((s: number, p: any) => s + p.montant, 0);
-  const totalServi    = filtered.filter((p: any) => p.statutNormalise === "servi").reduce((s: number, p: any) => s + p.montant, 0);
+  const totalServi = filtered.filter((p: any) => p.statutNormalise === "servi").reduce((s: number, p: any) => s + p.montant, 0);
 
   return (
     <div className="space-y-5 fade-in">
@@ -237,7 +237,7 @@ export default function PaiementsPage() {
                   className="ldf-select text-sm py-2"
                 >
                   <option value="">Toutes les banques</option>
-                  <option value="AFG Bank">AFG Bank</option>
+                  <option value="AFG BANK">AFG BANK</option>
                 </select>
               </div>
             )}

@@ -29,14 +29,14 @@ export function PDFSouscription({ souscription }: PDFSouscriptionProps) {
   useEffect(() => {
     async function loadData() {
       try {
-        const { 
-          souscripteursPhysiquesOps, 
+        const {
+          souscripteursPhysiquesOps,
           souscripteursMoralesOps,
           souscriptionsFournisseursOps,
           devisOps,
-          agencesAFGOps 
+          agencesAFGOps
         } = await import("@/lib/database/operations");
-        
+
         // Charger souscripteur
         if (souscription.typeSouscripteur === "physique") {
           const s = await souscripteursPhysiquesOps.getById(souscription.souscripteurId);
@@ -57,7 +57,7 @@ export function PDFSouscription({ souscription }: PDFSouscriptionProps) {
         // Charger agence
         const agenceData = await agencesAFGOps.getById(souscription.agenceBanqueId);
         setAgence(agenceData);
-        
+
         setLoading(false);
       } catch (error) {
         console.error("Erreur chargement données PDF:", error);
@@ -65,7 +65,7 @@ export function PDFSouscription({ souscription }: PDFSouscriptionProps) {
         setLoading(false);
       }
     }
-    
+
     loadData();
   }, [souscription]);
 
@@ -73,12 +73,12 @@ export function PDFSouscription({ souscription }: PDFSouscriptionProps) {
   const handleImprimer = async () => {
     try {
       toast.loading("Génération du PDF...");
-      
+
       await downloadPDFFromHTML(
         "pdf-souscription",
         `Souscription_${souscription.reference}.pdf`
       );
-      
+
       toast.dismiss();
       toast.success("PDF téléchargé avec succès");
     } catch (error) {
@@ -128,7 +128,7 @@ export function PDFSouscription({ souscription }: PDFSouscriptionProps) {
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">Souscription Vitalis</h1>
-                  <p className="text-sm text-amber-600 font-medium">Programme AFG Bank</p>
+                  <p className="text-sm text-amber-600 font-medium">Programme AFG BANK</p>
                 </div>
               </div>
             </div>
@@ -214,10 +214,10 @@ export function PDFSouscription({ souscription }: PDFSouscriptionProps) {
                       ? souscripteur.situationMatrimoniale === "celibataire"
                         ? "Célibataire"
                         : souscripteur.situationMatrimoniale === "marie"
-                        ? "Marié(e)"
-                        : souscripteur.situationMatrimoniale === "divorce"
-                        ? "Divorcé(e)"
-                        : "Veuf(ve)"
+                          ? "Marié(e)"
+                          : souscripteur.situationMatrimoniale === "divorce"
+                            ? "Divorcé(e)"
+                            : "Veuf(ve)"
                       : "N/A"}
                   </p>
                 </div>
@@ -228,10 +228,10 @@ export function PDFSouscription({ souscription }: PDFSouscriptionProps) {
                       ? souscripteur.situationProfessionnelle === "salarie"
                         ? "Salarié(e)"
                         : souscripteur.situationProfessionnelle === "independant"
-                        ? "Indépendant(e)"
-                        : souscripteur.situationProfessionnelle === "fonctionnaire"
-                        ? "Fonctionnaire"
-                        : "Retraité(e)"
+                          ? "Indépendant(e)"
+                          : souscripteur.situationProfessionnelle === "fonctionnaire"
+                            ? "Fonctionnaire"
+                            : "Retraité(e)"
                       : "N/A"}
                   </p>
                 </div>
@@ -431,7 +431,7 @@ export function PDFSouscription({ souscription }: PDFSouscriptionProps) {
               <p className="text-xs text-gray-500 text-center">Signature et date</p>
             </div>
             <div className="border border-gray-300 rounded-lg p-4 min-h-[120px]">
-              <p className="text-xs text-gray-600 font-semibold mb-2">AFG Bank</p>
+              <p className="text-xs text-gray-600 font-semibold mb-2">AFG BANK</p>
               <div className="border-b border-gray-200 mt-12 mb-2"></div>
               <p className="text-xs text-gray-500 text-center">Signature et cachet</p>
             </div>
@@ -449,7 +449,7 @@ export function PDFSouscription({ souscription }: PDFSouscriptionProps) {
             Document généré le {new Date().toLocaleDateString("fr-FR")} à{" "}
             {new Date().toLocaleTimeString("fr-FR")}
           </p>
-          <p className="mt-1">Programme Vitalis - AFG Bank - {AFG_BANK.siege}</p>
+          <p className="mt-1">Programme Vitalis - AFG BANK - {AFG_BANK.siege}</p>
         </div>
       </div>
 

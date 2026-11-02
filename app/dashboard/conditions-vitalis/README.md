@@ -2,7 +2,7 @@
 
 ## 📄 Description
 
-Page complète affichant toutes les conditions générales du programme de financement Vitalis AFG Bank, avec fonctionnalité d'impression optimisée.
+Page complète affichant toutes les conditions générales du programme de financement Vitalis AFG BANK, avec fonctionnalité d'impression optimisée.
 
 ## 🎯 Fonctionnalités
 
@@ -57,7 +57,7 @@ Page complète affichant toutes les conditions générales du programme de finan
    - Résolution des litiges
 
 9. **Contact et Informations**
-   - Agences AFG Bank
+   - Agences AFG BANK
    - Service Client Vitalis
 
 ## 🔧 Utilisation
@@ -151,7 +151,7 @@ export default function DashboardFournisseur() {
 - Sidebar (si présent)
 
 #### Éléments ajoutés à l'impression
-- En-tête avec logo AFG Bank
+- En-tête avec logo AFG BANK
 - Version et date de publication
 - Pied de page avec date/heure d'impression
 - Copyright
@@ -236,7 +236,7 @@ sections: [
 
 - **Formulaire souscription** : `/dashboard/souscriptions/creer`
 - **Liste fournisseurs agréés** : `/dashboard/fournisseurs`
-- **Agences AFG Bank** : `/dashboard/agences-afg`
+- **Agences AFG BANK** : `/dashboard/agences-afg`
 - **Contact** : Intégré dans la page
 
 ## 📱 Responsive
@@ -264,7 +264,7 @@ sections: [
 
 ## 📚 Ressources
 
-- [Documentation AFG Bank](https://afgbank.ci)
+- [Documentation AFG BANK](https://afgbank.ci)
 - [Guide Vitalis](https://afgbank.ci/vitalis)
 - [Lucide Icons](https://lucide.dev)
 - [Tailwind Print Styles](https://tailwindcss.com/docs/customizing-colors#using-css-variables)

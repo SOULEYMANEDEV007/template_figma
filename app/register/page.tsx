@@ -95,7 +95,7 @@ export default function RegisterPage() {
         situationMatri,
         typeProfil,
         banqueId: "AFG-001",
-        banqueNom: "AFG Bank",
+        banqueNom: "AFG BANK",
         documents: {
           attestationTravail: attestationTravailFile ? attestationTravailFile.name : null,
           bulletinSalaire: bulletinSalaireFile ? bulletinSalaireFile.name : null,
@@ -423,7 +423,7 @@ export default function RegisterPage() {
                     Pièces justificatives (Constitution du dossier)
                   </h3>
                   <p className="text-[11px] text-gray-500 mt-0.5">
-                    Téléversez vos pièces dès maintenant pour accélérer l'analyse de votre dossier par AFG Bank.
+                    Téléversez vos pièces dès maintenant pour accélérer l'analyse de votre dossier par AFG BANK.
                   </p>
                 </div>
                 <span className="text-[10px] font-semibold text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full">
@@ -443,9 +443,8 @@ export default function RegisterPage() {
                         </span>
                       )}
                     </label>
-                    <label className={`flex flex-col items-center justify-center p-3 border-2 border-dashed rounded-xl cursor-pointer transition-all ${
-                      attestationTravailFile ? "border-emerald-400 bg-emerald-50/40" : "border-gray-200 hover:border-orange-300 bg-white"
-                    }`}>
+                    <label className={`flex flex-col items-center justify-center p-3 border-2 border-dashed rounded-xl cursor-pointer transition-all ${attestationTravailFile ? "border-emerald-400 bg-emerald-50/40" : "border-gray-200 hover:border-orange-300 bg-white"
+                      }`}>
                       <input
                         type="file"
                         accept=".pdf,.jpg,.jpeg,.png"
@@ -492,9 +491,8 @@ export default function RegisterPage() {
                         </span>
                       )}
                     </label>
-                    <label className={`flex flex-col items-center justify-center p-3 border-2 border-dashed rounded-xl cursor-pointer transition-all ${
-                      bulletinSalaireFile ? "border-emerald-400 bg-emerald-50/40" : "border-gray-200 hover:border-orange-300 bg-white"
-                    }`}>
+                    <label className={`flex flex-col items-center justify-center p-3 border-2 border-dashed rounded-xl cursor-pointer transition-all ${bulletinSalaireFile ? "border-emerald-400 bg-emerald-50/40" : "border-gray-200 hover:border-orange-300 bg-white"
+                      }`}>
                       <input
                         type="file"
                         accept=".pdf,.jpg,.jpeg,.png"
@@ -536,9 +534,8 @@ export default function RegisterPage() {
                   {/* RCCM Entreprise */}
                   <div className="space-y-1">
                     <label className="text-xs font-semibold text-gray-700">Registre du Commerce (RCCM) *</label>
-                    <label className={`flex flex-col items-center justify-center p-3 border-2 border-dashed rounded-xl cursor-pointer transition-all ${
-                      rccmFile ? "border-emerald-400 bg-emerald-50/40" : "border-gray-200 hover:border-orange-300 bg-white"
-                    }`}>
+                    <label className={`flex flex-col items-center justify-center p-3 border-2 border-dashed rounded-xl cursor-pointer transition-all ${rccmFile ? "border-emerald-400 bg-emerald-50/40" : "border-gray-200 hover:border-orange-300 bg-white"
+                      }`}>
                       <input
                         type="file"
                         accept=".pdf,.jpg,.jpeg,.png"

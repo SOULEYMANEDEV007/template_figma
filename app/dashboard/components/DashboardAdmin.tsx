@@ -67,7 +67,7 @@ export default function DashboardAdmin() {
     })),
     ...dossiers.filter(d => ['accepte', 'valide', 'finance', 'fournisseur_paye', 'livre', 'servie'].includes(d.statut)).slice(0, 1).map(d => ({
       id: d.id, icon: CheckCircle2, color: "text-emerald-600 bg-emerald-50",
-      text: `Dossier ${d.reference} validé par AFG Bank`,
+      text: `Dossier ${d.reference} validé par AFG BANK`,
       time: d.dateValidation || d.dateMiseAJour, href: `/dashboard/dossiers/${d.id}`,
     })),
     ...paiements.filter(p => ['termine', 'encaisse', 'servi', 'fournisseur_paye', 'confirme'].includes(p.statut)).slice(0, 1).map(p => ({
@@ -126,7 +126,7 @@ export default function DashboardAdmin() {
         <KPICard title="En cours de traitement" value={stats.souscriptionsEnCours} icon={Clock} variant="yellow" subtitle="Souscriptions actives" />
         <KPICard title="Dossiers en analyse" value={stats.dossiersEnAnalyse} icon={BookOpen} variant="yellow" subtitle="En attente validation AFG" />
         <KPICard title="Dossiers rejetés" value={stats.dossiersRejetes} icon={XCircle} variant="red" subtitle={stats.dossiersRejetes > 0 ? "Dossiers refusés" : "Ce trimestre"} />
-        <KPICard title="Agences AFG Bank" value={stats.totalAgences} icon={Users} variant="blue" subtitle="Agences actives" />
+        <KPICard title="Agences AFG BANK" value={stats.totalAgences} icon={Users} variant="blue" subtitle="Agences actives" />
       </div>
 
       {/* Graphiques */}
@@ -212,7 +212,7 @@ export default function DashboardAdmin() {
                 <span className="w-2 h-2 rounded-full bg-[#0284c7]" />
                 Banque financeuse :
               </span>
-              <span className="font-bold text-[#0284c7]">AFG Bank</span>
+              <span className="font-bold text-[#0284c7]">AFG BANK</span>
             </div>
           </div>
         </div>

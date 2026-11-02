@@ -115,8 +115,8 @@ export default function DossierDetailPage() {
 
   const linkedDevis = dossier
     ? (Array.isArray(dossier.devisIds) && dossier.devisIds.length > 0
-        ? dossier.devisIds.map((dId: string) => getDevisById(dId)).filter(Boolean)
-        : getDevisBySouscription(dossier.souscriptionId))
+      ? dossier.devisIds.map((dId: string) => getDevisById(dId)).filter(Boolean)
+      : getDevisBySouscription(dossier.souscriptionId))
     : [];
   const sumDevisTTC = linkedDevis.reduce((sum: number, d: any) => sum + (Number(d?.totalTTC) || 0), 0);
   const dossierMontant = sumDevisTTC > 0 ? sumDevisTTC : (dossier?.montantTotal || dossier?.montant || devis?.totalTTC || sub?.montantTotal || 0);
@@ -144,7 +144,7 @@ export default function DossierDetailPage() {
       : "") ||
     "Librairie de France Groupe";
 
-  // Process steps (VITALIS Workflow: 1. Demande & Besoin -> 2. Devis fournisseur -> 3. Dépôt dossier physique -> 4. Décision AFG Bank -> 5. Virement fournisseur -> 6. Retrait des articles)
+  // Process steps (VITALIS Workflow: 1. Demande & Besoin -> 2. Devis fournisseur -> 3. Dépôt dossier physique -> 4. Décision AFG BANK -> 5. Virement fournisseur -> 6. Retrait des articles)
   const processSteps = [
     { id: "s1", label: "1. Demande & Besoin", statut: "complete" as const, date: sub?.dateCreation || dossier.dateCreation },
     { id: "s2", label: "2. Devis fournisseur", statut: devis ? ("complete" as const) : ("pending" as const) },
@@ -159,7 +159,7 @@ export default function DossierDetailPage() {
     },
     {
       id: "s4",
-      label: "4. Décision AFG Bank",
+      label: "4. Décision AFG BANK",
       statut: isDossierRejete
         ? ("rejected" as const)
         : isPasse(effectifStatut, "accepte")
@@ -200,15 +200,15 @@ export default function DossierDetailPage() {
     addHistorique({
       souscriptionId: dossier.souscriptionId,
       action: "dossier_accepte",
-      description: `Dossier ${dossier.reference} validé — Financement accordé par AFG Bank`,
-      auteur: `${user?.firstName || "AFG Bank"} ${user?.lastName || ""}`,
+      description: `Dossier ${dossier.reference} validé — Financement accordé par AFG BANK`,
+      auteur: `${user?.firstName || "AFG BANK"} ${user?.lastName || ""}`,
       date: new Date().toISOString(),
     });
 
     // ── NOTIFIER LE FOURNISSEUR ET LE CLIENT (SOUSCRIPTEUR) ──
     emitInAppNotification({
-      titre: `Accord de financement AFG Bank : ${dossier.reference}`,
-      message: `Bonne nouvelle ! Le financement pour ${dossier.souscripteurPrenom} ${dossier.souscripteurNom} (${fmtCFA(dossierMontant)}) a été accordé par AFG Bank. La commande peut être préparée et servie.`,
+      titre: `Accord de financement AFG BANK : ${dossier.reference}`,
+      message: `Bonne nouvelle ! Le financement pour ${dossier.souscripteurPrenom} ${dossier.souscripteurNom} (${fmtCFA(dossierMontant)}) a été accordé par AFG BANK. La commande peut être préparée et servie.`,
       categorie: "dossier",
       reference: dossier.reference,
       lien: `/dashboard/dossiers/${dossier.id}`,
@@ -232,15 +232,15 @@ export default function DossierDetailPage() {
     addHistorique({
       souscriptionId: dossier.souscriptionId,
       action: "dossier_refuse",
-      description: `Dossier ${dossier.reference} rejeté par AFG Bank : ${motif}`,
-      auteur: `${user?.firstName || "AFG Bank"} ${user?.lastName || ""}`,
+      description: `Dossier ${dossier.reference} rejeté par AFG BANK : ${motif}`,
+      auteur: `${user?.firstName || "AFG BANK"} ${user?.lastName || ""}`,
       date: new Date().toISOString(),
     });
 
     // ── NOTIFIER LE FOURNISSEUR ET LE CLIENT (SOUSCRIPTEUR) ──
     emitInAppNotification({
-      titre: `Décision AFG Bank : Dossier ${dossier.reference} refusé`,
-      message: `Le dossier de ${dossier.souscripteurPrenom} ${dossier.souscripteurNom} a été refusé par AFG Bank. Motif : ${motif}`,
+      titre: `Décision AFG BANK : Dossier ${dossier.reference} refusé`,
+      message: `Le dossier de ${dossier.souscripteurPrenom} ${dossier.souscripteurNom} a été refusé par AFG BANK. Motif : ${motif}`,
       categorie: "dossier",
       reference: dossier.reference,
       lien: `/dashboard/dossiers/${dossier.id}`,
@@ -289,21 +289,21 @@ export default function DossierDetailPage() {
     addHistorique({
       souscriptionId: sub.id,
       action: "paiement_effectue",
-      description: `Virement AFG Bank de ${fmtCFA(montantTotal)} effectué au fournisseur ${fournisseurAffiche} — Réf ${refPay}`,
-      auteur: `${user?.firstName || "AFG Bank"} ${user?.lastName || ""}`,
+      description: `Virement AFG BANK de ${fmtCFA(montantTotal)} effectué au fournisseur ${fournisseurAffiche} — Réf ${refPay}`,
+      auteur: `${user?.firstName || "AFG BANK"} ${user?.lastName || ""}`,
       date: new Date().toISOString(),
     });
 
     emitInAppNotification({
-      titre: `Virement AFG Bank émis : ${refPay}`,
-      message: `AFG Bank a validé le virement de ${fmtCFA(montantTotal)} pour le dossier ${dossier.reference}. Le fournisseur peut préparer la commande.`,
+      titre: `Virement AFG BANK émis : ${refPay}`,
+      message: `AFG BANK a validé le virement de ${fmtCFA(montantTotal)} pour le dossier ${dossier.reference}. Le fournisseur peut préparer la commande.`,
       categorie: "paiement",
       reference: refPay,
       lien: `/dashboard/dossiers/${dossier.id}`,
       roles: ["fournisseur", "souscripteur", "banque", "admin"],
     });
 
-    toast.success("Virement fournisseur validé avec succès par AFG Bank !");
+    toast.success("Virement fournisseur validé avec succès par AFG BANK !");
   };
 
   return (
@@ -321,7 +321,7 @@ export default function DossierDetailPage() {
               <StatusBadge statut={currentStatut} />
             </div>
             <p className="text-sm text-gray-500 mt-0.5">
-              Reçu le {new Date(dossier.dateReception).toLocaleDateString("fr-FR")} · {dossier.banqueNom || "AFG Bank"}
+              Reçu le {new Date(dossier.dateReception).toLocaleDateString("fr-FR")} · {dossier.banqueNom || "AFG BANK"}
             </p>
           </div>
         </div>
@@ -363,13 +363,13 @@ export default function DossierDetailPage() {
               {isDossierRejete ? "Dossier rejeté" : "Dossier validé — financement accordé"}
             </p>
             <p className="text-sm text-gray-600 mt-0.5">
-              {commentaire || dossier.motifRejet || dossier.commentaireBanque || dossier.commentaireAFG || (!isDossierRejete ? "Financement accordé par AFG Bank." : "")}
+              {commentaire || dossier.motifRejet || dossier.commentaireBanque || dossier.commentaireAFG || (!isDossierRejete ? "Financement accordé par AFG BANK." : "")}
             </p>
           </div>
         </div>
       )}
 
-      {/* ── Action Virement Bancaire AFG Bank (Étape 5) ── */}
+      {/* ── Action Virement Bancaire AFG BANK (Étape 5) ── */}
       {!isDossierRejete && !isPasse(effectifStatut, "fournisseur_paye") && isPasse(effectifStatut, "accepte") && (
         <div className="p-4 rounded-xl border bg-amber-50/80 border-amber-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm">
           <div className="flex items-start gap-3">
@@ -379,7 +379,7 @@ export default function DossierDetailPage() {
             <div>
               <p className="text-sm font-bold text-gray-900">Étape 5 : Virement au fournisseur requis</p>
               <p className="text-xs text-gray-600 mt-0.5">
-                AFG Bank se prépare à Valider le virement direct de {fmtCFA(dossierMontant)} sur le compte du fournisseur.
+                AFG BANK se prépare à Valider le virement direct de {fmtCFA(dossierMontant)} sur le compte du fournisseur.
               </p>
             </div>
           </div>
@@ -409,7 +409,7 @@ export default function DossierDetailPage() {
         <div className="p-4 rounded-xl border bg-sky-50 border-sky-200 flex items-center gap-3 shadow-sm">
           <CheckCircle2 className="w-5 h-5 text-sky-600 flex-shrink-0" />
           <div>
-            <p className="text-sm font-bold text-sky-900">Virement bancaire AFG Bank exécuté ✓</p>
+            <p className="text-sm font-bold text-sky-900">Virement bancaire AFG BANK exécuté ✓</p>
             <p className="text-xs text-sky-700 mt-0.5">
               Fonds transférés au fournisseur {fournisseurAffiche} ({fmtCFA(dossierMontant)}). {isPasse(effectifStatut, "livre") ? "Articles retirés contre fiche d'émargement signée — Dossier clôturé ✓" : "Commande en cours de préparation / retrait chez le fournisseur."}
             </p>
@@ -444,7 +444,7 @@ export default function DossierDetailPage() {
                 <div><p className="text-xs text-gray-400 mb-0.5">Téléphone</p><p className="text-sm font-medium text-gray-800">{sub.souscripteurTelephone}</p></div>
                 <div><p className="text-xs text-gray-400 mb-0.5">Email</p><p className="text-sm font-medium text-gray-800">{sub.souscripteurEmail}</p></div>
               </>}
-              <div><p className="text-xs text-gray-400 mb-0.5">Banque</p><p className="text-sm font-medium text-gray-800">{dossier.banqueNom || "AFG Bank"}</p></div>
+              <div><p className="text-xs text-gray-400 mb-0.5">Banque</p><p className="text-sm font-medium text-gray-800">{dossier.banqueNom || "AFG BANK"}</p></div>
             </div>
           </div>
 
@@ -563,7 +563,7 @@ export default function DossierDetailPage() {
             </div>
             <div className="section-card-body space-y-3">
               <div className="grid grid-cols-2 gap-4">
-                <div><p className="text-xs text-gray-400 mb-0.5">Banque</p><p className="text-sm font-medium text-gray-800">{dossier.banqueNom || "AFG Bank"}</p></div>
+                <div><p className="text-xs text-gray-400 mb-0.5">Banque</p><p className="text-sm font-medium text-gray-800">{dossier.banqueNom || "AFG BANK"}</p></div>
                 <div><p className="text-xs text-gray-400 mb-0.5">Date réception</p><p className="text-sm font-medium text-gray-800">{new Date(dossier.dateReception).toLocaleDateString("fr-FR")}</p></div>
                 {dossier.dateTraitement && (
                   <div><p className="text-xs text-gray-400 mb-0.5">Date traitement</p><p className="text-sm font-medium text-gray-800">{new Date(dossier.dateTraitement).toLocaleDateString("fr-FR")}</p></div>
@@ -630,7 +630,7 @@ export default function DossierDetailPage() {
               {[
                 { label: "Montant", value: fmtCFA(dossierMontant), highlight: true },
                 { label: "Fournisseur", value: fournisseurAffiche },
-                { label: "Banque", value: dossier.banqueNom || "AFG Bank" },
+                { label: "Banque", value: dossier.banqueNom || "AFG BANK" },
                 { label: "Statut", value: null, badge: currentStatut },
               ].map(r => (
                 <div key={r.label} className="flex justify-between items-center border-b border-gray-50 pb-2 last:border-0 last:pb-0">

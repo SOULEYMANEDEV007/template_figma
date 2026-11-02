@@ -78,7 +78,7 @@ export default function BanqueDossiersPage() {
     });
     emitInAppNotification({
       titre: `Accord de financement : ${dossier.reference}`,
-      message: `AFG Bank a validé le financement pour ${dossier.souscripteurPrenom} ${dossier.souscripteurNom}. Commande prête pour préparation.`,
+      message: `AFG BANK a validé le financement pour ${dossier.souscripteurPrenom} ${dossier.souscripteurNom}. Commande prête pour préparation.`,
       categorie: "dossier",
       reference: dossier.reference,
       lien: `/dashboard/dossiers/${dossier.id}`,
@@ -102,7 +102,7 @@ export default function BanqueDossiersPage() {
     });
     emitInAppNotification({
       titre: `Financement refusé : ${dossier.reference}`,
-      message: `Le comité AFG Bank n'a pas accordé le crédit pour ${dossier.souscripteurPrenom} ${dossier.souscripteurNom}. Motif : ${dossier.motifRejet || "Non conforme aux critères"}.`,
+      message: `Le comité AFG BANK n'a pas accordé le crédit pour ${dossier.souscripteurPrenom} ${dossier.souscripteurNom}. Motif : ${dossier.motifRejet || "Non conforme aux critères"}.`,
       categorie: "dossier",
       reference: dossier.reference,
       lien: `/dashboard/dossiers/${dossier.id}`,
@@ -117,7 +117,7 @@ export default function BanqueDossiersPage() {
     if (sous) updateSouscription(sous.id, { statut: "en_analyse_bancaire" });
     emitInAppNotification({
       titre: `Décision de banque en cours : ${dossier.reference}`,
-      message: `L'analyse du dossier de ${dossier.souscripteurPrenom} ${dossier.souscripteurNom} a démarré à l'agence AFG Bank.`,
+      message: `L'analyse du dossier de ${dossier.souscripteurPrenom} ${dossier.souscripteurNom} a démarré à l'agence AFG BANK.`,
       categorie: "dossier",
       reference: dossier.reference,
       lien: `/dashboard/dossiers/${dossier.id}`,
@@ -130,7 +130,7 @@ export default function BanqueDossiersPage() {
     <div className="space-y-5 fade-in">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Dossiers à traiter — AFG Bank</h1>
+          <h1 className="page-title">Dossiers à traiter — AFG BANK</h1>
           <p className="page-subtitle">
             {enAttente.length} dossier{enAttente.length > 1 ? "s" : ""} en attente de décision
           </p>
@@ -160,8 +160,8 @@ export default function BanqueDossiersPage() {
         ].map(t => (
           <button key={t.key} onClick={() => setActiveTab(t.key as any)}
             className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === t.key
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-500 hover:text-gray-700"}`}>
+              ? "bg-white text-gray-900 shadow-sm"
+              : "text-gray-500 hover:text-gray-700"}`}>
             {t.label}
           </button>
         ))}
@@ -184,80 +184,80 @@ export default function BanqueDossiersPage() {
             const isDecide = ["accepte", "valide", "finance", "fournisseur_paye", "commande_en_preparation", "livre", "servie", "cloture", "refuse", "rejetee"].includes(statutEffectif);
 
             return (
-            <div key={d.id} className="section-card hover:shadow-md transition-shadow">
-              <div className="p-5">
-                {/* Header */}
-                <div className="flex items-start justify-between gap-3 mb-4">
-                  <div>
-                    <Link href={`/dashboard/dossiers/${d.id}`}
-                      className="font-mono text-sm font-bold text-amber-700 hover:underline">{d.reference}</Link>
-                    <p className="text-xs text-gray-400 mt-0.5">
-                      Reçu le {new Date(d.dateReception).toLocaleDateString("fr-FR")}
-                    </p>
+              <div key={d.id} className="section-card hover:shadow-md transition-shadow">
+                <div className="p-5">
+                  {/* Header */}
+                  <div className="flex items-start justify-between gap-3 mb-4">
+                    <div>
+                      <Link href={`/dashboard/dossiers/${d.id}`}
+                        className="font-mono text-sm font-bold text-amber-700 hover:underline">{d.reference}</Link>
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        Reçu le {new Date(d.dateReception).toLocaleDateString("fr-FR")}
+                      </p>
+                    </div>
+                    <StatusBadge statut={statutEffectif} />
                   </div>
-                  <StatusBadge statut={statutEffectif} />
-                </div>
 
-                {/* Infos */}
-                <div className="grid grid-cols-2 gap-3 mb-4">
-                  <div>
-                    <p className="text-xs text-gray-400">Souscripteur</p>
-                    <p className="text-sm font-medium text-gray-800 truncate">{d.souscripteurPrenom} {d.souscripteurNom}</p>
+                  {/* Infos */}
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    <div>
+                      <p className="text-xs text-gray-400">Souscripteur</p>
+                      <p className="text-sm font-medium text-gray-800 truncate">{d.souscripteurPrenom} {d.souscripteurNom}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400">Fournisseurs</p>
+                      <p className="text-sm font-medium text-gray-800 truncate">{d.fournisseursNoms}</p>
+                    </div>
+                    <div className="col-span-2">
+                      <p className="text-xs text-gray-400">Montant total du financement</p>
+                      <p className="text-xl font-bold text-gray-900">{fmtCFA(getDossierMontant(d))}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs text-gray-400">Fournisseurs</p>
-                    <p className="text-sm font-medium text-gray-800 truncate">{d.fournisseursNoms}</p>
-                  </div>
-                  <div className="col-span-2">
-                    <p className="text-xs text-gray-400">Montant total du financement</p>
-                    <p className="text-xl font-bold text-gray-900">{fmtCFA(getDossierMontant(d))}</p>
-                  </div>
-                </div>
 
-                {/* Commentaire / Motif rejet */}
-                {(d.commentaireAFG || d.motifRejet) && (
-                  <div className={`p-2.5 rounded-lg text-xs mb-4 ${statutEffectif === "accepte" ? "bg-emerald-50 text-emerald-700" :
+                  {/* Commentaire / Motif rejet */}
+                  {(d.commentaireAFG || d.motifRejet) && (
+                    <div className={`p-2.5 rounded-lg text-xs mb-4 ${statutEffectif === "accepte" ? "bg-emerald-50 text-emerald-700" :
                       statutEffectif === "refuse" || statutEffectif === "rejetee" ? "bg-red-50 text-red-700" :
                         "bg-gray-50 text-gray-600"}`}>
-                    {d.commentaireAFG || d.motifRejet}
-                  </div>
-                )}
+                      {d.commentaireAFG || d.motifRejet}
+                    </div>
+                  )}
 
-                {/* Actions selon statut */}
-                {!isOwner && !isDecide && (statutEffectif === "depose_banque" || statutEffectif === "recu" || statutEffectif === "pret_pour_depot") ? (
-                  <div className="flex items-center gap-2">
-                    <button onClick={() => handleAnalyser(d)}
-                      className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors">
-                      Démarrer l'analyse
-                    </button>
+                  {/* Actions selon statut */}
+                  {!isOwner && !isDecide && (statutEffectif === "depose_banque" || statutEffectif === "recu" || statutEffectif === "pret_pour_depot") ? (
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => handleAnalyser(d)}
+                        className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors">
+                        Démarrer l'analyse
+                      </button>
+                      <Link href={`/dashboard/dossiers/${d.id}`}
+                        className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-sm font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+                        <Eye className="w-4 h-4" /> Voir
+                      </Link>
+                    </div>
+                  ) : !isOwner && !isDecide && (statutEffectif === "en_analyse_bancaire" || statutEffectif === "en_analyse" || statutEffectif === "informations_demandees") ? (
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => handleAccepter(d)}
+                        className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">
+                        <CheckCircle2 className="w-4 h-4" /> Accepter
+                      </button>
+                      <button onClick={() => handleRefuser(d)}
+                        className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors">
+                        <XCircle className="w-4 h-4" /> Refuser
+                      </button>
+                      <Link href={`/dashboard/dossiers/${d.id}`}
+                        className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-sm font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+                        <Eye className="w-4 h-4" />
+                      </Link>
+                    </div>
+                  ) : (
                     <Link href={`/dashboard/dossiers/${d.id}`}
-                      className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-sm font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
-                      <Eye className="w-4 h-4" /> Voir
+                      className="flex items-center justify-center gap-2 w-full py-2.5 text-sm font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+                      <Eye className="w-4 h-4" /> Voir le détail <ChevronRight className="w-3.5 h-3.5" />
                     </Link>
-                  </div>
-                ) : !isOwner && !isDecide && (statutEffectif === "en_analyse_bancaire" || statutEffectif === "en_analyse" || statutEffectif === "informations_demandees") ? (
-                  <div className="flex items-center gap-2">
-                    <button onClick={() => handleAccepter(d)}
-                      className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">
-                      <CheckCircle2 className="w-4 h-4" /> Accepter
-                    </button>
-                    <button onClick={() => handleRefuser(d)}
-                      className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors">
-                      <XCircle className="w-4 h-4" /> Refuser
-                    </button>
-                    <Link href={`/dashboard/dossiers/${d.id}`}
-                      className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-sm font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
-                      <Eye className="w-4 h-4" />
-                    </Link>
-                  </div>
-                ) : (
-                  <Link href={`/dashboard/dossiers/${d.id}`}
-                    className="flex items-center justify-center gap-2 w-full py-2.5 text-sm font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
-                    <Eye className="w-4 h-4" /> Voir le détail <ChevronRight className="w-3.5 h-3.5" />
-                  </Link>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
             );
           })}
         </div>

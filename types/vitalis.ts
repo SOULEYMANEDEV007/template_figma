@@ -1,6 +1,6 @@
 // @ts-nocheck
-// types/vitalis.ts — Types spécifiques au programme Vitalis AFG Bank
-// Modèle métier : 1 Souscription → N Fournisseurs → N Devis → 1 Dossier → AFG Bank
+// types/vitalis.ts — Types spécifiques au programme Vitalis AFG BANK
+// Modèle métier : 1 Souscription → N Fournisseurs → N Devis → 1 Dossier → AFG BANK
 
 // ============================================================
 // CONSTANTES VITALIS
@@ -10,7 +10,7 @@ export const VITALIS_CONFIG = {
   DELAI_LIVRAISON_ABIDJAN: "7 jours ouvrés",
   DELAI_LIVRAISON_INTERIEUR: "15 jours ouvrés",
   VALIDITE_DEVIS: "60 jours",
-  BANQUE_FINANCEUSE: "AFG-001", // ID unique AFG Bank
+  BANQUE_FINANCEUSE: "AFG-001", // ID unique AFG BANK
 } as const;
 
 // ============================================================
@@ -109,8 +109,8 @@ export interface Souscription {
   souscripteurId: string;
   typeSouscripteur: TypeSouscripteur;
 
-  // AFG Bank est la seule banque (pas de sélection)
-  banqueId: "AFG-001"; // Toujours AFG Bank
+  // AFG BANK est la seule banque (pas de sélection)
+  banqueId: "AFG-001"; // Toujours AFG BANK
   agenceAFGId?: string; // Agence AFG qui traite le dossier
 
   dateDebut: string;
@@ -300,7 +300,7 @@ export interface Dossier {
   fournisseurNom?: string;
   fournisseursNoms?: string;
 
-  // Gestion AFG Bank
+  // Gestion AFG BANK
   agenceAFGId?: string;
   agentAFGId?: string; // ID de l'agent qui traite
   statut: DossierStatut;
@@ -351,7 +351,7 @@ export interface Paiement {
   // Répartition par fournisseur
   repartitionFournisseurs: PaiementFournisseur[];
 
-  // AFG Bank
+  // AFG BANK
   agenceAFGId?: string;
   numeroTransactionAFG?: string;
 
@@ -495,22 +495,22 @@ export interface HistoriqueEvenement {
   id: string;
   souscriptionId: string;
   etape:
-    | "souscription_creee"
-    | "souscription_soumise"
-    | "fournisseur_associe"
-    | "devis_cree"
-    | "devis_envoye"
-    | "dossier_cree"
-    | "dossier_en_analyse"
-    | "informations_demandees"
-    | "dossier_valide"
-    | "dossier_rejete"
-    | "financement_valide"
-    | "transfert_effectue"
-    | "preparation_commencee"
-    | "livraison_expediee"
-    | "livraison_effectuee"
-    | "souscription_terminee";
+  | "souscription_creee"
+  | "souscription_soumise"
+  | "fournisseur_associe"
+  | "devis_cree"
+  | "devis_envoye"
+  | "dossier_cree"
+  | "dossier_en_analyse"
+  | "informations_demandees"
+  | "dossier_valide"
+  | "dossier_rejete"
+  | "financement_valide"
+  | "transfert_effectue"
+  | "preparation_commencee"
+  | "livraison_expediee"
+  | "livraison_effectuee"
+  | "souscription_terminee";
   titre: string;
   description: string;
   utilisateurId?: string;
@@ -597,13 +597,13 @@ export interface DashboardStatsVitalis {
 export interface SearchResult {
   id: string;
   type:
-    | "souscription"
-    | "devis"
-    | "dossier"
-    | "paiement"
-    | "souscripteur"
-    | "fournisseur"
-    | "agence";
+  | "souscription"
+  | "devis"
+  | "dossier"
+  | "paiement"
+  | "souscripteur"
+  | "fournisseur"
+  | "agence";
   reference?: string;
   titre: string;
   description: string;
