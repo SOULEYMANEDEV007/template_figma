@@ -32,4 +32,5 @@ export const STATUS = {
 export * from "./images";
 export * from "./icons";
 export * from "./besoins";
+export * from "./ads";
 
