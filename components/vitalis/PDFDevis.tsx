@@ -128,7 +128,7 @@ export function PDFDevis({ devis }: PDFDevisProps) {
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">Devis Vitalis</h1>
-                  <p className="text-sm text-green-600 font-medium">Programme AFG BANK</p>
+                  <p className="text-sm text-green-600 font-medium">Programme AFG BANK CI</p>
                 </div>
               </div>
             </div>
@@ -269,7 +269,7 @@ export function PDFDevis({ devis }: PDFDevisProps) {
               <span className="font-semibold">Délai :</span> {devis.delaiLivraison} jours ouvrés
             </p>
             <p className="text-sm text-blue-900">
-              <span className="font-semibold">Conditions Vitalis :</span> Livraison coordonnée avec AFG BANK
+              <span className="font-semibold">Conditions Vitalis :</span> Livraison coordonnée avec AFG BANK CI
             </p>
             {devis.observations && (
               <p className="text-sm text-blue-800 mt-2 italic">{devis.observations}</p>
@@ -286,7 +286,7 @@ export function PDFDevis({ devis }: PDFDevisProps) {
               <p className="text-xs text-gray-500">{fournisseur.nom}</p>
             </div>
             <div className="border border-gray-300 rounded-lg p-4 h-32">
-              <p className="text-sm font-semibold text-gray-700 mb-2">AFG BANK</p>
+              <p className="text-sm font-semibold text-gray-700 mb-2">AFG BANK CI</p>
               <p className="text-xs text-gray-500">Pour validation</p>
             </div>
           </div>

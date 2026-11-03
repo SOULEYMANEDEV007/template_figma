@@ -2,7 +2,7 @@
 
 ## 📋 Vue d'ensemble
 
-Ce module gère les souscriptions dans le cadre du programme **Vitalis** financé par **AFG BANK**, avec support du workflow multi-fournisseurs : **1 souscription → N fournisseurs → N devis**.
+Ce module gère les souscriptions dans le cadre du programme **Vitalis** financé par **AFG BANK CI**, avec support du workflow multi-fournisseurs : **1 souscription → N fournisseurs → N devis**.
 
 ## 🗂️ Architecture des fichiers
 
@@ -86,7 +86,7 @@ Montant total: 8 500 000 F
 **Workflow affiché :**
 ```
 💡 Chaque fournisseur doit créer son propre devis
-💡 AFG BANK validera le dossier global (tous les devis)
+💡 AFG BANK CI validera le dossier global (tous les devis)
 💡 Montant total = somme de tous les devis
 💡 Paiement individuel par fournisseur après validation
 ```
@@ -132,7 +132,7 @@ const souscription = mockSouscriptionsVitalis.find(s => s.id === id);
 - ✅ Chaque fournisseur crée **1 seul devis** par souscription
 
 ### Banque unique
-- ✅ AFG BANK (`AFG-001`) seule banque financeuse
+- ✅ AFG BANK CI (`AFG-001`) seule banque financeuse
 - ✅ Sélection d'agence AFG obligatoire
 - ✅ Pas de choix de banque dans le formulaire
 
@@ -230,7 +230,7 @@ router.back() ou href="/dashboard/souscriptions/[id]"
 - [ ] Tâche #7 : Génération PDF souscription
 - [ ] Tâche #8 : Génération PDF devis
 - [ ] Formulaire création/édition devis par fournisseur
-- [ ] Validation AFG BANK (vue consolidée)
+- [ ] Validation AFG BANK CI (vue consolidée)
 - [ ] Notifications workflow (devis créé, validé, etc.)
 
 ## 🛠️ Maintenance

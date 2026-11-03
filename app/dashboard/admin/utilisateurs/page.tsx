@@ -270,7 +270,7 @@ export default function AdminUtilisateursPage() {
           <p className="text-2xl font-bold text-blue-700">
             {users.filter((u) => u.role === "banque").length}
           </p>
-          <p className="text-xs text-gray-500 mt-0.5">Responsables AFG BANK</p>
+          <p className="text-xs text-gray-500 mt-0.5">Responsables AFG BANK CI</p>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-amber-500 p-4 shadow-sm">
           <p className="text-2xl font-bold text-amber-700">
@@ -360,7 +360,7 @@ export default function AdminUtilisateursPage() {
                         <RoleBadge role={u.role} />
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-600">
-                        {u.organisationName || (u.role === "banque" ? "AFG BANK" : "LDF Groupe")}
+                        {u.organisationName || (u.role === "banque" ? "AFG BANK CI" : "LDF Groupe")}
                       </td>
                       <td className="py-3 px-4">
                         <span
@@ -416,8 +416,8 @@ export default function AdminUtilisateursPage() {
                             onClick={() => setShowConfirmDisable(u)}
                             title={u.isActive ? "Désactiver" : "Réactiver"}
                             className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${u.isActive
-                                ? "text-gray-400 hover:bg-red-50 hover:text-red-600"
-                                : "text-gray-400 hover:bg-emerald-50 hover:text-emerald-600"
+                              ? "text-gray-400 hover:bg-red-50 hover:text-red-600"
+                              : "text-gray-400 hover:bg-emerald-50 hover:text-emerald-600"
                               }`}
                           >
                             {u.isActive ? <UserX className="w-3.5 h-3.5" /> : <UserCheck className="w-3.5 h-3.5" />}

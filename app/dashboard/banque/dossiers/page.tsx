@@ -78,7 +78,7 @@ export default function BanqueDossiersPage() {
     });
     emitInAppNotification({
       titre: `Accord de financement : ${dossier.reference}`,
-      message: `AFG BANK a validé le financement pour ${dossier.souscripteurPrenom} ${dossier.souscripteurNom}. Commande prête pour préparation.`,
+      message: `AFG BANK CI a validé le financement pour ${dossier.souscripteurPrenom} ${dossier.souscripteurNom}. Commande prête pour préparation.`,
       categorie: "dossier",
       reference: dossier.reference,
       lien: `/dashboard/dossiers/${dossier.id}`,
@@ -102,7 +102,7 @@ export default function BanqueDossiersPage() {
     });
     emitInAppNotification({
       titre: `Financement refusé : ${dossier.reference}`,
-      message: `Le comité AFG BANK n'a pas accordé le crédit pour ${dossier.souscripteurPrenom} ${dossier.souscripteurNom}. Motif : ${dossier.motifRejet || "Non conforme aux critères"}.`,
+      message: `Le comité AFG BANK CI n'a pas accordé le crédit pour ${dossier.souscripteurPrenom} ${dossier.souscripteurNom}. Motif : ${dossier.motifRejet || "Non conforme aux critères"}.`,
       categorie: "dossier",
       reference: dossier.reference,
       lien: `/dashboard/dossiers/${dossier.id}`,
@@ -117,7 +117,7 @@ export default function BanqueDossiersPage() {
     if (sous) updateSouscription(sous.id, { statut: "en_analyse_bancaire" });
     emitInAppNotification({
       titre: `Décision de banque en cours : ${dossier.reference}`,
-      message: `L'analyse du dossier de ${dossier.souscripteurPrenom} ${dossier.souscripteurNom} a démarré à l'agence AFG BANK.`,
+      message: `L'analyse du dossier de ${dossier.souscripteurPrenom} ${dossier.souscripteurNom} a démarré à l'agence AFG BANK CI.`,
       categorie: "dossier",
       reference: dossier.reference,
       lien: `/dashboard/dossiers/${dossier.id}`,
@@ -130,7 +130,7 @@ export default function BanqueDossiersPage() {
     <div className="space-y-5 fade-in">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Dossiers à traiter — AFG BANK</h1>
+          <h1 className="page-title">Dossiers à traiter — AFG BANK CI</h1>
           <p className="page-subtitle">
             {enAttente.length} dossier{enAttente.length > 1 ? "s" : ""} en attente de décision
           </p>

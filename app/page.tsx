@@ -135,7 +135,7 @@ export default function RootPage() {
           />
           {/*Image
             src={IMAGES.logos.afgBank}
-            alt="AFG BANK"
+            alt="AFG BANK CI"
             width={80} height={30}
             className="object-contain opacity-90 mix-blend-multiply"
           />*/}

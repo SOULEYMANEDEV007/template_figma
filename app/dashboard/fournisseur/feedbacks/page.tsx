@@ -23,7 +23,7 @@ export default function FeedbacksPage() {
   const { dossiers } = useVitalisDb();
   const [filterStatut, setFilterStatut] = useState<string>("tous");
 
-  // Dossiers associés au fournisseur avec retours ou décisions AFG BANK
+  // Dossiers associés au fournisseur avec retours ou décisions AFG BANK CI
   const feedbacks = useMemo(() => {
     return (dossiers || [])
       .filter(d => {
@@ -44,10 +44,10 @@ export default function FeedbacksPage() {
         const statut = isValide ? "accepte" : isRejete ? "refuse" : "en_analyse_bancaire";
 
         const commentaire = isValide
-          ? (d.commentaireAFG || d.commentaireBanque || "Dossier conforme aux critères du programme Vitalis. Financement accordé par AFG BANK.")
+          ? (d.commentaireAFG || d.commentaireBanque || "Dossier conforme aux critères du programme Vitalis. Financement accordé par AFG BANK CI.")
           : isRejete
-            ? (d.motifRejet || d.commentaireBanque || "Dossier non retenu par le comité de crédit AFG BANK.")
-            : (d.commentaireAFG || "Dossier réceptionné à l'agence AFG BANK. Analyse financière en cours.");
+            ? (d.motifRejet || d.commentaireBanque || "Dossier non retenu par le comité de crédit AFG BANK CI.")
+            : (d.commentaireAFG || "Dossier réceptionné à l'agence AFG BANK CI. Analyse financière en cours.");
 
         const dateAffichage = d.dateValidation || d.dateRejet || d.dateTraitement || d.dateMiseAJour || d.dateReception || d.dateCreation;
 
@@ -57,7 +57,7 @@ export default function FeedbacksPage() {
           dossierRef: d.reference,
           souscriptionRef: d.souscriptionRef,
           souscripteurNom: `${d.souscripteurPrenom || ""} ${d.souscripteurNom || ""}`.trim() || "Souscripteur Vitalis",
-          banqueNom: d.banqueNom || "AFG BANK",
+          banqueNom: d.banqueNom || "AFG BANK CI",
           montant: d.montantTotal || d.montant || 0,
           statut,
           commentaire,
@@ -83,7 +83,7 @@ export default function FeedbacksPage() {
       <div className="page-header">
         <div>
           <h1 className="page-title">Feedbacks bancaires</h1>
-          <p className="page-subtitle">Décisions et retours officiels d'AFG BANK sur vos dossiers de financement</p>
+          <p className="page-subtitle">Décisions et retours officiels d'AFG BANK CI sur vos dossiers de financement</p>
         </div>
       </div>
 
@@ -110,7 +110,7 @@ export default function FeedbacksPage() {
         <div className="section-card p-16 text-center text-gray-400">
           <ShieldCheck className="w-12 h-12 text-gray-200 mx-auto mb-3" />
           <p className="text-sm font-medium">Aucun retour bancaire pour ce filtre</p>
-          <p className="text-xs text-gray-400 mt-1">Les décisions d'AFG BANK s'afficheront ici en temps réel.</p>
+          <p className="text-xs text-gray-400 mt-1">Les décisions d'AFG BANK CI s'afficheront ici en temps réel.</p>
         </div>
       ) : (
         <div className="space-y-3">

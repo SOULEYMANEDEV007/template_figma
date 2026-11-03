@@ -111,7 +111,7 @@ export default function FournisseurCommandesPage() {
         <div>
           <h1 className="page-title">Mes Commandes — Logistique VITALIS</h1>
           <p className="page-subtitle">
-            {mesCommandes.length} commande{mesCommandes.length > 1 ? "s" : ""} · Programme AFG BANK
+            {mesCommandes.length} commande{mesCommandes.length > 1 ? "s" : ""} · Programme AFG BANK CI
           </p>
         </div>
       </div>
@@ -152,8 +152,8 @@ export default function FournisseurCommandesPage() {
             <button key={f.value}
               onClick={() => setFilterStatut(f.value as any)}
               className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${filterStatut === f.value
-                  ? "bg-orange-500 border-orange-500 text-white"
-                  : "border-gray-200 text-gray-600 hover:border-orange-300"}`}>
+                ? "bg-orange-500 border-orange-500 text-white"
+                : "border-gray-200 text-gray-600 hover:border-orange-300"}`}>
               {f.label}
             </button>
           ))}
@@ -165,7 +165,7 @@ export default function FournisseurCommandesPage() {
         <div className="section-card p-16 text-center text-gray-400">
           <Package className="w-12 h-12 text-gray-200 mx-auto mb-3" />
           <p className="text-sm font-medium">Aucune commande dans cette catégorie</p>
-          <p className="text-xs mt-1">Les commandes apparaissent quand AFG BANK a accepté le dossier et payé le fournisseur.</p>
+          <p className="text-xs mt-1">Les commandes apparaissent quand AFG BANK CI a accepté le dossier et payé le fournisseur.</p>
         </div>
       ) : (
         <div className="space-y-3">

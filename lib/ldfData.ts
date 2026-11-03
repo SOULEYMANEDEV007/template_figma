@@ -1,6 +1,6 @@
 // @ts-nocheck
-// lib/ldfData.ts — Données mock ViFlo (Vitalis · AFG BANK)
-// Modèle métier : 1 Souscription → N Fournisseurs → N Devis → 1 Dossier → AFG BANK
+// lib/ldfData.ts — Données mock ViFlo (Vitalis · AFG BANK CI)
+// Modèle métier : 1 Souscription → N Fournisseurs → N Devis → 1 Dossier → AFG BANK CI
 
 // ============================================================
 // COMPTES DÉMO (Connexion rapide)
@@ -14,17 +14,17 @@ export const demoAccounts = [
     nom: "",
     prenom: "Administrateur",
     banqueId: "AFG-001",
-    banqueNom: "AFG BANK",
+    banqueNom: "AFG BANK CI",
   },
   {
     email: "banque@afgbank.ci",
     password: "banque123",
     role: "banque",
-    label: "Responsable AFG BANK",
+    label: "Responsable AFG BANK CI",
     nom: "Traoré",
     prenom: "Abdoulaye",
     banqueId: "AFG-001",
-    banqueNom: "AFG BANK",
+    banqueNom: "AFG BANK CI",
   },
   {
     email: "fournisseur@ldf.ci",
@@ -34,7 +34,7 @@ export const demoAccounts = [
     nom: "Librairie de France",
     prenom: "Groupe",
     banqueId: "AFG-001",
-    banqueNom: "AFG BANK",
+    banqueNom: "AFG BANK CI",
   },
   {
     email: "client@viflo.ci",
@@ -44,7 +44,7 @@ export const demoAccounts = [
     nom: "Coulibaly",
     prenom: "Mamadou",
     banqueId: "AFG-001",
-    banqueNom: "AFG BANK",
+    banqueNom: "AFG BANK CI",
   },
   {
     email: "owner@viflo.ci",
@@ -56,7 +56,7 @@ export const demoAccounts = [
     disabled: false,
     badge: "Supervision",
     banqueId: "AFG-001",
-    banqueNom: "AFG BANK",
+    banqueNom: "AFG BANK CI",
   },
 ];
 
@@ -94,7 +94,7 @@ export const mockUsers = [
     role: "banque",
     banqueId: "AFG-001",
     organisationId: "AFG-001",
-    organisationName: "AFG BANK",
+    organisationName: "AFG BANK CI",
     telephone: "+225 07 01 00 00 00",
     statut: "actif",
     isActive: true,
@@ -155,18 +155,18 @@ export const mockSouscripteursUsers = [
 ];
 
 // ============================================================
-// BANQUES — AFG BANK est la seule banque financeuse du programme Vitalis
+// BANQUES — AFG BANK CI est la seule banque financeuse du programme Vitalis
 // ============================================================
 export const mockBanques = [{
   id: "AFG-001",
   code: "AFG",
-  nom: "AFG BANK",
-  sigle: "AFG BANK",
+  nom: "AFG BANK CI",
+  sigle: "AFG BANK CI",
   statut: "actif",
 }];
 
 // ============================================================
-// AGENCES AFG BANK
+// AGENCES AFG BANK CI
 // ============================================================
 export const mockAgencesAFG = [
   { id: "AGC-001", code: "AGC-01", nom: "Agence Plateau", ville: "Abidjan", region: "Abidjan", statut: "active" },
@@ -235,7 +235,7 @@ export const mockFournisseurs = [
     souscripteurEmail: "jm.kouassi@gmail.com",
     typeSouscripteur: "physique",
     banqueId: "AFG-001",
-    banqueNom: "AFG BANK",
+    banqueNom: "AFG BANK CI",
     agenceId: "AGC-001",
     fournisseurs: [
       { fournisseurId: "FOUR-LDF-001", fournisseurNom: "LDF Groupe", devisId: "DEV-001", statut: "devis_cree" },
@@ -260,7 +260,7 @@ export const mockFournisseurs = [
     souscripteurEmail: "a.toure@gmail.com",
     typeSouscripteur: "physique",
     banqueId: "AFG-001",
-    banqueNom: "AFG BANK",
+    banqueNom: "AFG BANK CI",
     agenceId: "AGC-002",
     fournisseurs: [
       { fournisseurId: "FOUR-DRO-002", fournisseurNom: "Drocolor", devisId: "DEV-002", statut: "devis_cree" },
@@ -285,7 +285,7 @@ export const mockFournisseurs = [
     souscripteurEmail: "i.kone@gmail.com",
     typeSouscripteur: "physique",
     banqueId: "AFG-001",
-    banqueNom: "AFG BANK",
+    banqueNom: "AFG BANK CI",
     agenceId: "AGC-003",
     fournisseurs: [
       { fournisseurId: "FOUR-LDF-001", fournisseurNom: "LDF Groupe", devisId: "DEV-003", statut: "devis_cree" },
@@ -311,7 +311,7 @@ export const mockFournisseurs = [
     souscripteurEmail: "f.diallo@outlook.com",
     typeSouscripteur: "morale",
     banqueId: "AFG-001",
-    banqueNom: "AFG BANK",
+    banqueNom: "AFG BANK CI",
     agenceId: "AGC-001",
     fournisseurs: [
       { fournisseurId: "FOUR-LDF-001", fournisseurNom: "LDF Groupe", devisId: null, statut: "en_attente" },
@@ -336,7 +336,7 @@ export const mockFournisseurs = [
     souscripteurEmail: "b.assi@yahoo.fr",
     typeSouscripteur: "physique",
     banqueId: "AFG-001",
-    banqueNom: "AFG BANK",
+    banqueNom: "AFG BANK CI",
     agenceId: "AGC-002",
     fournisseurs: [
       { fournisseurId: "FOUR-DRO-002", fournisseurNom: "Drocolor", devisId: "DEV-005", statut: "valide" },
@@ -367,7 +367,7 @@ export const mockDevis = [
     fournisseurId: "FOUR-LDF-001",
     fournisseurNom: "LDF Groupe",
     banqueId: "AFG-001",
-    banqueNom: "AFG BANK",
+    banqueNom: "AFG BANK CI",
     articles: [
       { id: "ART-001", designation: "Cahiers 96 pages", reference: "CAH-96", quantite: 50, prixUnitaire: 500, remise: 0, montantHT: 25000 },
       { id: "ART-002", designation: "Stylos bleus Bic", reference: "STY-BLU", quantite: 100, prixUnitaire: 200, remise: 5, montantHT: 19000 },
@@ -378,7 +378,7 @@ export const mockDevis = [
     totalTTC: 780000,
     montantHT: 780000,
     montantTTC: 780000,
-    conditions: "Paiement à réception de la commande validée par AFG BANK.",
+    conditions: "Paiement à réception de la commande validée par AFG BANK CI.",
     conditionsLivraison: {
       delaiGrandAbidjan: "7 jours ouvrés",
       delaiInterieur: "15 jours ouvrés",
@@ -400,7 +400,7 @@ export const mockDevis = [
     fournisseurId: "FOUR-DRO-002",
     fournisseurNom: "Drocolor",
     banqueId: "AFG-001",
-    banqueNom: "AFG BANK",
+    banqueNom: "AFG BANK CI",
     articles: [
       { id: "ART-004", designation: "Cartables scolaires", reference: "CART-SC", quantite: 30, prixUnitaire: 15000, remise: 10, montantHT: 405000 },
     ],
@@ -430,7 +430,7 @@ export const mockDevis = [
     fournisseurId: "FOUR-LDF-001",
     fournisseurNom: "LDF Groupe",
     banqueId: "AFG-001",
-    banqueNom: "AFG BANK",
+    banqueNom: "AFG BANK CI",
     articles: [
       { id: "ART-005", designation: "Classeurs A4", reference: "CLA-A4", quantite: 20, prixUnitaire: 3500, remise: 0, montantHT: 70000 },
       { id: "ART-006", designation: "Ramettes papier A4", reference: "PAP-A4", quantite: 15, prixUnitaire: 5000, remise: 5, montantHT: 71250 },
@@ -461,7 +461,7 @@ export const mockDevis = [
     fournisseurId: "FOUR-DRO-002",
     fournisseurNom: "Drocolor",
     banqueId: "AFG-001",
-    banqueNom: "AFG BANK",
+    banqueNom: "AFG BANK CI",
     articles: [
       { id: "ART-007", designation: "Ordinateurs portables HP", reference: "HP-LAPTOP", quantite: 3, prixUnitaire: 275000, remise: 5, montantHT: 783750 },
       { id: "ART-008", designation: "Imprimante Brother", reference: "BROT-IMP", quantite: 1, prixUnitaire: 180000, remise: 0, montantHT: 180000 },
@@ -500,7 +500,7 @@ export const mockDossiers = [
     typeSouscripteur: "physique",
     fournisseurNom: "LDF Groupe",
     banqueId: "AFG-001",
-    banqueNom: "AFG BANK",
+    banqueNom: "AFG BANK CI",
     agenceId: "AGC-001",
     devisIds: ["DEV-001"],
     montant: 850000,
@@ -523,7 +523,7 @@ export const mockDossiers = [
     typeSouscripteur: "physique",
     fournisseurNom: "Drocolor",
     banqueId: "AFG-001",
-    banqueNom: "AFG BANK",
+    banqueNom: "AFG BANK CI",
     agenceId: "AGC-002",
     devisIds: ["DEV-002"],
     montant: 650000,
@@ -545,7 +545,7 @@ export const mockDossiers = [
     typeSouscripteur: "physique",
     fournisseurNom: "LDF Groupe + Drocolor",
     banqueId: "AFG-001",
-    banqueNom: "AFG BANK",
+    banqueNom: "AFG BANK CI",
     agenceId: "AGC-001",
     devisIds: ["DEV-003"],
     montant: 1200000,
@@ -566,7 +566,7 @@ export const mockDossiers = [
     typeSouscripteur: "physique",
     fournisseurNom: "Drocolor",
     banqueId: "AFG-001",
-    banqueNom: "AFG BANK",
+    banqueNom: "AFG BANK CI",
     agenceId: "AGC-002",
     devisIds: ["DEV-005"],
     montant: 975000,
@@ -713,9 +713,9 @@ export const paiementsParMois = [
   { mois: "Sept", montant: 12300000 },
 ];
 
-// AFG BANK est la seule banque — graphique de répartition par fournisseur
+// AFG BANK CI est la seule banque — graphique de répartition par fournisseur
 export const souscriptionsParBanque = [
-  { banque: "AFG BANK", valeur: 100, couleur: "#0284c7" },
+  { banque: "AFG BANK CI", valeur: 100, couleur: "#0284c7" },
 ];
 
 export const souscriptionsParFournisseur = [
@@ -775,7 +775,7 @@ export const mockSouscriptions = [
     souscripteurPrenom: "Jean-Marc",
     souscripteurEmail: "client@viflo.ci",
     banqueId: "AFG-001",
-    banqueNom: "AFG BANK",
+    banqueNom: "AFG BANK CI",
     fournisseurId: "FOUR-LDF-001",
     fournisseurNom: "Librairie de France Groupe",
     montantTotal: 850000,
@@ -793,7 +793,7 @@ export const mockSouscriptions = [
     souscripteurPrenom: "Aminata",
     souscripteurEmail: "a.toure@education.gouv.ci",
     banqueId: "AFG-001",
-    banqueNom: "AFG BANK",
+    banqueNom: "AFG BANK CI",
     fournisseurId: "FOUR-DRO-002",
     fournisseurNom: "Drocolor",
     montantTotal: 650000,
@@ -913,7 +913,7 @@ export const paiementsParMois = [
 ];
 
 export const souscriptionsParBanque = [
-  { banque: "AFG BANK", valeur: 100, couleur: "#0284c7" },
+  { banque: "AFG BANK CI", valeur: 100, couleur: "#0284c7" },
 ];
 
 export const souscriptionsParFournisseur = [

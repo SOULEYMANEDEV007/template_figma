@@ -1,6 +1,6 @@
 /**
  * Référentiel officiel des Natures et Catégories de besoins
- * Programme Vitalis FADES · AFG BANK & LDF Groupe
+ * Programme Vitalis FADES · AFG BANK CI & LDF Groupe
  * 
  * Ce référentiel associe rigoureusement chaque Nature de besoin à ses Catégories de produits réelles,
  * directement alignées sur les 14 fournisseurs agréés officiels du programme.

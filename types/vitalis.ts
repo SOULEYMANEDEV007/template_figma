@@ -1,6 +1,6 @@
 // @ts-nocheck
-// types/vitalis.ts — Types spécifiques au programme Vitalis AFG BANK
-// Modèle métier : 1 Souscription → N Fournisseurs → N Devis → 1 Dossier → AFG BANK
+// types/vitalis.ts — Types spécifiques au programme Vitalis AFG BANK CI
+// Modèle métier : 1 Souscription → N Fournisseurs → N Devis → 1 Dossier → AFG BANK CI
 
 // ============================================================
 // CONSTANTES VITALIS
@@ -10,7 +10,7 @@ export const VITALIS_CONFIG = {
   DELAI_LIVRAISON_ABIDJAN: "7 jours ouvrés",
   DELAI_LIVRAISON_INTERIEUR: "15 jours ouvrés",
   VALIDITE_DEVIS: "60 jours",
-  BANQUE_FINANCEUSE: "AFG-001", // ID unique AFG BANK
+  BANQUE_FINANCEUSE: "AFG-001", // ID unique AFG BANK CI
 } as const;
 
 // ============================================================
@@ -109,8 +109,8 @@ export interface Souscription {
   souscripteurId: string;
   typeSouscripteur: TypeSouscripteur;
 
-  // AFG BANK est la seule banque (pas de sélection)
-  banqueId: "AFG-001"; // Toujours AFG BANK
+  // AFG BANK CI est la seule banque (pas de sélection)
+  banqueId: "AFG-001"; // Toujours AFG BANK CI
   agenceAFGId?: string; // Agence AFG qui traite le dossier
 
   dateDebut: string;
@@ -300,7 +300,7 @@ export interface Dossier {
   fournisseurNom?: string;
   fournisseursNoms?: string;
 
-  // Gestion AFG BANK
+  // Gestion AFG BANK CI
   agenceAFGId?: string;
   agentAFGId?: string; // ID de l'agent qui traite
   statut: DossierStatut;
@@ -351,7 +351,7 @@ export interface Paiement {
   // Répartition par fournisseur
   repartitionFournisseurs: PaiementFournisseur[];
 
-  // AFG BANK
+  // AFG BANK CI
   agenceAFGId?: string;
   numeroTransactionAFG?: string;
 
@@ -458,7 +458,7 @@ export interface PointRelais {
 }
 
 // ============================================================
-// AGENCE AFG BANK
+// AGENCE AFG BANK CI
 // ============================================================
 export interface AgenceAFG {
   id: string;

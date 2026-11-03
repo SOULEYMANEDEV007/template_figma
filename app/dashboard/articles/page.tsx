@@ -140,7 +140,7 @@ export default function ArticlesServisPage() {
         typeSouscripteur: sub?.typeSouscripteur || "physique",
         fournisseurId: p.fournisseurId || dev?.fournisseurId || sub?.fournisseurId,
         fournisseurNom,
-        banqueNom: p.banqueNom || sub?.banqueNom || "AFG BANK",
+        banqueNom: p.banqueNom || sub?.banqueNom || "AFG BANK CI",
         articles,
         nombreArticles: articles.reduce((acc: number, a: any) => acc + (a.quantite || 1), 0),
         montant,
@@ -209,7 +209,7 @@ export default function ArticlesServisPage() {
         typeSouscripteur: s.typeSouscripteur || "physique",
         fournisseurId: dev?.fournisseurId || s.fournisseurId,
         fournisseurNom,
-        banqueNom: s.banqueNom || "AFG BANK",
+        banqueNom: s.banqueNom || "AFG BANK CI",
         articles,
         nombreArticles: articles.reduce((acc: number, a: any) => acc + (a.quantite || 1), 0),
         montant: s.montantTotal || dev?.totalTTC || 0,
@@ -233,7 +233,7 @@ export default function ArticlesServisPage() {
   const roleFilteredItems = useMemo(() => {
     return allDeliveryItems.filter(item => {
       if (user?.role === "admin") return true;
-      if (user?.role === "banque") return true; // AFG BANK finance l'ensemble
+      if (user?.role === "banque") return true; // AFG BANK CI finance l'ensemble
       if (user?.role === "fournisseur") {
         if (user.organisationId && item.fournisseurId === user.organisationId) return true;
         if (user.firstName && item.fournisseurNom.toLowerCase().includes(user.firstName.toLowerCase())) return true;
@@ -350,11 +350,11 @@ export default function ArticlesServisPage() {
       <div class="header">
         <img src="${window.location.origin}${IMAGES.logos.fades}" alt="FADES" />
         <img src="${window.location.origin}${IMAGES.logos.vifloNew}" alt="ViFlo" style="height: 48px;" />
-        <img src="${window.location.origin}${IMAGES.logos.afgBank}" alt="AFG BANK" />
+        <img src="${window.location.origin}${IMAGES.logos.afgBank}" alt="AFG BANK CI" />
       </div>
 
       <h1>Bon d'Émargement et Décharge Officielle</h1>
-      <p class="subtitle">Programme National VITALIS · Financement Sécurisé AFG BANK · Clôture de Financement & Remise des Biens</p>
+      <p class="subtitle">Programme National VITALIS · Financement Sécurisé AFG BANK CI · Clôture de Financement & Remise des Biens</p>
 
       <div class="info-grid">
         <div class="info-card">
@@ -403,7 +403,7 @@ export default function ArticlesServisPage() {
 
       <div class="attestation">
         <strong>ATTESTATION SUR L'HONNEUR & DÉCHARGE FORMELLE :</strong><br/>
-        Je soussigné(e), <strong>${item.souscripteurNom}</strong>, atteste par la présente avoir réceptionné en bon état l'intégralité des articles et matériels listés ci-dessus, financés par AFG BANK dans le cadre du Programme Vitalis. La présente signature vaut quitus de réception définitive et confirme la conformité de la commande.
+        Je soussigné(e), <strong>${item.souscripteurNom}</strong>, atteste par la présente avoir réceptionné en bon état l'intégralité des articles et matériels listés ci-dessus, financés par AFG BANK CI dans le cadre du Programme Vitalis. La présente signature vaut quitus de réception définitive et confirme la conformité de la commande.
       </div>
 
       <div class="signatures">
@@ -420,7 +420,7 @@ export default function ArticlesServisPage() {
       </div>
 
       <div class="footer">
-        <p>Document officiel établi sous convention AFG BANK Atlantic, FADES et Plateforme ViFlo · Fiche d'émargement originale à archiver</p>
+        <p>Document officiel établi sous convention AFG BANK CI Atlantic, FADES et Plateforme ViFlo · Fiche d'émargement originale à archiver</p>
       </div>
       </body></html>
     `);
@@ -603,7 +603,7 @@ export default function ArticlesServisPage() {
                     <p className="text-sm font-semibold text-gray-700">Aucun article dans cette vue</p>
                     <p className="text-xs text-gray-400 mt-1 max-w-sm mx-auto">
                       {activeTab === "attente"
-                        ? "Aucune commande en attente de retrait. Les articles sont remis dès confirmation du virement AFG BANK."
+                        ? "Aucune commande en attente de retrait. Les articles sont remis dès confirmation du virement AFG BANK CI."
                         : "Aucune livraison enregistrée avec ces filtres."}
                     </p>
                   </td>
@@ -822,7 +822,7 @@ export default function ArticlesServisPage() {
                 <div className="text-xs text-emerald-900">
                   <p className="font-bold">Décharge d'émargement conforme</p>
                   <p className="text-[11px] text-emerald-700 mt-0.5">
-                    Tous les articles listés sont délivrés au titre de la convention VITALIS approuvée par AFG BANK Atlantic.
+                    Tous les articles listés sont délivrés au titre de la convention VITALIS approuvée par AFG BANK CI Atlantic.
                   </p>
                 </div>
               </div>

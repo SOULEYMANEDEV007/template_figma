@@ -78,7 +78,7 @@ export default function PaiementsPage() {
       const sub = p.souscriptionId ? getSouscriptionById(p.souscriptionId) : null;
       const souscripteurNom = p.souscripteurNom || (sub ? `${sub.souscripteurPrenom || ""} ${sub.souscripteurNom || ""}`.trim() : "Souscripteur");
       const fournisseurNom = p.repartitionFournisseurs?.[0]?.fournisseurNom || p.fournisseurNom || sub?.fournisseurNom || "Librairie de France Groupe";
-      const banqueNom = p.banqueNom || sub?.banqueNom || "AFG BANK";
+      const banqueNom = p.banqueNom || sub?.banqueNom || "AFG BANK CI";
       const montant = p.montantTotal || p.montant || sub?.montantTotal || 0;
       const statutNormalise = getStatutCategory(p);
       const datePaiement = p.dateTransfert || p.dateValidationAFG || p.dateCreation || new Date().toISOString().split("T")[0];
@@ -112,7 +112,7 @@ export default function PaiementsPage() {
       // Filtrage par rôle utilisateur
       let matchRole = true;
       if (user?.role === "banque") {
-        // En tant qu'AFG BANK, voit l'ensemble des paiements financés par la banque
+        // En tant qu'AFG BANK CI, voit l'ensemble des paiements financés par la banque
         matchRole = !p.banqueNom || p.banqueNom.toLowerCase().includes("afg") || p.banqueId === user.organisationId;
       } else if (user?.role === "fournisseur") {
         // En tant que fournisseur, voit les paiements qui lui sont alloués
@@ -237,7 +237,7 @@ export default function PaiementsPage() {
                   className="ldf-select text-sm py-2"
                 >
                   <option value="">Toutes les banques</option>
-                  <option value="AFG BANK">AFG BANK</option>
+                  <option value="AFG BANK CI">AFG BANK CI</option>
                 </select>
               </div>
             )}

@@ -51,7 +51,7 @@ export default function FournisseurDashboardPage() {
       <div className="page-header">
         <div>
           <h1 className="page-title">Tableau de bord Fournisseur</h1>
-          <p className="page-subtitle">Programme VITALIS · AFG BANK</p>
+          <p className="page-subtitle">Programme VITALIS · AFG BANK CI</p>
         </div>
         <Link href="/dashboard/devis/nouveau" className="btn-ldf-primary">
           <Plus className="w-4 h-4" /> Nouveau devis

@@ -31,7 +31,7 @@ const COULEURS_FOURNISSEURS: Record<string, string> = {
 };
 
 const PALETTE_AGENCES = [
-  '#0284c7', // Bleu AFG BANK (Plateau)
+  '#0284c7', // Bleu AFG BANK CI (Plateau)
   '#10b981', // Vert émeraude (Cocody)
   '#ea580c', // Orange ViFlo (Marcory)
   '#8b5cf6', // Violet (Yopougon)
@@ -97,7 +97,7 @@ export default function RapportsPage() {
     };
   }).filter(f => f.valeur > 0);
 
-  // 4. Répartition par agence AFG BANK (Donut multi-agences)
+  // 4. Répartition par agence AFG BANK CI (Donut multi-agences)
   const totalDossiersWithAgence = (agencesAFG || []).reduce((sum, ag) => {
     return sum + (dossiers || []).filter(d => d.agenceId === ag.id).length;
   }, 0);
@@ -183,7 +183,7 @@ export default function RapportsPage() {
 
       csvContent += `RAPPORT D'ACTIVITE & STATISTIQUES — PROGRAMME VITALIS FADES\n`;
       csvContent += `Date d'extraction : ${now}\n`;
-      csvContent += `Banque financeuse : AFG BANK Côte d'Ivoire\n\n`;
+      csvContent += `Banque financeuse : AFG BANK CI Côte d'Ivoire\n\n`;
 
       csvContent += `INDICATEURS CLES (KPIS)\n`;
       csvContent += `Indicateur;Valeur;Detail\n`;
@@ -200,7 +200,7 @@ export default function RapportsPage() {
       });
       csvContent += `\n`;
 
-      csvContent += `REPARTITION PAR AGENCE AFG BANK\n`;
+      csvContent += `REPARTITION PAR AGENCE AFG BANK CI\n`;
       csvContent += `Agence;Ville;Nombre de dossiers;Part (%)\n`;
       dossiersParAgenceData.forEach(a => {
         csvContent += `"${a.nomComplet}";${a.ville};${a.valeur};${Math.round((a.valeur / totalDossiersAgences) * 100)}%\n`;
@@ -253,7 +253,7 @@ export default function RapportsPage() {
         </div>
         <div className="flex items-center gap-2.5 flex-wrap">
           <span className="hidden md:inline-flex text-xs bg-orange-50 text-orange-700 font-semibold px-3 py-2 rounded-lg border border-orange-200">
-            Banque financeuse : AFG BANK
+            Banque financeuse : AFG BANK CI
           </span>
 
           {/* Bouton Export CSV (Excel) */}
@@ -306,7 +306,7 @@ export default function RapportsPage() {
             <div className="h-6 w-px bg-gray-200" />
             <img src={IMAGES.logos.fades} alt="FADES" className="h-8 object-contain" />
             <div className="h-6 w-px bg-gray-200" />
-            <img src={IMAGES.logos.afgBank} alt="AFG BANK" className="h-6 object-contain" />
+            <img src={IMAGES.logos.afgBank} alt="AFG BANK CI" className="h-6 object-contain" />
           </div>
           <div className="text-right">
             <span className="text-[10px] font-bold tracking-wider uppercase bg-orange-100 text-orange-800 px-2 py-0.5 rounded">
@@ -414,7 +414,7 @@ export default function RapportsPage() {
             <div className="section-card-header flex items-center justify-between pb-3 border-b border-gray-50">
               <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#10b981]" />
-                Paiements par mois (AFG BANK)
+                Paiements par mois (AFG BANK CI)
               </h3>
               <span className="text-xs text-gray-400 font-medium">Encaissés vs En cours</span>
             </div>
@@ -487,12 +487,12 @@ export default function RapportsPage() {
             </div>
           </div>
 
-          {/* 4. Répartition par agence AFG BANK */}
+          {/* 4. Répartition par agence AFG BANK CI */}
           <div className="section-card border border-gray-100 shadow-none">
             <div className="section-card-header flex items-center justify-between pb-3 border-b border-gray-50">
               <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#0284c7]" />
-                Répartition par agence AFG BANK
+                Répartition par agence AFG BANK CI
               </h3>
               <span className="text-xs text-gray-400 font-medium">Réseau d'agences</span>
             </div>
@@ -597,7 +597,7 @@ export default function RapportsPage() {
         {/* Pied de page du rapport officiel */}
         <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between text-[11px] text-gray-400 gap-2">
           <span>Programme Vitalis FADES · Plateforme ViFlo</span>
-          <span>Banque Financeuse Unique : AFG BANK Côte d'Ivoire</span>
+          <span>Banque Financeuse Unique : AFG BANK CI Côte d'Ivoire</span>
           <span>Page 1 / 1</span>
         </div>
       </div>

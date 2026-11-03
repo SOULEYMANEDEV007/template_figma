@@ -90,10 +90,10 @@ export default function DashboardBanque() {
               <Legend wrapperStyle={{ fontSize: 10 }} />
             </PieChart>
           </ResponsiveContainer>
-          {/* Badge AFG BANK */}
+          {/* Badge AFG BANK CI */}
           <div className="mt-3 pt-3 border-t border-gray-100 flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-orange-500" />
-            <span className="text-xs font-bold text-orange-600">AFG BANK — Banque financeuse unique</span>
+            <span className="text-xs font-bold text-orange-600">AFG BANK CI — Banque financeuse unique</span>
           </div>
         </div>
       </div>

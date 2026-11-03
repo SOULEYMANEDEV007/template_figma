@@ -177,8 +177,8 @@ export function BesoinsMultiplesList({
             <div
               key={besoin.id}
               className={`rounded-2xl border transition-all duration-200 overflow-hidden shadow-xs ${hasSelectedFournisseur
-                  ? "border-orange-200 bg-white ring-1 ring-orange-500/10"
-                  : "border-gray-200 bg-white hover:border-gray-300"
+                ? "border-orange-200 bg-white ring-1 ring-orange-500/10"
+                : "border-gray-200 bg-white hover:border-gray-300"
                 }`}
             >
               {/* En-tête de la carte besoin */}
@@ -337,8 +337,8 @@ export function BesoinsMultiplesList({
                           type="button"
                           onClick={() => handleSelectFournisseur(besoin.id, f.id, f.nom)}
                           className={`relative text-left p-3 rounded-xl border transition-all cursor-pointer flex items-center gap-3 ${isSelected
-                              ? "bg-orange-50/80 border-orange-500 ring-2 ring-orange-500/20 shadow-xs"
-                              : "bg-white border-gray-200 hover:border-gray-300 hover:bg-gray-50/60"
+                            ? "bg-orange-50/80 border-orange-500 ring-2 ring-orange-500/20 shadow-xs"
+                            : "bg-white border-gray-200 hover:border-gray-300 hover:bg-gray-50/60"
                             }`}
                         >
                           {/* Logo Fournisseur */}
@@ -465,7 +465,7 @@ export function BesoinsMultiplesList({
         <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-start gap-2.5 text-[11px] text-slate-300 leading-relaxed">
           <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
           <p>
-            <strong>Règle de consolidation Vitalis :</strong> Vos demandes de devis seront transmises directement à chaque fournisseur sélectionné. Une fois tous vos devis établis et chiffrés, votre <strong>Dossier unique</strong> sera constitué et prêt pour analyse et financement auprès d'<strong>AFG BANK</strong>.
+            <strong>Règle de consolidation Vitalis :</strong> Vos demandes de devis seront transmises directement à chaque fournisseur sélectionné. Une fois tous vos devis établis et chiffrés, votre <strong>Dossier unique</strong> sera constitué et prêt pour analyse et financement auprès d'<strong>AFG BANK CI</strong>.
           </p>
         </div>
       </div>

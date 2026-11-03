@@ -55,8 +55,8 @@ mv page-vitalis.tsx page.tsx
 - ✅ Récapitulatif des fournisseurs sélectionnés
 
 ### Étape 4 : Configuration
-- ✅ **AFG BANK unique** (pas de sélection, info seulement)
-- ✅ Sélection agence AFG BANK
+- ✅ **AFG BANK CI unique** (pas de sélection, info seulement)
+- ✅ Sélection agence AFG BANK CI
 - ✅ Date de début
 - ✅ **Durée 36 mois par défaut**
 - ✅ Observations
@@ -68,10 +68,10 @@ mv page-vitalis.tsx page.tsx
 
 ## 🎯 Points clés
 
-### AFG BANK unique
+### AFG BANK CI unique
 ```typescript
 // Pas de sélection de banque
-// AFG BANK est hardcodée
+// AFG BANK CI est hardcodée
 const banqueId = "AFG-001"; // Toujours
 ```
 

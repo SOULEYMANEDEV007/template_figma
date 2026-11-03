@@ -112,7 +112,7 @@ export default function SouscriptionsPage() {
         <div>
           <h1 className="page-title">Souscriptions Vitalis</h1>
           <p className="page-subtitle">
-            {filtered.length} souscription{filtered.length > 1 ? "s" : ""}{hasFilters ? " filtrées" : " au total"} · Banque : <strong>AFG BANK</strong>
+            {filtered.length} souscription{filtered.length > 1 ? "s" : ""}{hasFilters ? " filtrées" : " au total"} · Banque : <strong>AFG BANK CI</strong>
           </p>
         </div>
         <div className="flex items-center gap-2">

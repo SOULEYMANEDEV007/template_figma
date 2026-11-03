@@ -12,7 +12,7 @@ import type {
 import { db } from "./db";
 
 // ============================================================
-// AGENCES AFG BANK
+// AGENCES AFG BANK CI
 // ============================================================
 const agencesAFG: AgenceAFG[] = [
   {
@@ -669,7 +669,7 @@ export async function seedDatabase() {
 
     // Insérer les agences AFG
     await db.agencesAFG.bulkAdd(agencesAFG);
-    console.log(`✅ ${agencesAFG.length} agences AFG BANK ajoutées`);
+    console.log(`✅ ${agencesAFG.length} agences AFG BANK CI ajoutées`);
 
     // Insérer les fournisseurs si pas fait
     const fCount = await db.fournisseurs.count();

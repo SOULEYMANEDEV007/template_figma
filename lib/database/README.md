@@ -43,7 +43,7 @@ providers/
 | `paiements` | Paiements multi-fournisseurs | `id` |
 | `pointsRelais` | Points relais livraison | `id` |
 | `livraisons` | Livraisons | `id` |
-| `agencesAFG` | Agences AFG BANK | `id` |
+| `agencesAFG` | Agences AFG BANK CI | `id` |
 
 ## 🚀 Utilisation
 
@@ -193,7 +193,7 @@ Au premier démarrage, la base est remplie avec :
 - Korhogo
 - Daloa
 
-### Agences AFG BANK (4)
+### Agences AFG BANK CI (4)
 - Plateau (Abidjan)
 - Cocody (Abidjan)
 - Bouaké

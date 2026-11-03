@@ -105,7 +105,7 @@ export default function AdminFournisseurDetailPage() {
     });
   }, [dossiers, linkedSouscriptions, linkedDevis, normNom, normCode]);
 
-  // 4. Paiements AFG BANK émis
+  // 4. Paiements AFG BANK CI émis
   const linkedPaiements = useMemo(() => {
     return (paiements || []).filter(p => {
       if (p.fournisseurId === fournisseur.id) return true;
@@ -363,7 +363,7 @@ export default function AdminFournisseurDetailPage() {
             }`}
         >
           <CreditCard className="w-4 h-4" />
-          Paiements AFG BANK
+          Paiements AFG BANK CI
           <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-bold">
             {linkedPaiements.length}
           </span>
@@ -423,17 +423,17 @@ export default function AdminFournisseurDetailPage() {
             </div>
           </div>
 
-          {/* Bloc 2 : Partenariat AFG BANK CI & Convention Vitalis */}
+          {/* Bloc 2 : Partenariat AFG BANK CI CI & Convention Vitalis */}
           <div className="section-card p-6 space-y-4">
             <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2 border-b border-gray-100 pb-3">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              Convention AFG BANK CI & Programme Vitalis
+              Convention AFG BANK CI CI & Programme Vitalis
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               <div>
                 <p className="text-gray-400 font-medium">Banque Partenaire Unique</p>
-                <p className="text-blue-700 font-bold text-sm mt-0.5">AFG BANK CI (Atlantic Financial Group)</p>
+                <p className="text-blue-700 font-bold text-sm mt-0.5">AFG BANK CI CI (Atlantic Financial Group)</p>
               </div>
 
               <div>
@@ -456,7 +456,7 @@ export default function AdminFournisseurDetailPage() {
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Modalité de Paiement Direct Fournisseur
                 </p>
                 <p className="text-emerald-800/90 leading-relaxed text-[11px]">
-                  En conformité avec le cahier des charges Vitalis FADES, dès accord de crédit par le comité AFG BANK,
+                  En conformité avec le cahier des charges Vitalis FADES, dès accord de crédit par le comité AFG BANK CI,
                   la banque règle directement 100% de la quote-part du devis sur le compte bancaire de {fournisseur.nom},
                   permettant la libération immédiate des articles pour les bénéficiaires.
                 </p>
@@ -662,12 +662,12 @@ export default function AdminFournisseurDetailPage() {
         </div>
       )}
 
-      {/* ── Onglet Règlements AFG BANK ── */}
+      {/* ── Onglet Règlements AFG BANK CI ── */}
       {activeTab === "paiements" && (
         <div className="section-card overflow-hidden">
           <div className="p-4 border-b border-gray-100 flex items-center justify-between">
             <h2 className="text-sm font-bold text-gray-900">
-              Règlements & Décaissements AFG BANK vers {fournisseur.nom} ({linkedPaiements.length})
+              Règlements & Décaissements AFG BANK CI vers {fournisseur.nom} ({linkedPaiements.length})
             </h2>
             <span className="text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-lg border border-purple-100">
               Total décaissé : {fmtCFA(totalPayeAFG)}
@@ -690,7 +690,7 @@ export default function AdminFournisseurDetailPage() {
                 {linkedPaiements.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="text-center py-12 text-gray-400 text-sm">
-                      Aucun règlement AFG BANK versé pour ce fournisseur pour l'instant.
+                      Aucun règlement AFG BANK CI versé pour ce fournisseur pour l'instant.
                     </td>
                   </tr>
                 ) : (
@@ -709,7 +709,7 @@ export default function AdminFournisseurDetailPage() {
                             : "—"}
                         </td>
                         <td className="px-4 py-3 text-xs font-semibold text-blue-700">
-                          AFG BANK Atlantic
+                          AFG BANK CI Atlantic
                         </td>
                         <td className="px-4 py-3 font-bold text-purple-700">
                           {fmtCFA(p.montantTotal || p.montant)}

@@ -128,7 +128,7 @@ export function PDFSouscription({ souscription }: PDFSouscriptionProps) {
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">Souscription Vitalis</h1>
-                  <p className="text-sm text-amber-600 font-medium">Programme AFG BANK</p>
+                  <p className="text-sm text-amber-600 font-medium">Programme AFG BANK CI</p>
                 </div>
               </div>
             </div>
@@ -431,7 +431,7 @@ export function PDFSouscription({ souscription }: PDFSouscriptionProps) {
               <p className="text-xs text-gray-500 text-center">Signature et date</p>
             </div>
             <div className="border border-gray-300 rounded-lg p-4 min-h-[120px]">
-              <p className="text-xs text-gray-600 font-semibold mb-2">AFG BANK</p>
+              <p className="text-xs text-gray-600 font-semibold mb-2">AFG BANK CI</p>
               <div className="border-b border-gray-200 mt-12 mb-2"></div>
               <p className="text-xs text-gray-500 text-center">Signature et cachet</p>
             </div>
@@ -449,7 +449,7 @@ export function PDFSouscription({ souscription }: PDFSouscriptionProps) {
             Document généré le {new Date().toLocaleDateString("fr-FR")} à{" "}
             {new Date().toLocaleTimeString("fr-FR")}
           </p>
-          <p className="mt-1">Programme Vitalis - AFG BANK - {AFG_BANK.siege}</p>
+          <p className="mt-1">Programme Vitalis - AFG BANK CI - {AFG_BANK.siege}</p>
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 /**
  * Données géographiques de Côte d'Ivoire (Régions, Villes, Communes / Quartiers)
- * Programme Vitalis FADES – LDF Groupe & AFG BANK (Version MVP)
+ * Programme Vitalis FADES – LDF Groupe & AFG BANK CI (Version MVP)
  */
 
 export interface RegionData {

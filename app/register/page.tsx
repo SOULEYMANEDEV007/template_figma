@@ -95,7 +95,7 @@ export default function RegisterPage() {
         situationMatri,
         typeProfil,
         banqueId: "AFG-001",
-        banqueNom: "AFG BANK",
+        banqueNom: "AFG BANK CI",
         documents: {
           attestationTravail: attestationTravailFile ? attestationTravailFile.name : null,
           bulletinSalaire: bulletinSalaireFile ? bulletinSalaireFile.name : null,
@@ -423,7 +423,7 @@ export default function RegisterPage() {
                     Pièces justificatives (Constitution du dossier)
                   </h3>
                   <p className="text-[11px] text-gray-500 mt-0.5">
-                    Téléversez vos pièces dès maintenant pour accélérer l'analyse de votre dossier par AFG BANK.
+                    Téléversez vos pièces dès maintenant pour accélérer l'analyse de votre dossier par AFG BANK CI.
                   </p>
                 </div>
                 <span className="text-[10px] font-semibold text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full">

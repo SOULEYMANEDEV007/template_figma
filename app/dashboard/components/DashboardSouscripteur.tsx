@@ -53,7 +53,7 @@ export default function DashboardSouscripteur() {
           <div className="flex-1">
             <h3 className="text-sm font-bold text-orange-900 mb-1">📢 Note importante — Conditions d'éligibilité</h3>
             <p className="text-sm text-orange-800 leading-relaxed">
-              Bienvenue sur votre espace Viflo. Avant d'initier une demande de financement pour vos achats, assurez-vous de prendre connaissance de toutes les conditions requises par <strong>AFG BANK</strong>.
+              Bienvenue sur votre espace Viflo. Avant d'initier une demande de financement pour vos achats, assurez-vous de prendre connaissance de toutes les conditions requises par <strong>AFG BANK CI</strong>.
             </p>
             <p className="text-xs text-orange-700 mt-2">
               📄 <strong>Consulter ou Imprimer :</strong> Cliquez sur le bouton ci-contre pour lire le document récapitulatif des conditions de souscription au Programme Vitalis.
@@ -64,7 +64,7 @@ export default function DashboardSouscripteur() {
               const w = window.open('', '_blank');
               if (!w) return;
               w.document.write(`
-                <html><head><title>Conditions Vitalis — AFG BANK</title>
+                <html><head><title>Conditions Vitalis — AFG BANK CI</title>
                 <style>
                   body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; color: #1f2937; line-height: 1.6; }
                   .header-logos { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f3f4f6; padding-bottom: 15px; }
@@ -84,12 +84,12 @@ export default function DashboardSouscripteur() {
                 <div class="header-logos">
                   <img src="${window.location.origin}${IMAGES.logos.fades}" alt="FADES" />
                   <img src="${window.location.origin}${IMAGES.logos.vifloNew}" alt="VIFLO" style="height: 50px;" />
-                  <img src="${window.location.origin}${IMAGES.logos.afgBank}" alt="AFG BANK" />
+                  <img src="${window.location.origin}${IMAGES.logos.afgBank}" alt="AFG BANK CI" />
                 </div>
 
                 <h1>📋 Conditions de Souscription — Programme VITALIS</h1>
-                <p><span class="badge">AFG BANK · Banque Financeuse Unique</span> &nbsp; <span class="badge">Durée : 36 mois</span></p>
-                <p>Ce document résume les conditions à remplir pour bénéficier du programme Vitalis financé par <strong>AFG BANK</strong>.</p>
+                <p><span class="badge">AFG BANK CI · Banque Financeuse Unique</span> &nbsp; <span class="badge">Durée : 36 mois</span></p>
+                <p>Ce document résume les conditions à remplir pour bénéficier du programme Vitalis financé par <strong>AFG BANK CI</strong>.</p>
 
                 <h2>1. Conditions pour les Personnes Physiques</h2>
                 <table>
@@ -97,7 +97,7 @@ export default function DashboardSouscripteur() {
                   <tr><td>Situation professionnelle</td><td>Salarié ou Fonctionnaire (en activité)</td></tr>
                   <tr><td>Pièce d'identité</td><td>CNI valide (Carte Nationale d'Identité ivoirienne)</td></tr>
                   <tr><td>Situation matrimoniale</td><td>Attestation de mariage requise si marié(e)</td></tr>
-                  <tr><td>Compte bancaire</td><td>Compte ouvert à AFG BANK ou domiciliation de salaire</td></tr>
+                  <tr><td>Compte bancaire</td><td>Compte ouvert à AFG BANK CI ou domiciliation de salaire</td></tr>
                   <tr><td>Localisation</td><td>Résider en Côte d'Ivoire (Abidjan ou intérieur)</td></tr>
                 </table>
 
@@ -134,7 +134,7 @@ export default function DashboardSouscripteur() {
                 </table>
 
                 <div class="footer">
-                  <p>Document établi dans le cadre du Programme Vitalis — AFG BANK · Tous droits réservés · ${new Date().toLocaleDateString('fr-FR')}</p>
+                  <p>Document établi dans le cadre du Programme Vitalis — AFG BANK CI · Tous droits réservés · ${new Date().toLocaleDateString('fr-FR')}</p>
                 </div>
                 </body></html>
               `);
@@ -158,7 +158,7 @@ export default function DashboardSouscripteur() {
             <span>✨</span> Initier une demande de financement
           </p>
           <p className="text-orange-100 text-xs mt-1">
-            Sélectionnez vos articles chez nos fournisseurs partenaires agréés et soumettez votre demande directement à AFG BANK.
+            Sélectionnez vos articles chez nos fournisseurs partenaires agréés et soumettez votre demande directement à AFG BANK CI.
           </p>
         </div>
         <Link

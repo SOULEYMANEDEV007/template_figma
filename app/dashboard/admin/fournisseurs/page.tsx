@@ -416,7 +416,7 @@ export default function AdminFournisseursPage() {
             { key: "ville", label: "Ville", placeholder: "Abidjan", full: false },
             { key: "region", label: "Région", placeholder: "Abidjan Lagunes", full: false },
             { key: "adresse", label: "Adresse", placeholder: "Zone Industrielle...", full: true },
-            { key: "numeroContratAFG", label: "N° Contrat AFG BANK", placeholder: "AFG-2026-F-001", full: true },
+            { key: "numeroContratAFG", label: "N° Contrat AFG BANK CI", placeholder: "AFG-2026-F-001", full: true },
           ].map((field: any) => (
             <div key={field.key} className={field.full ? "col-span-2" : ""}>
               <label className="ldf-label">{field.label}</label>

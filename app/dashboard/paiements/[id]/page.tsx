@@ -54,7 +54,7 @@ export default function PaiementDetailPage() {
   // Normalisation du paiement
   const souscripteurNom = rawPaiement.souscripteurNom || (sub ? `${sub.souscripteurPrenom || ""} ${sub.souscripteurNom || ""}`.trim() : "Souscripteur");
   const fournisseurNom = rawPaiement.repartitionFournisseurs?.[0]?.fournisseurNom || rawPaiement.fournisseurNom || sub?.fournisseurNom || "Librairie de France Groupe";
-  const banqueNom = rawPaiement.banqueNom || sub?.banqueNom || "AFG BANK";
+  const banqueNom = rawPaiement.banqueNom || sub?.banqueNom || "AFG BANK CI";
   const montant = rawPaiement.montantTotal || rawPaiement.montant || sub?.montantTotal || 0;
 
   // Calcul du statut effectif
@@ -86,7 +86,7 @@ export default function PaiementDetailPage() {
         souscriptionId: sub.id,
         action: "paiement_encaisse",
         description: `Virement de ${fmtCFA(montant)} validé et encaissé par ${fournisseurNom}`,
-        auteur: `${user?.firstName || "AFG BANK"} ${user?.lastName || ""}`,
+        auteur: `${user?.firstName || "AFG BANK CI"} ${user?.lastName || ""}`,
         date: new Date().toISOString(),
       });
     }
@@ -143,7 +143,7 @@ export default function PaiementDetailPage() {
   const steps = [
     {
       id: "init",
-      label: "Ordre de virement émis (AFG BANK)",
+      label: "Ordre de virement émis (AFG BANK CI)",
       date: rawPaiement.dateCreation || rawPaiement.datePaiement,
       done: true,
     },
