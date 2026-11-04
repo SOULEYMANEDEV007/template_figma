@@ -64,7 +64,7 @@ export default function DevisPage() {
         <div>
           <h1 className="page-title">Devis</h1>
           <p className="page-subtitle">
-            {filtered.length} devis{hasFilters ? " filtrés" : ""} · <span className="font-medium text-orange-600">AFG Bank</span>
+            {filtered.length} devis{hasFilters ? " filtrés" : ""} · <span className="font-medium text-orange-600">AFG BANK CI</span>
           </p>
         </div>
         {(user?.role === "admin" || user?.role === "fournisseur") && (
@@ -157,7 +157,7 @@ export default function DevisPage() {
                     </td>
                     <td className="px-4 py-3">
                       <p className="text-xs font-semibold text-gray-800">{d.souscripteurPrenom} {d.souscripteurNom}</p>
-                      <p className="text-[10px] text-orange-500">AFG Bank</p>
+                      <p className="text-[10px] text-orange-500">AFG BANK CI</p>
                     </td>
                     <td className="px-4 py-3 hidden md:table-cell">
                       <span className="text-xs px-2 py-0.5 bg-orange-100 text-orange-700 rounded-full font-medium">

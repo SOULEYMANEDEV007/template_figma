@@ -24,9 +24,9 @@ const fmtCFA = (v: number) => new Intl.NumberFormat("fr-FR").format(v) + " FCFA"
 
 // Workflow des commandes fournisseur — Page 17 du cahier des charges
 const COMMANDE_WORKFLOW = [
-  { statut: "fournisseur_paye",        label: "Commande reçue",       icon: Package,      couleur: "text-sky-600 bg-sky-50"     },
-  { statut: "commande_en_preparation", label: "En préparation",       icon: Box,          couleur: "text-cyan-600 bg-cyan-50"   },
-  { statut: "livre",                   label: "Livré",                icon: CheckCircle2, couleur: "text-emerald-600 bg-emerald-50" },
+  { statut: "fournisseur_paye", label: "Commande reçue", icon: Package, couleur: "text-sky-600 bg-sky-50" },
+  { statut: "commande_en_preparation", label: "En préparation", icon: Box, couleur: "text-cyan-600 bg-cyan-50" },
+  { statut: "livre", label: "Livré", icon: CheckCircle2, couleur: "text-emerald-600 bg-emerald-50" },
 ] as const;
 
 type CommandeStatut = "fournisseur_paye" | "commande_en_preparation" | "livre";
@@ -56,10 +56,10 @@ export default function FournisseurCommandesPage() {
 
   // KPIs
   const kpis = {
-    recues:          mesCommandes.filter(s => s.statut === "fournisseur_paye").length,
-    enPreparation:   mesCommandes.filter(s => s.statut === "commande_en_preparation").length,
-    livrees:         mesCommandes.filter(s => s.statut === "livre").length,
-    montantTotal:    mesCommandes.reduce((acc, s) => {
+    recues: mesCommandes.filter(s => s.statut === "fournisseur_paye").length,
+    enPreparation: mesCommandes.filter(s => s.statut === "commande_en_preparation").length,
+    livrees: mesCommandes.filter(s => s.statut === "livre").length,
+    montantTotal: mesCommandes.reduce((acc, s) => {
       const monDevis = devis.find(d => d.fournisseurId === fournisseurId && d.souscriptionId === s.id);
       return acc + (monDevis?.totalTTC ?? 0);
     }, 0),
@@ -67,9 +67,9 @@ export default function FournisseurCommandesPage() {
 
   const handleAvancer = (souscriptionId: string, currentStatut: string) => {
     const next: Record<string, CommandeStatut> = {
-      "accepte":                 "fournisseur_paye",
-      "finance":                 "fournisseur_paye",
-      "fournisseur_paye":        "commande_en_preparation",
+      "accepte": "fournisseur_paye",
+      "finance": "fournisseur_paye",
+      "fournisseur_paye": "commande_en_preparation",
       "commande_en_preparation": "livre",
     };
     const newStatut = next[currentStatut];
@@ -88,9 +88,9 @@ export default function FournisseurCommandesPage() {
         date: new Date().toISOString(),
       });
       const messages: Record<string, string> = {
-        fournisseur_paye:        "✅ Commande confirmée — paiement reçu",
+        fournisseur_paye: "✅ Commande confirmée — paiement reçu",
         commande_en_preparation: "📦 Commande en cours de préparation",
-        livre:                   "🚚 Commande marquée comme livrée !",
+        livre: "🚚 Commande marquée comme livrée !",
       };
       toast.success(messages[newStatut] ?? `Statut → ${newStatut}`);
       setActionTarget(null);
@@ -98,9 +98,9 @@ export default function FournisseurCommandesPage() {
   };
 
   const nextLabel: Record<string, string> = {
-    "accepte":                 "Confirmer paiement reçu",
-    "finance":                 "Confirmer paiement reçu",
-    "fournisseur_paye":        "Démarrer la préparation",
+    "accepte": "Confirmer paiement reçu",
+    "finance": "Confirmer paiement reçu",
+    "fournisseur_paye": "Démarrer la préparation",
     "commande_en_preparation": "Marquer comme livré",
   };
 
@@ -111,7 +111,7 @@ export default function FournisseurCommandesPage() {
         <div>
           <h1 className="page-title">Mes Commandes — Logistique VITALIS</h1>
           <p className="page-subtitle">
-            {mesCommandes.length} commande{mesCommandes.length > 1 ? "s" : ""} · Programme AFG Bank
+            {mesCommandes.length} commande{mesCommandes.length > 1 ? "s" : ""} · Programme AFG BANK CI
           </p>
         </div>
       </div>
@@ -119,10 +119,10 @@ export default function FournisseurCommandesPage() {
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: "Commandes reçues",      value: kpis.recues,          icon: Package,      color: "bg-sky-50 text-sky-600"       },
-          { label: "En préparation",         value: kpis.enPreparation,   icon: Box,          color: "bg-cyan-50 text-cyan-600"     },
-          { label: "Livrées",               value: kpis.livrees,          icon: CheckCircle2, color: "bg-emerald-50 text-emerald-600"},
-          { label: "Chiffre d'affaires",     value: fmtCFA(kpis.montantTotal), icon: AlertCircle, color: "bg-orange-50 text-orange-600", isStr: true },
+          { label: "Commandes reçues", value: kpis.recues, icon: Package, color: "bg-sky-50 text-sky-600" },
+          { label: "En préparation", value: kpis.enPreparation, icon: Box, color: "bg-cyan-50 text-cyan-600" },
+          { label: "Livrées", value: kpis.livrees, icon: CheckCircle2, color: "bg-emerald-50 text-emerald-600" },
+          { label: "Chiffre d'affaires", value: fmtCFA(kpis.montantTotal), icon: AlertCircle, color: "bg-orange-50 text-orange-600", isStr: true },
         ].map((k) => {
           const Icon = k.icon;
           return (
@@ -144,17 +144,16 @@ export default function FournisseurCommandesPage() {
         <div className="flex items-center gap-2 flex-wrap">
           <span className="text-xs text-gray-500 font-medium">Filtrer :</span>
           {[
-            { value: "",                      label: "Toutes" },
-            { value: "fournisseur_paye",       label: "Commandes reçues" },
-            { value: "commande_en_preparation",label: "En préparation" },
-            { value: "livre",                  label: "Livrées" },
+            { value: "", label: "Toutes" },
+            { value: "fournisseur_paye", label: "Commandes reçues" },
+            { value: "commande_en_preparation", label: "En préparation" },
+            { value: "livre", label: "Livrées" },
           ].map(f => (
             <button key={f.value}
               onClick={() => setFilterStatut(f.value as any)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
-                filterStatut === f.value
-                  ? "bg-orange-500 border-orange-500 text-white"
-                  : "border-gray-200 text-gray-600 hover:border-orange-300"}`}>
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${filterStatut === f.value
+                ? "bg-orange-500 border-orange-500 text-white"
+                : "border-gray-200 text-gray-600 hover:border-orange-300"}`}>
               {f.label}
             </button>
           ))}
@@ -166,7 +165,7 @@ export default function FournisseurCommandesPage() {
         <div className="section-card p-16 text-center text-gray-400">
           <Package className="w-12 h-12 text-gray-200 mx-auto mb-3" />
           <p className="text-sm font-medium">Aucune commande dans cette catégorie</p>
-          <p className="text-xs mt-1">Les commandes apparaissent quand AFG Bank a accepté le dossier et payé le fournisseur.</p>
+          <p className="text-xs mt-1">Les commandes apparaissent quand AFG BANK CI a accepté le dossier et payé le fournisseur.</p>
         </div>
       ) : (
         <div className="space-y-3">

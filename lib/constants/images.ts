@@ -8,7 +8,7 @@
  * import { IMAGES } from "@/lib/constants/images";
  * 
  * <Image src={IMAGES.logos.viflo} alt="ViFlo Logo" width={160} height={160} />
- * <img src={IMAGES.logos.afgBank} alt="AFG Bank" />
+ * <img src={IMAGES.logos.afgBank} alt="AFG BANK CI" />
  */
 
 export const IMAGES = {
@@ -71,7 +71,7 @@ export const IMAGE_META = {
   },
   afgBank: {
     src: IMAGES.logos.afgBank,
-    alt: "AFG Bank - Partenaire Bancaire",
+    alt: "AFG BANK CI - Partenaire Bancaire",
   },
   fades: {
     src: IMAGES.logos.fades,

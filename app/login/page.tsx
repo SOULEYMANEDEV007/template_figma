@@ -17,6 +17,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+//import { IMAGES } from "@/lib/constants";
+import { SupplierVideoAdBanner } from "@/components/vitalis";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -108,22 +110,43 @@ export default function LoginPage() {
         </div>
 
         {/* Contenu central */}
-        <div className="relative z-10 space-y-8">
-          <div>
+        <div className="relative z-10 space-y-8 -mt-16">
+          {/*<div>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 mb-4 backdrop-blur-sm">
               <Sparkles className="w-3.5 h-3.5 text-white" />
               <span className="text-white text-xs font-medium">Digitalisation des financements structurés.</span>
             </div>
-            <h2 className="text-4xl font-extrabold text-white leading-tight tracking-tight">
+            {/*<h2 className="text-4xl font-extrabold text-white leading-tight tracking-tight">
               Gérez le cycle complet<br />de vos financements.
             </h2>
+            <h2 className="text-4xl font-extrabold text-white leading-tight tracking-tighttex-">
+              Donnons vie à vos projets.
+            </h2>
             <p className="text-white/80 text-sm mt-4 leading-relaxed max-w-md">
-              Une plateforme centralisée pour les souscripteurs, fournisseurs agréés et la banque partenaire AFG Bank.
+              Une plateforme centralisée pour les souscripteurs, fournisseurs agréés et la banque partenaire AFG BANK CI.
             </p>
+          </div>*/}
+          {/* Contenu central + Encart publicitaire vidéo */}
+          <div className="relative z-10 flex-1 flex flex-col justify-center gap-6 my-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 mb-3 backdrop-blur-sm">
+                <Sparkles className="w-3.5 h-3.5 text-white" />
+                <span className="text-white text-xs font-medium">Digitalisation des financements structurés.</span>
+              </div>
+              <h2 className="text-3xl xl:text-4xl font-extrabold text-white leading-tight tracking-tight">
+                Donnons vie à vos projets.
+              </h2>
+              <p className="text-white/80 text-sm mt-2.5 leading-relaxed max-w-lg">
+                Une plateforme centralisée pour les souscripteurs, fournisseurs agréés et la banque partenaire AFG BANK CI.
+              </p>
+            </div>
+
+            {/* Encart Vidéo Fournisseurs Agréés */}
+            <SupplierVideoAdBanner variant="dark" className="mx-auto" />
           </div>
 
           {/* Steps */}
-          <div className="space-y-3">
+          {/*<div className="space-y-3">
             {[
               { step: "01", label: "Souscription et constitution du dossier" },
               { step: "02", label: "Génération et validation des devis" },
@@ -137,21 +160,22 @@ export default function LoginPage() {
                 <span className="text-white font-medium text-sm">{s.label}</span>
               </div>
             ))}
-          </div>
+          </div>*/}
         </div>
 
         {/* Stats */}
-        <div className="relative z-10 grid grid-cols-3 gap-4 pt-8 border-t border-white/20">
+        <div className="relative z-10 grid grid-cols-4   gap-4 pt-8 border-t border-white/20">
           {[
-            { label: "Souscriptions", value: "30+" },
-            { label: "Fournisseurs agréés", value: "5" },
-            { label: "Banque partenaire", value: "1" },
+            { label: "Souscriptions", value: "30000+" },
+            { label: "Fournisseurs agréés", value: "12" },
+            { label: "Banques partenaires", value: "1" },
+            { label: "Assurances partenaires", value: "1" },
           ].map((s) => (
             <div key={s.label}>
               {s.isLogo ? (
                 <div className="h-10 flex items-center mb-0.5">
                   <div className="bg-white/5 p-1 rounded-lg border border-white/10 backdrop-blur-sm inline-flex items-center justify-center h-full overflow-hidden">
-                    <Image src={IMAGES.logos.afgBank} alt="AFG Bank" width={80} height={32} className="object-contain w-full h-full rounded bg-white" />
+                    <Image src={IMAGES.logos.afgBank} alt="AFG BANK CI" width={80} height={32} className="object-contain w-full h-full rounded bg-white" />
                   </div>
                 </div>
               ) : (

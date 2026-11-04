@@ -152,8 +152,8 @@ export default function DossiersPage() {
       });
       updateSouscription(dossier.souscriptionId, { statut: "accepte" });
       emitInAppNotification({
-        titre: `Accord de financement AFG Bank : ${dossier.reference}`,
-        message: `Bonne nouvelle ! Le financement pour ${dossier.souscripteurPrenom} ${dossier.souscripteurNom} (${fmtCFA(dossier.montantTotal || dossier.montant)}) a été accordé par AFG Bank. La commande peut être préparée et servie.`,
+        titre: `Accord de financement AFG BANK CI : ${dossier.reference}`,
+        message: `Bonne nouvelle ! Le financement pour ${dossier.souscripteurPrenom} ${dossier.souscripteurNom} (${fmtCFA(dossier.montantTotal || dossier.montant)}) a été accordé par AFG BANK CI. La commande peut être préparée et servie.`,
         categorie: "dossier",
         reference: dossier.reference,
         lien: `/dashboard/dossiers/${dossier.id}`,
@@ -174,8 +174,8 @@ export default function DossiersPage() {
       });
       updateSouscription(dossier.souscriptionId, { statut: "refuse" });
       emitInAppNotification({
-        titre: `Décision AFG Bank : Dossier ${dossier.reference} refusé`,
-        message: `Le dossier de ${dossier.souscripteurPrenom} ${dossier.souscripteurNom} a été refusé par AFG Bank. Motif : ${motif}`,
+        titre: `Décision AFG BANK CI : Dossier ${dossier.reference} refusé`,
+        message: `Le dossier de ${dossier.souscripteurPrenom} ${dossier.souscripteurNom} a été refusé par AFG BANK CI. Motif : ${motif}`,
         categorie: "dossier",
         reference: dossier.reference,
         lien: `/dashboard/dossiers/${dossier.id}`,
@@ -200,9 +200,9 @@ export default function DossiersPage() {
       {/* Header */}
       <div className="page-header">
         <div>
-          <h1 className="page-title">Dossiers AFG Bank</h1>
+          <h1 className="page-title">Dossiers AFG BANK CI</h1>
           <p className="page-subtitle">
-            {filtered.length} dossier{filtered.length > 1 ? "s" : ""} · <span className="font-bold text-orange-600">AFG Bank — Programme Vitalis</span>
+            {filtered.length} dossier{filtered.length > 1 ? "s" : ""} · <span className="font-bold text-orange-600">AFG BANK CI — Programme Vitalis</span>
           </p>
         </div>
       </div>

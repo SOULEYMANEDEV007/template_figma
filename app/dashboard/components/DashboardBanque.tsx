@@ -41,19 +41,19 @@ export default function DashboardBanque() {
 
   // PieChart par statut
   const dossiersParStatutData = [
-    { statut: "Validés",       valeur: stats.dossiersValides,     couleur: "#22c55e" },
+    { statut: "Validés", valeur: stats.dossiersValides, couleur: "#22c55e" },
     { statut: "En traitement", valeur: stats.dossiersEnTraitement, couleur: "#ff8c42" },
-    { statut: "Rejetés",       valeur: stats.dossiersRejetes,     couleur: "#ef4444" },
+    { statut: "Rejetés", valeur: stats.dossiersRejetes, couleur: "#ef4444" },
   ].filter(d => d.valeur > 0);
 
   return (
     <div className="space-y-6 fade-in">
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPICard title="Dossiers reçus"        value={stats.dossiersRecus}        icon={FileText}     variant="yellow" subtitle="Total programme Vitalis" />
-        <KPICard title="En cours d'analyse"    value={stats.dossiersEnTraitement} icon={Clock}        variant="yellow" subtitle="À traiter en priorité" />
-        <KPICard title="Dossiers validés"      value={stats.dossiersValides}      icon={CheckCircle2} variant="green"  subtitle={fmtCFA(stats.montantTotal)} />
-        <KPICard title="Taux d'approbation"    value={`${stats.tauxApprobation}%`} icon={TrendingUp}  variant="blue"   subtitle="Depuis lancement" />
+        <KPICard title="Dossiers reçus" value={stats.dossiersRecus} icon={FileText} variant="yellow" subtitle="Total programme Vitalis" />
+        <KPICard title="En cours d'analyse" value={stats.dossiersEnTraitement} icon={Clock} variant="yellow" subtitle="À traiter en priorité" />
+        <KPICard title="Dossiers validés" value={stats.dossiersValides} icon={CheckCircle2} variant="green" subtitle={fmtCFA(stats.montantTotal)} />
+        <KPICard title="Taux d'approbation" value={`${stats.tauxApprobation}%`} icon={TrendingUp} variant="blue" subtitle="Depuis lancement" />
       </div>
 
       {/* Graphiques */}
@@ -69,9 +69,9 @@ export default function DashboardBanque() {
               <YAxis tick={{ fontSize: 11 }} />
               <Tooltip />
               <Legend wrapperStyle={{ fontSize: 11 }} />
-              <Bar dataKey="valides"  name="Validés"  fill="#22c55e" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="rejetes"  name="Rejetés"  fill="#ef4444" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="enCours"  name="En cours" fill="#ff8c42" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="valides" name="Validés" fill="#22c55e" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="rejetes" name="Rejetés" fill="#ef4444" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="enCours" name="En cours" fill="#ff8c42" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -90,10 +90,10 @@ export default function DashboardBanque() {
               <Legend wrapperStyle={{ fontSize: 10 }} />
             </PieChart>
           </ResponsiveContainer>
-          {/* Badge AFG Bank */}
+          {/* Badge AFG BANK CI */}
           <div className="mt-3 pt-3 border-t border-gray-100 flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-orange-500" />
-            <span className="text-xs font-bold text-orange-600">AFG Bank — Banque financeuse unique</span>
+            <span className="text-xs font-bold text-orange-600">AFG BANK CI — Banque financeuse unique</span>
           </div>
         </div>
       </div>

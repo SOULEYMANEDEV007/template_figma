@@ -28,12 +28,12 @@ export function PDFDevis({ devis }: PDFDevisProps) {
   useEffect(() => {
     async function loadData() {
       try {
-        const { 
+        const {
           fournisseursOps,
           souscriptionsOps,
-          agencesAFGOps 
+          agencesAFGOps
         } = await import("@/lib/database/operations");
-        
+
         // Charger fournisseur
         const f = await fournisseursOps.getById(devis.fournisseurId);
         setFournisseur(f || null);
@@ -47,7 +47,7 @@ export function PDFDevis({ devis }: PDFDevisProps) {
           const ag = await agencesAFGOps.getById(s.agenceBanqueId);
           setAgence(ag);
         }
-        
+
         setLoading(false);
       } catch (error) {
         console.error("Erreur chargement données PDF devis:", error);
@@ -55,7 +55,7 @@ export function PDFDevis({ devis }: PDFDevisProps) {
         setLoading(false);
       }
     }
-    
+
     loadData();
   }, [devis]);
 
@@ -63,12 +63,12 @@ export function PDFDevis({ devis }: PDFDevisProps) {
   const handleTelecharger = async () => {
     try {
       toast.loading("Génération du PDF...");
-      
+
       await downloadPDFFromHTML(
         "pdf-devis",
         `Devis_${devis.numero}.pdf`
       );
-      
+
       toast.dismiss();
       toast.success("PDF téléchargé avec succès");
     } catch (error) {
@@ -128,7 +128,7 @@ export function PDFDevis({ devis }: PDFDevisProps) {
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">Devis Vitalis</h1>
-                  <p className="text-sm text-green-600 font-medium">Programme AFG Bank</p>
+                  <p className="text-sm text-green-600 font-medium">Programme AFG BANK CI</p>
                 </div>
               </div>
             </div>
@@ -189,7 +189,7 @@ export function PDFDevis({ devis }: PDFDevisProps) {
             <Package className="w-5 h-5 text-gray-700" />
             <h2 className="text-lg font-bold text-gray-900">Articles commandés</h2>
           </div>
-          
+
           <div className="border border-gray-200 rounded-lg overflow-hidden">
             <table className="w-full">
               <thead className="bg-gray-50">
@@ -231,7 +231,7 @@ export function PDFDevis({ devis }: PDFDevisProps) {
                 <span>Montant HT</span>
                 <span className="font-medium">{montantHT.toLocaleString("fr-FR")} FCFA</span>
               </div>
-              
+
               {devis.remisePourcentage > 0 && (
                 <>
                   <div className="flex justify-between text-green-700">
@@ -244,12 +244,12 @@ export function PDFDevis({ devis }: PDFDevisProps) {
                   </div>
                 </>
               )}
-              
+
               <div className="flex justify-between text-gray-700">
                 <span>TVA (18%)</span>
                 <span className="font-medium">{montantTVA.toLocaleString("fr-FR")} FCFA</span>
               </div>
-              
+
               <div className="flex justify-between text-lg font-bold text-gray-900 pt-3 border-t-2 border-gray-300">
                 <span>Total TTC</span>
                 <span className="text-green-600">{montantTTC.toLocaleString("fr-FR")} FCFA</span>
@@ -269,7 +269,7 @@ export function PDFDevis({ devis }: PDFDevisProps) {
               <span className="font-semibold">Délai :</span> {devis.delaiLivraison} jours ouvrés
             </p>
             <p className="text-sm text-blue-900">
-              <span className="font-semibold">Conditions Vitalis :</span> Livraison coordonnée avec AFG Bank
+              <span className="font-semibold">Conditions Vitalis :</span> Livraison coordonnée avec AFG BANK CI
             </p>
             {devis.observations && (
               <p className="text-sm text-blue-800 mt-2 italic">{devis.observations}</p>
@@ -286,7 +286,7 @@ export function PDFDevis({ devis }: PDFDevisProps) {
               <p className="text-xs text-gray-500">{fournisseur.nom}</p>
             </div>
             <div className="border border-gray-300 rounded-lg p-4 h-32">
-              <p className="text-sm font-semibold text-gray-700 mb-2">AFG Bank</p>
+              <p className="text-sm font-semibold text-gray-700 mb-2">AFG BANK CI</p>
               <p className="text-xs text-gray-500">Pour validation</p>
             </div>
           </div>

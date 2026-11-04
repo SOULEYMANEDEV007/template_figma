@@ -3,9 +3,9 @@
 ## 📁 Structure des types
 
 ### `vitalis.ts` — Types principaux du programme Vitalis
-Types métier alignés sur le workflow AFG Bank :
+Types métier alignés sur le workflow AFG BANK CI :
 - ✅ 1 Souscription → N Fournisseurs → N Devis
-- ✅ AFG Bank unique
+- ✅ AFG BANK CI unique
 - ✅ Type Souscripteur (Physique/Morale)
 - ✅ Workflow complet de financement
 
@@ -72,7 +72,7 @@ const souscription: Souscription = {
   reference: "SUB-2026-00001",
   souscripteurId: "SCP-001",
   typeSouscripteur: "physique",
-  banqueId: "AFG-001", // Toujours AFG Bank
+  banqueId: "AFG-001", // Toujours AFG BANK CI
   duree: 36, // 36 mois par défaut
   montantTotal: 0,
   statut: "brouillon",
@@ -180,7 +180,7 @@ function SouscriptionDetail({
   return (
     <div>
       <h2>Souscription {souscription.reference}</h2>
-      <p>Banque : AFG Bank</p>
+      <p>Banque : AFG BANK CI</p>
       <h3>Fournisseurs associés :</h3>
       <ul>
         {fournisseurs.map(f => (
@@ -211,7 +211,7 @@ function SouscriptionDetail({
 | `Paiement` | Financement AFG | `vitalis.ts` |
 | `Livraison` | Préparation et livraison | `vitalis.ts` |
 | `PointRelais` | Point de retrait | `vitalis.ts` |
-| `AgenceAFG` | Agence AFG Bank | `vitalis.ts` |
+| `AgenceAFG` | Agence AFG BANK CI | `vitalis.ts` |
 
 ### Statuts
 
@@ -227,7 +227,7 @@ function SouscriptionDetail({
 
 ## ⚠️ Règles importantes
 
-1. **AFG Bank unique** : Ne jamais permettre la sélection d'une autre banque
+1. **AFG BANK CI unique** : Ne jamais permettre la sélection d'une autre banque
 2. **Type souscripteur obligatoire** : Toujours spécifier `physique` ou `morale`
 3. **Plusieurs fournisseurs** : Utiliser `SouscriptionFournisseur` pour les associations
 4. **Durée 36 mois** : Valeur par défaut via `VITALIS_CONFIG.DUREE_PAR_DEFAUT`
@@ -262,4 +262,4 @@ Si vous avez une API backend, utilisez des outils comme :
 ---
 
 **Dernière mise à jour** : 9 septembre 2026  
-**Version** : 2.0 (Modèle Vitalis AFG Bank)
+**Version** : 2.0 (Modèle Vitalis AFG BANK CI)

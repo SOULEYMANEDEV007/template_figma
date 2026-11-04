@@ -151,7 +151,7 @@ function DevisPreview({
         <div className="flex flex-col items-end pl-2">
           <p className="text-[10px] font-bold text-[#0B2447] tracking-[0.2em] uppercase mb-1 mr-1">Financement</p>
           <div className="h-12 px-3 flex items-center justify-center rounded-lg bg-white border border-gray-200 shadow-sm">
-            <img src={IMAGES.logos.afgBank} alt="AFG Bank" className="h-8 object-contain" crossOrigin="anonymous" />
+            <img src={IMAGES.logos.afgBank} alt="AFG BANK CI" className="h-8 object-contain" crossOrigin="anonymous" />
           </div>
         </div>
       </div>
@@ -163,7 +163,7 @@ function DevisPreview({
           <div className="text-xs text-gray-400 font-mono">{devisRef}</div>
         </div>
         <div className="text-right">
-          <div className="font-bold text-gray-800">AFG Bank — Programme Vitalis</div>
+          <div className="font-bold text-gray-800">AFG BANK CI — Programme Vitalis</div>
           <div className="text-xs text-gray-500">{fournisseurNom}</div>
           {agenceNom && <div className="text-xs text-gray-400">Agence : {agenceNom}</div>}
         </div>
@@ -174,7 +174,7 @@ function DevisPreview({
         <div>
           <p className="font-bold text-gray-700 uppercase tracking-wider mb-1">Souscripteur (Bénéficiaire)</p>
           <p className="font-semibold text-gray-900 text-sm">{souscripteurPrenom} {souscripteurNom}</p>
-          <p className="text-gray-500 mt-1">Programme d'acquisition financé par AFG Bank</p>
+          <p className="text-gray-500 mt-1">Programme d'acquisition financé par AFG BANK CI</p>
         </div>
         <div className="text-right">
           <p className="font-bold text-gray-700 uppercase tracking-wider mb-1">Détails du Devis</p>
@@ -254,7 +254,7 @@ function DevisPreview({
       {/* Conditions générales */}
       <div className="text-[10px] text-gray-400 border-t border-gray-100 pt-3">
         <p><strong>Conditions :</strong> {conditions}</p>
-        <p className="mt-1">Ce devis est établi dans le cadre du Programme Vitalis financé par AFG Bank. Exonéré de TVA. Tout paiement sera effectué directement par AFG Bank.</p>
+        <p className="mt-1">Ce devis est établi dans le cadre du Programme Vitalis financé par AFG BANK CI. Exonéré de TVA. Tout paiement sera effectué directement par AFG BANK CI.</p>
       </div>
     </div>
   );
@@ -280,7 +280,7 @@ function NouveauDevisContent() {
     user?.role === "fournisseur" ? (user.organisationId || "") : ""
   );
   const [articles, setArticles] = useState<ArticleRow[]>([newArticle()]);
-  const [conditions, setConditions] = useState("Paiement à réception de la commande validée par AFG Bank. Livraison franco de port selon convention.");
+  const [conditions, setConditions] = useState("Paiement à réception de la commande validée par AFG BANK CI. Livraison franco de port selon convention.");
   const [observationsFourn, setObservationsFourn] = useState("");
   const [dateCreation] = useState(today());
   const [dateExpiration] = useState(inDays(60)); // 60 jours de validité selon consigne cliente
@@ -428,7 +428,7 @@ function NouveauDevisContent() {
         fournisseurId,
         fournisseurNom: fournisseurSelectionne?.nom || "",
         banqueId: "AFG-001",
-        banqueNom: "AFG Bank",
+        banqueNom: "AFG BANK CI",
         articles: articlesValides,
         totalHT, tva, totalTTC,
         conditions,
@@ -464,7 +464,7 @@ function NouveauDevisContent() {
 
         emitInAppNotification({
           titre: `Devis chiffré prêt : ${ref}`,
-          message: `Le devis pour la souscription ${souscription.reference} (${fmtCFA(totalTTC)}) est prêt. Le souscripteur peut imprimer son dossier et se déplacer à son agence AFG Bank pour le dépôt.`,
+          message: `Le devis pour la souscription ${souscription.reference} (${fmtCFA(totalTTC)}) est prêt. Le souscripteur peut imprimer son dossier et se déplacer à son agence AFG BANK CI pour le dépôt.`,
           categorie: "devis",
           reference: ref,
           lien: `/dashboard/souscriptions/${souscriptionId}`,
@@ -503,7 +503,7 @@ function NouveauDevisContent() {
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Établissement du Devis Vitalis</h1>
             <p className="text-sm text-gray-500 mt-0.5">
-              Chiffrage des articles demandés par le souscripteur · Application des remises · Éligibilité financement AFG Bank
+              Chiffrage des articles demandés par le souscripteur · Application des remises · Éligibilité financement AFG BANK CI
             </p>
           </div>
         </div>
@@ -551,7 +551,7 @@ function NouveauDevisContent() {
 
       {/* ── SECTION 1 : SOUSCRIPTION LIÉE & DEMANDE CLIENT (Pleine largeur) ── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        
+
         {/* Colonne 1 : Sélection Souscription & Fournisseur */}
         <div className="lg:col-span-5 bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-gray-100">
@@ -613,15 +613,14 @@ function NouveauDevisContent() {
                       {souscription.souscripteurPrenom} {souscription.souscripteurNom}
                     </span>
                   </div>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    souscription.typeSouscripteur === "physique" ? "bg-blue-100 text-blue-800" : "bg-purple-100 text-purple-800"
-                  }`}>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${souscription.typeSouscripteur === "physique" ? "bg-blue-100 text-blue-800" : "bg-purple-100 text-purple-800"
+                    }`}>
                     {souscription.typeSouscripteur === "physique" ? "Personne Physique" : "Personne Morale"}
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-gray-600 pt-1 border-t border-slate-200">
                   <p>Tél : <span className="font-semibold text-gray-800">{souscription.souscripteurTelephone || "—"}</span></p>
-                  <p>Banque : <span className="font-semibold text-gray-800">AFG Bank ({souscription.duree} mois)</span></p>
+                  <p>Banque : <span className="font-semibold text-gray-800">AFG BANK CI ({souscription.duree} mois)</span></p>
                   <p className="col-span-2">Email : <span className="font-semibold text-gray-800 font-mono text-[11px]">{souscription.souscripteurEmail || "—"}</span></p>
                   {souscription.agenceNom && (
                     <p className="col-span-2 text-blue-700 font-medium">Agence AFG : {souscription.agenceNom}</p>
@@ -686,7 +685,7 @@ function NouveauDevisContent() {
                     {besoinClient?.budget ? fmtCFA(besoinClient.budget) : "Non renseigné"}
                   </p>
                   <p className="text-[11px] text-gray-400 mt-0.5">
-                    Règlement direct par AFG Bank après accord
+                    Règlement direct par AFG BANK CI après accord
                   </p>
                 </div>
 
@@ -821,9 +820,8 @@ function NouveauDevisContent() {
                           type="number"
                           min={0}
                           max={100}
-                          className={`w-full px-2 py-2.5 text-sm font-bold text-right border rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-orange-400 shadow-2xs ${
-                            a.remise > 0 ? "border-green-400 bg-green-50 text-green-700" : "border-gray-300 text-gray-700"
-                          }`}
+                          className={`w-full px-2 py-2.5 text-sm font-bold text-right border rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-orange-400 shadow-2xs ${a.remise > 0 ? "border-green-400 bg-green-50 text-green-700" : "border-gray-300 text-gray-700"
+                            }`}
                           value={a.remise || 0}
                           onChange={e => updateArticle(a._key, "remise", Number(e.target.value))}
                         />
@@ -860,7 +858,7 @@ function NouveauDevisContent() {
           <div className="flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-xl mt-4 text-xs text-emerald-800">
             <ShieldCheck className="w-4 h-4 text-emerald-600 flex-shrink-0" />
             <p>
-              <strong>Programme VITALIS FADES :</strong> Exonération totale de TVA (0%). Les remises s'appliquent directement ligne par ligne. Le montant Total TTC sera décaissé par AFG Bank.
+              <strong>Programme VITALIS FADES :</strong> Exonération totale de TVA (0%). Les remises s'appliquent directement ligne par ligne. Le montant Total TTC sera décaissé par AFG BANK CI.
             </p>
           </div>
 
@@ -889,7 +887,7 @@ function NouveauDevisContent() {
 
       {/* ── SECTION 3 : CONDITIONS DE LIVRAISON & RÉCAPITULATIF FINANCIER ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        
+
         {/* Colonne gauche : Conditions de livraison & Délais Vitalis */}
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-4">
           <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
@@ -943,10 +941,10 @@ function NouveauDevisContent() {
           <div>
             <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
               <Wallet className="w-5 h-5 text-orange-500" />
-              <span>Engagement Financier & Décaissement AFG Bank</span>
+              <span>Engagement Financier & Décaissement AFG BANK CI</span>
             </h3>
             <p className="text-xs text-gray-500 mt-0.5">
-              Modalités de règlement par AFG Bank pour le compte du souscripteur
+              Modalités de règlement par AFG BANK CI pour le compte du souscripteur
             </p>
           </div>
 
@@ -972,7 +970,7 @@ function NouveauDevisContent() {
           </div>
 
           <div className="text-[11px] text-gray-500 leading-relaxed">
-            🛡️ <strong>Règlement Garanti :</strong> Une fois le devis soumis et le dossier validé par l'agence AFG Bank, le décaissement financier est émis directement par AFG Bank vers le compte du fournisseur agréé.
+            🛡️ <strong>Règlement Garanti :</strong> Une fois le devis soumis et le dossier validé par l'agence AFG BANK CI, le décaissement financier est émis directement par AFG BANK CI vers le compte du fournisseur agréé.
           </div>
         </div>
       </div>
@@ -998,7 +996,7 @@ function NouveauDevisContent() {
             <FileText className="w-4 h-4" />
             <span>Enregistrer en Brouillon</span>
           </button>
-          
+
           <button
             type="button"
             onClick={() => handleSubmit(false)}

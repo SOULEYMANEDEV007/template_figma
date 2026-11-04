@@ -347,11 +347,10 @@ export function FournisseursMultiSelect({
               <button
                 type="button"
                 onClick={() => setFilterDomaine("all")}
-                className={`px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
-                  filterDomaine === "all"
-                    ? "bg-orange-500 text-white shadow-xs"
-                    : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
-                }`}
+                className={`px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${filterDomaine === "all"
+                  ? "bg-orange-500 text-white shadow-xs"
+                  : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+                  }`}
               >
                 Tous les domaines ({allFournisseurs.length})
               </button>
@@ -362,11 +361,10 @@ export function FournisseursMultiSelect({
                     key={dom.id}
                     type="button"
                     onClick={() => setFilterDomaine(dom.id)}
-                    className={`px-2 py-1 rounded-lg text-xs font-medium whitespace-nowrap flex items-center gap-1 transition-colors ${
-                      filterDomaine === dom.id
-                        ? "bg-gray-900 text-white shadow-xs"
-                        : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
-                    }`}
+                    className={`px-2 py-1 rounded-lg text-xs font-medium whitespace-nowrap flex items-center gap-1 transition-colors ${filterDomaine === dom.id
+                      ? "bg-gray-900 text-white shadow-xs"
+                      : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+                      }`}
                   >
                     <span>{dom.emoji}</span>
                     <span>{dom.nom.split("&")[0].trim()}</span>
@@ -417,18 +415,16 @@ export function FournisseursMultiSelect({
                   <div
                     key={f.id}
                     onClick={() => toggleOne(f.id)}
-                    className={`p-2.5 rounded-xl transition-all cursor-pointer flex items-center gap-3 select-none ${
-                      isSelected
-                        ? "bg-orange-50/70 border border-orange-200"
-                        : "hover:bg-gray-50 border border-transparent"
-                    }`}
+                    className={`p-2.5 rounded-xl transition-all cursor-pointer flex items-center gap-3 select-none ${isSelected
+                      ? "bg-orange-50/70 border border-orange-200"
+                      : "hover:bg-gray-50 border border-transparent"
+                      }`}
                   >
                     {/* Checkbox visuelle */}
-                    <div className={`w-5 h-5 rounded-md border flex items-center justify-center flex-shrink-0 transition-colors ${
-                      isSelected
-                        ? "bg-orange-500 border-orange-500 text-white shadow-xs"
-                        : "border-gray-300 bg-white"
-                    }`}>
+                    <div className={`w-5 h-5 rounded-md border flex items-center justify-center flex-shrink-0 transition-colors ${isSelected
+                      ? "bg-orange-500 border-orange-500 text-white shadow-xs"
+                      : "border-gray-300 bg-white"
+                      }`}>
                       {isSelected && <Check className="w-3.5 h-3.5" />}
                     </div>
 
@@ -506,7 +502,7 @@ export function FournisseursMultiSelect({
             </p>
             <p className="text-[11px] text-blue-800">
               Chaque fournisseur sélectionné ({selectedIds.length} au total, dans {secteursDistincts} secteur{secteursDistincts > 1 ? "s" : ""}) émettra son propre devis pour ses articles.
-              Tous ces devis seront réunis en <strong>un dossier consolidé unique</strong> transmis à AFG Bank pour l'accord de financement.
+              Tous ces devis seront réunis en <strong>un dossier consolidé unique</strong> transmis à AFG BANK CI pour l'accord de financement.
             </p>
           </div>
         </div>

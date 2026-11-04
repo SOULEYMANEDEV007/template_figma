@@ -34,8 +34,8 @@ const BANQUES_PARTENAIRES = [
   {
     id: "afg-bank",
     code: "AFG",
-    nom: "AFG Bank Côte d'Ivoire",
-    nomCourt: "AFG Bank CI",
+    nom: "AFG BANK CI Côte d'Ivoire",
+    nomCourt: "AFG BANK CI CI",
     statut: "actif",
     isPilote: true,
     logo: IMAGES.logos.afgBank,
@@ -118,7 +118,7 @@ export default function AdminBanquesPage() {
     });
   }, [agencesAFG, search, filterVille, filterStatut]);
 
-  // Métriques globales du réseau AFG Bank
+  // Métriques globales du réseau AFG BANK CI
   const totalAgences = agencesAFG.length;
   const agencesActives = agencesAFG.filter(a => a.statut === "actif").length;
   const agencesAbidjan = agencesAFG.filter(a => a.ville.toLowerCase().includes("abidjan")).length;
@@ -164,7 +164,7 @@ export default function AdminBanquesPage() {
       toast.success(`${form.nom} mise à jour avec succès`);
     } else {
       const created = addAgenceAFG(form);
-      toast.success(`${created.nom} ajoutée au réseau AFG Bank`);
+      toast.success(`${created.nom} ajoutée au réseau AFG BANK CI`);
     }
 
     setShowForm(false);
@@ -188,7 +188,7 @@ export default function AdminBanquesPage() {
       <div className="page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="page-title">AFG Bank Côte d'Ivoire</h1>
+            <h1 className="page-title">AFG BANK CI Côte d'Ivoire</h1>
             <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
               Banque Partenaire Active
             </span>
@@ -207,42 +207,42 @@ export default function AdminBanquesPage() {
 
       {/* 4 Cartes KPIs Synthèse Réseau */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-blue-600 p-4 shadow-sm">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold text-gray-500">Réseau AFG Bank</p>
-                <Building2 className="w-4 h-4 text-blue-600" />
-              </div>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{totalAgences}</p>
-              <p className="text-[11px] text-gray-400 mt-0.5">{agencesActives} agences opérationnelles</p>
-            </div>
-
-            <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-teal-500 p-4 shadow-sm">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold text-gray-500">Grand Abidjan</p>
-                <MapPin className="w-4 h-4 text-teal-500" />
-              </div>
-              <p className="text-2xl font-bold text-teal-700 mt-1">{agencesAbidjan}</p>
-              <p className="text-[11px] text-gray-400 mt-0.5">Plateau, Cocody, Marcory, Yopougon</p>
-            </div>
-
-            <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-amber-500 p-4 shadow-sm">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold text-gray-500">Intérieur du Pays</p>
-                <MapPin className="w-4 h-4 text-amber-500" />
-              </div>
-              <p className="text-2xl font-bold text-amber-700 mt-1">{agencesInterieur}</p>
-              <p className="text-[11px] text-gray-400 mt-0.5">Bouaké, Yamoussoukro, San-Pedro...</p>
-            </div>
-
-            <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-emerald-500 p-4 shadow-sm">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold text-gray-500">Dossiers Instruits</p>
-                <ShieldCheck className="w-4 h-4 text-emerald-500" />
-              </div>
-              <p className="text-2xl font-bold text-emerald-700 mt-1">{totalDossiersReseau}</p>
-              <p className="text-[11px] text-gray-400 mt-0.5">{fmtCFA(montantTotalFinanceReseau)} financés</p>
-            </div>
+        <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-blue-600 p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-semibold text-gray-500">Réseau AFG BANK CI</p>
+            <Building2 className="w-4 h-4 text-blue-600" />
           </div>
+          <p className="text-2xl font-bold text-gray-900 mt-1">{totalAgences}</p>
+          <p className="text-[11px] text-gray-400 mt-0.5">{agencesActives} agences opérationnelles</p>
+        </div>
+
+        <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-teal-500 p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-semibold text-gray-500">Grand Abidjan</p>
+            <MapPin className="w-4 h-4 text-teal-500" />
+          </div>
+          <p className="text-2xl font-bold text-teal-700 mt-1">{agencesAbidjan}</p>
+          <p className="text-[11px] text-gray-400 mt-0.5">Plateau, Cocody, Marcory, Yopougon</p>
+        </div>
+
+        <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-amber-500 p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-semibold text-gray-500">Intérieur du Pays</p>
+            <MapPin className="w-4 h-4 text-amber-500" />
+          </div>
+          <p className="text-2xl font-bold text-amber-700 mt-1">{agencesInterieur}</p>
+          <p className="text-[11px] text-gray-400 mt-0.5">Bouaké, Yamoussoukro, San-Pedro...</p>
+        </div>
+
+        <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-emerald-500 p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-semibold text-gray-500">Dossiers Instruits</p>
+            <ShieldCheck className="w-4 h-4 text-emerald-500" />
+          </div>
+          <p className="text-2xl font-bold text-emerald-700 mt-1">{totalDossiersReseau}</p>
+          <p className="text-[11px] text-gray-400 mt-0.5">{fmtCFA(montantTotalFinanceReseau)} financés</p>
+        </div>
+      </div>
 
       {/* ── Barre de Filtres et Recherche ── */}
       <div className="section-card p-4 space-y-3">
@@ -293,7 +293,7 @@ export default function AdminBanquesPage() {
         </div>
       </div>
 
-      {/* ── Grille des Agences AFG Bank ── */}
+      {/* ── Grille des Agences AFG BANK CI ── */}
       {filtered.length === 0 ? (
         <div className="section-card py-16 text-center">
           <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-3">
@@ -432,7 +432,7 @@ export default function AdminBanquesPage() {
       <LDFModal
         open={showForm}
         onClose={() => setShowForm(false)}
-        title={editTarget ? `Modifier ${editTarget.nom}` : "Ajouter une agence AFG Bank"}
+        title={editTarget ? `Modifier ${editTarget.nom}` : "Ajouter une agence AFG BANK CI"}
         size="md"
       >
         <div className="grid grid-cols-2 gap-4">
@@ -541,8 +541,8 @@ export default function AdminBanquesPage() {
         open={!!showConfirmDelete}
         onClose={() => setShowConfirmDelete(null)}
         onConfirm={handleDelete}
-        title="Supprimer l'agence AFG Bank"
-        message={`Voulez-vous supprimer ${showConfirmDelete?.nom} (${showConfirmDelete?.ville}) du réseau AFG Bank CI ?`}
+        title="Supprimer l'agence AFG BANK CI"
+        message={`Voulez-vous supprimer ${showConfirmDelete?.nom} (${showConfirmDelete?.ville}) du réseau AFG BANK CI CI ?`}
         confirmLabel="Supprimer"
         variant="danger"
       />

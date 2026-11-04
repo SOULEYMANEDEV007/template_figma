@@ -270,7 +270,7 @@ export default function AdminUtilisateursPage() {
           <p className="text-2xl font-bold text-blue-700">
             {users.filter((u) => u.role === "banque").length}
           </p>
-          <p className="text-xs text-gray-500 mt-0.5">Responsables AFG Bank</p>
+          <p className="text-xs text-gray-500 mt-0.5">Responsables AFG BANK CI</p>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 border-l-4 border-l-amber-500 p-4 shadow-sm">
           <p className="text-2xl font-bold text-amber-700">
@@ -344,9 +344,8 @@ export default function AdminUtilisateursPage() {
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2.5">
                           <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-                              ROLE_ICON_BG[roleKey] || "bg-gray-100 text-gray-700"
-                            }`}
+                            className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${ROLE_ICON_BG[roleKey] || "bg-gray-100 text-gray-700"
+                              }`}
                           >
                             {initial}
                           </div>
@@ -361,18 +360,16 @@ export default function AdminUtilisateursPage() {
                         <RoleBadge role={u.role} />
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-600">
-                        {u.organisationName || (u.role === "banque" ? "AFG Bank" : "LDF Groupe")}
+                        {u.organisationName || (u.role === "banque" ? "AFG BANK CI" : "LDF Groupe")}
                       </td>
                       <td className="py-3 px-4">
                         <span
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
-                            u.isActive ? "bg-emerald-50 text-emerald-700" : "bg-gray-100 text-gray-500"
-                          }`}
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${u.isActive ? "bg-emerald-50 text-emerald-700" : "bg-gray-100 text-gray-500"
+                            }`}
                         >
                           <span
-                            className={`w-1.5 h-1.5 rounded-full ${
-                              u.isActive ? "bg-emerald-500" : "bg-gray-400"
-                            }`}
+                            className={`w-1.5 h-1.5 rounded-full ${u.isActive ? "bg-emerald-500" : "bg-gray-400"
+                              }`}
                           />
                           {u.isActive ? "Actif" : "Inactif"}
                         </span>
@@ -383,9 +380,8 @@ export default function AdminUtilisateursPage() {
                         ) : (
                           <div className="flex items-center gap-1.5">
                             <span
-                              className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
-                                isRecent ? "bg-emerald-500 animate-pulse" : "bg-gray-300"
-                              }`}
+                              className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${isRecent ? "bg-emerald-500 animate-pulse" : "bg-gray-300"
+                                }`}
                             />
                             <span className={isRecent ? "text-emerald-700 font-semibold" : "text-gray-600"}>
                               {loginText}
@@ -419,11 +415,10 @@ export default function AdminUtilisateursPage() {
                           <button
                             onClick={() => setShowConfirmDisable(u)}
                             title={u.isActive ? "Désactiver" : "Réactiver"}
-                            className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${
-                              u.isActive
-                                ? "text-gray-400 hover:bg-red-50 hover:text-red-600"
-                                : "text-gray-400 hover:bg-emerald-50 hover:text-emerald-600"
-                            }`}
+                            className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${u.isActive
+                              ? "text-gray-400 hover:bg-red-50 hover:text-red-600"
+                              : "text-gray-400 hover:bg-emerald-50 hover:text-emerald-600"
+                              }`}
                           >
                             {u.isActive ? <UserX className="w-3.5 h-3.5" /> : <UserCheck className="w-3.5 h-3.5" />}
                           </button>
@@ -566,13 +561,13 @@ export default function AdminUtilisateursPage() {
                     const formatted = isNaN(d.getTime())
                       ? log.date
                       : d.toLocaleString("fr-FR", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          second: "2-digit",
-                        });
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                      });
 
                     return (
                       <tr key={log.id} className="hover:bg-gray-50/80">
@@ -617,11 +612,9 @@ export default function AdminUtilisateursPage() {
         onClose={() => setShowConfirmDisable(null)}
         onConfirm={() => showConfirmDisable && handleDisable(showConfirmDisable)}
         title={showConfirmDisable?.isActive ? "Désactiver l'utilisateur" : "Réactiver l'utilisateur"}
-        message={`Voulez-vous ${
-          showConfirmDisable?.isActive ? "désactiver" : "réactiver"
-        } le compte de ${showConfirmDisable?.firstName || showConfirmDisable?.nom || ""} ${
-          showConfirmDisable?.lastName || ""
-        } (${showConfirmDisable?.email}) ?`}
+        message={`Voulez-vous ${showConfirmDisable?.isActive ? "désactiver" : "réactiver"
+          } le compte de ${showConfirmDisable?.firstName || showConfirmDisable?.nom || ""} ${showConfirmDisable?.lastName || ""
+          } (${showConfirmDisable?.email}) ?`}
         confirmLabel={showConfirmDisable?.isActive ? "Désactiver" : "Réactiver"}
         variant={showConfirmDisable?.isActive ? "warning" : "success"}
       />

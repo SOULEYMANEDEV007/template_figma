@@ -90,7 +90,7 @@ export interface VSouscription {
   typeSouscripteur: 'physique' | 'morale';
   // Banque (toujours AFG)
   banqueId: 'AFG-001';
-  banqueNom: 'AFG Bank';
+  banqueNom: 'AFG BANK CI';
   agenceId?: string;
   agenceNom?: string;
   // Fournisseurs associés
@@ -129,7 +129,7 @@ export interface VDevis {
   fournisseurNom: string;
   // Banque
   banqueId: 'AFG-001';
-  banqueNom: 'AFG Bank';
+  banqueNom: 'AFG BANK CI';
   // Articles
   articles: VArticleDevis[];
   // Montants
@@ -183,9 +183,9 @@ export interface VDossier {
   fournisseursNoms: string;
   fournisseurNom?: string;
   devisIds: string[];
-  // AFG Bank
+  // AFG BANK CI
   banqueId: 'AFG-001';
-  banqueNom: 'AFG Bank';
+  banqueNom: 'AFG BANK CI';
   agenceId?: string;
   // Montant total (somme de tous les devis)
   montantTotal: number;
@@ -304,7 +304,7 @@ const SEED_USERS: VUser[] = [
     role: 'banque',
     banqueId: 'AFG-001',
     organisationId: 'AFG-001',
-    organisationName: 'AFG Bank',
+    organisationName: 'AFG BANK CI',
     telephone: '+225 07 01 00 00 00',
     phone: '+225 07 01 00 00 00',
     statut: 'actif',
@@ -613,7 +613,7 @@ const SEED_POINTS_RELAIS: VPointRelais[] = [
 ];
 
 // ============================================================
-// DONNÉES DÉMO (pour la présentation AFG Bank)
+// DONNÉES DÉMO (pour la présentation AFG BANK CI)
 // ============================================================
 
 const today = new Date().toISOString().split('T')[0];
@@ -626,7 +626,7 @@ const DEMO_SOUSCRIPTIONS: VSouscription[] = [
     id: 'SOUS-001', reference: 'VF-2026-001', typeSouscripteur: 'physique',
     souscripteurId: 'SCP-001', souscripteurNom: 'KOUASSI', souscripteurPrenom: 'Jean-Marc',
     souscripteurTelephone: '+225 07 12 34 56 78', souscripteurEmail: 'jm.kouassi@example.ci',
-    banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-001', agenceNom: 'Agence Plateau',
+    banqueId: 'AFG-001', banqueNom: 'AFG BANK CI', agenceId: 'AGE-AFG-001', agenceNom: 'Agence Plateau',
     fournisseurs: [{ fournisseurId: 'FOUR-LDF-001', fournisseurNom: 'Librairie de France Groupe', devisId: 'DEV-001', statut: 'valide' }],
     montantTotal: 850000, duree: 36, statut: 'accepte',
     dateCreation: oneWeekAgo, dateMiseAJour: twoDaysAgo, dateValidation: twoDaysAgo,
@@ -636,7 +636,7 @@ const DEMO_SOUSCRIPTIONS: VSouscription[] = [
     id: 'SOUS-002', reference: 'VF-2026-002', typeSouscripteur: 'physique',
     souscripteurId: 'SCP-002', souscripteurNom: 'TOURÉ', souscripteurPrenom: 'Aminata',
     souscripteurTelephone: '+225 05 23 45 67 89', souscripteurEmail: 'a.toure@education.gouv.ci',
-    banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-002', agenceNom: 'Agence Cocody',
+    banqueId: 'AFG-001', banqueNom: 'AFG BANK CI', agenceId: 'AGE-AFG-002', agenceNom: 'Agence Cocody',
     fournisseurs: [{ fournisseurId: 'FOUR-DRO-002', fournisseurNom: 'Drocolor', devisId: 'DEV-002', statut: 'devis_cree' }],
     montantTotal: 650000, duree: 36, statut: 'pret_pour_depot',
     dateCreation: yesterday, dateMiseAJour: yesterday,
@@ -645,7 +645,7 @@ const DEMO_SOUSCRIPTIONS: VSouscription[] = [
     id: 'SOUS-003', reference: 'VF-2026-003', typeSouscripteur: 'physique',
     souscripteurId: 'SCP-003', souscripteurNom: 'KONÉ', souscripteurPrenom: 'Ibrahim',
     souscripteurTelephone: '+225 07 77 88 99 00', souscripteurEmail: 'i.kone@gmail.com',
-    banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-001', agenceNom: 'Agence Plateau',
+    banqueId: 'AFG-001', banqueNom: 'AFG BANK CI', agenceId: 'AGE-AFG-001', agenceNom: 'Agence Plateau',
     fournisseurs: [
       { fournisseurId: 'FOUR-LDF-001', fournisseurNom: 'Librairie de France Groupe', devisId: 'DEV-003', statut: 'devis_cree' },
       { fournisseurId: 'FOUR-ATC-003', fournisseurNom: 'ATC Comafrique', statut: 'en_attente' },
@@ -659,7 +659,7 @@ const DEMO_SOUSCRIPTIONS: VSouscription[] = [
     souscripteurId: 'SCP-004', souscripteurNom: 'DIALLO', souscripteurPrenom: 'Fatoumata',
     souscripteurEntreprise: 'DIGITAL SOLUTIONS CI', souscripteurTelephone: '+225 27 22 33 44 55',
     souscripteurEmail: 'contact@digitalsolutions.ci',
-    banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-003', agenceNom: 'Agence Marcory',
+    banqueId: 'AFG-001', banqueNom: 'AFG BANK CI', agenceId: 'AGE-AFG-003', agenceNom: 'Agence Marcory',
     fournisseurs: [{ fournisseurId: 'FOUR-INO-004', fournisseurNom: 'INOVIM', statut: 'en_attente' }],
     montantTotal: 2500000, duree: 36, statut: 'en_preparation',
     dateCreation: today, dateMiseAJour: today,
@@ -669,7 +669,7 @@ const DEMO_SOUSCRIPTIONS: VSouscription[] = [
     id: 'SOUS-005', reference: 'VF-2026-005', typeSouscripteur: 'physique',
     souscripteurId: 'SCP-005', souscripteurNom: 'ASSI', souscripteurPrenom: 'Brice',
     souscripteurTelephone: '+225 05 87 65 43 21', souscripteurEmail: 'b.assi@yahoo.fr',
-    banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-004', agenceNom: 'Agence Yopougon',
+    banqueId: 'AFG-001', banqueNom: 'AFG BANK CI', agenceId: 'AGE-AFG-004', agenceNom: 'Agence Yopougon',
     fournisseurs: [{ fournisseurId: 'FOUR-DRO-002', fournisseurNom: 'Drocolor', devisId: 'DEV-005', statut: 'valide' }],
     montantTotal: 975000, duree: 36, statut: 'livre',
     dateCreation: oneWeekAgo, dateMiseAJour: yesterday, dateValidation: twoDaysAgo,
@@ -681,7 +681,7 @@ const DEMO_DEVIS: VDevis[] = [
     id: 'DEV-001', reference: 'DEV-2026-001', souscriptionId: 'SOUS-001', souscriptionRef: 'VF-2026-001',
     souscripteurNom: 'KOUASSI', souscripteurPrenom: 'Jean-Marc',
     fournisseurId: 'FOUR-LDF-001', fournisseurNom: 'Librairie de France Groupe',
-    banqueId: 'AFG-001', banqueNom: 'AFG Bank',
+    banqueId: 'AFG-001', banqueNom: 'AFG BANK CI',
     articles: [
       { id: 'ART-001', reference: 'CAH-96', designation: 'Cahiers 96 pages', quantite: 50, prixUnitaire: 500, remise: 0, montantHT: 25000 },
       { id: 'ART-002', reference: 'STY-BIC', designation: 'Stylos bleus Bic (boîte)', quantite: 20, prixUnitaire: 2500, remise: 5, montantHT: 47500 },
@@ -690,7 +690,7 @@ const DEMO_DEVIS: VDevis[] = [
       { id: 'ART-005', reference: 'RAM-A4', designation: 'Ramettes Papier A4 (500 feuilles)', quantite: 20, prixUnitaire: 5000, remise: 5, montantHT: 95000 },
     ],
     totalHT: 287500, tva: 0, totalTTC: 287500,
-    conditions: 'Paiement à la réception de la commande validée par AFG Bank. Livraison franco de port à Abidjan.',
+    conditions: 'Paiement à la réception de la commande validée par AFG BANK CI. Livraison franco de port à Abidjan.',
     delaiLivraisonAbidjan: '7 jours ouvrés', delaiLivraisonInterieur: '15 jours ouvrés', validiteDevis: '60 jours',
     statut: 'valide', dateCreation: oneWeekAgo, dateExpiration: today, dateValidation: twoDaysAgo, dateMiseAJour: twoDaysAgo,
   },
@@ -698,7 +698,7 @@ const DEMO_DEVIS: VDevis[] = [
     id: 'DEV-002', reference: 'DEV-2026-002', souscriptionId: 'SOUS-002', souscriptionRef: 'VF-2026-002',
     souscripteurNom: 'TOURÉ', souscripteurPrenom: 'Aminata',
     fournisseurId: 'FOUR-DRO-002', fournisseurNom: 'Drocolor',
-    banqueId: 'AFG-001', banqueNom: 'AFG Bank',
+    banqueId: 'AFG-001', banqueNom: 'AFG BANK CI',
     articles: [
       { id: 'ART-006', reference: 'DRO-PAC-25', designation: 'Peinture Acrylique Extérieure Drocolor (Fût 25kg)', quantite: 8, prixUnitaire: 45000, remise: 5, montantHT: 342000 },
       { id: 'ART-007', reference: 'DRO-PRI-20', designation: 'Sous-couche Primaire d\'Accrochage Façade (20L)', quantite: 4, prixUnitaire: 38000, remise: 0, montantHT: 152000 },
@@ -713,7 +713,7 @@ const DEMO_DEVIS: VDevis[] = [
     id: 'DEV-003', reference: 'DEV-2026-003', souscriptionId: 'SOUS-003', souscriptionRef: 'VF-2026-003',
     souscripteurNom: 'KONÉ', souscripteurPrenom: 'Ibrahim',
     fournisseurId: 'FOUR-LDF-001', fournisseurNom: 'Librairie de France Groupe',
-    banqueId: 'AFG-001', banqueNom: 'AFG Bank',
+    banqueId: 'AFG-001', banqueNom: 'AFG BANK CI',
     articles: [
       { id: 'ART-007', reference: 'CLS-A4', designation: 'Classeurs A4', quantite: 20, prixUnitaire: 3500, remise: 0, montantHT: 70000 },
       { id: 'ART-008', reference: 'RAM-A4', designation: 'Ramettes papier A4', quantite: 15, prixUnitaire: 5000, remise: 5, montantHT: 71250 },
@@ -727,7 +727,7 @@ const DEMO_DEVIS: VDevis[] = [
     id: 'DEV-005', reference: 'DEV-2026-005', souscriptionId: 'SOUS-005', souscriptionRef: 'VF-2026-005',
     souscripteurNom: 'ASSI', souscripteurPrenom: 'Brice',
     fournisseurId: 'FOUR-DRO-002', fournisseurNom: 'Drocolor',
-    banqueId: 'AFG-001', banqueNom: 'AFG Bank',
+    banqueId: 'AFG-001', banqueNom: 'AFG BANK CI',
     articles: [
       { id: 'ART-009', reference: 'DRO-PFH-25', designation: 'Peinture Façade Hydrofuge Drocolor Pro 25L', quantite: 8, prixUnitaire: 65000, remise: 5, montantHT: 494000 },
       { id: 'ART-010', reference: 'DRO-PEI-20', designation: 'Peinture Émulsion Intérieure Blanche Drocolor 20L', quantite: 8, prixUnitaire: 40000, remise: 0, montantHT: 320000 },
@@ -745,7 +745,7 @@ const DEMO_DOSSIERS: VDossier[] = [
     id: 'DOS-001', reference: 'DOS-2026-001', souscriptionId: 'SOUS-001', souscriptionRef: 'VF-2026-001',
     souscripteurId: 'SCP-001', souscripteurNom: 'KOUASSI', souscripteurPrenom: 'Jean-Marc', typeSouscripteur: 'physique',
     fournisseursNoms: 'Librairie de France Groupe', devisIds: ['DEV-001'],
-    banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-001',
+    banqueId: 'AFG-001', banqueNom: 'AFG BANK CI', agenceId: 'AGE-AFG-001',
     montantTotal: 850000, statut: 'accepte',
     commentaireAFG: 'Dossier conforme aux conditions du programme Vitalis.',
     dateCreation: twoDaysAgo, dateReception: twoDaysAgo, dateDebutAnalyse: yesterday, dateValidation: today, dateMiseAJour: today,
@@ -754,7 +754,7 @@ const DEMO_DOSSIERS: VDossier[] = [
     id: 'DOS-002', reference: 'DOS-2026-002', souscriptionId: 'SOUS-002', souscriptionRef: 'VF-2026-002',
     souscripteurId: 'SCP-002', souscripteurNom: 'TOURÉ', souscripteurPrenom: 'Aminata', typeSouscripteur: 'physique',
     fournisseursNoms: 'Drocolor', devisIds: ['DEV-002'],
-    banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-002',
+    banqueId: 'AFG-001', banqueNom: 'AFG BANK CI', agenceId: 'AGE-AFG-002',
     montantTotal: 650000, statut: 'en_analyse_bancaire',
     dateCreation: yesterday, dateReception: yesterday, dateDebutAnalyse: today, dateMiseAJour: today,
   },
@@ -762,7 +762,7 @@ const DEMO_DOSSIERS: VDossier[] = [
     id: 'DOS-003', reference: 'DOS-2026-003', souscriptionId: 'SOUS-003', souscriptionRef: 'VF-2026-003',
     souscripteurId: 'SCP-003', souscripteurNom: 'KONÉ', souscripteurPrenom: 'Ibrahim', typeSouscripteur: 'physique',
     fournisseursNoms: 'LDF Groupe + ATC Comafrique', devisIds: ['DEV-003'],
-    banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-001',
+    banqueId: 'AFG-001', banqueNom: 'AFG BANK CI', agenceId: 'AGE-AFG-001',
     montantTotal: 1200000, statut: 'depose_banque',
     dateCreation: today, dateReception: today, dateMiseAJour: today,
   },
@@ -770,7 +770,7 @@ const DEMO_DOSSIERS: VDossier[] = [
     id: 'DOS-004', reference: 'DOS-2026-004', souscriptionId: 'SOUS-005', souscriptionRef: 'VF-2026-005',
     souscripteurId: 'SCP-005', souscripteurNom: 'ASSI', souscripteurPrenom: 'Brice', typeSouscripteur: 'physique',
     fournisseursNoms: 'Drocolor', devisIds: ['DEV-005'],
-    banqueId: 'AFG-001', banqueNom: 'AFG Bank', agenceId: 'AGE-AFG-004',
+    banqueId: 'AFG-001', banqueNom: 'AFG BANK CI', agenceId: 'AGE-AFG-004',
     montantTotal: 975000, statut: 'livre',
     commentaireAFG: 'Financement accordé — Équipements professionnels conformes au programme.',
     dateCreation: oneWeekAgo, dateReception: oneWeekAgo, dateDebutAnalyse: twoDaysAgo, dateValidation: yesterday, dateMiseAJour: yesterday,
@@ -787,7 +787,7 @@ const DEMO_PAIEMENTS: VPaiement[] = [
     dossierRef: 'DOS-2026-004',
     souscripteurNom: 'ASSI Brice',
     banqueId: 'BNQ-AFG-001',
-    banqueNom: 'AFG Bank',
+    banqueNom: 'AFG BANK CI',
     fournisseurId: 'FOUR-DRO-002',
     fournisseurNom: 'Drocolor',
     montantTotal: 975000,
@@ -807,7 +807,7 @@ const DEMO_PAIEMENTS: VPaiement[] = [
     dossierRef: 'DOS-2026-001',
     souscripteurNom: 'KOUASSI Jean-Marc',
     banqueId: 'BNQ-AFG-001',
-    banqueNom: 'AFG Bank',
+    banqueNom: 'AFG BANK CI',
     fournisseurId: 'FOUR-LDF-001',
     fournisseurNom: 'Librairie de France Groupe',
     montantTotal: 850000,
@@ -827,7 +827,7 @@ const DEMO_PAIEMENTS: VPaiement[] = [
     dossierRef: 'DOS-2026-003',
     souscripteurNom: 'KOFFI Amenan Marie',
     banqueId: 'BNQ-AFG-001',
-    banqueNom: 'AFG Bank',
+    banqueNom: 'AFG BANK CI',
     fournisseurId: 'FOUR-LDF-001',
     fournisseurNom: 'Librairie de France Groupe',
     montantTotal: 540000,
@@ -966,7 +966,7 @@ export const useVitalisDb = create<VitalisDbState>()(
       users: SEED_USERS,
       connexionsLogs: SEED_CONNEXIONS_LOGS,
       notifications: [
-        { id: 'NOTIF-001', titre: 'Bienvenue', message: 'Bienvenue sur la plateforme Vitalis AFG Bank', lue: false, date: new Date().toISOString() }
+        { id: 'NOTIF-001', titre: 'Bienvenue', message: 'Bienvenue sur la plateforme Vitalis AFG BANK CI', lue: false, date: new Date().toISOString() }
       ],
       _seeded: true,
 
@@ -1061,7 +1061,7 @@ export const useVitalisDb = create<VitalisDbState>()(
               fournisseursNoms: (s.fournisseurs || []).map(f => f.fournisseurNom).join(', ') || 'Librairie de France Groupe',
               devisIds: devisLies.map(d => d.id),
               banqueId: 'AFG-001',
-              banqueNom: 'AFG Bank',
+              banqueNom: 'AFG BANK CI',
               agenceId: s.agenceId || 'AGE-AFG-001',
               montantTotal: s.montantTotal || devisLies.reduce((acc, d) => acc + (d.totalTTC || 0), 0),
               statut: 'depose_banque',
@@ -1267,7 +1267,7 @@ export const useVitalisDb = create<VitalisDbState>()(
                 fournisseurNom: fournisseurs.map(f => f.fournisseurNom).join(', '),
                 devisIds: fournisseurs.map(f => f.devisId as string).filter(Boolean),
                 banqueId: 'AFG-001',
-                banqueNom: 'AFG Bank',
+                banqueNom: 'AFG BANK CI',
                 agenceId: sous.agenceId || 'AGE-AFG-001',
                 montantTotal,
                 montant: montantTotal,
@@ -1345,7 +1345,7 @@ export const useVitalisDb = create<VitalisDbState>()(
         get().addHistorique({
           souscriptionId: data.souscriptionId,
           action: 'dossier_cree',
-          description: `Dossier ${data.reference} soumis à AFG Bank`,
+          description: `Dossier ${data.reference} soumis à AFG BANK CI`,
           date: new Date().toISOString(),
         });
         return newItem;
@@ -1423,7 +1423,7 @@ export const useVitalisDb = create<VitalisDbState>()(
                 dossierRef: dossierLie?.reference || '',
                 souscripteurNom: `${s.souscripteurPrenom || ''} ${s.souscripteurNom || ''}`.trim(),
                 banqueId: 'BNQ-AFG-001',
-                banqueNom: s.banqueNom || 'AFG Bank',
+                banqueNom: s.banqueNom || 'AFG BANK CI',
                 fournisseurId: devisLie?.fournisseurId || 'FOUR-LDF-001',
                 fournisseurNom: devisLie?.fournisseurNom || s.fournisseurNom || 'Librairie de France Groupe',
                 montantTotal: mnt,

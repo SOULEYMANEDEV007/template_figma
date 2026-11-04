@@ -55,7 +55,7 @@ export default function AdminBanqueDetailPage() {
         <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-4">
           <Building2 className="w-7 h-7" />
         </div>
-        <h2 className="text-lg font-bold text-gray-900 mb-2">Agence AFG Bank introuvable</h2>
+        <h2 className="text-lg font-bold text-gray-900 mb-2">Agence AFG BANK CI introuvable</h2>
         <p className="text-sm text-gray-500 mb-6">
           L'agence demandée avec l'identifiant <code className="bg-gray-100 px-2 py-0.5 rounded font-mono text-xs">{id}</code> n'a pas été trouvée dans le réseau.
         </p>
@@ -63,7 +63,7 @@ export default function AdminBanqueDetailPage() {
           href="/dashboard/admin/banques"
           className="btn-ldf-primary inline-flex items-center gap-2"
         >
-          <ArrowLeft className="w-4 h-4" /> Retour aux agences AFG Bank
+          <ArrowLeft className="w-4 h-4" /> Retour aux agences AFG BANK CI
         </Link>
       </div>
     );
@@ -151,7 +151,7 @@ export default function AdminBanqueDetailPage() {
         <div className="flex items-center gap-2 text-xs text-gray-500">
           <Link href="/dashboard" className="hover:text-blue-600 transition-colors">Dashboard</Link>
           <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
-          <Link href="/dashboard/admin/banques" className="hover:text-blue-600 transition-colors">Agences AFG Bank CI</Link>
+          <Link href="/dashboard/admin/banques" className="hover:text-blue-600 transition-colors">Agences AFG BANK CI CI</Link>
           <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
           <span className="font-semibold text-gray-800">{agence.nom}</span>
         </div>
@@ -164,15 +164,15 @@ export default function AdminBanqueDetailPage() {
         </Link>
       </div>
 
-      {/* ── Fiche En-tête Agence AFG Bank ── */}
+      {/* ── Fiche En-tête Agence AFG BANK CI ── */}
       <div className="section-card p-6 bg-gradient-to-r from-white via-white to-blue-50/40 border border-gray-100 shadow-xs">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="flex items-start gap-4">
-            {/* Logo AFG Bank */}
+            {/* Logo AFG BANK CI */}
             <div className="w-20 h-20 rounded-2xl bg-white border border-gray-200 p-2 flex items-center justify-center flex-shrink-0 shadow-sm overflow-hidden">
               <Image
                 src={IMAGES.logos.afgBank}
-                alt="AFG Bank"
+                alt="AFG BANK CI"
                 width={70}
                 height={70}
                 className="object-contain w-full h-full"
@@ -193,7 +193,7 @@ export default function AdminBanqueDetailPage() {
 
               <p className="text-sm font-medium text-gray-600 flex items-center gap-1.5">
                 <Building2 className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                Guichet d'instruction et de décaissement AFG Bank Atlantic · Côte d'Ivoire
+                Guichet d'instruction et de décaissement AFG BANK CI Atlantic · Côte d'Ivoire
               </p>
 
               <div className="flex items-center gap-4 text-xs text-gray-500 pt-1 flex-wrap">
@@ -232,11 +232,10 @@ export default function AdminBanqueDetailPage() {
             {isAdmin && (
               <button
                 onClick={handleToggleStatut}
-                className={`text-xs py-2 px-3 rounded-xl font-semibold transition-colors flex items-center justify-center gap-1.5 ${
-                  agence.statut === "actif"
-                    ? "btn-ldf-outline text-yellow-700 border-yellow-300 hover:bg-yellow-50"
-                    : "btn-ldf-primary"
-                }`}
+                className={`text-xs py-2 px-3 rounded-xl font-semibold transition-colors flex items-center justify-center gap-1.5 ${agence.statut === "actif"
+                  ? "btn-ldf-outline text-yellow-700 border-yellow-300 hover:bg-yellow-50"
+                  : "btn-ldf-primary"
+                  }`}
               >
                 {agence.statut === "actif" ? (
                   <>
@@ -318,22 +317,20 @@ export default function AdminBanqueDetailPage() {
       <div className="flex items-center gap-2 border-b border-gray-200">
         <button
           onClick={() => setActiveTab("general")}
-          className={`px-4 py-3 text-sm font-semibold border-b-2 transition-colors flex items-center gap-2 ${
-            activeTab === "general"
-              ? "border-blue-600 text-blue-700"
-              : "border-transparent text-gray-500 hover:text-gray-900"
-          }`}
+          className={`px-4 py-3 text-sm font-semibold border-b-2 transition-colors flex items-center gap-2 ${activeTab === "general"
+            ? "border-blue-600 text-blue-700"
+            : "border-transparent text-gray-500 hover:text-gray-900"
+            }`}
         >
           <Building2 className="w-4 h-4" /> Fiche Agence & Missions
         </button>
 
         <button
           onClick={() => setActiveTab("dossiers")}
-          className={`px-4 py-3 text-sm font-semibold border-b-2 transition-colors flex items-center gap-2 ${
-            activeTab === "dossiers"
-              ? "border-blue-600 text-blue-700"
-              : "border-transparent text-gray-500 hover:text-gray-900"
-          }`}
+          className={`px-4 py-3 text-sm font-semibold border-b-2 transition-colors flex items-center gap-2 ${activeTab === "dossiers"
+            ? "border-blue-600 text-blue-700"
+            : "border-transparent text-gray-500 hover:text-gray-900"
+            }`}
         >
           <FileText className="w-4 h-4" />
           Dossiers de Financement
@@ -344,11 +341,10 @@ export default function AdminBanqueDetailPage() {
 
         <button
           onClick={() => setActiveTab("repartition")}
-          className={`px-4 py-3 text-sm font-semibold border-b-2 transition-colors flex items-center gap-2 ${
-            activeTab === "repartition"
-              ? "border-blue-600 text-blue-700"
-              : "border-transparent text-gray-500 hover:text-gray-900"
-          }`}
+          className={`px-4 py-3 text-sm font-semibold border-b-2 transition-colors flex items-center gap-2 ${activeTab === "repartition"
+            ? "border-blue-600 text-blue-700"
+            : "border-transparent text-gray-500 hover:text-gray-900"
+            }`}
         >
           <Briefcase className="w-4 h-4" />
           Répartition Fournisseurs
@@ -359,11 +355,10 @@ export default function AdminBanqueDetailPage() {
 
         <button
           onClick={() => setActiveTab("paiements")}
-          className={`px-4 py-3 text-sm font-semibold border-b-2 transition-colors flex items-center gap-2 ${
-            activeTab === "paiements"
-              ? "border-blue-600 text-blue-700"
-              : "border-transparent text-gray-500 hover:text-gray-900"
-          }`}
+          className={`px-4 py-3 text-sm font-semibold border-b-2 transition-colors flex items-center gap-2 ${activeTab === "paiements"
+            ? "border-blue-600 text-blue-700"
+            : "border-transparent text-gray-500 hover:text-gray-900"
+            }`}
         >
           <CreditCard className="w-4 h-4" />
           Virements & Règlements

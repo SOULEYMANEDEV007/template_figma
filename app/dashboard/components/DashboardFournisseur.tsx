@@ -66,7 +66,7 @@ export default function DashboardFournisseur() {
             <h3 className="text-sm font-bold text-orange-900 mb-1">📢 Note importante — Programme Vitalis</h3>
             <p className="text-sm text-orange-800 leading-relaxed">
               En tant que fournisseur agréé Vitalis, vous recevez les demandes de financement initiées par les bénéficiaires et établissez vos devis chiffrés.
-              Une fois les dossiers validés par <strong>AFG Bank</strong>, vous recevrez les règlements bancaires et pourrez procéder à la livraison des articles.
+              Une fois les dossiers validés par <strong>AFG BANK CI</strong>, vous recevrez les règlements bancaires et pourrez procéder à la livraison des articles.
             </p>
             <p className="text-xs text-orange-700 mt-2">
               📄 <strong>Document à remettre au client :</strong> imprimez et transmettez le document ci-dessous
@@ -78,7 +78,7 @@ export default function DashboardFournisseur() {
               const w = window.open('', '_blank');
               if (!w) return;
               w.document.write(`
-                <html><head><title>Conditions Vitalis — AFG Bank</title>
+                <html><head><title>Conditions Vitalis — AFG BANK CI</title>
                 <style>
                   body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; color: #1f2937; line-height: 1.6; }
                   .header-logos { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f3f4f6; padding-bottom: 15px; }
@@ -98,19 +98,19 @@ export default function DashboardFournisseur() {
                 <div class="header-logos">
                   <img src="${window.location.origin}${IMAGES.logos.fades}" alt="FADES" />
                   <img src="${window.location.origin}${IMAGES.logos.vifloNew}" alt="VIFLO" style="height: 50px;" />
-                  <img src="${window.location.origin}${IMAGES.logos.afgBank}" alt="AFG Bank" />
+                  <img src="${window.location.origin}${IMAGES.logos.afgBank}" alt="AFG BANK CI" />
                 </div>
 
                 <h1>📋 Conditions de Souscription — Programme VITALIS</h1>
-                <p><span class="badge">AFG Bank · Banque Financeuse Unique</span> &nbsp; <span class="badge">Durée : 36 mois</span></p>
-                <p>Ce document résume les conditions à remplir pour bénéficier du programme Vitalis financé par <strong>AFG Bank</strong>. Il doit être remis au client avant son inscription.</p>
+                <p><span class="badge">AFG BANK CI · Banque Financeuse Unique</span> &nbsp; <span class="badge">Durée : 36 mois</span></p>
+                <p>Ce document résume les conditions à remplir pour bénéficier du programme Vitalis financé par <strong>AFG BANK CI</strong>. Il doit être remis au client avant son inscription.</p>
 
                 <h2>1. Conditions pour les Personnes Physiques</h2>
                 <table>
                   <tr><th>Critère</th><th>Détail</th></tr>
                   <tr><td>Situation professionnelle</td><td>Salarié ou Fonctionnaire (en activité)</td></tr>
                   <tr><td>Ancienneté requise</td><td>Minimum 12 mois dans l'emploi actuel</td></tr>
-                  <tr><td>Domiciliation bancaire</td><td>Compte AFG Bank ou engagement de domiciliation</td></tr>
+                  <tr><td>Domiciliation bancaire</td><td>Compte AFG BANK CI ou engagement de domiciliation</td></tr>
                   <tr><td>Taux d'endettement max.</td><td>33% du revenu mensuel net</td></tr>
                   <tr><td>Âge maximum</td><td>60 ans au terme du crédit (36 mois)</td></tr>
                 </table>
@@ -151,10 +151,10 @@ export default function DashboardFournisseur() {
                 </table>
 
                 <h2>5. Modalités de paiement</h2>
-                <p>Le paiement est effectué directement par <strong>AFG Bank</strong> aux fournisseurs, simultanément au déboursement du prêt au client. Le remboursement se fait sur <strong>36 mois</strong> par prélèvement automatique.</p>
+                <p>Le paiement est effectué directement par <strong>AFG BANK CI</strong> aux fournisseurs, simultanément au déboursement du prêt au client. Le remboursement se fait sur <strong>36 mois</strong> par prélèvement automatique.</p>
 
                 <div class="footer">
-                  <p>Document établi dans le cadre du Programme Vitalis — AFG Bank · Tous droits réservés · ${new Date().toLocaleDateString('fr-FR')}</p>
+                  <p>Document établi dans le cadre du Programme Vitalis — AFG BANK CI · Tous droits réservés · ${new Date().toLocaleDateString('fr-FR')}</p>
                 </div>
                 </body></html>
               `);
@@ -232,10 +232,10 @@ export default function DashboardFournisseur() {
               <p className="text-xs">Aucun devis encore</p>
             </div>
           )}
-          {/* AFG Bank label */}
+          {/* AFG BANK CI label */}
           <div className="mt-3 pt-3 border-t border-gray-100 flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-orange-500 flex-shrink-0" />
-            <span className="text-xs text-gray-600">Banque : <strong className="text-orange-600">AFG Bank</strong></span>
+            <span className="text-xs text-gray-600">Banque : <strong className="text-orange-600">AFG BANK CI</strong></span>
           </div>
         </div>
 

@@ -2,7 +2,7 @@
 // Fichier complet avec toutes les données mockées nécessaires
 // À copier dans ldfData.ts après vérification
 
-export const mockBanques: any[] = [{ id: "AFG-001", code: "AFG", nom: "AFG Bank", sigle: "AFG" }];
+export const mockBanques: any[] = [{ id: "AFG-001", code: "AFG", nom: "AFG BANK CI", sigle: "AFG" }];
 export const mockFournisseurs: any[] = [];
 export const mockSouscriptions: any[] = [];
 export const mockDevis: any[] = [];

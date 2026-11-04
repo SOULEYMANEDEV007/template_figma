@@ -262,7 +262,7 @@ export default function NouvelleDemandeSouscripteur() {
 
       const livraisonStr = `Livraison: [${modeLivraison === "point_relais" ? "Point Relais: " + (selectedRelais?.nom || pointRelaisId) : "Domicile: " + adresseLivraison}] | Zone: ${commune}, ${ville} (${region}) | Destinataire: ${destinataireNom || (prenomClient + " " + nomClient)} (${destinataireTelephone || telClient})${instructionsLivraison ? ` | Instructions: ${instructionsLivraison}` : ""}`;
 
-      const obsFinale = `${resumeBesoins}\n\n${livraisonStr}${selectedAgence ? `\nAgence AFG Bank: ${selectedAgence.nom}` : ""}${observations ? `\nNotes client: ${observations}` : ""}`;
+      const obsFinale = `${resumeBesoins}\n\n${livraisonStr}${selectedAgence ? `\nAgence AFG BANK CI: ${selectedAgence.nom}` : ""}${observations ? `\nNotes client: ${observations}` : ""}`;
 
       const nouvelle = addSouscription({
         reference: ref,
@@ -273,7 +273,7 @@ export default function NouvelleDemandeSouscripteur() {
         souscripteurTelephone: telClient,
         typeSouscripteur: "physique",
         banqueId: "AFG-001",
-        banqueNom: "AFG Bank",
+        banqueNom: "AFG BANK CI",
         agenceId: agenceAfgId || undefined,
         agenceNom: selectedAgence?.nom || undefined,
         fournisseurs: fournisseursChoisis,
@@ -361,7 +361,7 @@ export default function NouvelleDemandeSouscripteur() {
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-[#0B2447]">Demander un financement</h1>
           <p className="text-xs sm:text-sm text-gray-500">
-            Programme Vitalis FADES · En partenariat avec <strong>AFG Bank Atlantic</strong>
+            Programme Vitalis FADES · En partenariat avec <strong>AFG BANK CI Atlantic</strong>
           </p>
         </div>
       </div>
@@ -402,13 +402,13 @@ export default function NouvelleDemandeSouscripteur() {
                     <option value={48}>48 mois</option>
                     <option value={60}>60 mois</option>
                   </select>
-                  <p className="text-[11px] text-gray-400 mt-1">Taux bonifié Vitalis FADES avec AFG Bank.</p>
+                  <p className="text-[11px] text-gray-400 mt-1">Taux bonifié Vitalis FADES avec AFG BANK CI.</p>
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1.5">Modalités de règlement fournisseurs</label>
                   <div className="px-3.5 py-2.5 text-xs rounded-xl bg-orange-50/70 border border-orange-200/80 text-orange-950 font-medium">
-                    AFG Bank effectue le règlement direct à chacun de vos fournisseurs partenaires dès accord de financement.
+                    AFG BANK CI effectue le règlement direct à chacun de vos fournisseurs partenaires dès accord de financement.
                   </div>
                   <p className="text-[11px] text-gray-400 mt-1">Vous ne réalisez aucune avance financière en boutique.</p>
                 </div>
@@ -433,14 +433,14 @@ export default function NouvelleDemandeSouscripteur() {
         {step === 2 && (
           <div className="space-y-6 slide-in">
 
-            {/* 2.1 Agence AFG Bank */}
-            <SectionCard title="Agence AFG Bank de dépôt" icon={Building2} badge="Banque financeuse unique">
+            {/* 2.1 Agence AFG BANK CI */}
+            <SectionCard title="Agence AFG BANK CI de dépôt" icon={Building2} badge="Banque financeuse unique">
               <div>
                 <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                  Agence AFG Bank de rattachement <span className="text-gray-400 font-normal">(Optionnel)</span>
+                  Agence AFG BANK CI de rattachement <span className="text-gray-400 font-normal">(Optionnel)</span>
                 </label>
                 <select className={sel} value={agenceAfgId} onChange={e => setAgenceAfgId(e.target.value)}>
-                  <option value="">Sélectionnez l'agence AFG Bank la plus proche...</option>
+                  <option value="">Sélectionnez l'agence AFG BANK CI la plus proche...</option>
                   {(agencesAFG || []).map(a => (
                     <option key={a.id} value={a.id}>
                       {a.nom} — {a.ville} ({a.adresse})
@@ -656,7 +656,7 @@ export default function NouvelleDemandeSouscripteur() {
                 <p className="font-bold">Confidentialité & Règle d'Isolation ViFlo</p>
                 <p className="leading-relaxed text-blue-900">
                   Votre souscription générera un devis distinct par fournisseur sélectionné.
-                  <strong> Chaque fournisseur n'aura accès qu'à son propre devis et ses propres articles</strong>, sans voir les autres fournisseurs intervenant sur votre dossier. Seuls vous, votre agence AFG Bank et la supervision ViFlo bénéficierez de la vue d'ensemble consolidée.
+                  <strong> Chaque fournisseur n'aura accès qu'à son propre devis et ses propres articles</strong>, sans voir les autres fournisseurs intervenant sur votre dossier. Seuls vous, votre agence AFG BANK CI et la supervision ViFlo bénéficierez de la vue d'ensemble consolidée.
                 </p>
               </div>
             </div>

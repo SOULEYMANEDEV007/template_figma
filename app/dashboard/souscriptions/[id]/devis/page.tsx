@@ -366,12 +366,12 @@ export default function DevisMultiplesSouscriptionPage() {
               <p className="font-semibold mb-1">Workflow multi-fournisseurs Vitalis</p>
               <ul className="space-y-1 text-xs">
                 <li>• Chaque fournisseur doit créer son propre devis avec ses articles</li>
-                <li>• AFG Bank validera le dossier global contenant tous les devis</li>
+                <li>• AFG BANK CI validera le dossier global contenant tous les devis</li>
                 <li>
                   • Le montant total de la souscription est la somme de tous les devis :{" "}
                   <strong>{new Intl.NumberFormat("fr-FR").format(Math.round(stats.total))} FCFA</strong>
                 </li>
-                <li>• Chaque fournisseur sera payé individuellement après validation AFG Bank</li>
+                <li>• Chaque fournisseur sera payé individuellement après validation AFG BANK CI</li>
               </ul>
             </div>
           </div>
