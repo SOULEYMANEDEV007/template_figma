@@ -29,9 +29,10 @@ interface NavItem {
 }
 
 const BANQUES_SUB_ITEMS: SubNavItem[] = [
-  { name: "AFG BANK CI CI", href: "/dashboard/admin/banques", disabled: false },
-  { name: "BNI", disabled: true, badge: "Bientôt" },
+  { name: "AFG BANK CI", href: "/dashboard/admin/banques", disabled: false },
   { name: "Banque Atlantique", disabled: true, badge: "Bientôt" },
+  { name: "NSI BANQUE", disabled: true, badge: "Bientôt" },
+  { name: "BNI", disabled: true, badge: "Bientôt" },
   { name: "Ecobank", disabled: true, badge: "Bientôt" },
 ];
 
@@ -119,6 +120,7 @@ function getNav(role: LDFUserRole, unreadCount: number): { main: NavItem[]; bott
       { name: "Feedbacks banque", href: "/dashboard/fournisseur/feedbacks", icon: ICONS.shield },
       { name: "Paiements", href: "/dashboard/paiements", icon: ICONS.paiements },
       { name: "Notifications", href: "/dashboard/notifications", icon: ICONS.notifications, badge: unreadCount },
+
     ],
     bottom: [
       { name: "Paramètres", href: "/dashboard/parametres", icon: ICONS.settings },

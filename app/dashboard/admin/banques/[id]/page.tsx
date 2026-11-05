@@ -151,7 +151,7 @@ export default function AdminBanqueDetailPage() {
         <div className="flex items-center gap-2 text-xs text-gray-500">
           <Link href="/dashboard" className="hover:text-blue-600 transition-colors">Dashboard</Link>
           <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
-          <Link href="/dashboard/admin/banques" className="hover:text-blue-600 transition-colors">Agences AFG BANK CI CI</Link>
+          <Link href="/dashboard/admin/banques" className="hover:text-blue-600 transition-colors">Agences AFG BANK CI</Link>
           <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
           <span className="font-semibold text-gray-800">{agence.nom}</span>
         </div>

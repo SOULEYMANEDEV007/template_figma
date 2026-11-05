@@ -35,7 +35,7 @@ const BANQUES_PARTENAIRES = [
     id: "afg-bank",
     code: "AFG",
     nom: "AFG BANK CI Côte d'Ivoire",
-    nomCourt: "AFG BANK CI CI",
+    nomCourt: "AFG BANK CI",
     statut: "actif",
     isPilote: true,
     logo: IMAGES.logos.afgBank,
@@ -542,7 +542,7 @@ export default function AdminBanquesPage() {
         onClose={() => setShowConfirmDelete(null)}
         onConfirm={handleDelete}
         title="Supprimer l'agence AFG BANK CI"
-        message={`Voulez-vous supprimer ${showConfirmDelete?.nom} (${showConfirmDelete?.ville}) du réseau AFG BANK CI CI ?`}
+        message={`Voulez-vous supprimer ${showConfirmDelete?.nom} (${showConfirmDelete?.ville}) du réseau AFG BANK CI ?`}
         confirmLabel="Supprimer"
         variant="danger"
       />

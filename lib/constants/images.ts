@@ -15,10 +15,10 @@ export const IMAGES = {
   // --- LOGOS OFFICIELS DE L'APPLICATION & INSTITUTIONS ---
   logos: {
     viflo: "/logos/viflo-logo.png",
-    vifloNew: "/logos/new_logo-viflo.JPG",
-    vifloText: "/logos/logo-viflo-text.png",
+    vifloText: "/logos/Logo ViFlo brillant et dynamique.png",
+    vitalisLogo: "/logos/logo-vitalis.JPG",
     vifloIcon: "/logos/icon-viflo.png",
-    vifloDefault: "/images/viflo_logo.png",
+    //vifloDefault: "/images/viflo_logo.png",
 
     afgBank: "/logos/logo-afg-bank_atlantic.png",
     afgBankJpg: "/logos/LOGO-AFG-Bank.jpg",
@@ -65,8 +65,12 @@ export type AppImages = typeof IMAGES;
  * Métadonnées d'accessibilité et d'affichage par défaut
  */
 export const IMAGE_META = {
+  vitalis: {
+    src: IMAGES.logos.vitalisLogo,
+    alt: "Vitalis",
+  },
   viflo: {
-    src: IMAGES.logos.vifloNew,
+    src: IMAGES.logos.vifloText,
     alt: "ViFlo - Plateforme de Financement Vitalis",
   },
   afgBank: {
