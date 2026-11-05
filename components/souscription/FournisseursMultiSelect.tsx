@@ -85,7 +85,7 @@ export function getDomaineFournisseur(f: { code?: string; id?: string; nom?: str
   if (code === "DRO" || code.includes("DROCOLOR") || nom.includes("drocolor") || code === "SIPPEC" || nom.includes("sippec")) {
     return DOMAINES_VITALIS.peinture;
   }
-  if (code === "ATC" || nom.includes("comafrique") || code === "RYMCO" || nom.includes("rimco") || code === "SOCIDA" || nom.includes("socida")) {
+  if (code === "ATC" || nom.includes("comafrique") || code === "RIMCO" || nom.includes("rimco") || code === "SOCIDA" || nom.includes("socida")) {
     return DOMAINES_VITALIS.automobile;
   }
   if (code === "ORIBAT" || nom.includes("oribat") || code === "INOVIM" || nom.includes("inoovim") || code === "KAYDAN" || nom.includes("kaydan")) {

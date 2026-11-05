@@ -127,7 +127,7 @@ export default function DashboardSouscripteur() {
                   <tr><td>INOVIM</td><td>Informatique, bureautique & high-tech</td></tr>
                   <tr><td>KAYDAN</td><td>Immobilier, construction & aménagement</td></tr>
                   <tr><td>SOCIDA</td><td>Automobile, mobilité & véhicules</td></tr>
-                  <tr><td>RYMCO</td><td>Deux-roues, motocycles & accessoires</td></tr>
+                  <tr><td>RIMCO</td><td>Deux-roues, motocycles & accessoires</td></tr>
                   <tr><td>LG</td><td>Électroménager, TV & climatisation</td></tr>
                   <tr><td>SODIMAC</td><td>Matériaux de construction & quincaillerie</td></tr>
                   <tr><td>SOCIAM</td><td>Électroménager & équipement de la maison</td></tr>

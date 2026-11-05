@@ -48,7 +48,7 @@ export default function DashboardAdmin() {
     'FOUR-INO-004': '#7c3aed', // INOVIM (Violet Profond)
     'FOUR-KAY-005': '#db2777', // KAYDAN (Rose Magenta)
     'FOUR-SOC-006': '#0891b2', // SOCIDA (Bleu Cyan Lagon)
-    'FOUR-RYM-007': '#d97706', // RYMCO (Ambre Doré)
+    'FOUR-RYM-007': '#d97706', // RIMCO (Ambre Doré)
     'FOUR-LG-008': '#e11d48', // LG (Rouge Carmin)
     'FOUR-SDM-009': '#475569', // SODIMAC (Gris Ardoise)
     'FOUR-SCM-010': '#4f46e5', // SOCIAM (Indigo)
