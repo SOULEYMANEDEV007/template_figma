@@ -16,6 +16,7 @@ import {
   BookOpen,
   Activity,
   Wallet,
+  Megaphone,
 
   // Actions
   Plus,
@@ -104,6 +105,7 @@ export const ICONS = {
   documentation: BookOpen,
   activity: Activity,
   wallet: Wallet,
+  ads: Megaphone,
 
   // --- Actions ---
   add: Plus,

@@ -9,6 +9,7 @@ import {
 } from "@/lib/constants";
 import { useLDFAuthStore } from "@/stores/ldfAuth";
 import { useVitalisDb } from "@/stores/vitalisDbStore";
+import { useActiveVideoAds } from "@/stores/adsStore";
 import {
   BadgeCheck,
   ChevronLeft,
@@ -41,7 +42,8 @@ export default function RootPage() {
   const [animating, setAnimating] = useState(true);
 
   // État du lecteur Cinéma
-  const ads = SUPPLIER_VIDEO_ADS;
+  //const ads = SUPPLIER_VIDEO_ADS;
+  const ads = useActiveVideoAds("splash");
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const playerContainerRef = useRef<HTMLDivElement | null>(null);
   const switchingSpotRef = useRef(false);
@@ -279,10 +281,10 @@ export default function RootPage() {
                           : `${f.nom} — Partenaire Agréé Vitalis`
                       }
                       className={`w-full h-full rounded-full bg-white p-2 flex items-center justify-center animate-[spin_28s_linear_infinite_reverse] transition-all ${isCurrentAd
-                          ? "ring-4 ring-[#FF5E00] shadow-[0_0_28px_rgba(255,94,0,0.95)] scale-115 z-30"
-                          : hasVideo
-                            ? "border-2 border-orange-300 shadow-[0_8px_25px_rgba(0,0,0,0.25)] hover:scale-110 cursor-pointer"
-                            : "border-2 border-white/80 shadow-[0_8px_25px_rgba(0,0,0,0.2)] cursor-default"
+                        ? "ring-4 ring-[#FF5E00] shadow-[0_0_28px_rgba(255,94,0,0.95)] scale-115 z-30"
+                        : hasVideo
+                          ? "border-2 border-orange-300 shadow-[0_8px_25px_rgba(0,0,0,0.25)] hover:scale-110 cursor-pointer"
+                          : "border-2 border-white/80 shadow-[0_8px_25px_rgba(0,0,0,0.2)] cursor-default"
                         }`}
                     >
                       {logoSrc ? (
@@ -363,8 +365,8 @@ export default function RootPage() {
                   type="button"
                   onClick={toggleMute}
                   className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border backdrop-blur-md flex items-center gap-1.5 transition cursor-pointer ${isMuted
-                      ? "bg-black/60 hover:bg-black/80 text-white border-white/20"
-                      : "bg-[#FF5E00] text-white border-orange-300/50 shadow-lg"
+                    ? "bg-black/60 hover:bg-black/80 text-white border-white/20"
+                    : "bg-[#FF5E00] text-white border-orange-300/50 shadow-lg"
                     }`}
                 >
                   {isMuted ? (
@@ -435,8 +437,8 @@ export default function RootPage() {
                     type="button"
                     onClick={() => goToAd(idx, true)}
                     className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border backdrop-blur-md transition-all cursor-pointer ${isActive
-                        ? "bg-[#FF5E00]/25 border-[#FF7B2E] text-white shadow-[0_0_20px_rgba(255,94,0,0.35)] scale-105"
-                        : "bg-white/8 hover:bg-white/15 border-white/15 text-white/75 hover:text-white"
+                      ? "bg-[#FF5E00]/25 border-[#FF7B2E] text-white shadow-[0_0_20px_rgba(255,94,0,0.35)] scale-105"
+                      : "bg-white/8 hover:bg-white/15 border-white/15 text-white/75 hover:text-white"
                       }`}
                   >
                     <div className="w-5 h-5 rounded bg-white p-0.5 flex items-center justify-center overflow-hidden flex-shrink-0">

@@ -2,6 +2,8 @@
 "use client";
 
 import { OFFICIAL_FOURNISSEURS, SUPPLIER_VIDEO_ADS, type SupplierVideoAd } from "@/lib/constants";
+import { useActiveVideoAds } from "@/stores/adsStore";
+import type { AdPlacement } from "@/lib/constants";
 import {
     BadgeCheck,
     ChevronLeft,
@@ -18,13 +20,16 @@ interface SupplierVideoAdBannerProps {
     /** "dark" pour la colonne bleue de /login, "light" pour les dashboards Client/Fournisseur */
     variant?: "dark" | "light";
     className?: string;
+    placement?: AdPlacement;
 }
 
 export default function SupplierVideoAdBanner({
     variant = "dark",
     className = "",
+    placement = "login"
 }: SupplierVideoAdBannerProps) {
-    const ads = SUPPLIER_VIDEO_ADS;
+    //const ads = SUPPLIER_VIDEO_ADS;
+    const ads = useActiveVideoAds(placement);
     const videoRef = useRef<HTMLVideoElement | null>(null);
 
     const [activeIndex, setActiveIndex] = useState(0);
