@@ -423,17 +423,17 @@ export default function AdminFournisseurDetailPage() {
             </div>
           </div>
 
-          {/* Bloc 2 : Partenariat AFG BANK CI CI & Convention Vitalis */}
+          {/* Bloc 2 : Partenariat AFG BANK CI & Convention Vitalis */}
           <div className="section-card p-6 space-y-4">
             <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2 border-b border-gray-100 pb-3">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              Convention AFG BANK CI CI & Programme Vitalis
+              Convention AFG BANK CI & Programme Vitalis
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               <div>
                 <p className="text-gray-400 font-medium">Banque Partenaire Unique</p>
-                <p className="text-blue-700 font-bold text-sm mt-0.5">AFG BANK CI CI (Atlantic Financial Group)</p>
+                <p className="text-blue-700 font-bold text-sm mt-0.5">AFG BANK CI (Atlantic Financial Group)</p>
               </div>
 
               <div>
