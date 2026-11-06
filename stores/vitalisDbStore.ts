@@ -474,7 +474,7 @@ const SEED_FOURNISSEURS: VFournisseur[] = [
     nombreSouscriptions: 1, montantTotal: 0,
   },
   {
-    id: 'FOUR-RYM-007', code: 'RYMCO', nom: 'Rimco', raisonSociale: 'RYMCO Côte d\'Ivoire (Rimco Motors)',
+    id: 'FOUR-RYM-007', code: 'RIMCO', nom: 'Rimco', raisonSociale: 'RIMCO Côte d\'Ivoire (Rimco Motors)',
     nomDirecteur: 'M. Rida FAWAZ',
     email: 'b2b@rymco.ci', emailCommercial: 'commercial@rymco.ci',
     telephone: '+225 27 21 25 00 00', telephoneCommercial: '+225 05 44 55 66 77',

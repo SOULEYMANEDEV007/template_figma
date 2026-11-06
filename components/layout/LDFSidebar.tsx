@@ -55,6 +55,7 @@ function getNav(role: LDFUserRole, unreadCount: number): { main: NavItem[]; bott
       ],
       bottom: [
         { name: "Fournisseurs", href: "/dashboard/admin/fournisseurs", icon: ICONS.fournisseur },
+        { name: "Publicités", href: "/dashboard/admin/publicites", icon: ICONS.ads },
         { name: "Banques", href: "/dashboard/admin/banques", icon: ICONS.banque, children: BANQUES_SUB_ITEMS },
         { name: "Utilisateurs", href: "/dashboard/admin/utilisateurs", icon: ICONS.users },
         { name: "Paramètres", href: "/dashboard/parametres", icon: ICONS.settings },

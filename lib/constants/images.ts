@@ -153,9 +153,9 @@ export const OFFICIAL_FOURNISSEURS = [
   },
   {
     id: "FOUR-RYM-007",
-    code: "RYMCO",
+    code: "RIMCO",
     nom: "Rimco",
-    raisonSociale: "RYMCO Côte d'Ivoire (Rimco Motors)",
+    raisonSociale: "RIMCO Côte d'Ivoire (Rimco Motors)",
     secteurActivite: "Automobile, Concessionnaire véhicules, deux-roues & pièces",
     logo: IMAGES.partners.rymco,
     adresse: "Zone Industrielle de Vridi",

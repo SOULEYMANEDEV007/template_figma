@@ -144,7 +144,7 @@ export default function DashboardFournisseur() {
                   <tr><td>INOVIM</td><td>Immobilier, Logement & Aménagement</td></tr>
                   <tr><td>KAYDAN</td><td>Promotion immobilière, BTP & Construction</td></tr>
                   <tr><td>SOCIDA</td><td>Automobile, Véhicules neufs, Utilitaires & Pièces</td></tr>
-                  <tr><td>RYMCO</td><td>Automobile, Deux-roues, Équipements & Matériel</td></tr>
+                  <tr><td>RIMCO</td><td>Automobile, Deux-roues, Équipements & Matériel</td></tr>
                   <tr><td>LG</td><td>Électroménager, Climatisation & Électronique</td></tr>
                   <tr><td>SODIMAC</td><td>Matériaux de construction, Cimenterie & Aménagement</td></tr>
                   <tr><td>SOCIAM</td><td>Électroménager, Image & Son, Froid</td></tr>
