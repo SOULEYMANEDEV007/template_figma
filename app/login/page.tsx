@@ -99,12 +99,13 @@ export default function LoginPage() {
         {/* Logo ViFlo */}
         <div className="relative z-10 flex items-center gap-3">
           <div className="w-20 h-20 rounded-2xl overflow-hidden flex items-center justify-center bg-white p-2 shadow-lg border border-white/20">
-            <Image src={IMAGES.logos.vifloText} alt="ViFlo" width={160} height={160} className="object-contain w-full h-full" />
+            <Image src={IMAGES.logos.vifloText} alt="ViFlo" width={180} height={180} className="object-contain w-full h-full" />
           </div>
           <div>
-            <p className="text-white font-bold text-2xl leading-none">
+            {/*<p className="text-white font-bold text-2xl leading-none">
               ViFlo
             </p>
+            */}
             <p className="text-white/80 text-sm mt-1">Plateforme de gestion Vitalis FADES</p>
           </div>
         </div>
