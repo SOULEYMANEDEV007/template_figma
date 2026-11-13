@@ -142,7 +142,7 @@ export default function LoginPage() {
             </div>
 
             {/* Encart Vidéo Fournisseurs Agréés */}
-            <SupplierVideoAdBanner variant="dark" className="mx-auto" />
+            <SupplierVideoAdBanner variant="dark" className="mx-w-[460px]" />
           </div>
 
           {/* Steps */}
