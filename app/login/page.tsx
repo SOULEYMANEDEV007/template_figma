@@ -83,143 +83,151 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex">
-      {/* ── Colonne gauche — branding ViFlo ── */}
-      <div className="hidden lg:flex lg:w-[50%] relative overflow-hidden flex-col justify-between p-12 bg-[#0B2447]">
+      {/* ── Colonne gauche — branding ViFlo (Palette Blanche lumineuse) ── */}
+      <div className="hidden lg:flex lg:w-[50%] relative overflow-hidden flex-col justify-between p-12 bg-white border-r border-slate-200/80">
 
-        {/* Pattern Topographique Décoratif */}
-        <div className="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='%23FF7B2E' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E")`,
-          backgroundSize: '120px 120px'
-        }} />
+        {/* Pattern Topographique Décoratif subtil sur fond blanc */}
+        <div
+          className="absolute inset-0 opacity-[0.05] pointer-events-none"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='%230B2447' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E")`,
+            backgroundSize: "120px 120px",
+          }}
+        />
 
-        {/* Cercles de lumière (pour le relief) */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#FF5E00]/20 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3 pointer-events-none" />
-
-        {/* Logo ViFlo */}
-        <div className="relative z-10 flex items-center gap-3">
-          <div className="w-20 h-20 rounded-2xl overflow-hidden flex items-center justify-center bg-white p-2 shadow-lg border border-white/20">
-            <Image src={IMAGES.logos.vifloText} alt="ViFlo" width={180} height={180} className="object-contain w-full h-full" />
-          </div>
-          <div>
-            {/*<p className="text-white font-bold text-2xl leading-none">
-              ViFlo
-            </p>
-            */}
-            <p className="text-white/80 text-sm mt-1">Plateforme de gestion Vitalis FADES</p>
+        {/* Halos lumineux doux pour mettre en valeur le logo */}
+        <div className="absolute top-0 left-0 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl -translate-y-1/3 -translate-x-1/3 pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#0B2447]/[0.06] rounded-full blur-3xl translate-y-1/3 translate-x-1/3 pointer-events-none" />
+        {/* Logo ViFlo mis en lumière sur fond blanc */}
+        <div className="relative z-10 flex items-center justify-center">
+          <div className="w-44 h-24 rounded-2xl overflow-hidden flex items-center justify-center bg-white p-2 shadow-md shadow-slate-200/80 border border-slate-100">
+            <Image
+              src={IMAGES.logos.vifloText}
+              alt="ViFlo"
+              width={260}
+              height={120}
+              unoptimized
+              className="object-contain w-full h-full scale-110"
+            />
           </div>
         </div>
 
-        {/* Contenu central */}
-        <div className="relative z-10 space-y-8 -mt-16">
-          {/*<div>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 mb-4 backdrop-blur-sm">
-              <Sparkles className="w-3.5 h-3.5 text-white" />
-              <span className="text-white text-xs font-medium">Digitalisation des financements structurés.</span>
-            </div>
-            {/*<h2 className="text-4xl font-extrabold text-white leading-tight tracking-tight">
-              Gérez le cycle complet<br />de vos financements.
-            </h2>
-            <h2 className="text-4xl font-extrabold text-white leading-tight tracking-tighttex-">
-              Donnons vie à vos projets.
-            </h2>
-            <p className="text-white/80 text-sm mt-4 leading-relaxed max-w-md">
-              Une plateforme centralisée pour les souscripteurs, fournisseurs agréés et la banque partenaire AFG BANK CI.
-            </p>
-          </div>*/}
-          {/* Contenu central + Encart publicitaire vidéo */}
+        {/* Contenu central + Encart publicitaire vidéo */}
+        <div className="relative z-10 space-y-8 -mt-6">
           <div className="relative z-10 flex-1 flex flex-col justify-center gap-6 my-6">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 mb-3 backdrop-blur-sm">
-                <Sparkles className="w-3.5 h-3.5 text-white" />
-                <span className="text-white text-xs font-medium">Digitalisation des financements structurés.</span>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0B2447]/[0.06] border border-[#0B2447]/15 mb-3">
+                <Sparkles className="w-3.5 h-3.5 text-[#FF5E00]" />
+                <span className="text-[#0B2447] text-xs font-semibold">
+                  Digitalisation des financements structurés.
+                </span>
               </div>
-              <h2 className="text-3xl xl:text-4xl font-extrabold text-white leading-tight tracking-tight">
+              <h2 className="text-3xl xl:text-4xl font-extrabold text-[#0B2447] leading-tight tracking-tight">
                 Donnons vie à vos projets.
               </h2>
-              <p className="text-white/80 text-sm mt-2.5 leading-relaxed max-w-lg">
+              <p className="text-slate-600 text-sm mt-2.5 leading-relaxed max-w-lg">
                 Une plateforme centralisée pour les souscripteurs, fournisseurs agréés et la banque partenaire AFG BANK CI.
               </p>
             </div>
 
-            {/* Encart Vidéo Fournisseurs Agréés */}
-            <SupplierVideoAdBanner variant="dark" className="mx-w-[460px]" />
+            {/* Encart Vidéo Fournisseurs Agréés (Thème clair) */}
+            <SupplierVideoAdBanner variant="light" className="max-w-[460px]" />
           </div>
+        </div>
 
-          {/* Steps */}
-          {/*<div className="space-y-3">
+        {/* Footer Stats — Dégradé Orange ViFlo */}
+        <footer className="relative z-10 -mx-12 -mb-12 px-12 py-7 bg-gradient-to-r from-[#FF7B2E] via-[#FF6B1A] to-[#FF5E00] border-t border-orange-300/40 shadow-[0_-10px_30px_rgba(255,94,0,0.15)]">
+          <div className="grid grid-cols-4 gap-4">
             {[
-              { step: "01", label: "Souscription et constitution du dossier" },
-              { step: "02", label: "Génération et validation des devis" },
-              { step: "03", label: "Analyse et décision bancaire" },
-              { step: "04", label: "Paiement et mise à disposition des articles" },
+              { label: "Souscriptions", value: "30000+" },
+              { label: "Fournisseurs agréés", value: "12" },
+              { label: "Banques partenaires", value: "1" },
+              { label: "Assurances partenaires", value: "1" },
             ].map((s) => (
-              <div key={s.step} className="flex items-center gap-3 bg-white/5 border border-white/10 p-2 rounded-full backdrop-blur-sm w-max pr-6">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#FF7B2E] to-[#FF5E00] text-white flex items-center justify-center flex-shrink-0 shadow-md">
-                  <span className="text-xs font-bold">{s.step}</span>
-                </div>
-                <span className="text-white font-medium text-sm">{s.label}</span>
+              <div key={s.label}>
+                {s.isLogo ? (
+                  <div className="h-10 flex items-center mb-0.5">
+                    <div className="bg-white/15 p-1 rounded-lg border border-white/25 inline-flex items-center justify-center h-full overflow-hidden">
+                      <Image
+                        src={IMAGES.logos.afgBank}
+                        alt="AFG BANK CI"
+                        width={80}
+                        height={32}
+                        className="object-contain w-full h-full rounded bg-white"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-3xl font-black text-white tracking-tight h-10 flex items-end drop-shadow-xs">
+                    {s.value}
+                  </p>
+                )}
+                <p className="text-white/90 text-[11px] mt-1 uppercase tracking-wider font-semibold">
+                  {s.label}
+                </p>
               </div>
             ))}
-          </div>*/}
-        </div>
-
-        {/* Stats */}
-        <div className="relative z-10 grid grid-cols-4   gap-4 pt-8 border-t border-white/20">
-          {[
-            { label: "Souscriptions", value: "30000+" },
-            { label: "Fournisseurs agréés", value: "12" },
-            { label: "Banques partenaires", value: "1" },
-            { label: "Assurances partenaires", value: "1" },
-          ].map((s) => (
-            <div key={s.label}>
-              {s.isLogo ? (
-                <div className="h-10 flex items-center mb-0.5">
-                  <div className="bg-white/5 p-1 rounded-lg border border-white/10 backdrop-blur-sm inline-flex items-center justify-center h-full overflow-hidden">
-                    <Image src={IMAGES.logos.afgBank} alt="AFG BANK CI" width={80} height={32} className="object-contain w-full h-full rounded bg-white" />
-                  </div>
-                </div>
-              ) : (
-                <p className="text-3xl font-black text-white tracking-tight h-10 flex items-end">{s.value}</p>
-              )}
-              <p className="text-white/70 text-xs mt-1 uppercase tracking-wider font-semibold">{s.label}</p>
-            </div>
-          ))}
-        </div>
+          </div>
+        </footer>
       </div>
 
-      {/* ── Colonne droite — formulaire ── */}
-      <div className="flex-1 flex flex-col justify-center px-6 py-12 sm:px-12 lg:px-16 bg-gray-50">
-        <div className="w-full max-w-md mx-auto">
+      {/* ── Colonne droite — formulaire (Palette Bleu ViFlo #0B2447) ── */}
+      <div className="flex-1 relative overflow-hidden flex flex-col justify-center px-6 py-12 sm:px-12 lg:px-16 bg-[#0B2447]">
+
+        {/* Pattern Topographique Décoratif */}
+        <div
+          className="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='%23FF7B2E' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E")`,
+            backgroundSize: "120px 120px",
+          }}
+        />
+
+        {/* Cercles de lumière */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#FF5E00]/20 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3 pointer-events-none" />
+
+        <div className="relative z-10 w-full max-w-md mx-auto">
 
           {/* Mobile logo ViFlo */}
           <div className="lg:hidden flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center bg-white border border-gray-200 p-1">
-              <Image src={IMAGES.logos.vifloText} alt="ViFlo" width={48} height={48} className="object-contain w-full h-full" />
+            <div className="w-14 h-14 rounded-xl overflow-hidden flex items-center justify-center bg-white border border-white/20 p-1.5 shadow-md">
+              <Image
+                src={IMAGES.logos.vifloText}
+                alt="ViFlo"
+                width={56}
+                height={56}
+                className="object-contain w-full h-full"
+              />
             </div>
             <div>
-              <p className="font-bold text-gray-900 text-lg">ViFlo <span className="text-orange-500">FADES</span></p>
-              <p className="text-xs text-gray-500">Plateforme Vitalis FADES</p>
+              <p className="font-bold text-white text-lg">
+                ViFlo <span className="text-[#FF7B2E]">FADES</span>
+              </p>
+              <p className="text-xs text-white/75">Plateforme Vitalis FADES</p>
             </div>
           </div>
 
           {/* Titre */}
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-gray-900">Bienvenue sur Vitalis FADES</h1>
-            <p className="text-gray-500 text-sm mt-1.5">Connectez-vous pour accéder à votre espace de gestion.</p>
+            <h1 className="text-2xl font-bold text-white">Bienvenue sur Vitalis FADES</h1>
+            <p className="text-white/75 text-sm mt-1.5">
+              Connectez-vous pour accéder à votre espace de gestion.
+            </p>
           </div>
 
           {/* Formulaire */}
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email */}
             <div className="space-y-1.5">
-              <label className="text-sm font-semibold text-gray-700">Adresse e-mail</label>
+              <label className="text-sm font-semibold text-white/90">Adresse e-mail</label>
               <Input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="votre@email.ci"
                 autoComplete="email"
+                className="bg-white text-gray-900 border-white/20"
                 startIcon={<Mail className="w-5 h-5" />}
               />
             </div>
@@ -227,8 +235,11 @@ export default function LoginPage() {
             {/* Mot de passe */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-semibold text-gray-700">Mot de passe</label>
-                <button type="button" className="text-sm text-primary hover:text-primary-foreground font-medium transition-colors">
+                <label className="text-sm font-semibold text-white/90">Mot de passe</label>
+                <button
+                  type="button"
+                  className="text-sm text-[#FF7B2E] hover:text-orange-300 font-medium transition-colors"
+                >
                   Oublié ?
                 </button>
               </div>
@@ -238,6 +249,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 autoComplete="current-password"
+                className="bg-white text-gray-900 border-white/20"
                 startIcon={<Lock className="w-5 h-5" />}
                 endIcon={
                   <button
@@ -266,13 +278,18 @@ export default function LoginPage() {
                   </svg>
                   Connexion en cours...
                 </>
-              ) : "Se connecter"}
+              ) : (
+                "Se connecter"
+              )}
             </Button>
 
             <div className="text-center mt-6">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-white/80">
                 Vous n'avez pas encore de compte ?{" "}
-                <Link href="/register" className="text-primary hover:text-orange-600 font-semibold transition-colors">
+                <Link
+                  href="/register"
+                  className="text-[#FF7B2E] hover:text-orange-300 font-semibold transition-colors"
+                >
                   Créer un compte
                 </Link>
               </p>
@@ -282,15 +299,18 @@ export default function LoginPage() {
           {/* Comptes de démo */}
           <div className="mt-8">
             <div className="flex items-center gap-3 mb-4">
-              <div className="flex-1 h-px bg-gray-200" />
-              <span className="text-xs text-gray-400 font-medium px-2">Comptes de démonstration</span>
-              <div className="flex-1 h-px bg-gray-200" />
+              <div className="flex-1 h-px bg-white/20" />
+              <span className="text-xs text-white/70 font-medium px-2">
+                Comptes de démonstration
+              </span>
+              <div className="flex-1 h-px bg-white/20" />
             </div>
 
             <div className="space-y-2">
               {demoAccounts.map((acc, idx) => {
                 const Icon = ROLE_ICONS[idx] || User;
-                const isOwnerDisabled = (acc.role === "owner" && !IS_OWNER_PROFILE_ENABLED) || acc.disabled;
+                const isOwnerDisabled =
+                  (acc.role === "owner" && !IS_OWNER_PROFILE_ENABLED) || acc.disabled;
                 return (
                   <button
                     key={acc.email}
@@ -300,10 +320,14 @@ export default function LoginPage() {
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all duration-200 text-left ${ROLE_COLORS[idx] || "border-gray-200 bg-gray-50"
                       } ${isOwnerDisabled ? "opacity-60 cursor-not-allowed border-dashed" : ""}`}
                   >
-                    <Icon className={`w-4 h-4 flex-shrink-0 ${ICON_COLORS[idx] || "text-gray-600"}`} />
+                    <Icon
+                      className={`w-4 h-4 flex-shrink-0 ${ICON_COLORS[idx] || "text-gray-600"}`}
+                    />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className="text-sm font-semibold text-gray-800 truncate">{acc.label}</p>
+                        <p className="text-sm font-semibold text-gray-800 truncate">
+                          {acc.label}
+                        </p>
                         {isOwnerDisabled && (
                           <span className="text-[10px] bg-amber-100 text-amber-800 font-semibold px-2 py-0.5 rounded-full border border-amber-300 flex-shrink-0">
                             En attente de validation
@@ -312,14 +336,16 @@ export default function LoginPage() {
                       </div>
                       <p className="text-xs text-gray-500 truncate">{acc.email}</p>
                     </div>
-                    <span className="text-xs text-gray-400 font-mono flex-shrink-0">{acc.password}</span>
+                    <span className="text-xs text-gray-500 font-mono flex-shrink-0">
+                      {acc.password}
+                    </span>
                   </button>
                 );
               })}
             </div>
           </div>
 
-          <p className="text-xs text-center text-gray-400 mt-6">
+          <p className="text-xs text-center text-white/60 mt-6">
             © {new Date().getFullYear()} ViFlo · Plateforme Vitalis · Tous droits réservés
           </p>
         </div>
@@ -327,3 +353,4 @@ export default function LoginPage() {
     </div>
   );
 }
+
