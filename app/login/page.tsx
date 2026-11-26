@@ -136,7 +136,7 @@ export default function LoginPage() {
         </div>
 
         {/* Footer Stats — Dégradé Orange ViFlo */}
-        <footer className="relative z-10 -mx-12 -mb-12 px-12 py-7 bg-gradient-to-r from-[#FF7B2E] via-[#FF6B1A] to-[#FF5E00] border-t border-orange-300/40 shadow-[0_-10px_30px_rgba(255,94,0,0.15)]">
+        <footer className="relative z-10 -mx-12 -mb-12 px-12 py-7 bg-gradient-to-r from-[#FCB45F] via-[#FFD47B] to-[#FCB45F] border-t border-orange-300/40 shadow-[0_-10px_30px_rgba(255,94,0,0.15)]">
           <div className="grid grid-cols-4 gap-4">
             {[
               { label: "Souscriptions", value: "30000+" },
